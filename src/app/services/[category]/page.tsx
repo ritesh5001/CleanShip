@@ -1,0 +1,139 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { PageHero } from "@/components/page-hero";
+import { CtaBand } from "@/components/cta-band";
+import { FaqList } from "@/components/faq";
+import { Reveal } from "@/components/reveal";
+import { ServiceCard } from "@/components/service-cards";
+import { JsonLd } from "@/components/json-ld";
+import { SectionHeading } from "@/components/ui";
+import { getCategory, serviceCategories } from "@/lib/services";
+import {
+  breadcrumbSchema,
+  buildMetadata,
+  categorySchema,
+  faqSchema,
+} from "@/lib/seo";
+
+type Params = { params: Promise<{ category: string }> };
+
+/** Every category is known at build time, so all pages are statically rendered. */
+export function generateStaticParams() {
+  return serviceCategories.map((category) => ({ category: category.slug }));
+}
+
+export const dynamicParams = false;
+
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { category: slug } = await params;
+  const category = getCategory(slug);
+
+  if (!category) {
+    return { title: "Service not found" };
+  }
+
+  return buildMetadata({
+    title: category.seoTitle,
+    description: category.metaDescription,
+    path: `/services/${category.slug}`,
+    keywords: category.keywords,
+  });
+}
+
+export default async function CategoryPage({ params }: Params) {
+  const { category: slug } = await params;
+  const category = getCategory(slug);
+
+  if (!category) notFound();
+
+  const trail = [
+    { name: "Home", path: "/" },
+    { name: "Services", path: "/services" },
+    { name: category.name, path: `/services/${category.slug}` },
+  ];
+
+  return (
+    <>
+      <JsonLd
+        schema={[
+          breadcrumbSchema(trail),
+          categorySchema(category),
+          faqSchema(category.faqs),
+        ]}
+      />
+
+      <PageHero
+        eyebrow={category.tagline}
+        title={category.name}
+        description={category.summary}
+        trail={trail}
+      />
+
+      {/* ---------- Introduction ---------- */}
+      <section className="pb-16 lg:pb-20">
+        <div className="container-page">
+          <Reveal>
+            <div className="grid gap-8 rounded-3xl border border-white/10 bg-abyss-900/40 p-8 lg:grid-cols-2 lg:p-12">
+              {category.intro.map((paragraph, i) => (
+                <p
+                  key={i}
+                  className="text-base leading-relaxed text-abyss-200"
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ---------- Child services ---------- */}
+      <section className="border-t border-white/8 py-16 lg:py-24">
+        <div className="container-page">
+          <Reveal>
+            <SectionHeading
+              eyebrow="Scopes available"
+              title={`${category.name} services`}
+              description={`Each scope below is a distinct service with its own method, crew and equipment. Combine them in one mobilisation where it makes sense.`}
+            />
+          </Reveal>
+
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {category.services.map((service, i) => (
+              <ServiceCard
+                key={service.slug}
+                service={service}
+                categorySlug={category.slug}
+                index={i}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- FAQ ---------- */}
+      <section className="border-t border-white/8 bg-abyss-900/30 py-16 lg:py-24">
+        <div className="container-page grid gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="lg:col-span-5">
+            <Reveal>
+              <SectionHeading
+                eyebrow="Questions"
+                title={`${category.name} — frequently asked`}
+              />
+            </Reveal>
+          </div>
+          <div className="lg:col-span-7">
+            <Reveal delay={100}>
+              <FaqList faqs={category.faqs} />
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      <CtaBand
+        title={`Need ${category.name.toLowerCase()} arranged?`}
+        description="Send us the vessel, the port and the window. You will get a scope, a crew size and an honest duration — usually the same working day."
+      />
+    </>
+  );
+}

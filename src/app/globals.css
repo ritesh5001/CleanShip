@@ -1,0 +1,281 @@
+@import "tailwindcss";
+
+/* ==================================================================== */
+/*  Design tokens                                                        */
+/*  A deep-ocean palette: abyss navy for depth, aqua for the "clean"     */
+/*  signal, and a warm sand accent used sparingly for emphasis.          */
+/* ==================================================================== */
+
+@theme {
+  /* Deep ocean — backgrounds, headers, footers */
+  --color-abyss-50: #eef6fb;
+  --color-abyss-100: #d5e8f3;
+  --color-abyss-200: #adcfe4;
+  --color-abyss-300: #79aecf;
+  --color-abyss-400: #4886b3;
+  --color-abyss-500: #2c6693;
+  --color-abyss-600: #1f4d75;
+  --color-abyss-700: #173c5d;
+  --color-abyss-800: #112c45;
+  --color-abyss-900: #0a1e31;
+  --color-abyss-950: #04121f;
+
+  /* Aqua — the primary accent, the "clean water" signal */
+  --color-aqua-50: #e8fffb;
+  --color-aqua-100: #c5fff6;
+  --color-aqua-200: #8dfdee;
+  --color-aqua-300: #4bf3e1;
+  --color-aqua-400: #1adecc;
+  --color-aqua-500: #00c2b2;
+  --color-aqua-600: #009c92;
+  --color-aqua-700: #027c75;
+  --color-aqua-800: #08615d;
+  --color-aqua-900: #0c514e;
+  --color-aqua-950: #003331;
+
+  /* Sand — used sparingly for warmth and emphasis */
+  --color-sand-300: #f0d5a8;
+  --color-sand-400: #e5bd7c;
+  --color-sand-500: #d9a05f;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sora), var(--font-inter), ui-sans-serif, sans-serif;
+
+  --radius-4xl: 2rem;
+  --radius-5xl: 2.75rem;
+
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-drift: drift 22s ease-in-out infinite alternate;
+  --animate-pulse-ring: pulse-ring 3s ease-out infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(4%, -6%, 0) scale(1.15);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+/* ==================================================================== */
+/*  Base                                                                 */
+/* ==================================================================== */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Offset anchor targets so the sticky header never covers a heading. */
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-abyss-950);
+    color: var(--color-abyss-100);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Visible, on-brand focus ring for keyboard users. */
+  :focus-visible {
+    outline: 2px solid var(--color-aqua-400);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background-color: var(--color-aqua-400);
+    color: var(--color-abyss-950);
+  }
+}
+
+/* ==================================================================== */
+/*  Component utilities                                                  */
+/* ==================================================================== */
+
+@layer components {
+  /* Consistent page gutter and max width for every section. */
+  .container-page {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Small uppercase label that sits above section headings. */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-aqua-300);
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 1.75rem;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-aqua-400)
+    );
+  }
+
+  /* Frosted panel used for cards on dark backgrounds. */
+  .glass {
+    background: color-mix(in oklab, var(--color-abyss-800) 55%, transparent);
+    backdrop-filter: blur(14px);
+    border: 1px solid color-mix(in oklab, var(--color-abyss-300) 16%, transparent);
+  }
+
+  /* Gradient hairline border that brightens on hover. */
+  .card-hover {
+    position: relative;
+    transition:
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.4s ease,
+      background-color 0.4s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-6px);
+    border-color: color-mix(in oklab, var(--color-aqua-400) 45%, transparent);
+  }
+
+  /* Subtle engineering grid used behind dark sections. */
+  .grid-lines {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in oklab, var(--color-abyss-300) 8%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklab, var(--color-abyss-300) 8%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 72px 72px;
+  }
+
+  /* Radial fade so the grid dissolves toward the edges. */
+  .mask-fade {
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 40%, transparent 100%);
+  }
+
+  .text-gradient {
+    background: linear-gradient(
+      100deg,
+      var(--color-aqua-200) 0%,
+      var(--color-aqua-400) 45%,
+      var(--color-abyss-200) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Scroll-reveal.
+
+     Deliberately gated behind [data-js="true"], which an inline script in the
+     document head sets before first paint. Without JavaScript — or if
+     hydration fails or is slow — the hidden state is never applied and all
+     content renders normally. Content must never depend on JS to be visible. */
+  [data-js="true"] .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+
+  [data-js="true"] .reveal[data-visible="true"] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Honour the user's reduced-motion preference across every animation. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  [data-js="true"] .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
