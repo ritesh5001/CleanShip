@@ -21,7 +21,7 @@ export default function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           background:
-            "linear-gradient(135deg, #04121f 0%, #0a1e31 55%, #08615d 100%)",
+            "linear-gradient(135deg, #04121f 0%, #0a1e31 55%, #1b52a0 100%)",
           padding: "72px",
           fontFamily: "sans-serif",
         }}
@@ -32,7 +32,7 @@ export default function OpengraphImage() {
               width: "56px",
               height: "56px",
               borderRadius: "999px",
-              border: "3px solid #4bf3e1",
+              border: "3px solid #93d0ff",
               display: "flex",
             }}
           />
@@ -44,7 +44,7 @@ export default function OpengraphImage() {
             </span>
             <span
               style={{
-                color: "#4bf3e1",
+                color: "#93d0ff",
                 fontSize: "15px",
                 letterSpacing: "5px",
                 textTransform: "uppercase",
@@ -69,7 +69,7 @@ export default function OpengraphImage() {
           </span>
           <span
             style={{
-              color: "#4bf3e1",
+              color: "#93d0ff",
               fontSize: "68px",
               fontWeight: 700,
               lineHeight: 1.1,

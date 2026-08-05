@@ -169,7 +169,7 @@ function ContactCard({
 }) {
   return (
     <div className="flex gap-4 rounded-2xl border border-white/10 bg-abyss-900/40 p-5">
-      <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-aqua-400/10 text-aqua-300 ring-1 ring-aqua-400/20">
+      <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-marine-400/10 text-marine-300 ring-1 ring-marine-400/20">
         <Icon className="size-5" />
       </span>
       <div className="min-w-0">
@@ -181,7 +181,7 @@ function ContactCard({
             <p
               key={line.text}
               className={`text-sm leading-relaxed break-words ${
-                line.accent ? "text-aqua-300" : "text-abyss-100"
+                line.accent ? "text-marine-300" : "text-abyss-100"
               }`}
             >
               {line.href ? (
@@ -190,7 +190,7 @@ function ContactCard({
                   {...(line.external
                     ? { target: "_blank", rel: "noopener noreferrer" }
                     : {})}
-                  className="transition hover:text-aqua-300"
+                  className="transition hover:text-marine-300"
                 >
                   {line.text}
                 </a>

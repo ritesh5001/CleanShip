@@ -17,9 +17,9 @@ type ButtonProps = {
 
 const buttonStyles = {
   primary:
-    "bg-aqua-400 text-abyss-950 shadow-lg shadow-aqua-500/25 hover:bg-aqua-300",
+    "bg-marine-400 text-abyss-950 shadow-lg shadow-marine-500/25 hover:bg-marine-300",
   ghost:
-    "border border-white/20 text-white hover:border-aqua-400/70 hover:text-aqua-300",
+    "border border-white/20 text-white hover:border-marine-400/70 hover:text-marine-300",
   light:
     "bg-white text-abyss-950 shadow-lg shadow-abyss-950/10 hover:bg-abyss-50",
 } as const;
@@ -82,7 +82,7 @@ export function SectionHeading({
       {eyebrow && (
         <span
           className={`eyebrow ${align === "center" ? "justify-center" : ""} ${
-            light ? "text-aqua-700" : ""
+            light ? "text-marine-700" : ""
           }`}
         >
           {eyebrow}
@@ -128,8 +128,8 @@ export function CheckList({
           <span
             className={`mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full ${
               light
-                ? "bg-aqua-600/15 text-aqua-700"
-                : "bg-aqua-400/15 text-aqua-300"
+                ? "bg-marine-600/15 text-marine-700"
+                : "bg-marine-400/15 text-marine-300"
             }`}
           >
             <CheckIcon className="size-3" />
@@ -164,14 +164,14 @@ export function Breadcrumbs({
           return (
             <li key={item.path} className="flex items-center gap-2">
               {last ? (
-                <span aria-current="page" className="text-aqua-300">
+                <span aria-current="page" className="text-marine-300">
                   {item.name}
                 </span>
               ) : (
                 <>
                   <Link
                     href={item.path}
-                    className="transition hover:text-aqua-300"
+                    className="transition hover:text-marine-300"
                   >
                     {item.name}
                   </Link>

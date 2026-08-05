@@ -15,11 +15,11 @@ export function Hero() {
       {/* ---------- Ambient background ---------- */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         {/* Deep gradient wash */}
-        <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_75%_0%,#0c514e_0%,#0a1e31_45%,#04121f_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_75%_0%,#123a6b_0%,#0a1e31_45%,#04121f_100%)]" />
         {/* Engineering grid, faded at the edges */}
         <div className="grid-lines mask-fade absolute inset-0 opacity-60" />
         {/* Drifting light sources */}
-        <div className="absolute -right-40 top-0 size-[38rem] animate-drift rounded-full bg-aqua-500/18 blur-[110px]" />
+        <div className="absolute -right-40 top-0 size-[38rem] animate-drift rounded-full bg-marine-500/18 blur-[110px]" />
         <div className="absolute -left-52 top-40 size-[32rem] rounded-full bg-abyss-500/25 blur-[120px]" />
         {/* Waterline curve at the base of the hero */}
         <svg
@@ -39,10 +39,10 @@ export function Hero() {
         <div className="grid items-center gap-16 lg:grid-cols-12">
           {/* ---------- Copy ---------- */}
           <div className="lg:col-span-7">
-            <span className="inline-flex items-center gap-2 rounded-full border border-aqua-400/25 bg-aqua-400/8 px-4 py-1.5 text-xs font-medium text-aqua-300">
+            <span className="inline-flex items-center gap-2 rounded-full border border-marine-400/25 bg-marine-400/8 px-4 py-1.5 text-xs font-medium text-marine-300">
               <span className="relative flex size-1.5">
-                <span className="absolute inline-flex size-full animate-pulse-ring rounded-full bg-aqua-400" />
-                <span className="relative inline-flex size-1.5 rounded-full bg-aqua-300" />
+                <span className="absolute inline-flex size-full animate-pulse-ring rounded-full bg-marine-400" />
+                <span className="relative inline-flex size-1.5 rounded-full bg-marine-300" />
               </span>
               Operations desk manned 24 / 7
             </span>
@@ -64,7 +64,7 @@ export function Hero() {
                   key={point}
                   className="flex items-center gap-2 text-sm text-abyss-200"
                 >
-                  <span className="flex size-5 items-center justify-center rounded-full bg-aqua-400/15 text-aqua-300">
+                  <span className="flex size-5 items-center justify-center rounded-full bg-marine-400/15 text-marine-300">
                     <CheckIcon className="size-3" />
                   </span>
                   {point}
@@ -91,7 +91,7 @@ export function Hero() {
                 {[0, 1, 2].map((ring) => (
                   <span
                     key={ring}
-                    className="absolute inset-0 rounded-full border border-aqua-400/12"
+                    className="absolute inset-0 rounded-full border border-marine-400/12"
                     style={{
                       transform: `scale(${0.5 + ring * 0.25})`,
                     }}
@@ -110,7 +110,7 @@ export function Hero() {
                       {totalServiceCount} scopes
                     </p>
                   </div>
-                  <span className="flex size-11 items-center justify-center rounded-2xl bg-aqua-400/12 text-aqua-300 ring-1 ring-aqua-400/25">
+                  <span className="flex size-11 items-center justify-center rounded-2xl bg-marine-400/12 text-marine-300 ring-1 ring-marine-400/25">
                     <ShieldIcon className="size-5" />
                   </span>
                 </div>
@@ -136,7 +136,7 @@ export function Hero() {
 
                 <Link
                   href="/services"
-                  className="group mt-6 flex items-center justify-between rounded-xl bg-aqua-400/10 px-4 py-3 text-sm font-semibold text-aqua-300 transition hover:bg-aqua-400/18"
+                  className="group mt-6 flex items-center justify-between rounded-xl bg-marine-400/10 px-4 py-3 text-sm font-semibold text-marine-300 transition hover:bg-marine-400/18"
                 >
                   See the full scope list
                   <ArrowIcon className="size-4 transition-transform group-hover:translate-x-1" />

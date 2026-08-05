@@ -12,9 +12,9 @@ export function CtaBand({
   return (
     <section className="relative overflow-hidden py-20 lg:py-28">
       <div className="container-page">
-        <div className="relative overflow-hidden rounded-4xl border border-aqua-400/20 bg-gradient-to-br from-abyss-800 via-abyss-900 to-abyss-950 px-6 py-14 sm:px-12 lg:px-16 lg:py-20">
+        <div className="relative overflow-hidden rounded-4xl border border-marine-400/20 bg-gradient-to-br from-abyss-800 via-abyss-900 to-abyss-950 px-6 py-14 sm:px-12 lg:px-16 lg:py-20">
           {/* Ambient light sources */}
-          <div className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-aqua-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-marine-500/20 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-32 -left-20 size-80 rounded-full bg-abyss-400/15 blur-3xl" />
 
           <div className="relative flex flex-col items-start gap-10 lg:flex-row lg:items-center lg:justify-between">
@@ -32,7 +32,7 @@ export function CtaBand({
               <Button href="/contact">Request a quote</Button>
               <a
                 href={siteConfig.phones[0].href}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 px-6 py-3.5 text-sm font-semibold text-white transition hover:border-aqua-400/70 hover:text-aqua-300"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 px-6 py-3.5 text-sm font-semibold text-white transition hover:border-marine-400/70 hover:text-marine-300"
               >
                 <PhoneIcon className="size-4" />
                 {siteConfig.phones[0].number}

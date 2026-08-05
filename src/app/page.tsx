@@ -143,7 +143,7 @@ export default function HomePage() {
                     key={item}
                     className="flex shrink-0 items-center gap-3 text-sm font-medium text-abyss-300"
                   >
-                    <span className="size-1.5 rounded-full bg-aqua-400" />
+                    <span className="size-1.5 rounded-full bg-marine-400" />
                     {item}
                   </span>
                 ))}
@@ -165,7 +165,7 @@ export default function HomePage() {
               />
               <Link
                 href="/services"
-                className="group inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-aqua-300"
+                className="group inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-marine-300"
               >
                 View all services
                 <ArrowIcon className="size-4 transition-transform group-hover:translate-x-1" />
@@ -180,7 +180,7 @@ export default function HomePage() {
 
             {/* Contact card completing the grid */}
             <Reveal delay={serviceCategories.length * 80} className="h-full">
-              <div className="flex h-full flex-col justify-between rounded-3xl border border-aqua-400/25 bg-gradient-to-br from-aqua-600/20 to-abyss-900/60 p-7">
+              <div className="flex h-full flex-col justify-between rounded-3xl border border-marine-400/25 bg-gradient-to-br from-marine-600/20 to-abyss-900/60 p-7">
                 <div>
                   <h3 className="text-xl text-white">
                     Not sure which scope you need?
@@ -204,7 +204,7 @@ export default function HomePage() {
       <section className="relative overflow-hidden border-y border-white/8 bg-abyss-900/30 py-20 lg:py-28">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -left-40 top-1/3 size-[30rem] rounded-full bg-aqua-500/8 blur-[120px]"
+          className="pointer-events-none absolute -left-40 top-1/3 size-[30rem] rounded-full bg-marine-500/8 blur-[120px]"
         />
         <div className="container-page relative">
           <div className="grid gap-14 lg:grid-cols-12 lg:gap-20">
@@ -237,7 +237,7 @@ export default function HomePage() {
                 {differentiators.map(({ Icon, title, body }, i) => (
                   <Reveal key={title} delay={i * 90} className="h-full">
                     <div className="card-hover h-full rounded-2xl border border-white/10 bg-abyss-950/50 p-6">
-                      <span className="flex size-11 items-center justify-center rounded-xl bg-aqua-400/10 text-aqua-300 ring-1 ring-aqua-400/20">
+                      <span className="flex size-11 items-center justify-center rounded-xl bg-marine-400/10 text-marine-300 ring-1 ring-marine-400/20">
                         <Icon className="size-5" />
                       </span>
                       <h3 className="mt-5 text-base text-white">{title}</h3>
@@ -273,10 +273,10 @@ export default function HomePage() {
                   {i < process.length - 1 && (
                     <span
                       aria-hidden="true"
-                      className="absolute left-14 top-6 hidden h-px w-[calc(100%-2rem)] bg-gradient-to-r from-aqua-400/40 to-transparent lg:block"
+                      className="absolute left-14 top-6 hidden h-px w-[calc(100%-2rem)] bg-gradient-to-r from-marine-400/40 to-transparent lg:block"
                     />
                   )}
-                  <span className="relative flex size-12 items-center justify-center rounded-2xl border border-aqua-400/30 bg-abyss-950 font-display text-sm font-semibold text-aqua-300">
+                  <span className="relative flex size-12 items-center justify-center rounded-2xl border border-marine-400/30 bg-abyss-950 font-display text-sm font-semibold text-marine-300">
                     {item.step}
                   </span>
                   <h3 className="mt-6 text-lg text-white">{item.title}</h3>
@@ -319,12 +319,12 @@ export default function HomePage() {
               {serviceAreas.map((area) => (
                 <li
                   key={area}
-                  className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-abyss-200 transition hover:border-aqua-400/40 hover:text-aqua-300"
+                  className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-abyss-200 transition hover:border-marine-400/40 hover:text-marine-300"
                 >
                   {area}
                 </li>
               ))}
-              <li className="rounded-full border border-aqua-400/30 bg-aqua-400/10 px-4 py-2 text-sm text-aqua-300">
+              <li className="rounded-full border border-marine-400/30 bg-marine-400/10 px-4 py-2 text-sm text-marine-300">
                 + worldwide by arrangement
               </li>
             </ul>

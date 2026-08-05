@@ -14,8 +14,8 @@ export function Logo({ className = "" }: { className?: string }) {
       >
         <defs>
           <linearGradient id="cs-logo" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#4bf3e1" />
-            <stop offset="100%" stopColor="#009c92" />
+            <stop offset="0%" stopColor="#93d0ff" />
+            <stop offset="100%" stopColor="#217ce4" />
           </linearGradient>
         </defs>
         <circle cx="20" cy="20" r="19" fill="url(#cs-logo)" opacity="0.12" />
@@ -44,7 +44,7 @@ export function Logo({ className = "" }: { className?: string }) {
         <path
           d="M8 31.5c1.7 0 1.7-1.3 3.4-1.3s1.7 1.3 3.4 1.3 1.7-1.3 3.4-1.3 1.7 1.3 3.4 1.3 1.7-1.3 3.4-1.3 1.7 1.3 3.4 1.3"
           fill="none"
-          stroke="#4bf3e1"
+          stroke="#93d0ff"
           strokeWidth="1.5"
           strokeLinecap="round"
           opacity="0.8"
@@ -54,7 +54,7 @@ export function Logo({ className = "" }: { className?: string }) {
         <span className="font-display text-xl font-semibold tracking-tight text-white">
           {siteConfig.name}
         </span>
-        <span className="mt-0.5 text-[9px] font-medium uppercase tracking-[0.22em] text-aqua-400">
+        <span className="mt-0.5 text-[9px] font-medium uppercase tracking-[0.22em] text-marine-400">
           Marine Services
         </span>
       </span>

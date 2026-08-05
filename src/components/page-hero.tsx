@@ -22,9 +22,9 @@ export function PageHero({
   return (
     <section className="relative isolate overflow-hidden pb-16 pt-12 lg:pb-20 lg:pt-16">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(100%_80%_at_70%_0%,#0c514e_0%,#0a1e31_50%,#04121f_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(100%_80%_at_70%_0%,#123a6b_0%,#0a1e31_50%,#04121f_100%)]" />
         <div className="grid-lines mask-fade absolute inset-0 opacity-50" />
-        <div className="absolute -right-32 -top-24 size-[30rem] rounded-full bg-aqua-500/12 blur-[110px]" />
+        <div className="absolute -right-32 -top-24 size-[30rem] rounded-full bg-marine-500/12 blur-[110px]" />
       </div>
 
       <div className="container-page">

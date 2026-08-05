@@ -146,7 +146,7 @@ export default function AboutPage() {
                       <span className="text-abyss-400">Office hours:</span>{" "}
                       {siteConfig.hours.office}
                       <br />
-                      <span className="text-aqua-300">
+                      <span className="text-marine-300">
                         {siteConfig.hours.operations}
                       </span>
                     </p>
@@ -186,7 +186,7 @@ export default function AboutPage() {
             {values.map(({ Icon, title, body }, i) => (
               <Reveal key={title} delay={i * 90} className="h-full">
                 <div className="card-hover h-full rounded-2xl border border-white/10 bg-abyss-950/50 p-7">
-                  <span className="flex size-12 items-center justify-center rounded-xl bg-aqua-400/10 text-aqua-300 ring-1 ring-aqua-400/20">
+                  <span className="flex size-12 items-center justify-center rounded-xl bg-marine-400/10 text-marine-300 ring-1 ring-marine-400/20">
                     <Icon className="size-5.5" />
                   </span>
                   <h3 className="mt-5 text-lg text-white">{title}</h3>
@@ -216,7 +216,7 @@ export default function AboutPage() {
               <Reveal key={category.slug} delay={i * 70} className="h-full">
                 <div className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-6">
                   <h3 className="text-base text-white">{category.name}</h3>
-                  <p className="mt-2 text-xs font-medium text-aqua-400">
+                  <p className="mt-2 text-xs font-medium text-marine-400">
                     {category.services.length} scopes
                   </p>
                   <p className="mt-3 text-sm leading-relaxed text-abyss-300">

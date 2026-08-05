@@ -42,7 +42,7 @@ export function StatsBand({ stats }: { stats: Stat[] }) {
         <div key={stat.label} className="bg-abyss-900/80 px-6 py-8 text-center">
           <div className="font-display text-4xl font-semibold text-white lg:text-5xl">
             <CountUp target={stat.value} run={started} />
-            <span className="text-aqua-400">{stat.suffix}</span>
+            <span className="text-marine-400">{stat.suffix}</span>
           </div>
           <p className="mt-2 text-xs uppercase tracking-[0.14em] text-abyss-400">
             {stat.label}

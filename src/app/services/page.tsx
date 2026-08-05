@@ -72,7 +72,7 @@ export default function ServicesPage() {
                   <Reveal>
                     <div className="lg:sticky lg:top-28">
                       <div className="flex items-center gap-4">
-                        <span className="flex size-14 items-center justify-center rounded-2xl bg-aqua-400/10 text-aqua-300 ring-1 ring-aqua-400/20">
+                        <span className="flex size-14 items-center justify-center rounded-2xl bg-marine-400/10 text-marine-300 ring-1 ring-marine-400/20">
                           <CategoryIcon
                             name={category.icon}
                             className="size-7"
@@ -86,7 +86,7 @@ export default function ServicesPage() {
                       <h2 className="mt-6 text-3xl text-white">
                         {category.name}
                       </h2>
-                      <p className="mt-2 text-sm font-medium text-aqua-400">
+                      <p className="mt-2 text-sm font-medium text-marine-400">
                         {category.tagline}
                       </p>
                       <p className="mt-4 text-sm leading-relaxed text-abyss-300">
@@ -95,7 +95,7 @@ export default function ServicesPage() {
 
                       <Link
                         href={`/services/${category.slug}`}
-                        className="group mt-6 inline-flex items-center gap-2 text-sm font-semibold text-aqua-300"
+                        className="group mt-6 inline-flex items-center gap-2 text-sm font-semibold text-marine-300"
                       >
                         {category.name} overview
                         <ArrowIcon className="size-4 transition-transform group-hover:translate-x-1" />
@@ -116,16 +116,16 @@ export default function ServicesPage() {
                           href={`/services/${category.slug}/${service.slug}`}
                           className="card-hover group flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-6"
                         >
-                          <h3 className="text-lg leading-snug text-white transition group-hover:text-aqua-300">
+                          <h3 className="text-lg leading-snug text-white transition group-hover:text-marine-300">
                             {service.name}
                           </h3>
-                          <p className="mt-2 text-[13px] font-medium text-aqua-400/90">
+                          <p className="mt-2 text-[13px] font-medium text-marine-400/90">
                             {service.tagline}
                           </p>
                           <p className="mt-3 flex-1 text-sm leading-relaxed text-abyss-300">
                             {service.summary}
                           </p>
-                          <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-aqua-300">
+                          <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-marine-300">
                             Read more
                             <ArrowIcon className="size-4 transition-transform group-hover:translate-x-1" />
                           </span>

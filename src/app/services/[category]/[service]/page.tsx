@@ -103,7 +103,7 @@ export default async function ServicePage({ params }: Params) {
 
             {/* Highlights */}
             <Reveal delay={80}>
-              <div className="mt-10 rounded-2xl border border-aqua-400/20 bg-aqua-400/5 p-7">
+              <div className="mt-10 rounded-2xl border border-marine-400/20 bg-marine-400/5 p-7">
                 <h2 className="text-lg text-white">What you get</h2>
                 <CheckList className="mt-5" items={service.highlights} />
               </div>
@@ -127,7 +127,7 @@ export default async function ServicePage({ params }: Params) {
                   <Reveal key={item.title} delay={i * 60}>
                     <div className="bg-abyss-900/50 p-6 transition hover:bg-abyss-900/80 sm:p-7">
                       <div className="flex gap-5">
-                        <span className="font-display text-sm text-aqua-400/70">
+                        <span className="font-display text-sm text-marine-400/70">
                           {String(i + 1).padStart(2, "0")}
                         </span>
                         <div>
@@ -156,13 +156,13 @@ export default async function ServicePage({ params }: Params) {
                   <Reveal key={step.title} delay={i * 70}>
                     <li className="relative flex gap-5 pl-0">
                       <div className="flex flex-col items-center">
-                        <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-aqua-400/30 bg-abyss-950 font-display text-xs font-semibold text-aqua-300">
+                        <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-marine-400/30 bg-abyss-950 font-display text-xs font-semibold text-marine-300">
                           {i + 1}
                         </span>
                         {i < service.process.length - 1 && (
                           <span
                             aria-hidden="true"
-                            className="mt-2 w-px flex-1 bg-gradient-to-b from-aqua-400/30 to-transparent"
+                            className="mt-2 w-px flex-1 bg-gradient-to-b from-marine-400/30 to-transparent"
                           />
                         )}
                       </div>
@@ -197,7 +197,7 @@ export default async function ServicePage({ params }: Params) {
           <aside className="lg:col-span-4">
             <div className="space-y-5 lg:sticky lg:top-28">
               {/* Enquiry card */}
-              <div className="rounded-2xl border border-aqua-400/25 bg-gradient-to-br from-aqua-600/20 to-abyss-900/70 p-6">
+              <div className="rounded-2xl border border-marine-400/25 bg-gradient-to-br from-marine-600/20 to-abyss-900/70 p-6">
                 <h2 className="text-lg text-white">
                   Enquire about {service.name.toLowerCase()}
                 </h2>
@@ -210,7 +210,7 @@ export default async function ServicePage({ params }: Params) {
                 </Button>
                 <a
                   href={siteConfig.phones[0].href}
-                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-white/15 px-5 py-3 text-sm font-semibold text-white transition hover:border-aqua-400/60 hover:text-aqua-300"
+                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-white/15 px-5 py-3 text-sm font-semibold text-white transition hover:border-marine-400/60 hover:text-marine-300"
                 >
                   <PhoneIcon className="size-4" />
                   {siteConfig.phones[0].number}
@@ -228,7 +228,7 @@ export default async function ServicePage({ params }: Params) {
                       key={item}
                       className="flex items-start gap-2.5 text-sm text-abyss-200"
                     >
-                      <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-aqua-400" />
+                      <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-marine-400" />
                       {item}
                     </li>
                   ))}
@@ -241,7 +241,7 @@ export default async function ServicePage({ params }: Params) {
                   <h2 className="flex items-center gap-2.5 text-sm font-semibold uppercase tracking-wider text-abyss-300">
                     <CategoryIcon
                       name={category.icon}
-                      className="size-4 text-aqua-400"
+                      className="size-4 text-marine-400"
                     />
                     More in {category.name}
                   </h2>
@@ -250,7 +250,7 @@ export default async function ServicePage({ params }: Params) {
                       <li key={sibling.slug}>
                         <Link
                           href={`/services/${category.slug}/${sibling.slug}`}
-                          className="group flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-sm text-abyss-200 transition hover:bg-white/5 hover:text-aqua-300"
+                          className="group flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-sm text-abyss-200 transition hover:bg-white/5 hover:text-marine-300"
                         >
                           {sibling.name}
                           <ArrowIcon className="size-3.5 shrink-0 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
@@ -260,7 +260,7 @@ export default async function ServicePage({ params }: Params) {
                   </ul>
                   <Link
                     href={`/services/${category.slug}`}
-                    className="mt-3 inline-flex items-center gap-2 px-3 text-sm font-semibold text-aqua-300"
+                    className="mt-3 inline-flex items-center gap-2 px-3 text-sm font-semibold text-marine-300"
                   >
                     All {category.name.toLowerCase()}
                     <ArrowIcon className="size-3.5" />

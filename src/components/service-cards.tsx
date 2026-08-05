@@ -18,10 +18,10 @@ export function CategoryCard({
         className="card-hover group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-abyss-900/60 p-7 backdrop-blur-sm"
       >
         {/* Glow that follows the card on hover */}
-        <div className="pointer-events-none absolute -right-20 -top-20 size-48 rounded-full bg-aqua-500/0 blur-3xl transition-all duration-500 group-hover:bg-aqua-500/20" />
+        <div className="pointer-events-none absolute -right-20 -top-20 size-48 rounded-full bg-marine-500/0 blur-3xl transition-all duration-500 group-hover:bg-marine-500/20" />
 
         <div className="relative flex items-start justify-between">
-          <span className="flex size-13 items-center justify-center rounded-2xl bg-aqua-400/10 text-aqua-300 ring-1 ring-aqua-400/20 transition group-hover:bg-aqua-400/20">
+          <span className="flex size-13 items-center justify-center rounded-2xl bg-marine-400/10 text-marine-300 ring-1 ring-marine-400/20 transition group-hover:bg-marine-400/20">
             <CategoryIcon name={category.icon} className="size-6.5" />
           </span>
           <span className="font-display text-sm font-medium text-abyss-600">
@@ -29,7 +29,7 @@ export function CategoryCard({
           </span>
         </div>
 
-        <h3 className="relative mt-6 text-xl text-white transition group-hover:text-aqua-300">
+        <h3 className="relative mt-6 text-xl text-white transition group-hover:text-marine-300">
           {category.name}
         </h3>
         <p className="relative mt-3 flex-1 text-sm leading-relaxed text-abyss-300">
@@ -42,7 +42,7 @@ export function CategoryCard({
               key={service.slug}
               className="flex items-center gap-2 text-[13px] text-abyss-400"
             >
-              <span className="size-1 rounded-full bg-aqua-400/70" />
+              <span className="size-1 rounded-full bg-marine-400/70" />
               {service.name}
             </li>
           ))}
@@ -53,7 +53,7 @@ export function CategoryCard({
           )}
         </ul>
 
-        <span className="relative mt-6 inline-flex items-center gap-2 text-sm font-semibold text-aqua-300">
+        <span className="relative mt-6 inline-flex items-center gap-2 text-sm font-semibold text-marine-300">
           Explore
           <ArrowIcon className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
         </span>
@@ -78,16 +78,16 @@ export function ServiceCard({
         href={`/services/${categorySlug}/${service.slug}`}
         className="card-hover group flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-6"
       >
-        <h3 className="text-lg leading-snug text-white transition group-hover:text-aqua-300">
+        <h3 className="text-lg leading-snug text-white transition group-hover:text-marine-300">
           {service.name}
         </h3>
-        <p className="mt-2 text-sm font-medium text-aqua-400/90">
+        <p className="mt-2 text-sm font-medium text-marine-400/90">
           {service.tagline}
         </p>
         <p className="mt-3 flex-1 text-sm leading-relaxed text-abyss-300">
           {service.summary}
         </p>
-        <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-aqua-300">
+        <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-marine-300">
           Read more
           <ArrowIcon className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
         </span>

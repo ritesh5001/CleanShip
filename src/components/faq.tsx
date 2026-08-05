@@ -22,14 +22,14 @@ export function FaqList({
           <summary
             className={`flex cursor-pointer list-none items-start justify-between gap-4 text-left text-base font-medium transition ${
               light
-                ? "text-abyss-950 hover:text-aqua-700"
-                : "text-white hover:text-aqua-300"
+                ? "text-abyss-950 hover:text-marine-700"
+                : "text-white hover:text-marine-300"
             }`}
           >
             <span>{faq.q}</span>
             <ChevronIcon
               className={`mt-0.5 size-5 shrink-0 transition-transform duration-300 group-open:rotate-180 ${
-                light ? "text-aqua-700" : "text-aqua-400"
+                light ? "text-marine-700" : "text-marine-400"
               }`}
             />
           </summary>

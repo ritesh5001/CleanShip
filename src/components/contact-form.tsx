@@ -11,7 +11,7 @@ const initialState: EnquiryState = { status: "idle", message: "" };
 /* Background is kept out of the shared base so the select can set its own
    without two competing bg-* utilities of equal specificity. */
 const fieldBase =
-  "w-full rounded-xl border border-white/12 px-4 py-3 text-sm text-white placeholder:text-abyss-500 transition focus:border-aqua-400/60 focus:outline-none focus:ring-2 focus:ring-aqua-400/25";
+  "w-full rounded-xl border border-white/12 px-4 py-3 text-sm text-white placeholder:text-abyss-500 transition focus:border-marine-400/60 focus:outline-none focus:ring-2 focus:ring-marine-400/25";
 
 const fieldClass = `${fieldBase} bg-abyss-950/60`;
 
@@ -24,8 +24,8 @@ export function ContactForm() {
 
   if (state.status === "success") {
     return (
-      <div className="flex flex-col items-start gap-4 rounded-3xl border border-aqua-400/30 bg-aqua-400/8 p-8">
-        <span className="flex size-12 items-center justify-center rounded-full bg-aqua-400/20 text-aqua-300">
+      <div className="flex flex-col items-start gap-4 rounded-3xl border border-marine-400/30 bg-marine-400/8 p-8">
+        <span className="flex size-12 items-center justify-center rounded-full bg-marine-400/20 text-marine-300">
           <CheckIcon className="size-6" />
         </span>
         <h3 className="text-xl text-white">Enquiry received</h3>
@@ -127,7 +127,7 @@ export function ContactForm() {
           htmlFor="message"
           className="mb-2 block text-xs font-medium uppercase tracking-wider text-abyss-300"
         >
-          Scope, port and window <span className="text-aqua-400">*</span>
+          Scope, port and window <span className="text-marine-400">*</span>
         </label>
         <textarea
           id="message"
@@ -169,7 +169,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-aqua-400 px-6 py-4 text-sm font-semibold text-abyss-950 shadow-lg shadow-aqua-500/25 transition hover:bg-aqua-300 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+      className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-marine-400 px-6 py-4 text-sm font-semibold text-abyss-950 shadow-lg shadow-marine-500/25 transition hover:bg-marine-300 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
     >
       {pending ? "Sending…" : "Send enquiry"}
       {!pending && (
@@ -202,7 +202,7 @@ function Field({
         htmlFor={name}
         className="mb-2 block text-xs font-medium uppercase tracking-wider text-abyss-300"
       >
-        {label} {required && <span className="text-aqua-400">*</span>}
+        {label} {required && <span className="text-marine-400">*</span>}
         {optional && (
           <span className="normal-case tracking-normal text-abyss-500">
             {" "}

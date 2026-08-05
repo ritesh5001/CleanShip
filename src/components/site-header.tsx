@@ -82,14 +82,14 @@ export function SiteHeader() {
           <div className="flex items-center gap-6">
             <a
               href={siteConfig.phones[0].href}
-              className="flex items-center gap-2 transition hover:text-aqua-300"
+              className="flex items-center gap-2 transition hover:text-marine-300"
             >
               <PhoneIcon className="size-3.5" />
               {siteConfig.phones[0].number}
             </a>
             <a
               href={`mailto:${siteConfig.email}`}
-              className="transition hover:text-aqua-300"
+              className="transition hover:text-marine-300"
             >
               {siteConfig.email}
             </a>
@@ -132,8 +132,8 @@ export function SiteHeader() {
                     aria-haspopup="true"
                     className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition ${
                       isActive(item.href)
-                        ? "text-aqua-300"
-                        : "text-abyss-100 hover:text-aqua-300"
+                        ? "text-marine-300"
+                        : "text-abyss-100 hover:text-marine-300"
                     }`}
                   >
                     {item.label}
@@ -150,8 +150,8 @@ export function SiteHeader() {
                   href={item.href}
                   className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                     isActive(item.href)
-                      ? "text-aqua-300"
-                      : "text-abyss-100 hover:text-aqua-300"
+                      ? "text-marine-300"
+                      : "text-abyss-100 hover:text-marine-300"
                   }`}
                 >
                   {item.label}
@@ -163,7 +163,7 @@ export function SiteHeader() {
           <div className="flex items-center gap-3">
             <Link
               href="/contact"
-              className="hidden rounded-full bg-aqua-400 px-5 py-2.5 text-sm font-semibold text-abyss-950 shadow-lg shadow-aqua-500/20 transition hover:bg-aqua-300 sm:inline-flex"
+              className="hidden rounded-full bg-marine-400 px-5 py-2.5 text-sm font-semibold text-abyss-950 shadow-lg shadow-marine-500/20 transition hover:bg-marine-300 sm:inline-flex"
             >
               Request a Quote
             </Link>
@@ -174,7 +174,7 @@ export function SiteHeader() {
               aria-expanded={mobileOpen}
               aria-controls="mobile-menu"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
-              className="inline-flex size-10 items-center justify-center rounded-full border border-white/15 text-abyss-50 transition hover:border-aqua-400/60 hover:text-aqua-300 lg:hidden"
+              className="inline-flex size-10 items-center justify-center rounded-full border border-white/15 text-abyss-50 transition hover:border-marine-400/60 hover:text-marine-300 lg:hidden"
             >
               {mobileOpen ? (
                 <CloseIcon className="size-5" />
@@ -200,9 +200,9 @@ export function SiteHeader() {
               <div key={category.slug}>
                 <Link
                   href={`/services/${category.slug}`}
-                  className="group mb-4 flex items-center gap-2.5 text-sm font-semibold text-abyss-50 transition hover:text-aqua-300"
+                  className="group mb-4 flex items-center gap-2.5 text-sm font-semibold text-abyss-50 transition hover:text-marine-300"
                 >
-                  <span className="flex size-8 items-center justify-center rounded-lg bg-aqua-400/10 text-aqua-300 ring-1 ring-aqua-400/20">
+                  <span className="flex size-8 items-center justify-center rounded-lg bg-marine-400/10 text-marine-300 ring-1 ring-marine-400/20">
                     <CategoryIcon name={category.icon} className="size-4.5" />
                   </span>
                   {category.name}
@@ -212,7 +212,7 @@ export function SiteHeader() {
                     <li key={service.slug}>
                       <Link
                         href={`/services/${category.slug}/${service.slug}`}
-                        className="block py-1 text-[13px] leading-snug text-abyss-300 transition hover:text-aqua-300"
+                        className="block py-1 text-[13px] leading-snug text-abyss-300 transition hover:text-marine-300"
                       >
                         {service.name}
                       </Link>
@@ -230,7 +230,7 @@ export function SiteHeader() {
               </p>
               <Link
                 href="/services"
-                className="group inline-flex items-center gap-2 font-semibold text-aqua-300"
+                className="group inline-flex items-center gap-2 font-semibold text-marine-300"
               >
                 View all services
                 <ArrowIcon className="size-4 transition-transform group-hover:translate-x-1" />
@@ -295,7 +295,7 @@ export function SiteHeader() {
                         <li key={category.slug}>
                           <Link
                             href={`/services/${category.slug}`}
-                            className="flex items-center gap-2 py-1 text-sm font-semibold text-aqua-300"
+                            className="flex items-center gap-2 py-1 text-sm font-semibold text-marine-300"
                           >
                             <CategoryIcon
                               name={category.icon}
@@ -336,7 +336,7 @@ export function SiteHeader() {
           <div className="mt-6 space-y-3">
             <Link
               href="/contact"
-              className="flex w-full items-center justify-center rounded-full bg-aqua-400 px-5 py-3.5 text-sm font-semibold text-abyss-950"
+              className="flex w-full items-center justify-center rounded-full bg-marine-400 px-5 py-3.5 text-sm font-semibold text-abyss-950"
             >
               Request a Quote
             </Link>

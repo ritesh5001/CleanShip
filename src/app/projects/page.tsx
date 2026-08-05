@@ -130,7 +130,7 @@ export default function ProjectsPage() {
               <Reveal key={project.vesselType + project.scope} delay={i * 70}>
                 <article className="card-hover h-full rounded-3xl border border-white/10 bg-abyss-900/50 p-7 lg:p-8">
                   <div className="flex flex-wrap items-center gap-3">
-                    <span className="rounded-full bg-aqua-400/10 px-3 py-1 text-xs font-medium text-aqua-300 ring-1 ring-aqua-400/20">
+                    <span className="rounded-full bg-marine-400/10 px-3 py-1 text-xs font-medium text-marine-300 ring-1 ring-marine-400/20">
                       {project.scope}
                     </span>
                     <span className="text-xs text-abyss-400">
@@ -157,7 +157,7 @@ export default function ProjectsPage() {
 
                   <Link
                     href={`/services/${project.category}/${project.service}`}
-                    className="group mt-6 inline-flex items-center gap-2 text-sm font-semibold text-aqua-300"
+                    className="group mt-6 inline-flex items-center gap-2 text-sm font-semibold text-marine-300"
                   >
                     About this service
                     <ArrowIcon className="size-4 transition-transform group-hover:translate-x-1" />
@@ -201,7 +201,7 @@ export default function ProjectsPage() {
                   href={`/services/${category.slug}`}
                   className="card-hover flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-6"
                 >
-                  <span className="flex size-11 items-center justify-center rounded-xl bg-aqua-400/10 text-aqua-300 ring-1 ring-aqua-400/20">
+                  <span className="flex size-11 items-center justify-center rounded-xl bg-marine-400/10 text-marine-300 ring-1 ring-marine-400/20">
                     <CategoryIcon name={category.icon} className="size-5" />
                   </span>
                   <h3 className="mt-5 text-base text-white">{category.name}</h3>

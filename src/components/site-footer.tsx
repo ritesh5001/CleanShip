@@ -23,7 +23,7 @@ export function SiteFooter() {
 
   return (
     <footer className="relative overflow-hidden border-t border-white/10 bg-abyss-950">
-      <div className="pointer-events-none absolute -top-40 left-1/2 size-[42rem] -translate-x-1/2 rounded-full bg-aqua-500/8 blur-3xl" />
+      <div className="pointer-events-none absolute -top-40 left-1/2 size-[42rem] -translate-x-1/2 rounded-full bg-marine-500/8 blur-3xl" />
 
       <div className="container-page relative py-16 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-12">
@@ -36,17 +36,17 @@ export function SiteFooter() {
 
             <address className="mt-6 space-y-3 not-italic text-sm text-abyss-300">
               <div className="flex gap-3">
-                <PinIcon className="mt-0.5 size-4 shrink-0 text-aqua-400" />
+                <PinIcon className="mt-0.5 size-4 shrink-0 text-marine-400" />
                 <span>{siteConfig.address.full}</span>
               </div>
               <div className="flex gap-3">
-                <PhoneIcon className="mt-0.5 size-4 shrink-0 text-aqua-400" />
+                <PhoneIcon className="mt-0.5 size-4 shrink-0 text-marine-400" />
                 <span className="flex flex-col gap-1">
                   {siteConfig.phones.map((p) => (
                     <a
                       key={p.href}
                       href={p.href}
-                      className="transition hover:text-aqua-300"
+                      className="transition hover:text-marine-300"
                     >
                       {p.number}
                     </a>
@@ -54,20 +54,20 @@ export function SiteFooter() {
                 </span>
               </div>
               <div className="flex gap-3">
-                <MailIcon className="mt-0.5 size-4 shrink-0 text-aqua-400" />
+                <MailIcon className="mt-0.5 size-4 shrink-0 text-marine-400" />
                 <a
                   href={`mailto:${siteConfig.email}`}
-                  className="transition hover:text-aqua-300"
+                  className="transition hover:text-marine-300"
                 >
                   {siteConfig.email}
                 </a>
               </div>
               <div className="flex gap-3">
-                <ClockIcon className="mt-0.5 size-4 shrink-0 text-aqua-400" />
+                <ClockIcon className="mt-0.5 size-4 shrink-0 text-marine-400" />
                 <span>
                   {siteConfig.hours.office}
                   <br />
-                  <span className="text-aqua-300">
+                  <span className="text-marine-300">
                     {siteConfig.hours.operations}
                   </span>
                 </span>
@@ -82,7 +82,7 @@ export function SiteFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`${siteConfig.name} on ${label}`}
-                  className="flex size-9 items-center justify-center rounded-full border border-white/12 text-abyss-300 transition hover:border-aqua-400/60 hover:text-aqua-300"
+                  className="flex size-9 items-center justify-center rounded-full border border-white/12 text-abyss-300 transition hover:border-marine-400/60 hover:text-marine-300"
                 >
                   <Icon className="size-4" />
                 </a>
@@ -97,7 +97,7 @@ export function SiteFooter() {
                 <h3 className="text-sm font-semibold text-white">
                   <Link
                     href={`/services/${category.slug}`}
-                    className="transition hover:text-aqua-300"
+                    className="transition hover:text-marine-300"
                   >
                     {category.name}
                   </Link>
@@ -107,7 +107,7 @@ export function SiteFooter() {
                     <li key={service.slug}>
                       <Link
                         href={`/services/${category.slug}/${service.slug}`}
-                        className="text-[13px] leading-snug text-abyss-300 transition hover:text-aqua-300"
+                        className="text-[13px] leading-snug text-abyss-300 transition hover:text-marine-300"
                       >
                         {service.name}
                       </Link>
@@ -123,22 +123,22 @@ export function SiteFooter() {
             <h3 className="text-sm font-semibold text-white">Company</h3>
             <ul className="mt-3 space-y-2 text-[13px] text-abyss-300">
               <li>
-                <Link href="/about" className="transition hover:text-aqua-300">
+                <Link href="/about" className="transition hover:text-marine-300">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/projects" className="transition hover:text-aqua-300">
+                <Link href="/projects" className="transition hover:text-marine-300">
                   Projects
                 </Link>
               </li>
               <li>
-                <Link href="/services" className="transition hover:text-aqua-300">
+                <Link href="/services" className="transition hover:text-marine-300">
                   All Services
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="transition hover:text-aqua-300">
+                <Link href="/contact" className="transition hover:text-marine-300">
                   Contact Us
                 </Link>
               </li>

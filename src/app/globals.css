@@ -2,8 +2,13 @@
 
 /* ==================================================================== */
 /*  Design tokens                                                        */
-/*  A deep-ocean palette: abyss navy for depth, aqua for the "clean"     */
-/*  signal, and a warm sand accent used sparingly for emphasis.          */
+/*                                                                       */
+/*  A single-hue marine blue system. Abyss carries the deep navy of the  */
+/*  backgrounds; Marine is the bright ocean blue used for every accent,  */
+/*  button, icon and link. Both ramps sit on the same blue hue family,   */
+/*  so the accent reads as a brighter version of the background rather   */
+/*  than a second colour competing with it. Sand is the only outsider,   */
+/*  reserved for warnings.                                               */
 /* ==================================================================== */
 
 @theme {
@@ -20,18 +25,20 @@
   --color-abyss-900: #0a1e31;
   --color-abyss-950: #04121f;
 
-  /* Aqua — the primary accent, the "clean water" signal */
-  --color-aqua-50: #e8fffb;
-  --color-aqua-100: #c5fff6;
-  --color-aqua-200: #8dfdee;
-  --color-aqua-300: #4bf3e1;
-  --color-aqua-400: #1adecc;
-  --color-aqua-500: #00c2b2;
-  --color-aqua-600: #009c92;
-  --color-aqua-700: #027c75;
-  --color-aqua-800: #08615d;
-  --color-aqua-900: #0c514e;
-  --color-aqua-950: #003331;
+  /* Marine blue — the primary accent.
+     400 is the button/brand blue, 300 the accent text on dark backgrounds,
+     700 the accent on light backgrounds, 900 the hero gradient. */
+  --color-marine-50: #eef7ff;
+  --color-marine-100: #d8edff;
+  --color-marine-200: #bae0ff;
+  --color-marine-300: #93d0ff;
+  --color-marine-400: #5cb4fc;
+  --color-marine-500: #3596f2;
+  --color-marine-600: #217ce4;
+  --color-marine-700: #1b63c2;
+  --color-marine-800: #1b52a0;
+  --color-marine-900: #123a6b;
+  --color-marine-950: #0b2445;
 
   /* Sand — used sparingly for warmth and emphasis */
   --color-sand-300: #f0d5a8;
@@ -132,13 +139,13 @@
 
   /* Visible, on-brand focus ring for keyboard users. */
   :focus-visible {
-    outline: 2px solid var(--color-aqua-400);
+    outline: 2px solid var(--color-marine-400);
     outline-offset: 3px;
     border-radius: 4px;
   }
 
   ::selection {
-    background-color: var(--color-aqua-400);
+    background-color: var(--color-marine-400);
     color: var(--color-abyss-950);
   }
 }
@@ -171,7 +178,7 @@
     font-weight: 600;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--color-aqua-300);
+    color: var(--color-marine-300);
   }
 
   .eyebrow::before {
@@ -181,7 +188,7 @@
     background: linear-gradient(
       90deg,
       transparent,
-      var(--color-aqua-400)
+      var(--color-marine-400)
     );
   }
 
@@ -203,7 +210,7 @@
 
   .card-hover:hover {
     transform: translateY(-6px);
-    border-color: color-mix(in oklab, var(--color-aqua-400) 45%, transparent);
+    border-color: color-mix(in oklab, var(--color-marine-400) 45%, transparent);
   }
 
   /* Subtle engineering grid used behind dark sections. */
@@ -230,8 +237,8 @@
   .text-gradient {
     background: linear-gradient(
       100deg,
-      var(--color-aqua-200) 0%,
-      var(--color-aqua-400) 45%,
+      var(--color-marine-200) 0%,
+      var(--color-marine-400) 45%,
       var(--color-abyss-200) 100%
     );
     -webkit-background-clip: text;

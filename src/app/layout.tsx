@@ -86,7 +86,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${sora.variable}`}>
+    /* suppressHydrationWarning covers the data-js attribute that the inline
+       script below writes onto <html> before React hydrates. Without it React
+       reports an attribute mismatch on every page load. It applies only to
+       this element's own attributes, so genuine mismatches in the tree below
+       are still reported. */
+    <html
+      lang="en"
+      className={`${inter.variable} ${sora.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         {/* Marks the document as JS-capable before first paint, which is what
             arms the scroll-reveal animations. If this never runs, every
@@ -105,7 +114,7 @@ export default function RootLayout({
 
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-100 focus:rounded-full focus:bg-aqua-400 focus:px-5 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-abyss-950"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-100 focus:rounded-full focus:bg-marine-400 focus:px-5 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-abyss-950"
         >
           Skip to content
         </a>
