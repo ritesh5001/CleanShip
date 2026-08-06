@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Sora } from "next/font/google";
+import { Barlow, Barlow_Condensed, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -7,16 +7,27 @@ import { JsonLd } from "@/components/json-ld";
 import { BASE_URL, organizationSchema, websiteSchema } from "@/lib/seo";
 import { siteConfig } from "@/lib/site";
 
-const inter = Inter({
+/* The DS specifies Barlow Condensed for display, Barlow for body and IBM Plex
+   Mono for spec figures. These are flagged in the DS as substitutions for the
+   brochure's industrial sans — swap them here if licensed faces arrive. */
+const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["500", "600", "700"],
+  variable: "--font-barlow-condensed",
   display: "swap",
 });
 
-const sora = Sora({
+const barlow = Barlow({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-sora",
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-barlow",
+  display: "swap",
+});
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-plex-mono",
   display: "swap",
 });
 
@@ -74,8 +85,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#04121f",
-  colorScheme: "dark",
+  themeColor: "#06203a",
+  colorScheme: "light",
   width: "device-width",
   initialScale: 1,
 };
@@ -93,7 +104,7 @@ export default function RootLayout({
        are still reported. */
     <html
       lang="en"
-      className={`${inter.variable} ${sora.variable}`}
+      className={`${barlowCondensed.variable} ${barlow.variable} ${plexMono.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -114,7 +125,7 @@ export default function RootLayout({
 
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-100 focus:rounded-full focus:bg-marine-400 focus:px-5 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-abyss-950"
+          className="label-caps sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-100 focus:bg-blue-600 focus:px-5 focus:py-3 focus:text-white"
         >
           Skip to content
         </a>

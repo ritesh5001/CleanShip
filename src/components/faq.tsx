@@ -2,40 +2,49 @@ import type { Faq } from "@/lib/services";
 import { ChevronIcon } from "./icons";
 
 /**
- * FAQ accordion built on native <details>/<summary>.
+ * FAQ accordion on native <details>/<summary>.
  *
- * Deliberately not a JS accordion: the answers stay in the DOM and in the
- * initial HTML, so crawlers index them and they pair correctly with the
- * FAQPage structured data. It also works with zero JavaScript.
+ * Deliberately not a JS accordion: the answers stay in the initial HTML, so
+ * crawlers index them and they pair correctly with the FAQPage structured
+ * data. It also works with zero JavaScript.
  */
 export function FaqList({
   faqs,
-  light = false,
+  onNavy = false,
 }: {
   faqs: Faq[];
-  light?: boolean;
+  onNavy?: boolean;
 }) {
   return (
-    <div className="divide-y divide-white/10 border-y border-white/10 data-[light=true]:divide-abyss-950/10 data-[light=true]:border-abyss-950/10" data-light={light}>
+    <div
+      className={`border-t ${onNavy ? "border-white/16" : "border-line-200"}`}
+    >
       {faqs.map((faq) => (
-        <details key={faq.q} className="group py-5">
+        <details
+          key={faq.q}
+          className={`group border-b ${
+            onNavy ? "border-white/16" : "border-line-200"
+          }`}
+        >
           <summary
-            className={`flex cursor-pointer list-none items-start justify-between gap-4 text-left text-base font-medium transition ${
-              light
-                ? "text-abyss-950 hover:text-marine-700"
-                : "text-white hover:text-marine-300"
+            className={`flex cursor-pointer list-none items-start justify-between gap-5 py-5 transition-colors duration-[140ms] ${
+              onNavy
+                ? "text-white hover:text-aqua-200"
+                : "text-ink-900 hover:text-blue-600"
             }`}
           >
-            <span>{faq.q}</span>
+            <span className="font-display text-[19px] font-semibold uppercase leading-tight">
+              {faq.q}
+            </span>
             <ChevronIcon
-              className={`mt-0.5 size-5 shrink-0 transition-transform duration-300 group-open:rotate-180 ${
-                light ? "text-marine-700" : "text-marine-400"
+              className={`mt-0.5 size-5 shrink-0 transition-transform duration-[220ms] group-open:rotate-180 ${
+                onNavy ? "text-aqua-200" : "text-blue-600"
               }`}
             />
           </summary>
           <p
-            className={`mt-3 max-w-3xl pr-9 text-sm leading-relaxed ${
-              light ? "text-abyss-700" : "text-abyss-300"
+            className={`max-w-[70ch] pb-6 pr-10 text-[15px] leading-[1.62] ${
+              onNavy ? "text-white/72" : "text-ink-700"
             }`}
           >
             {faq.a}

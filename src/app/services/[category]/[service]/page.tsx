@@ -6,13 +6,9 @@ import { CtaBand } from "@/components/cta-band";
 import { FaqList } from "@/components/faq";
 import { Reveal } from "@/components/reveal";
 import { JsonLd } from "@/components/json-ld";
-import { Button, CheckList, SectionHeading } from "@/components/ui";
+import { Button, CheckList } from "@/components/ui";
 import { ArrowIcon, CategoryIcon, PhoneIcon } from "@/components/icons";
-import {
-  allServicePaths,
-  getService,
-  relatedServices,
-} from "@/lib/services";
+import { allServicePaths, getService, relatedServices } from "@/lib/services";
 import { siteConfig } from "@/lib/site";
 import {
   breadcrumbSchema,
@@ -56,10 +52,7 @@ export default async function ServicePage({ params }: Params) {
     { name: "Home", path: "/" },
     { name: "Services", path: "/services" },
     { name: category.name, path: `/services/${category.slug}` },
-    {
-      name: service.name,
-      path: `/services/${category.slug}/${service.slug}`,
-    },
+    { name: service.name, path: `/services/${category.slug}/${service.slug}` },
   ];
 
   return (
@@ -79,20 +72,19 @@ export default async function ServicePage({ params }: Params) {
         trail={trail}
       />
 
-      <div className="container-page pb-20 lg:pb-28">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <section className="bg-white">
+        <div className="container-page grid gap-12 py-16 lg:grid-cols-12 lg:gap-16 lg:py-20">
           {/* ============ Main column ============ */}
           <div className="lg:col-span-8">
-            {/* Introduction */}
             <Reveal>
               <div className="space-y-5">
                 {service.intro.map((paragraph, i) => (
                   <p
                     key={i}
-                    className={`leading-relaxed ${
+                    className={`leading-[1.62] ${
                       i === 0
-                        ? "text-lg text-abyss-100"
-                        : "text-base text-abyss-300"
+                        ? "text-[19px] text-ink-900"
+                        : "text-[16px] text-ink-700"
                     }`}
                   >
                     {paragraph}
@@ -102,9 +94,11 @@ export default async function ServicePage({ params }: Params) {
             </Reveal>
 
             {/* Highlights */}
-            <Reveal delay={80}>
-              <div className="mt-10 rounded-2xl border border-marine-400/20 bg-marine-400/5 p-7">
-                <h2 className="text-lg text-white">What you get</h2>
+            <Reveal delay={60}>
+              <div className="rule-accent-left mt-10 border-y border-r border-line-200 bg-blue-50 p-7">
+                <h2 className="font-display text-[20px] font-bold uppercase leading-tight text-ink-900">
+                  What you get
+                </h2>
                 <CheckList className="mt-5" items={service.highlights} />
               </div>
             </Reveal>
@@ -112,30 +106,30 @@ export default async function ServicePage({ params }: Params) {
             {/* Scope of work */}
             <section className="mt-14">
               <Reveal>
-                <h2 className="text-2xl text-white sm:text-3xl">
+                <h2 className="font-display text-[28px] font-bold uppercase leading-tight text-ink-900 sm:text-[32px]">
                   Scope of work
                 </h2>
-                <p className="mt-3 text-sm leading-relaxed text-abyss-300">
+                <p className="mt-3 max-w-[68ch] text-[15px] leading-[1.62] text-slate-600">
                   What is included as standard. Anything outside this is quoted
                   separately and flagged before mobilisation, never added
                   afterwards.
                 </p>
               </Reveal>
 
-              <div className="mt-8 space-y-px overflow-hidden rounded-2xl border border-white/10">
+              <div className="mt-8 border-t border-line-200">
                 {service.scope.map((item, i) => (
-                  <Reveal key={item.title} delay={i * 60}>
-                    <div className="bg-abyss-900/50 p-6 transition hover:bg-abyss-900/80 sm:p-7">
-                      <div className="flex gap-5">
-                        <span className="font-display text-sm text-marine-400/70">
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
-                        <div>
-                          <h3 className="text-base text-white">{item.title}</h3>
-                          <p className="mt-2 text-sm leading-relaxed text-abyss-300">
-                            {item.body}
-                          </p>
-                        </div>
+                  <Reveal key={item.title} delay={i * 50}>
+                    <div className="flex gap-6 border-b border-line-200 py-6">
+                      <span className="tabular shrink-0 text-[13px] text-blue-600">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <div>
+                        <h3 className="font-display text-[19px] font-semibold uppercase leading-tight text-ink-900">
+                          {item.title}
+                        </h3>
+                        <p className="mt-2 max-w-[70ch] text-[15px] leading-[1.62] text-slate-600">
+                          {item.body}
+                        </p>
                       </div>
                     </div>
                   </Reveal>
@@ -146,32 +140,24 @@ export default async function ServicePage({ params }: Params) {
             {/* Process */}
             <section className="mt-14">
               <Reveal>
-                <h2 className="text-2xl text-white sm:text-3xl">
+                <h2 className="font-display text-[28px] font-bold uppercase leading-tight text-ink-900 sm:text-[32px]">
                   How we deliver it
                 </h2>
               </Reveal>
 
-              <ol className="mt-8 space-y-6">
+              <ol className="mt-8 grid gap-6 sm:grid-cols-2">
                 {service.process.map((step, i) => (
-                  <Reveal key={step.title} delay={i * 70}>
-                    <li className="relative flex gap-5 pl-0">
-                      <div className="flex flex-col items-center">
-                        <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-marine-400/30 bg-abyss-950 font-display text-xs font-semibold text-marine-300">
-                          {i + 1}
-                        </span>
-                        {i < service.process.length - 1 && (
-                          <span
-                            aria-hidden="true"
-                            className="mt-2 w-px flex-1 bg-gradient-to-b from-marine-400/30 to-transparent"
-                          />
-                        )}
-                      </div>
-                      <div className="pb-2">
-                        <h3 className="text-base text-white">{step.title}</h3>
-                        <p className="mt-2 text-sm leading-relaxed text-abyss-300">
-                          {step.body}
-                        </p>
-                      </div>
+                  <Reveal key={step.title} delay={i * 50}>
+                    <li className="rule-accent-top h-full bg-paper p-6">
+                      <span className="tabular text-[13px] text-blue-600">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <h3 className="mt-3 font-display text-[18px] font-semibold uppercase leading-tight text-ink-900">
+                        {step.title}
+                      </h3>
+                      <p className="mt-2 text-[15px] leading-[1.62] text-slate-600">
+                        {step.body}
+                      </p>
                     </li>
                   </Reveal>
                 ))}
@@ -182,7 +168,7 @@ export default async function ServicePage({ params }: Params) {
             {service.faqs.length > 0 && (
               <section className="mt-14">
                 <Reveal>
-                  <h2 className="text-2xl text-white sm:text-3xl">
+                  <h2 className="font-display text-[28px] font-bold uppercase leading-tight text-ink-900 sm:text-[32px]">
                     Frequently asked
                   </h2>
                   <div className="mt-6">
@@ -195,98 +181,84 @@ export default async function ServicePage({ params }: Params) {
 
           {/* ============ Sidebar ============ */}
           <aside className="lg:col-span-4">
-            <div className="space-y-5 lg:sticky lg:top-28">
-              {/* Enquiry card */}
-              <div className="rounded-2xl border border-marine-400/25 bg-gradient-to-br from-marine-600/20 to-abyss-900/70 p-6">
-                <h2 className="text-lg text-white">
-                  Enquire about {service.name.toLowerCase()}
+            <div className="space-y-6 lg:sticky lg:top-28">
+              {/* Enquiry */}
+              <div className="on-navy rule-accent-top bg-navy-800 p-6 text-white">
+                <h2 className="font-display text-[20px] font-bold uppercase leading-tight">
+                  Enquire about this service
                 </h2>
-                <p className="mt-2.5 text-sm leading-relaxed text-abyss-200">
+                <p className="mt-3 text-[15px] leading-[1.6] text-white/72">
                   Tell us the vessel, the port and the window. Scoped reply,
                   usually the same working day.
                 </p>
-                <Button href="/contact" className="mt-5 w-full">
-                  Request a quote
+                <Button
+                  href="/contact"
+                  variant="light"
+                  className="mt-6 w-full"
+                >
+                  Get a quote
                 </Button>
                 <a
                   href={siteConfig.phones[0].href}
-                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-white/15 px-5 py-3 text-sm font-semibold text-white transition hover:border-marine-400/60 hover:text-marine-300"
+                  className="label-caps mt-3 flex h-11 w-full items-center justify-center gap-2 border border-white/40 text-white transition-colors duration-[140ms] hover:border-aqua-500 hover:bg-white/10"
                 >
                   <PhoneIcon className="size-4" />
-                  {siteConfig.phones[0].number}
+                  <span className="tabular">{siteConfig.phones[0].number}</span>
                 </a>
               </div>
 
               {/* Applies to */}
-              <div className="rounded-2xl border border-white/10 bg-abyss-900/50 p-6">
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-abyss-300">
+              <div className="card p-6">
+                <h2 className="label-caps text-[12px] text-slate-500">
                   Typically applied to
                 </h2>
                 <ul className="mt-4 space-y-2.5">
                   {service.appliesTo.map((item) => (
                     <li
                       key={item}
-                      className="flex items-start gap-2.5 text-sm text-abyss-200"
+                      className="flex items-start gap-3 text-[15px] text-ink-700"
                     >
-                      <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-marine-400" />
+                      <span className="mt-2 size-1 shrink-0 bg-aqua-500" />
                       {item}
                     </li>
                   ))}
                 </ul>
               </div>
 
-              {/* Sibling services — internal linking for crawl depth */}
+              {/* Siblings — internal linking for crawl depth */}
               {siblings.length > 0 && (
-                <div className="rounded-2xl border border-white/10 bg-abyss-900/50 p-6">
-                  <h2 className="flex items-center gap-2.5 text-sm font-semibold uppercase tracking-wider text-abyss-300">
+                <div className="card p-6">
+                  <h2 className="label-caps flex items-center gap-2.5 text-[12px] text-slate-500">
                     <CategoryIcon
                       name={category.icon}
-                      className="size-4 text-marine-400"
+                      className="size-4 text-blue-600"
                     />
                     More in {category.name}
                   </h2>
-                  <ul className="mt-4 space-y-1">
+                  <ul className="mt-4 divide-y divide-line-100">
                     {siblings.map((sibling) => (
                       <li key={sibling.slug}>
                         <Link
                           href={`/services/${category.slug}/${sibling.slug}`}
-                          className="group flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-sm text-abyss-200 transition hover:bg-white/5 hover:text-marine-300"
+                          className="group flex items-center justify-between gap-3 py-3 text-[15px] text-ink-700 transition-colors duration-[140ms] hover:text-blue-600"
                         >
                           {sibling.name}
-                          <ArrowIcon className="size-3.5 shrink-0 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
+                          <ArrowIcon className="size-4 shrink-0 text-slate-300 transition-transform duration-[140ms] group-hover:translate-x-0.5 group-hover:text-blue-600" />
                         </Link>
                       </li>
                     ))}
                   </ul>
                   <Link
                     href={`/services/${category.slug}`}
-                    className="mt-3 inline-flex items-center gap-2 px-3 text-sm font-semibold text-marine-300"
+                    className="label-caps mt-4 inline-flex items-center gap-2 text-blue-600"
                   >
                     All {category.name.toLowerCase()}
-                    <ArrowIcon className="size-3.5" />
+                    <ArrowIcon className="size-4" />
                   </Link>
                 </div>
               )}
             </div>
           </aside>
-        </div>
-      </div>
-
-      {/* Cross-links to the other service lines */}
-      <section className="border-t border-white/8 bg-abyss-900/30 py-16 lg:py-20">
-        <div className="container-page">
-          <Reveal>
-            <SectionHeading
-              eyebrow="Also available"
-              title="Combine scopes in one mobilisation"
-              description="Most of our work is multi-scope. Cleaning, inspection and repair delivered together removes the handover delays that dominate the timeline when trades are split between contractors."
-            />
-            <div className="mt-8">
-              <Button href="/services" variant="ghost">
-                Browse all services
-              </Button>
-            </div>
-          </Reveal>
         </div>
       </section>
 

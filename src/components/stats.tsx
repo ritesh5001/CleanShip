@@ -1,89 +1,53 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
-
-type Stat = { value: number; suffix?: string; label: string };
-
 /**
- * Count-up statistics band.
+ * Counter band.
  *
- * The final value is rendered into the HTML first and only animated once the
- * band scrolls into view, so the real numbers are always present for crawlers
- * and for anyone with JavaScript disabled.
+ * Deliberately a server component with static figures: the design system
+ * explicitly rules out animated counters ("no bounce, no spring, no parallax,
+ * no scroll-triggered choreography, no animated counters"). The numbers are
+ * set in the mono face with a rationed aqua `+`, per the DS counter spec.
  */
-export function StatsBand({ stats }: { stats: Stat[] }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [started, setStarted] = useState(false);
 
-  useEffect(() => {
-    const node = ref.current;
-    if (!node || typeof IntersectionObserver === "undefined") return;
+type Stat = { value: string; suffix?: string; label: string };
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setStarted(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.4 },
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
+export function StatsBand({
+  stats,
+  onNavy = false,
+}: {
+  stats: Stat[];
+  onNavy?: boolean;
+}) {
   return (
-    <div
-      ref={ref}
-      className="grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/8 lg:grid-cols-4"
+    <dl
+      className={`grid grid-cols-2 border-t border-l lg:grid-cols-4 ${
+        onNavy ? "border-white/16" : "border-line-200"
+      }`}
     >
       {stats.map((stat) => (
-        <div key={stat.label} className="bg-abyss-900/80 px-6 py-8 text-center">
-          <div className="font-display text-4xl font-semibold text-white lg:text-5xl">
-            <CountUp target={stat.value} run={started} />
-            <span className="text-marine-400">{stat.suffix}</span>
-          </div>
-          <p className="mt-2 text-xs uppercase tracking-[0.14em] text-abyss-400">
+        <div
+          key={stat.label}
+          className={`border-b border-r px-6 py-8 lg:px-8 lg:py-10 ${
+            onNavy ? "border-white/16" : "border-line-200"
+          }`}
+        >
+          <dd
+            className={`tabular text-[38px] leading-none lg:text-[46px] ${
+              onNavy ? "text-white" : "text-navy-800"
+            }`}
+          >
+            {stat.value}
+            {stat.suffix && (
+              <span className="text-aqua-500">{stat.suffix}</span>
+            )}
+          </dd>
+          <dt
+            className={`label-caps mt-3 text-[12px] ${
+              onNavy ? "text-white/60" : "text-slate-500"
+            }`}
+          >
             {stat.label}
-          </p>
+          </dt>
         </div>
       ))}
-    </div>
+    </dl>
   );
-}
-
-function CountUp({ target, run }: { target: number; run: boolean }) {
-  const [value, setValue] = useState(target);
-
-  useEffect(() => {
-    if (!run) return;
-
-    // Respect reduced motion — jump straight to the final value.
-    const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (reduced) {
-      setValue(target);
-      return;
-    }
-
-    const duration = 1600;
-    const start = performance.now();
-    let frame = 0;
-
-    const tick = (now: number) => {
-      const progress = Math.min((now - start) / duration, 1);
-      // Ease-out cubic so the number decelerates into place.
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setValue(Math.round(target * eased));
-      if (progress < 1) frame = requestAnimationFrame(tick);
-    };
-
-    setValue(0);
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [run, target]);
-
-  return <>{value.toLocaleString("en-US")}</>;
 }

@@ -3,26 +3,23 @@ import type { ReactNode } from "react";
 import { ArrowIcon, CheckIcon } from "./icons";
 
 /* ------------------------------------------------------------------ */
-/* Buttons                                                             */
+/* Button                                                              */
+/*                                                                     */
+/* DS spec: 44px control height (hard floor), 2px radius, UPPERCASE     */
+/* label at --ls-label. Hover *darkens* — it never lightens or glows.   */
+/* Press scales to .985 with no colour change.                          */
 /* ------------------------------------------------------------------ */
 
-type ButtonProps = {
-  href: string;
-  children: ReactNode;
-  variant?: "primary" | "ghost" | "light";
-  className?: string;
-  /** Renders a plain <a> for tel:/mailto:/external targets. */
-  external?: boolean;
-};
+type Variant = "primary" | "outline" | "light" | "ghost-navy";
 
-const buttonStyles = {
-  primary:
-    "bg-marine-400 text-abyss-950 shadow-lg shadow-marine-500/25 hover:bg-marine-300",
-  ghost:
-    "border border-white/20 text-white hover:border-marine-400/70 hover:text-marine-300",
-  light:
-    "bg-white text-abyss-950 shadow-lg shadow-abyss-950/10 hover:bg-abyss-50",
-} as const;
+const variants: Record<Variant, string> = {
+  primary: "bg-blue-600 text-white hover:bg-navy-700",
+  outline:
+    "border border-blue-600 text-blue-600 hover:bg-blue-50 hover:border-blue-400",
+  light: "bg-white text-navy-800 hover:bg-blue-50",
+  "ghost-navy":
+    "border border-white/40 text-white hover:border-aqua-500 hover:bg-white/10",
+};
 
 export function Button({
   href,
@@ -30,13 +27,23 @@ export function Button({
   variant = "primary",
   className = "",
   external,
-}: ButtonProps) {
-  const classes = `group inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold transition duration-300 ${buttonStyles[variant]} ${className}`;
+  withArrow = true,
+}: {
+  href: string;
+  children: ReactNode;
+  variant?: Variant;
+  className?: string;
+  external?: boolean;
+  withArrow?: boolean;
+}) {
+  const classes = `label-caps group inline-flex h-11 items-center justify-center gap-2.5 rounded-xs px-6 transition-[background-color,border-color,transform] duration-[140ms] ease-standard active:scale-[.985] ${variants[variant]} ${className}`;
 
   const inner = (
     <>
       {children}
-      <ArrowIcon className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+      {withArrow && (
+        <ArrowIcon className="size-4 transition-transform duration-[140ms] ease-standard group-hover:translate-x-0.5" />
+      )}
     </>
   );
 
@@ -56,7 +63,11 @@ export function Button({
 }
 
 /* ------------------------------------------------------------------ */
-/* Section heading                                                     */
+/* SectionHeading                                                      */
+/*                                                                     */
+/* Eyebrow renders between two 3px aqua rules (the .eyebrow device).   */
+/* Display type is condensed uppercase and set large — the oversized    */
+/* type is what carries the premium feel in a system with no gradients. */
 /* ------------------------------------------------------------------ */
 
 export function SectionHeading({
@@ -64,15 +75,14 @@ export function SectionHeading({
   title,
   description,
   align = "left",
-  light = false,
+  onNavy = false,
   as: Tag = "h2",
 }: {
   eyebrow?: string;
   title: ReactNode;
   description?: ReactNode;
   align?: "left" | "center";
-  /** Set on light-background sections so the text inverts. */
-  light?: boolean;
+  onNavy?: boolean;
   as?: "h1" | "h2" | "h3";
 }) {
   return (
@@ -81,24 +91,22 @@ export function SectionHeading({
     >
       {eyebrow && (
         <span
-          className={`eyebrow ${align === "center" ? "justify-center" : ""} ${
-            light ? "text-marine-700" : ""
-          }`}
+          className={`eyebrow ${align === "center" ? "justify-center" : ""}`}
         >
           {eyebrow}
         </span>
       )}
       <Tag
-        className={`mt-4 text-3xl leading-[1.15] sm:text-4xl lg:text-[2.75rem] ${
-          light ? "text-abyss-950" : "text-white"
+        className={`mt-5 text-[32px] leading-[1.08] sm:text-[40px] lg:text-[52px] ${
+          onNavy ? "text-white" : "text-ink-900"
         }`}
       >
         {title}
       </Tag>
       {description && (
         <p
-          className={`mt-5 text-base leading-relaxed sm:text-lg ${
-            light ? "text-abyss-700" : "text-abyss-300"
+          className={`mt-5 max-w-[68ch] text-[17px] leading-[1.62] ${
+            onNavy ? "text-white/72" : "text-ink-700"
           }`}
         >
           {description}
@@ -109,34 +117,35 @@ export function SectionHeading({
 }
 
 /* ------------------------------------------------------------------ */
-/* Checklist                                                           */
+/* CheckList                                                           */
+/*                                                                     */
+/* DS: ticks are the `check` glyph inside a square tinted plate —       */
+/* blue-50 on white, rgba(255,255,255,.10) on navy. Never a bullet.     */
 /* ------------------------------------------------------------------ */
 
 export function CheckList({
   items,
-  light = false,
+  onNavy = false,
   className = "",
 }: {
   items: readonly string[];
-  light?: boolean;
+  onNavy?: boolean;
   className?: string;
 }) {
   return (
-    <ul className={`space-y-3 ${className}`}>
+    <ul className={`space-y-3.5 ${className}`}>
       {items.map((item) => (
-        <li key={item} className="flex gap-3">
+        <li key={item} className="flex gap-3.5">
           <span
-            className={`mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full ${
-              light
-                ? "bg-marine-600/15 text-marine-700"
-                : "bg-marine-400/15 text-marine-300"
+            className={`mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-xs ${
+              onNavy ? "bg-white/10 text-aqua-200" : "bg-blue-50 text-blue-600"
             }`}
           >
-            <CheckIcon className="size-3" />
+            <CheckIcon className="size-3.5" />
           </span>
           <span
-            className={`text-sm leading-relaxed ${
-              light ? "text-abyss-700" : "text-abyss-200"
+            className={`text-[15px] leading-[1.6] ${
+              onNavy ? "text-white/72" : "text-ink-700"
             }`}
           >
             {item}
@@ -153,29 +162,40 @@ export function CheckList({
 
 export function Breadcrumbs({
   trail,
+  onNavy = false,
 }: {
   trail: { name: string; path: string }[];
+  onNavy?: boolean;
 }) {
   return (
     <nav aria-label="Breadcrumb">
-      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-abyss-400">
+      <ol
+        className={`flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] ${
+          onNavy ? "text-white/60" : "text-slate-500"
+        }`}
+      >
         {trail.map((item, i) => {
           const last = i === trail.length - 1;
           return (
             <li key={item.path} className="flex items-center gap-2">
               {last ? (
-                <span aria-current="page" className="text-marine-300">
+                <span
+                  aria-current="page"
+                  className={onNavy ? "text-aqua-200" : "text-blue-600"}
+                >
                   {item.name}
                 </span>
               ) : (
                 <>
                   <Link
                     href={item.path}
-                    className="transition hover:text-marine-300"
+                    className={`transition-colors duration-[140ms] ${
+                      onNavy ? "hover:text-white" : "hover:text-blue-600"
+                    }`}
                   >
                     {item.name}
                   </Link>
-                  <span aria-hidden="true" className="text-abyss-600">
+                  <span aria-hidden="true" className="opacity-40">
                     /
                   </span>
                 </>
@@ -185,5 +205,48 @@ export function Breadcrumbs({
         })}
       </ol>
     </nav>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Badge — the one place the DS permits a pill                          */
+/* ------------------------------------------------------------------ */
+
+export function Badge({
+  children,
+  onNavy = false,
+}: {
+  children: ReactNode;
+  onNavy?: boolean;
+}) {
+  return (
+    <span
+      className={`label-caps inline-flex items-center rounded-full px-3 py-1 text-[11px] ${
+        onNavy
+          ? "bg-white/10 text-aqua-200"
+          : "bg-blue-50 text-blue-600"
+      }`}
+    >
+      {children}
+    </span>
+  );
+}
+
+/* Two-digit service index — DS: services are always 01…08, mono face. */
+export function IndexNumber({
+  n,
+  onNavy = false,
+}: {
+  n: number;
+  onNavy?: boolean;
+}) {
+  return (
+    <span
+      className={`tabular text-[13px] ${
+        onNavy ? "text-aqua-200" : "text-blue-600"
+      }`}
+    >
+      {String(n).padStart(2, "0")}
+    </span>
   );
 }

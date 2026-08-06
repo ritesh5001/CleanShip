@@ -20,8 +20,7 @@ import { serviceAreas, siteConfig } from "@/lib/site";
 import { buildMetadata, faqSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title:
-    "Hold, Tank & Hull Cleaning Specialists | Cleanship Marine Services",
+  title: "Hold, Tank & Hull Cleaning Specialists | Cleanship Marine Services",
   description: siteConfig.shortDescription,
   path: "/",
   keywords: [
@@ -38,12 +37,12 @@ const differentiators = [
   {
     Icon: ShieldIcon,
     title: "Safety that is not negotiable",
-    body: "Enclosed-space entry, work at height and diving operations all run under written procedures with continuous monitoring and a manned rescue standby. When a space cannot be made safe, we stop and say so.",
+    body: "Enclosed-space entry, work at height and diving operations run under written procedures with continuous monitoring and a manned rescue standby. When a space cannot be made safe, we stop and say so.",
   },
   {
     Icon: ClipboardIcon,
     title: "Documented, not just done",
-    body: "Every job closes with a photographic report, disposal manifests and — where relevant — measurement records and class-acceptable documentation. Your superintendent gets evidence, not assurances.",
+    body: "Every job closes with a photographic report, disposal manifests and, where relevant, measurement records and class-acceptable documentation. Your superintendent gets evidence, not assurances.",
   },
   {
     Icon: LeafIcon,
@@ -59,32 +58,28 @@ const differentiators = [
 
 const process = [
   {
-    step: "01",
     title: "Tell us the vessel and the window",
     body: "Vessel type, previous and next cargo, port, and the hours you actually have. The more precise the brief, the more honest the plan.",
   },
   {
-    step: "02",
     title: "We scope it properly",
     body: "You get a method statement, crew size, equipment list and a realistic duration — including what we think will not fit in the window.",
   },
   {
-    step: "03",
     title: "Certified crews mobilise",
     body: "Documentation, permits and port approvals are handled by us. The team boards with its own equipment, chemicals and PPE.",
   },
   {
-    step: "04",
     title: "Inspection and handover",
     body: "We attend the inspection, rectify observations on the spot, and close out with a photographic report and disposal documentation.",
   },
 ];
 
 const stats = [
-  { value: 300, suffix: "+", label: "Clients served" },
-  { value: 1200, suffix: "+", label: "Holds cleaned" },
-  { value: 18, suffix: "+", label: "Ports covered" },
-  { value: 24, suffix: "/7", label: "Operations desk" },
+  { value: "5", suffix: "+", label: "Years Experience" },
+  { value: "300", suffix: "+", label: "Clients" },
+  { value: "100", suffix: "+", label: "Project Done" },
+  { value: "10", suffix: "+", label: "Team Member" },
 ];
 
 /** Homepage FAQs — chosen for the questions people actually search. */
@@ -118,82 +113,59 @@ export default function HomePage() {
 
       <Hero />
 
-      {/* ---------- Capability marquee ---------- */}
-      <section
-        aria-label="Capabilities at a glance"
-        className="border-y border-white/8 bg-abyss-900/40 py-5"
-      >
-        <div className="flex overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
-          <div className="flex shrink-0 animate-marquee items-center gap-10 pr-10">
-            {/* Duplicated once so the -50% translation loops seamlessly. */}
-            {[0, 1].map((copy) => (
-              <div key={copy} className="flex shrink-0 items-center gap-10">
-                {[
-                  "Grain clean holds",
-                  "DPP & CPP tanks",
-                  "Propeller super polishing",
-                  "UWILD & in-water survey",
-                  "IRATA rope access",
-                  "Riding crews & squads",
-                  "Hydroblasting to WJ-2",
-                  "Class-approved NDT",
-                  "Offshore support",
-                ].map((item) => (
-                  <span
-                    key={item}
-                    className="flex shrink-0 items-center gap-3 text-sm font-medium text-abyss-300"
-                  >
-                    <span className="size-1.5 rounded-full bg-marine-400" />
-                    {item}
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
+      {/* ---------- Counters ---------- */}
+      <section className="bg-paper">
+        <div className="container-page py-16 lg:py-20">
+          <StatsBand stats={stats} />
+          <p className="mt-4 text-[13px] text-slate-400">
+            Figures are indicative of current operating scale — replace with
+            audited numbers before launch.
+          </p>
         </div>
       </section>
 
       {/* ---------- Services ---------- */}
-      <section id="services" className="py-20 lg:py-28">
-        <div className="container-page">
+      <section id="services" className="bg-white">
+        <div className="container-page py-20 lg:py-24">
           <Reveal>
-            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
               <SectionHeading
-                eyebrow="Our services"
-                title="Comprehensive marine solutions, under one contractor"
-                description="Five service lines that cover a vessel from the tank top to the propeller boss — so a single mobilisation can close out work that would otherwise need four separate suppliers."
+                eyebrow="Our Services"
+                title="Comprehensive marine solutions"
+                description="Five service lines covering a vessel from the tank top to the propeller boss — so a single mobilisation can close out work that would otherwise need four separate suppliers."
               />
               <Link
                 href="/services"
-                className="group inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-marine-300"
+                className="label-caps group inline-flex shrink-0 items-center gap-2 text-blue-600"
               >
-                View all services
-                <ArrowIcon className="size-4 transition-transform group-hover:translate-x-1" />
+                View more services
+                <ArrowIcon className="size-4 transition-transform duration-[140ms] group-hover:translate-x-0.5" />
               </Link>
             </div>
           </Reveal>
 
-          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {serviceCategories.map((category, i) => (
               <CategoryCard key={category.slug} category={category} index={i} />
             ))}
 
-            {/* Contact card completing the grid */}
-            <Reveal delay={serviceCategories.length * 80} className="h-full">
-              <div className="flex h-full flex-col justify-between rounded-3xl border border-marine-400/25 bg-gradient-to-br from-marine-600/20 to-abyss-900/60 p-7">
+            <Reveal delay={serviceCategories.length * 60} className="h-full">
+              <div className="on-navy rule-accent-top flex h-full flex-col justify-between bg-navy-800 p-6 text-white">
                 <div>
-                  <h3 className="text-xl text-white">
+                  <h3 className="font-display text-[22px] font-bold uppercase leading-tight">
                     Not sure which scope you need?
                   </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-abyss-200">
-                    Send us the vessel, the previous cargo and the port. We will
-                    tell you what the job actually requires — including when it
-                    is less than you were expecting.
+                  <p className="mt-3 text-[15px] leading-[1.6] text-white/72">
+                    Send us the vessel, the previous cargo and the port. We tell
+                    you what the job actually requires — including when it is
+                    less than you were expecting.
                   </p>
                 </div>
-                <Button href="/contact" className="mt-6 w-full">
-                  Talk to operations
-                </Button>
+                <div className="mt-8">
+                  <Button href="/contact" variant="light" className="w-full">
+                    Contact us
+                  </Button>
+                </div>
               </div>
             </Reveal>
           </div>
@@ -201,18 +173,14 @@ export default function HomePage() {
       </section>
 
       {/* ---------- About / differentiators ---------- */}
-      <section className="relative overflow-hidden border-y border-white/8 bg-abyss-900/30 py-20 lg:py-28">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -left-40 top-1/3 size-[30rem] rounded-full bg-marine-500/8 blur-[120px]"
-        />
-        <div className="container-page relative">
-          <div className="grid gap-14 lg:grid-cols-12 lg:gap-20">
+      <section className="bg-paper">
+        <div className="container-page py-20 lg:py-24">
+          <div className="grid gap-14 lg:grid-cols-12 lg:gap-16">
             <div className="lg:col-span-5">
               <Reveal>
                 <SectionHeading
                   eyebrow="About Cleanship"
-                  title="Why operators keep coming back"
+                  title="Why will you choose our services?"
                   description="We are a hold and tank cleaning specialist first. Everything else we do grew out of what our clients kept asking us to solve on the same mobilisation."
                 />
                 <CheckList
@@ -225,23 +193,25 @@ export default function HomePage() {
                   ]}
                 />
                 <div className="mt-9">
-                  <Button href="/about" variant="ghost">
-                    More about us
+                  <Button href="/about" variant="outline">
+                    Read more
                   </Button>
                 </div>
               </Reveal>
             </div>
 
             <div className="lg:col-span-7">
-              <div className="grid gap-5 sm:grid-cols-2">
+              <div className="grid gap-6 sm:grid-cols-2">
                 {differentiators.map(({ Icon, title, body }, i) => (
-                  <Reveal key={title} delay={i * 90} className="h-full">
-                    <div className="card-hover h-full rounded-2xl border border-white/10 bg-abyss-950/50 p-6">
-                      <span className="flex size-11 items-center justify-center rounded-xl bg-marine-400/10 text-marine-300 ring-1 ring-marine-400/20">
-                        <Icon className="size-5" />
+                  <Reveal key={title} delay={i * 60} className="h-full">
+                    <div className="card h-full p-6">
+                      <span className="flex size-12 items-center justify-center bg-blue-50 text-blue-600">
+                        <Icon className="size-[26px]" />
                       </span>
-                      <h3 className="mt-5 text-base text-white">{title}</h3>
-                      <p className="mt-2.5 text-sm leading-relaxed text-abyss-300">
+                      <h3 className="mt-5 font-display text-[19px] font-bold uppercase leading-tight text-ink-900">
+                        {title}
+                      </h3>
+                      <p className="mt-3 text-[15px] leading-[1.6] text-slate-600">
                         {body}
                       </p>
                     </div>
@@ -254,33 +224,28 @@ export default function HomePage() {
       </section>
 
       {/* ---------- Process ---------- */}
-      <section className="py-20 lg:py-28">
-        <div className="container-page">
+      <section className="bg-white">
+        <div className="container-page py-20 lg:py-24">
           <Reveal>
             <SectionHeading
-              eyebrow="How we work"
-              title="From enquiry to sign-off, in four steps"
-              description="No layers, no account managers relaying messages. You speak to the people who will plan and run the job."
+              eyebrow="How We Work"
+              title="From enquiry to sign-off"
+              description="No layers, no account managers relaying messages. You speak to the people who plan and run the job."
               align="center"
             />
           </Reveal>
 
           <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {process.map((item, i) => (
-              <Reveal key={item.step} delay={i * 100}>
-                <div className="relative">
-                  {/* Connector line between steps on wide screens */}
-                  {i < process.length - 1 && (
-                    <span
-                      aria-hidden="true"
-                      className="absolute left-14 top-6 hidden h-px w-[calc(100%-2rem)] bg-gradient-to-r from-marine-400/40 to-transparent lg:block"
-                    />
-                  )}
-                  <span className="relative flex size-12 items-center justify-center rounded-2xl border border-marine-400/30 bg-abyss-950 font-display text-sm font-semibold text-marine-300">
-                    {item.step}
+              <Reveal key={item.title} delay={i * 60}>
+                <div className="rule-accent-top pt-6">
+                  <span className="tabular text-[13px] text-blue-600">
+                    {String(i + 1).padStart(2, "0")}
                   </span>
-                  <h3 className="mt-6 text-lg text-white">{item.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-abyss-300">
+                  <h3 className="mt-3 font-display text-[19px] font-bold uppercase leading-tight text-ink-900">
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 text-[15px] leading-[1.6] text-slate-600">
                     {item.body}
                   </p>
                 </div>
@@ -290,22 +255,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ---------- Stats ---------- */}
-      <section className="pb-20 lg:pb-28">
-        <div className="container-page">
-          <Reveal>
-            <StatsBand stats={stats} />
-            <p className="mt-4 text-center text-xs text-abyss-500">
-              Figures are indicative of current operating scale — replace with
-              your audited numbers before launch.
-            </p>
-          </Reveal>
-        </div>
-      </section>
-
       {/* ---------- Coverage ---------- */}
-      <section className="border-y border-white/8 bg-abyss-900/30 py-20 lg:py-24">
-        <div className="container-page">
+      <section className="bg-paper">
+        <div className="container-page py-16 lg:py-20">
           <Reveal>
             <SectionHeading
               eyebrow="Coverage"
@@ -314,17 +266,17 @@ export default function HomePage() {
               align="center"
             />
           </Reveal>
-          <Reveal delay={120}>
-            <ul className="mx-auto mt-12 flex max-w-4xl flex-wrap justify-center gap-2.5">
+          <Reveal delay={80}>
+            <ul className="mx-auto mt-12 flex max-w-4xl flex-wrap justify-center gap-2">
               {serviceAreas.map((area) => (
                 <li
                   key={area}
-                  className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-abyss-200 transition hover:border-marine-400/40 hover:text-marine-300"
+                  className="border border-line-200 bg-white px-4 py-2 text-[14px] text-ink-700 transition-colors duration-[140ms] hover:border-blue-400 hover:text-blue-600"
                 >
                   {area}
                 </li>
               ))}
-              <li className="rounded-full border border-marine-400/30 bg-marine-400/10 px-4 py-2 text-sm text-marine-300">
+              <li className="border border-blue-200 bg-blue-50 px-4 py-2 text-[14px] text-blue-600">
                 + worldwide by arrangement
               </li>
             </ul>
@@ -333,24 +285,24 @@ export default function HomePage() {
       </section>
 
       {/* ---------- FAQ ---------- */}
-      <section className="py-20 lg:py-28">
-        <div className="container-page grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <section className="bg-white">
+        <div className="container-page grid gap-12 py-20 lg:grid-cols-12 lg:gap-16 lg:py-24">
           <div className="lg:col-span-5">
             <Reveal>
               <SectionHeading
                 eyebrow="Questions"
-                title="The things operators ask us first"
-                description="If your question is not here, the operations desk will answer it directly — no sales script."
+                title="The things operators ask first"
+                description="If your question is not here, the operations desk answers it directly — no sales script."
               />
               <div className="mt-8">
-                <Button href="/contact" variant="ghost">
-                  Ask us anything
+                <Button href="/contact" variant="outline">
+                  Contact us
                 </Button>
               </div>
             </Reveal>
           </div>
           <div className="lg:col-span-7">
-            <Reveal delay={100}>
+            <Reveal delay={80}>
               <FaqList faqs={homeFaqs} />
             </Reveal>
           </div>

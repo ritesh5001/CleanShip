@@ -17,7 +17,7 @@ import {
 
 type Params = { params: Promise<{ category: string }> };
 
-/** Every category is known at build time, so all pages are statically rendered. */
+/** Every category is known at build time, so all pages are static. */
 export function generateStaticParams() {
   return serviceCategories.map((category) => ({ category: category.slug }));
 }
@@ -28,9 +28,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { category: slug } = await params;
   const category = getCategory(slug);
 
-  if (!category) {
-    return { title: "Service not found" };
-  }
+  if (!category) return { title: "Service not found" };
 
   return buildMetadata({
     title: category.seoTitle,
@@ -70,15 +68,12 @@ export default async function CategoryPage({ params }: Params) {
       />
 
       {/* ---------- Introduction ---------- */}
-      <section className="pb-16 lg:pb-20">
-        <div className="container-page">
+      <section className="bg-white">
+        <div className="container-page py-16 lg:py-20">
           <Reveal>
-            <div className="grid gap-8 rounded-3xl border border-white/10 bg-abyss-900/40 p-8 lg:grid-cols-2 lg:p-12">
+            <div className="rule-accent-left grid gap-8 border-y border-r border-line-200 bg-paper p-8 lg:grid-cols-2 lg:p-12">
               {category.intro.map((paragraph, i) => (
-                <p
-                  key={i}
-                  className="text-base leading-relaxed text-abyss-200"
-                >
+                <p key={i} className="text-[17px] leading-[1.62] text-ink-700">
                   {paragraph}
                 </p>
               ))}
@@ -88,17 +83,17 @@ export default async function CategoryPage({ params }: Params) {
       </section>
 
       {/* ---------- Child services ---------- */}
-      <section className="border-t border-white/8 py-16 lg:py-24">
-        <div className="container-page">
+      <section className="bg-paper">
+        <div className="container-page py-16 lg:py-24">
           <Reveal>
             <SectionHeading
-              eyebrow="Scopes available"
+              eyebrow="Scopes Available"
               title={`${category.name} services`}
-              description={`Each scope below is a distinct service with its own method, crew and equipment. Combine them in one mobilisation where it makes sense.`}
+              description="Each scope below is a distinct service with its own method, crew and equipment. Combine them in one mobilisation where it makes sense."
             />
           </Reveal>
 
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {category.services.map((service, i) => (
               <ServiceCard
                 key={service.slug}
@@ -112,8 +107,8 @@ export default async function CategoryPage({ params }: Params) {
       </section>
 
       {/* ---------- FAQ ---------- */}
-      <section className="border-t border-white/8 bg-abyss-900/30 py-16 lg:py-24">
-        <div className="container-page grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <section className="bg-white">
+        <div className="container-page grid gap-12 py-16 lg:grid-cols-12 lg:gap-16 lg:py-24">
           <div className="lg:col-span-5">
             <Reveal>
               <SectionHeading
@@ -123,7 +118,7 @@ export default async function CategoryPage({ params }: Params) {
             </Reveal>
           </div>
           <div className="lg:col-span-7">
-            <Reveal delay={100}>
+            <Reveal delay={80}>
               <FaqList faqs={category.faqs} />
             </Reveal>
           </div>
@@ -132,7 +127,7 @@ export default async function CategoryPage({ params }: Params) {
 
       <CtaBand
         title={`Need ${category.name.toLowerCase()} arranged?`}
-        description="Send us the vessel, the port and the window. You will get a scope, a crew size and an honest duration — usually the same working day."
+        description="Send us the vessel, the port and the window. You get a scope, a crew size and an honest duration — usually the same working day."
       />
     </>
   );

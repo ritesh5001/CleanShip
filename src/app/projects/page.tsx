@@ -30,10 +30,9 @@ const trail = [
  * ⚠️ PLACEHOLDER CONTENT — REPLACE BEFORE LAUNCH.
  *
  * These entries describe the *shape* of a case study so the page layout and
- * SEO structure are ready. They are written as illustrative scope patterns,
- * not as claims about specific completed jobs. Swap each one for a real
- * project (with the client's permission) and delete the notice rendered below
- * the grid. Do not publish this page as-is with these presented as history.
+ * SEO structure are ready. They are illustrative scope patterns, not claims
+ * about specific completed jobs. Swap each for a real project (with the
+ * client's permission) and delete the notice rendered below the grid.
  */
 const PLACEHOLDER_PROJECTS = [
   {
@@ -123,32 +122,32 @@ export default function ProjectsPage() {
       />
 
       {/* ---------- Case studies ---------- */}
-      <section className="pb-16 lg:pb-24">
-        <div className="container-page">
-          <div className="grid gap-5 lg:grid-cols-2">
+      <section className="bg-white">
+        <div className="container-page py-16 lg:py-24">
+          <div className="grid gap-6 lg:grid-cols-2">
             {PLACEHOLDER_PROJECTS.map((project, i) => (
-              <Reveal key={project.vesselType + project.scope} delay={i * 70}>
-                <article className="card-hover h-full rounded-3xl border border-white/10 bg-abyss-900/50 p-7 lg:p-8">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className="rounded-full bg-marine-400/10 px-3 py-1 text-xs font-medium text-marine-300 ring-1 ring-marine-400/20">
+              <Reveal key={project.vesselType + project.scope} delay={i * 50}>
+                <article className="card card-interactive h-full p-7 lg:p-8">
+                  <div className="flex flex-wrap items-center gap-3 border-b border-line-100 pb-5">
+                    <span className="label-caps bg-blue-50 px-3 py-1.5 text-[11px] text-blue-600">
                       {project.scope}
                     </span>
-                    <span className="text-xs text-abyss-400">
+                    <span className="text-[13px] text-slate-500">
                       {project.vesselType}
                     </span>
                   </div>
 
-                  <dl className="mt-6 space-y-4">
+                  <dl className="mt-5 space-y-4">
                     {[
                       { term: "The problem", detail: project.challenge },
                       { term: "What we did", detail: project.approach },
                       { term: "Result", detail: project.outcome },
                     ].map((row) => (
                       <div key={row.term}>
-                        <dt className="text-xs font-semibold uppercase tracking-wider text-abyss-500">
+                        <dt className="label-caps text-[11px] text-slate-400">
                           {row.term}
                         </dt>
-                        <dd className="mt-1.5 text-sm leading-relaxed text-abyss-200">
+                        <dd className="mt-1.5 text-[15px] leading-[1.62] text-ink-700">
                           {row.detail}
                         </dd>
                       </div>
@@ -157,22 +156,20 @@ export default function ProjectsPage() {
 
                   <Link
                     href={`/services/${project.category}/${project.service}`}
-                    className="group mt-6 inline-flex items-center gap-2 text-sm font-semibold text-marine-300"
+                    className="label-caps group mt-6 inline-flex items-center gap-2 text-blue-600"
                   >
                     About this service
-                    <ArrowIcon className="size-4 transition-transform group-hover:translate-x-1" />
+                    <ArrowIcon className="size-4 transition-transform duration-[140ms] group-hover:translate-x-0.5" />
                   </Link>
                 </article>
               </Reveal>
             ))}
           </div>
 
-          {/*
-            Remove this notice once real, permission-cleared case studies
-            replace the placeholder entries above.
-          */}
+          {/* Remove once real, permission-cleared case studies replace the
+              placeholder entries above. */}
           <Reveal>
-            <p className="mt-8 rounded-2xl border border-sand-400/25 bg-sand-400/8 px-5 py-4 text-sm leading-relaxed text-sand-300">
+            <p className="rule-accent-left mt-8 border-y border-r border-warning-600/30 bg-warning-100 px-6 py-5 text-[15px] leading-[1.62] text-ink-700">
               <strong className="font-semibold">Note:</strong> the entries above
               are illustrative scope patterns showing how we approach typical
               jobs — not records of specific completed contracts. Replace them
@@ -184,28 +181,30 @@ export default function ProjectsPage() {
       </section>
 
       {/* ---------- Sectors ---------- */}
-      <section className="border-t border-white/8 bg-abyss-900/30 py-16 lg:py-24">
-        <div className="container-page">
+      <section className="bg-paper">
+        <div className="container-page py-16 lg:py-24">
           <Reveal>
             <SectionHeading
               eyebrow="Capability"
-              title="Every service line, available on the same mobilisation"
+              title="Every service line, one mobilisation"
               description="Most of our work is multi-scope. Cleaning, inspection and repair delivered together removes the handover delays that dominate a timeline when trades are split across contractors."
             />
           </Reveal>
 
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
             {serviceCategories.map((category, i) => (
-              <Reveal key={category.slug} delay={i * 70} className="h-full">
+              <Reveal key={category.slug} delay={i * 50} className="h-full">
                 <Link
                   href={`/services/${category.slug}`}
-                  className="card-hover flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-6"
+                  className="card card-interactive group flex h-full flex-col p-6"
                 >
-                  <span className="flex size-11 items-center justify-center rounded-xl bg-marine-400/10 text-marine-300 ring-1 ring-marine-400/20">
+                  <span className="flex size-11 items-center justify-center bg-blue-50 text-blue-600">
                     <CategoryIcon name={category.icon} className="size-5" />
                   </span>
-                  <h3 className="mt-5 text-base text-white">{category.name}</h3>
-                  <p className="mt-2 flex-1 text-sm leading-relaxed text-abyss-300">
+                  <h3 className="mt-5 font-display text-[18px] font-bold uppercase leading-tight text-ink-900 transition-colors duration-[140ms] group-hover:text-blue-600">
+                    {category.name}
+                  </h3>
+                  <p className="mt-2 flex-1 text-[14px] leading-[1.6] text-slate-600">
                     {category.tagline}
                   </p>
                 </Link>
@@ -217,7 +216,7 @@ export default function ProjectsPage() {
 
       <CtaBand
         title="Have a scope you want assessed?"
-        description="Send the vessel, the previous cargo and the port. We will tell you what the job actually needs — including when it is less than you expected."
+        description="Send the vessel, the previous cargo and the port. We tell you what the job actually needs — including when it is less than you expected."
       />
     </>
   );

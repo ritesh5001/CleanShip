@@ -8,28 +8,37 @@ import { ArrowIcon, CheckIcon, ChevronIcon } from "./icons";
 
 const initialState: EnquiryState = { status: "idle", message: "" };
 
-/* Background is kept out of the shared base so the select can set its own
-   without two competing bg-* utilities of equal specificity. */
+/* DS field spec: 44px control height (hard floor), 2px radius, 1px cool
+   border, white fill, 3px blue focus ring. Background is kept out of the
+   shared base so the select can set its own without two competing bg-*
+   utilities of equal specificity. */
 const fieldBase =
-  "w-full rounded-xl border border-white/12 px-4 py-3 text-sm text-white placeholder:text-abyss-500 transition focus:border-marine-400/60 focus:outline-none focus:ring-2 focus:ring-marine-400/25";
+  "w-full min-h-11 border border-line-200 px-4 py-2.5 text-[15px] text-ink-900 placeholder:text-slate-400 transition-colors duration-[140ms] focus:border-blue-400 focus:outline-none";
 
-const fieldClass = `${fieldBase} bg-abyss-950/60`;
+const fieldClass = `${fieldBase} bg-white`;
 
-/* The select needs a fully opaque background: with appearance stripped, a
-   translucent one lets the native control show through on some platforms. */
-const selectClass = `${fieldBase} bg-abyss-950 appearance-none pr-11 [&>optgroup]:bg-abyss-950 [&>optgroup]:text-abyss-300 [&_option]:bg-abyss-950 [&_option]:text-white`;
+/* appearance-none strips the native control (which renders light on both
+   macOS and Windows regardless of background), so the chevron is supplied
+   manually. Options are painted by the OS, so they get explicit colours. */
+const selectClass = `${fieldBase} bg-white appearance-none pr-11 [&_option]:bg-white [&_option]:text-ink-900`;
+
+const labelClass = "label-caps mb-2 block text-[11px] text-slate-500";
 
 export function ContactForm() {
   const [state, formAction] = useActionState(submitEnquiry, initialState);
 
   if (state.status === "success") {
     return (
-      <div className="flex flex-col items-start gap-4 rounded-3xl border border-marine-400/30 bg-marine-400/8 p-8">
-        <span className="flex size-12 items-center justify-center rounded-full bg-marine-400/20 text-marine-300">
+      <div className="rule-accent-left flex flex-col items-start gap-4 border-y border-r border-success-600/30 bg-success-100 p-8">
+        <span className="flex size-12 items-center justify-center bg-success-600 text-white">
           <CheckIcon className="size-6" />
         </span>
-        <h3 className="text-xl text-white">Enquiry received</h3>
-        <p className="text-sm leading-relaxed text-abyss-200">{state.message}</p>
+        <h3 className="font-display text-[22px] font-bold uppercase leading-tight text-ink-900">
+          Enquiry received
+        </h3>
+        <p className="text-[15px] leading-[1.62] text-ink-700">
+          {state.message}
+        </p>
       </div>
     );
   }
@@ -39,7 +48,7 @@ export function ContactForm() {
       {state.status === "error" && !state.errors && (
         <p
           role="alert"
-          className="rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200"
+          className="border border-danger-600/30 bg-danger-100 px-4 py-3 text-[14px] text-danger-600"
         >
           {state.message}
         </p>
@@ -83,19 +92,12 @@ export function ContactForm() {
         />
 
         <div>
-          <label
-            htmlFor="service"
-            className="mb-2 block text-xs font-medium uppercase tracking-wider text-abyss-300"
-          >
+          <label htmlFor="service" className={labelClass}>
             Service required{" "}
-            <span className="normal-case tracking-normal text-abyss-500">
+            <span className="font-normal normal-case tracking-normal text-slate-400">
               (optional)
             </span>
           </label>
-          {/* appearance-none strips the native control (which renders light
-              on both macOS and Windows regardless of the background), so the
-              chevron is supplied manually. Option elements are painted by the
-              OS, so they get explicit colours too. */}
           <div className="relative">
             <select
               id="service"
@@ -116,18 +118,15 @@ export function ContactForm() {
             </select>
             <ChevronIcon
               aria-hidden="true"
-              className="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-abyss-400"
+              className="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-slate-500"
             />
           </div>
         </div>
       </div>
 
       <div>
-        <label
-          htmlFor="message"
-          className="mb-2 block text-xs font-medium uppercase tracking-wider text-abyss-300"
-        >
-          Scope, port and window <span className="text-marine-400">*</span>
+        <label htmlFor="message" className={labelClass}>
+          Scope, port and window <span className="text-blue-600">*</span>
         </label>
         <textarea
           id="message"
@@ -140,21 +139,34 @@ export function ContactForm() {
           className={fieldClass}
         />
         {state.errors?.message && (
-          <p id="message-error" role="alert" className="mt-2 text-xs text-red-300">
+          <p
+            id="message-error"
+            role="alert"
+            className="mt-2 text-[13px] text-danger-600"
+          >
             {state.errors.message}
           </p>
         )}
       </div>
 
       {/* Honeypot — hidden from people, tempting to bots. */}
-      <div aria-hidden="true" className="absolute left-[-9999px] size-px overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="absolute left-[-9999px] size-px overflow-hidden"
+      >
         <label htmlFor="website">Leave this field empty</label>
-        <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+        <input
+          id="website"
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+        />
       </div>
 
       <SubmitButton />
 
-      <p className="text-xs leading-relaxed text-abyss-500">
+      <p className="text-[13px] leading-[1.62] text-slate-500">
         We use your details only to respond to this enquiry. No marketing lists,
         no third parties.
       </p>
@@ -169,11 +181,11 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-marine-400 px-6 py-4 text-sm font-semibold text-abyss-950 shadow-lg shadow-marine-500/25 transition hover:bg-marine-300 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+      className="label-caps group inline-flex h-12 w-full items-center justify-center gap-2.5 bg-blue-600 px-6 text-white transition-colors duration-[140ms] hover:bg-navy-700 active:scale-[.985] disabled:cursor-not-allowed disabled:opacity-45 sm:w-auto"
     >
       {pending ? "Sending…" : "Send enquiry"}
       {!pending && (
-        <ArrowIcon className="size-4 transition-transform group-hover:translate-x-1" />
+        <ArrowIcon className="size-4 transition-transform duration-[140ms] group-hover:translate-x-0.5" />
       )}
     </button>
   );
@@ -198,13 +210,10 @@ function Field({
 }) {
   return (
     <div>
-      <label
-        htmlFor={name}
-        className="mb-2 block text-xs font-medium uppercase tracking-wider text-abyss-300"
-      >
-        {label} {required && <span className="text-marine-400">*</span>}
+      <label htmlFor={name} className={labelClass}>
+        {label} {required && <span className="text-blue-600">*</span>}
         {optional && (
-          <span className="normal-case tracking-normal text-abyss-500">
+          <span className="font-normal normal-case tracking-normal text-slate-400">
             {" "}
             (optional)
           </span>
@@ -221,7 +230,11 @@ function Field({
         className={fieldClass}
       />
       {error && (
-        <p id={`${name}-error`} role="alert" className="mt-2 text-xs text-red-300">
+        <p
+          id={`${name}-error`}
+          role="alert"
+          className="mt-2 text-[13px] text-danger-600"
+        >
           {error}
         </p>
       )}

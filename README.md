@@ -106,11 +106,42 @@ Structural rules the codebase holds to:
 
 ## Design system
 
-Tokens are defined in the `@theme` block of `src/app/globals.css`:
+The site implements the **CleanShip Design System** in `cleanship design system/`.
+Its tokens are mirrored into the `@theme` block of `src/app/globals.css` so
+Tailwind utilities compile from the same values the DS defines. Add tokens
+there first — never invent a colour, radius or duration in a component.
 
-- **Abyss** (`abyss-50` → `abyss-950`) — deep ocean navy, used for backgrounds
-- **Aqua** (`aqua-50` → `aqua-950`) — the accent, the "clean water" signal
-- **Sand** (`sand-300` → `sand-500`) — sparing warm emphasis
+| Ramp | Role |
+| --- | --- |
+| `navy-600` → `navy-900` | Section bands, footer, CTA, photo scrims |
+| `blue-50` → `blue-600` | Buttons, links, eyebrows, index numbers, tint panels |
+| `aqua-200/500/600` | Rationed accent — 3px rules, active nav, counter `+` |
+| `ink-*`, `slate-*`, `line-*`, `paper` | Cool neutrals, never warm |
 
-Fonts are Sora (display) and Inter (body), self-hosted via `next/font`.
-Motion respects `prefers-reduced-motion` throughout.
+Type is **Barlow Condensed** (display, uppercase), **Barlow** (body) and
+**IBM Plex Mono** (spec figures, counters, phone numbers), loaded via
+`next/font`. All three are flagged in the DS as substitutions for the
+brochure's industrial sans — replace them if licensed faces arrive.
+
+### House rules the code enforces
+
+These are the DS constraints most easily broken by a future change:
+
+- **Light-first.** White or `paper` for content; solid navy for bands only.
+  Max two background colours per page.
+- **No decorative gradients, no backdrop blur, no frosted glass, no blurred
+  blobs.** The only gradients permitted are the navy photo scrims.
+- **Near-square corners** — 2px default; pills only for badges.
+- **Cards rest flat.** Shadow and a -2px lift appear on hover only, because
+  elevation signals interaction, not hierarchy.
+- **Motion is short and flat** — 140ms colour, 220ms surfaces, 700ms photo
+  scale. No bounce, spring, parallax or animated counters.
+- **Any navy surface must carry the `on-navy` class.** It flips headings to
+  white and switches the focus ring to aqua. Headings set their own colour, so
+  an inherited `text-white` alone is not enough.
+- Motion respects `prefers-reduced-motion` throughout.
+
+**Not yet implemented:** the DS is photography-driven and no imagery was
+supplied, so `PhotoFrame` and the full-bleed vessel photography it expects are
+absent. The home hero uses the brochure's other device — a numbered contents
+index — in that slot.

@@ -3,14 +3,28 @@ import type { IconKey } from "@/lib/services";
 
 type IconProps = SVGProps<SVGSVGElement>;
 
+/* DS iconography: Lucide-style geometry, stroke 1.75, round caps and joins,
+   never filled, never multicolour. */
 const base = {
   fill: "none",
   stroke: "currentColor",
-  strokeWidth: 1.5,
+  strokeWidth: 1.75,
   strokeLinecap: "round" as const,
   strokeLinejoin: "round" as const,
   viewBox: "0 0 24 24",
 };
+
+/** Anchor — the wordmark glyph. */
+export function AnchorIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="12" cy="5" r="2.5" />
+      <path d="M12 7.5V21" />
+      <path d="M7.5 11h9" />
+      <path d="M20 16.5A8 8 0 0 1 12 21a8 8 0 0 1-8-4.5" />
+    </svg>
+  );
+}
 
 /** Cargo hold — an open hatch with a hold beneath. */
 export function HoldIcon(props: IconProps) {

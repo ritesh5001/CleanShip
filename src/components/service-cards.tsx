@@ -3,7 +3,13 @@ import type { Service, ServiceCategory } from "@/lib/services";
 import { ArrowIcon, CategoryIcon } from "./icons";
 import { Reveal } from "./reveal";
 
-/** Large card representing a whole service category. */
+/**
+ * Cards follow the DS card spec: white, 1px cool border, 2px radius, 24px
+ * padding and **no resting shadow**. Shadow and a -2px lift arrive only on
+ * hover, because in this system elevation signals interaction rather than
+ * hierarchy — hierarchy comes from borders and fills.
+ */
+
 export function CategoryCard({
   category,
   index = 0,
@@ -12,57 +18,54 @@ export function CategoryCard({
   index?: number;
 }) {
   return (
-    <Reveal delay={index * 80} className="h-full">
+    <Reveal delay={index * 60} className="h-full">
       <Link
         href={`/services/${category.slug}`}
-        className="card-hover group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-abyss-900/60 p-7 backdrop-blur-sm"
+        className="card card-interactive group flex h-full flex-col p-6"
       >
-        {/* Glow that follows the card on hover */}
-        <div className="pointer-events-none absolute -right-20 -top-20 size-48 rounded-full bg-marine-500/0 blur-3xl transition-all duration-500 group-hover:bg-marine-500/20" />
-
-        <div className="relative flex items-start justify-between">
-          <span className="flex size-13 items-center justify-center rounded-2xl bg-marine-400/10 text-marine-300 ring-1 ring-marine-400/20 transition group-hover:bg-marine-400/20">
-            <CategoryIcon name={category.icon} className="size-6.5" />
+        <div className="flex items-start justify-between">
+          <span className="flex size-12 items-center justify-center bg-blue-50 text-blue-600 transition-colors duration-[220ms] group-hover:bg-blue-100">
+            <CategoryIcon name={category.icon} className="size-[26px]" />
           </span>
-          <span className="font-display text-sm font-medium text-abyss-600">
+          <span className="tabular text-[13px] text-slate-400 transition-colors duration-[140ms] group-hover:text-aqua-500">
             {String(index + 1).padStart(2, "0")}
           </span>
         </div>
 
-        <h3 className="relative mt-6 text-xl text-white transition group-hover:text-marine-300">
+        <h3 className="mt-6 font-display text-[22px] font-bold uppercase leading-tight text-ink-900 transition-colors duration-[140ms] group-hover:text-blue-600">
           {category.name}
         </h3>
-        <p className="relative mt-3 flex-1 text-sm leading-relaxed text-abyss-300">
+
+        <p className="mt-3 flex-1 text-[15px] leading-[1.6] text-slate-600">
           {category.summary}
         </p>
 
-        <ul className="relative mt-5 space-y-1.5 border-t border-white/8 pt-5">
+        <ul className="mt-5 space-y-2 border-t border-line-100 pt-5">
           {category.services.slice(0, 3).map((service) => (
             <li
               key={service.slug}
-              className="flex items-center gap-2 text-[13px] text-abyss-400"
+              className="flex items-center gap-2.5 text-[13px] text-slate-500"
             >
-              <span className="size-1 rounded-full bg-marine-400/70" />
+              <span className="size-1 shrink-0 bg-aqua-500" />
               {service.name}
             </li>
           ))}
           {category.services.length > 3 && (
-            <li className="pl-3 text-[13px] text-abyss-500">
+            <li className="pl-3.5 text-[13px] text-slate-400">
               + {category.services.length - 3} more
             </li>
           )}
         </ul>
 
-        <span className="relative mt-6 inline-flex items-center gap-2 text-sm font-semibold text-marine-300">
-          Explore
-          <ArrowIcon className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+        <span className="label-caps mt-6 inline-flex items-center gap-2 text-blue-600">
+          Read more
+          <ArrowIcon className="size-4 transition-transform duration-[140ms] group-hover:translate-x-0.5" />
         </span>
       </Link>
     </Reveal>
   );
 }
 
-/** Compact card for an individual service within a category. */
 export function ServiceCard({
   service,
   categorySlug,
@@ -73,23 +76,30 @@ export function ServiceCard({
   index?: number;
 }) {
   return (
-    <Reveal delay={index * 70} className="h-full">
+    <Reveal delay={index * 50} className="h-full">
       <Link
         href={`/services/${categorySlug}/${service.slug}`}
-        className="card-hover group flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-6"
+        className="card card-interactive group flex h-full flex-col p-6"
       >
-        <h3 className="text-lg leading-snug text-white transition group-hover:text-marine-300">
+        <span className="tabular text-[13px] text-slate-400 transition-colors duration-[140ms] group-hover:text-aqua-500">
+          {String(index + 1).padStart(2, "0")}
+        </span>
+
+        <h3 className="mt-3 font-display text-[20px] font-bold uppercase leading-tight text-ink-900 transition-colors duration-[140ms] group-hover:text-blue-600">
           {service.name}
         </h3>
-        <p className="mt-2 text-sm font-medium text-marine-400/90">
+
+        <p className="mt-2 text-[13px] font-medium text-blue-600">
           {service.tagline}
         </p>
-        <p className="mt-3 flex-1 text-sm leading-relaxed text-abyss-300">
+
+        <p className="mt-3 flex-1 text-[15px] leading-[1.6] text-slate-600">
           {service.summary}
         </p>
-        <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-marine-300">
+
+        <span className="label-caps mt-6 inline-flex items-center gap-2 text-blue-600">
           Read more
-          <ArrowIcon className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+          <ArrowIcon className="size-4 transition-transform duration-[140ms] group-hover:translate-x-0.5" />
         </span>
       </Link>
     </Reveal>

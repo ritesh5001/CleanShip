@@ -10,6 +10,7 @@ import {
   CategoryIcon,
   ChevronIcon,
   CloseIcon,
+  MailIcon,
   MenuIcon,
   PhoneIcon,
 } from "./icons";
@@ -23,21 +24,20 @@ export function SiteHeader() {
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Solid background once the hero has scrolled past.
+  // The DS allows the header to be the one sticky element; it takes
+  // shadow-sm once content scrolls beneath it. No blur, per the system.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Any navigation closes every menu.
   useEffect(() => {
     setMobileOpen(false);
     setMegaOpen(false);
   }, [pathname]);
 
-  // Lock body scroll while the mobile drawer is open.
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
     return () => {
@@ -45,7 +45,6 @@ export function SiteHeader() {
     };
   }, [mobileOpen]);
 
-  // Escape closes whichever menu is open.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
@@ -56,8 +55,8 @@ export function SiteHeader() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  /* A short close delay keeps the mega menu open while the pointer crosses
-     the gap between the trigger and the panel. */
+  /* A short close delay keeps the panel open while the pointer crosses the
+     gap between trigger and panel. */
   const openMega = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     setMegaOpen(true);
@@ -72,100 +71,91 @@ export function SiteHeader() {
 
   return (
     <>
-      {/* Utility strip — hidden on small screens to protect vertical space */}
-      <div className="hidden border-b border-white/5 bg-abyss-950 text-abyss-300 lg:block">
-        <div className="container-page flex h-10 items-center justify-between text-xs">
-          <p>
-            Welcome to Cleanship Marine Services — hold, tank, hull and offshore
-            specialists
-          </p>
-          <div className="flex items-center gap-6">
+      {/* ---------- Utility bar (navy) ---------- */}
+      <div className="on-navy hidden bg-navy-900 text-white/70 lg:block">
+        <div className="container-page flex h-10 items-center justify-between text-[13px]">
+          <p>Marine Cleaning You Can Trust — hold, tank, hull and offshore</p>
+          <div className="flex items-center gap-7">
             <a
               href={siteConfig.phones[0].href}
-              className="flex items-center gap-2 transition hover:text-marine-300"
+              className="flex items-center gap-2 transition-colors duration-[140ms] hover:text-aqua-200"
             >
-              <PhoneIcon className="size-3.5" />
+              <PhoneIcon className="size-4" />
               {siteConfig.phones[0].number}
             </a>
             <a
               href={`mailto:${siteConfig.email}`}
-              className="transition hover:text-marine-300"
+              className="flex items-center gap-2 transition-colors duration-[140ms] hover:text-aqua-200"
             >
+              <MailIcon className="size-4" />
               {siteConfig.email}
             </a>
           </div>
         </div>
       </div>
 
+      {/* ---------- Main header (white) ---------- */}
       <header
-        className={`sticky top-0 z-50 transition-all duration-300 ${
-          scrolled || mobileOpen
-            ? "border-b border-white/10 bg-abyss-950/85 backdrop-blur-xl"
-            : "border-b border-transparent bg-transparent"
+        className={`sticky top-0 z-50 border-b bg-white transition-shadow duration-[220ms] ${
+          scrolled ? "border-line-200 shadow-sm" : "border-line-100"
         }`}
       >
-        <div className="container-page flex h-18 items-center justify-between gap-4 py-3">
-          <Link
-            href="/"
-            className="shrink-0"
-            aria-label={`${siteConfig.name} — home`}
-          >
-            <Logo className="h-9 w-auto" />
+        <div className="container-page flex h-[72px] items-center justify-between gap-4">
+          <Link href="/" aria-label={`${siteConfig.name} — home`}>
+            <Logo />
           </Link>
 
-          {/* ---------- Desktop navigation ---------- */}
-          <nav
-            aria-label="Main"
-            className="hidden items-center gap-1 lg:flex"
-          >
-            {mainNav.map((item) =>
-              item.href === "/services" ? (
+          <nav aria-label="Main" className="hidden items-center lg:flex">
+            {mainNav.map((item) => {
+              const active = isActive(item.href);
+              const isServices = item.href === "/services";
+
+              return (
                 <div
                   key={item.href}
                   className="relative"
-                  onMouseEnter={openMega}
-                  onMouseLeave={scheduleCloseMega}
+                  {...(isServices
+                    ? { onMouseEnter: openMega, onMouseLeave: scheduleCloseMega }
+                    : {})}
                 >
                   <Link
                     href={item.href}
-                    aria-expanded={megaOpen}
-                    aria-haspopup="true"
-                    className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition ${
-                      isActive(item.href)
-                        ? "text-marine-300"
-                        : "text-abyss-100 hover:text-marine-300"
+                    {...(isServices
+                      ? { "aria-expanded": megaOpen, "aria-haspopup": true }
+                      : {})}
+                    className={`label-caps relative flex h-[72px] items-center gap-1.5 px-4 transition-colors duration-[140ms] ${
+                      active
+                        ? "text-blue-600"
+                        : "text-ink-700 hover:text-blue-600"
                     }`}
                   >
                     {item.label}
-                    <ChevronIcon
-                      className={`size-4 transition-transform duration-300 ${
-                        megaOpen ? "rotate-180" : ""
-                      }`}
-                    />
+                    {isServices && (
+                      <ChevronIcon
+                        className={`size-4 transition-transform duration-[140ms] ${
+                          megaOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    )}
+                    {/* Active nav takes a 2px aqua underline — DS spec. */}
+                    {active && (
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-x-3 bottom-0 h-0.5 bg-aqua-500"
+                      />
+                    )}
                   </Link>
                 </div>
-              ) : (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                    isActive(item.href)
-                      ? "text-marine-300"
-                      : "text-abyss-100 hover:text-marine-300"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ),
-            )}
+              );
+            })}
           </nav>
 
           <div className="flex items-center gap-3">
             <Link
               href="/contact"
-              className="hidden rounded-full bg-marine-400 px-5 py-2.5 text-sm font-semibold text-abyss-950 shadow-lg shadow-marine-500/20 transition hover:bg-marine-300 sm:inline-flex"
+              className="label-caps hidden h-11 items-center bg-blue-600 px-6 text-white transition-colors duration-[140ms] hover:bg-navy-700 active:scale-[.985] sm:inline-flex"
             >
-              Request a Quote
+              Get a quote
             </Link>
 
             <button
@@ -174,7 +164,7 @@ export function SiteHeader() {
               aria-expanded={mobileOpen}
               aria-controls="mobile-menu"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
-              className="inline-flex size-10 items-center justify-center rounded-full border border-white/15 text-abyss-50 transition hover:border-marine-400/60 hover:text-marine-300 lg:hidden"
+              className="inline-flex size-11 items-center justify-center border border-line-200 text-ink-900 transition-colors duration-[140ms] hover:border-blue-400 hover:text-blue-600 lg:hidden"
             >
               {mobileOpen ? (
                 <CloseIcon className="size-5" />
@@ -185,34 +175,42 @@ export function SiteHeader() {
           </div>
         </div>
 
-        {/* ---------- Desktop mega menu ---------- */}
+        {/* ---------- Mega menu ---------- */}
         <div
           onMouseEnter={openMega}
           onMouseLeave={scheduleCloseMega}
-          className={`absolute inset-x-0 top-full hidden origin-top border-b border-white/10 bg-abyss-950/95 backdrop-blur-2xl transition-all duration-300 lg:block ${
+          className={`absolute inset-x-0 top-full hidden border-b border-line-200 bg-white shadow-lg transition-[opacity,transform] duration-[220ms] ease-standard lg:block ${
             megaOpen
               ? "pointer-events-auto translate-y-0 opacity-100"
-              : "pointer-events-none -translate-y-3 opacity-0"
+              : "pointer-events-none -translate-y-2 opacity-0"
           }`}
         >
-          <div className="container-page grid grid-cols-5 gap-6 py-8">
-            {serviceCategories.map((category) => (
+          <div className="container-page grid grid-cols-5 gap-8 py-10">
+            {serviceCategories.map((category, i) => (
               <div key={category.slug}>
                 <Link
                   href={`/services/${category.slug}`}
-                  className="group mb-4 flex items-center gap-2.5 text-sm font-semibold text-abyss-50 transition hover:text-marine-300"
+                  className="group mb-4 block"
                 >
-                  <span className="flex size-8 items-center justify-center rounded-lg bg-marine-400/10 text-marine-300 ring-1 ring-marine-400/20">
-                    <CategoryIcon name={category.icon} className="size-4.5" />
+                  <span className="tabular text-[13px] text-blue-600">
+                    {String(i + 1).padStart(2, "0")}
                   </span>
-                  {category.name}
+                  <span className="mt-2 flex items-center gap-2.5">
+                    <CategoryIcon
+                      name={category.icon}
+                      className="size-[22px] text-blue-600"
+                    />
+                    <span className="font-display text-[19px] font-bold uppercase leading-tight text-ink-900 transition-colors duration-[140ms] group-hover:text-blue-600">
+                      {category.name}
+                    </span>
+                  </span>
                 </Link>
-                <ul className="space-y-1.5 border-l border-white/10 pl-3">
+                <ul className="space-y-2 border-l border-line-200 pl-3.5">
                   {category.services.map((service) => (
                     <li key={service.slug}>
                       <Link
                         href={`/services/${category.slug}/${service.slug}`}
-                        className="block py-1 text-[13px] leading-snug text-abyss-300 transition hover:text-marine-300"
+                        className="block py-0.5 text-[14px] leading-snug text-slate-600 transition-colors duration-[140ms] hover:text-blue-600"
                       >
                         {service.name}
                       </Link>
@@ -222,18 +220,17 @@ export function SiteHeader() {
               </div>
             ))}
           </div>
-          <div className="border-t border-white/10 bg-white/[0.02]">
-            <div className="container-page flex items-center justify-between py-4 text-sm">
-              <p className="text-abyss-300">
-                Not sure which scope you need? Our operations desk is manned
-                24/7.
+          <div className="border-t border-line-100 bg-paper">
+            <div className="container-page flex items-center justify-between py-4 text-[14px]">
+              <p className="text-slate-600">
+                Operations desk manned 24 hours, Mon – Sun.
               </p>
               <Link
                 href="/services"
-                className="group inline-flex items-center gap-2 font-semibold text-marine-300"
+                className="label-caps group inline-flex items-center gap-2 text-blue-600"
               >
-                View all services
-                <ArrowIcon className="size-4 transition-transform group-hover:translate-x-1" />
+                View more services
+                <ArrowIcon className="size-4 transition-transform duration-[140ms] group-hover:translate-x-0.5" />
               </Link>
             </div>
           </div>
@@ -248,26 +245,27 @@ export function SiteHeader() {
         }`}
         aria-hidden={!mobileOpen}
       >
+        {/* Navy scrim, never black — and no blur. */}
         <div
           onClick={() => setMobileOpen(false)}
-          className={`absolute inset-0 bg-abyss-950/70 backdrop-blur-sm transition-opacity duration-300 ${
+          className={`absolute inset-0 bg-[rgba(6,32,58,.62)] transition-opacity duration-[220ms] ${
             mobileOpen ? "opacity-100" : "opacity-0"
           }`}
         />
         <nav
           aria-label="Mobile"
-          className={`absolute inset-x-0 top-[calc(4.5rem)] max-h-[calc(100dvh-4.5rem)] overflow-y-auto border-t border-white/10 bg-abyss-950 px-5 pb-10 pt-4 transition-transform duration-300 ${
-            mobileOpen ? "translate-y-0" : "-translate-y-4 opacity-0"
+          className={`absolute inset-x-0 top-[72px] max-h-[calc(100dvh-72px)] overflow-y-auto border-t border-line-200 bg-white px-5 pb-10 pt-2 transition-transform duration-[220ms] ease-standard ${
+            mobileOpen ? "translate-y-0" : "-translate-y-3 opacity-0"
           }`}
         >
-          <ul className="divide-y divide-white/8">
+          <ul className="divide-y divide-line-100">
             {mainNav.map((item) =>
               item.href === "/services" ? (
-                <li key={item.href} className="py-1">
+                <li key={item.href}>
                   <div className="flex items-center justify-between">
                     <Link
                       href={item.href}
-                      className="flex-1 py-3 text-base font-medium text-abyss-50"
+                      className="label-caps flex-1 py-4 text-ink-900"
                     >
                       Services
                     </Link>
@@ -280,26 +278,26 @@ export function SiteHeader() {
                           v === "services" ? null : "services",
                         )
                       }
-                      className="p-3 text-abyss-300"
+                      className="flex size-11 items-center justify-center text-slate-500"
                     >
                       <ChevronIcon
-                        className={`size-5 transition-transform ${
+                        className={`size-5 transition-transform duration-[140ms] ${
                           openAccordion === "services" ? "rotate-180" : ""
                         }`}
                       />
                     </button>
                   </div>
                   {openAccordion === "services" && (
-                    <ul className="mb-3 space-y-4 border-l border-white/10 pl-4">
+                    <ul className="mb-4 space-y-5 border-l border-line-200 pl-4">
                       {serviceCategories.map((category) => (
                         <li key={category.slug}>
                           <Link
                             href={`/services/${category.slug}`}
-                            className="flex items-center gap-2 py-1 text-sm font-semibold text-marine-300"
+                            className="flex items-center gap-2 py-1 font-display text-[17px] font-bold uppercase text-blue-600"
                           >
                             <CategoryIcon
                               name={category.icon}
-                              className="size-4"
+                              className="size-[18px]"
                             />
                             {category.name}
                           </Link>
@@ -308,7 +306,7 @@ export function SiteHeader() {
                               <li key={service.slug}>
                                 <Link
                                   href={`/services/${category.slug}/${service.slug}`}
-                                  className="block py-1.5 text-[13px] text-abyss-300"
+                                  className="block py-2 text-[14px] text-slate-600"
                                 >
                                   {service.name}
                                 </Link>
@@ -324,7 +322,7 @@ export function SiteHeader() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="block py-4 text-base font-medium text-abyss-50"
+                    className="label-caps block py-4 text-ink-900"
                   >
                     {item.label}
                   </Link>
@@ -336,13 +334,13 @@ export function SiteHeader() {
           <div className="mt-6 space-y-3">
             <Link
               href="/contact"
-              className="flex w-full items-center justify-center rounded-full bg-marine-400 px-5 py-3.5 text-sm font-semibold text-abyss-950"
+              className="label-caps flex h-12 w-full items-center justify-center bg-blue-600 text-white"
             >
-              Request a Quote
+              Get a quote
             </Link>
             <a
               href={siteConfig.phones[0].href}
-              className="flex w-full items-center justify-center gap-2 rounded-full border border-white/15 px-5 py-3.5 text-sm font-semibold text-abyss-50"
+              className="label-caps flex h-12 w-full items-center justify-center gap-2 border border-blue-600 text-blue-600"
             >
               <PhoneIcon className="size-4" />
               {siteConfig.phones[0].number}
