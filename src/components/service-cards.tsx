@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Service, ServiceCategory } from "@/lib/services";
 import { ArrowIcon, CategoryIcon } from "./icons";
-import { Reveal } from "./reveal";
 
 /**
  * Cards follow the DS card spec: white, 1px cool border, 2px radius, 24px
@@ -18,7 +17,7 @@ export function CategoryCard({
   index?: number;
 }) {
   return (
-    <Reveal delay={index * 60} className="h-full">
+    <div data-stagger className="h-full">
       <Link
         href={`/services/${category.slug}`}
         className="card card-interactive group flex h-full flex-col p-6"
@@ -62,7 +61,7 @@ export function CategoryCard({
           <ArrowIcon className="size-4 transition-transform duration-[140ms] group-hover:translate-x-0.5" />
         </span>
       </Link>
-    </Reveal>
+    </div>
   );
 }
 
@@ -76,7 +75,7 @@ export function ServiceCard({
   index?: number;
 }) {
   return (
-    <Reveal delay={index * 50} className="h-full">
+    <div data-stagger className="h-full">
       <Link
         href={`/services/${categorySlug}/${service.slug}`}
         className="card card-interactive group flex h-full flex-col p-6"
@@ -102,6 +101,6 @@ export function ServiceCard({
           <ArrowIcon className="size-4 transition-transform duration-[140ms] group-hover:translate-x-0.5" />
         </span>
       </Link>
-    </Reveal>
+    </div>
   );
 }

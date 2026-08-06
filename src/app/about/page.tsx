@@ -57,10 +57,10 @@ const values = [
 ];
 
 const stats = [
-  { value: "5", suffix: "+", label: "Years Experience" },
-  { value: "300", suffix: "+", label: "Clients" },
-  { value: "100", suffix: "+", label: "Project Done" },
-  { value: "3", suffix: "+", label: "Award Winner" },
+  { value: 5, suffix: "+", label: "Years Experience" },
+  { value: 300, suffix: "+", label: "Clients" },
+  { value: 100, suffix: "+", label: "Project Done" },
+  { value: 3, suffix: "+", label: "Award Winner" },
 ];
 
 export default function AboutPage() {

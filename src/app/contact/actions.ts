@@ -1,6 +1,7 @@
 "use server";
 
 import { siteConfig } from "@/lib/site";
+import { sendEnquiryEmails, type Enquiry } from "@/lib/email";
 
 export type EnquiryState = {
   status: "idle" | "success" | "error";
@@ -20,11 +21,9 @@ function str(data: FormData, key: string): string {
  * Handles a quote enquiry.
  *
  * Validation runs on the server so it cannot be bypassed by disabling JS.
- *
- * ⚠️ DELIVERY IS NOT WIRED UP YET. The enquiry is currently validated and
- * logged only — see `deliverEnquiry` below. Connect an email provider (Resend,
- * SendGrid, SES or SMTP) or a CRM webhook before going live, or enquiries will
- * be accepted by the form and never reach anyone.
+ * Delivery goes out through Resend as two emails — a notification to the
+ * company inbox and an acknowledgement to the enquirer. See lib/email.ts for
+ * why only one of those is allowed to fail the submission.
  */
 export async function submitEnquiry(
   _prev: EnquiryState,
@@ -87,38 +86,10 @@ export async function submitEnquiry(
   return {
     status: "success",
     message:
-      "Thank you — your enquiry has reached our operations desk. We respond within one working day, and sooner for vessels already in port.",
+      "Thank you — your enquiry has reached our operations desk and a confirmation is on its way to your inbox. We respond within one working day, and sooner for vessels already in port.",
   };
 }
 
-type Enquiry = {
-  name: string;
-  email: string;
-  phone: string;
-  company: string;
-  vessel: string;
-  service: string;
-  message: string;
-};
-
-/**
- * Delivery hook — replace the body with a real integration.
- *
- * Example using Resend:
- *
- *   import { Resend } from "resend";
- *   const resend = new Resend(process.env.RESEND_API_KEY);
- *   await resend.emails.send({
- *     from: "website@cleanship.co",
- *     to: siteConfig.email,
- *     replyTo: enquiry.email,
- *     subject: `Enquiry — ${enquiry.service || "General"} — ${enquiry.name}`,
- *     text: JSON.stringify(enquiry, null, 2),
- *   });
- */
 async function deliverEnquiry(enquiry: Enquiry): Promise<void> {
-  console.info("[enquiry] received (delivery not configured)", {
-    ...enquiry,
-    to: siteConfig.email,
-  });
+  await sendEnquiryEmails(enquiry);
 }

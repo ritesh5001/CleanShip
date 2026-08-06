@@ -75,11 +75,14 @@ Structural rules the codebase holds to:
 1. **Set the real domain.** `siteConfig.url` in `src/lib/site.ts` is
    `https://www.cleanship.co`. Canonicals, the sitemap and OG URLs all derive
    from it.
-2. **Wire up the contact form.** `src/app/contact/actions.ts` currently
-   validates and logs enquiries but **does not deliver them**. Implement
-   `deliverEnquiry()` with Resend, SendGrid, SES, SMTP or a CRM webhook — a
-   worked example is in the file's comments. Until this is done, form
-   submissions go nowhere.
+2. **Add the Resend credentials.** Email delivery is implemented
+   (`src/lib/email.ts`) but needs environment variables — copy `.env.example`
+   to `.env.local` and fill in `RESEND_API_KEY`. **You must also verify the
+   sending domain** in the Resend dashboard (Domains → Add Domain → add the
+   DKIM/SPF records to your DNS). Resend rejects sends from unverified
+   domains; this is the most common reason a form works locally but not in
+   production. Without the key the form shows an error and tells the user to
+   email directly — it never silently drops an enquiry.
 3. **Replace the placeholder projects.** `src/app/projects/page.tsx` contains
    `PLACEHOLDER_PROJECTS` — illustrative scope patterns, not real contracts.
    Swap in genuine, permission-cleared case studies and delete the on-page
@@ -103,6 +106,49 @@ Structural rules the codebase holds to:
 9. **Post-deploy:** submit the sitemap in Google Search Console, validate the
    structured data with the Rich Results Test, and set up a Google Business
    Profile for the Ajman address.
+
+## Contact form email
+
+Submitting the form sends **two** emails through Resend (`src/lib/email.ts`):
+
+| Email | To | Purpose |
+| --- | --- | --- |
+| Notification | `ENQUIRY_TO_EMAIL` (default `ops@cleanship.co`) | The enquiry, with `replyTo` set to the enquirer so replying just works |
+| Acknowledgement | The enquirer | Confirms what they sent, with the operations-desk number |
+
+Only the **notification** is allowed to fail the submission. If the company
+copy fails the enquiry is genuinely lost and the user is told. If only the
+acknowledgement fails, the lead is safe — that failure is logged and
+swallowed rather than sending the user away over a confirmation email.
+
+All user input is HTML-escaped before it reaches the email body, and
+newlines are stripped from anything used in a subject line (header
+injection).
+
+## Motion
+
+`gsap` + `motion` (Framer Motion). The split between them is deliberate and
+documented at the top of `src/lib/motion.ts`:
+
+- **GSAP + ScrollTrigger** — anything that reveals indexable content.
+  `gsap.from()` writes nothing into the server HTML, so content is present and
+  visible with JavaScript disabled.
+- **Motion** — menus, hover, gestures and state transitions, where the initial
+  state hides nothing a crawler needs. Motion renders its `initial` prop into
+  the SSR HTML as an inline style, which is why it is kept away from body copy.
+
+Rules the code holds to (see the global `web-motion` skill for the full set):
+
+- **The hero `<h1>` is never animated** — it is the LCP element.
+- Only `transform` and `opacity` are animated, so nothing triggers layout.
+- `prefers-reduced-motion` is honoured in every motion component.
+- Every GSAP effect is created inside `gsap.context()` and reverted on unmount.
+- `ScrollTrigger.refresh()` runs on route change (`ScrollTriggerRefresh` in the
+  layout), because ScrollTrigger caches document height.
+- No scroll-jacking.
+
+Motion adds ~86 kB to the home and service routes. Pages remain static HTML,
+so LCP and FCP are unaffected; the cost lands on TBT.
 
 ## Design system
 

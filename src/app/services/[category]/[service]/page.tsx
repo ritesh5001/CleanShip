@@ -5,6 +5,11 @@ import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
 import { FaqList } from "@/components/faq";
 import { Reveal } from "@/components/reveal";
+import {
+  ProcessTimeline,
+  ScopeScroller,
+} from "@/components/motion/scope-scroller";
+import { ScrollProgress } from "@/components/motion/scroll-fx";
 import { JsonLd } from "@/components/json-ld";
 import { Button, CheckList } from "@/components/ui";
 import { ArrowIcon, CategoryIcon, PhoneIcon } from "@/components/icons";
@@ -65,6 +70,16 @@ export default async function ServicePage({ params }: Params) {
         ]}
       />
 
+      {/* Reading-progress rail. Long service pages benefit most from an
+          explicit "how much is left" signal, which matters more to a
+          scanning superintendent than to a casual reader. */}
+      <div
+        aria-hidden="true"
+        className="sticky top-0 z-40 h-[3px] w-full bg-line-100"
+      >
+        <ScrollProgress className="h-full w-full bg-aqua-500" />
+      </div>
+
       <PageHero
         eyebrow={category.name}
         title={service.name}
@@ -116,25 +131,9 @@ export default async function ServicePage({ params }: Params) {
                 </p>
               </Reveal>
 
-              <div className="mt-8 border-t border-line-200">
-                {service.scope.map((item, i) => (
-                  <Reveal key={item.title} delay={i * 50}>
-                    <div className="flex gap-6 border-b border-line-200 py-6">
-                      <span className="tabular shrink-0 text-[13px] text-blue-600">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <div>
-                        <h3 className="font-display text-[19px] font-semibold uppercase leading-tight text-ink-900">
-                          {item.title}
-                        </h3>
-                        <p className="mt-2 max-w-[70ch] text-[15px] leading-[1.62] text-slate-600">
-                          {item.body}
-                        </p>
-                      </div>
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
+              {/* GSAP scrubs the rail and reports the active row; Motion
+                  damps the resulting numeral transition. */}
+              <ScopeScroller items={service.scope} />
             </section>
 
             {/* Process */}
@@ -145,23 +144,9 @@ export default async function ServicePage({ params }: Params) {
                 </h2>
               </Reveal>
 
-              <ol className="mt-8 grid gap-6 sm:grid-cols-2">
-                {service.process.map((step, i) => (
-                  <Reveal key={step.title} delay={i * 50}>
-                    <li className="rule-accent-top h-full bg-paper p-6">
-                      <span className="tabular text-[13px] text-blue-600">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <h3 className="mt-3 font-display text-[18px] font-semibold uppercase leading-tight text-ink-900">
-                        {step.title}
-                      </h3>
-                      <p className="mt-2 text-[15px] leading-[1.62] text-slate-600">
-                        {step.body}
-                      </p>
-                    </li>
-                  </Reveal>
-                ))}
-              </ol>
+              <div className="mt-8">
+                <ProcessTimeline steps={service.process} />
+              </div>
             </section>
 
             {/* FAQ */}

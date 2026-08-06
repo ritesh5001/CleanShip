@@ -6,6 +6,7 @@ import { CtaBand } from "@/components/cta-band";
 import { FaqList } from "@/components/faq";
 import { StatsBand } from "@/components/stats";
 import { Reveal } from "@/components/reveal";
+import { StaggerGroup } from "@/components/motion/scroll-reveal";
 import { JsonLd } from "@/components/json-ld";
 import { Button, CheckList, SectionHeading } from "@/components/ui";
 import {
@@ -76,10 +77,10 @@ const process = [
 ];
 
 const stats = [
-  { value: "5", suffix: "+", label: "Years Experience" },
-  { value: "300", suffix: "+", label: "Clients" },
-  { value: "100", suffix: "+", label: "Project Done" },
-  { value: "10", suffix: "+", label: "Team Member" },
+  { value: 5, suffix: "+", label: "Years Experience" },
+  { value: 300, suffix: "+", label: "Clients" },
+  { value: 100, suffix: "+", label: "Project Done" },
+  { value: 10, suffix: "+", label: "Team Member" },
 ];
 
 /** Homepage FAQs — chosen for the questions people actually search. */
@@ -144,12 +145,12 @@ export default function HomePage() {
             </div>
           </Reveal>
 
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <StaggerGroup className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {serviceCategories.map((category, i) => (
               <CategoryCard key={category.slug} category={category} index={i} />
             ))}
 
-            <Reveal delay={serviceCategories.length * 60} className="h-full">
+            <div data-stagger className="h-full">
               <div className="on-navy rule-accent-top flex h-full flex-col justify-between bg-navy-800 p-6 text-white">
                 <div>
                   <h3 className="font-display text-[22px] font-bold uppercase leading-tight">
@@ -167,8 +168,8 @@ export default function HomePage() {
                   </Button>
                 </div>
               </div>
-            </Reveal>
-          </div>
+            </div>
+          </StaggerGroup>
         </div>
       </section>
 

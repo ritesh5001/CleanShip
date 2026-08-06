@@ -20,6 +20,7 @@
 
 @theme {
   /* ---- Navy — hulls, section bands, footer, photo scrims ---- */
+  --color-abyss-950: #03101f; /* deepest plate — full-bleed dramatic sections */
   --color-navy-900: #06203a;
   --color-navy-800: #0a2e52;
   --color-navy-700: #0e3d6b;
@@ -36,7 +37,11 @@
   /* ---- Aqua — clean-water accent. Rationed: rules, active states ---- */
   --color-aqua-600: #00929b;
   --color-aqua-500: #00b0b9;
+  --color-aqua-400: #22d3d9; /* electric edge — motion trails, live indicators */
   --color-aqua-200: #9de3e7;
+
+  /* ---- Ice — barely-there tint for alternating bands ---- */
+  --color-ice-50: #f4f9fd;
 
   /* ---- Neutrals — strictly cool, never warm ---- */
   --color-ink-900: #0f1c27;
@@ -96,6 +101,17 @@
   --section-y: 96px;
   --section-y-tight: 64px;
   --control-h: 44px;
+
+  /* Fluid display scale. Editorial-scale type is the main lever for a modern
+     feel that costs nothing in performance or legibility — it scales with the
+     viewport instead of stepping at breakpoints. Minimums stay generous
+     because the audience is 40+ professionals on real monitors. */
+  --fs-mega: clamp(46px, 8.2vw, 132px);
+  --fs-display: clamp(38px, 5.6vw, 88px);
+  --fs-h1: clamp(32px, 4.4vw, 60px);
+  --fs-h2: clamp(27px, 3.2vw, 44px);
+  --fs-h3: clamp(21px, 1.9vw, 28px);
+  --fs-lead: clamp(17px, 1.35vw, 21px);
 
   --focus-ring: 0 0 0 3px rgba(27, 123, 196, 0.35);
   --focus-ring-on-dark: 0 0 0 3px rgba(157, 227, 231, 0.45);
@@ -304,6 +320,99 @@
 
   .group:hover .photo-frame > .photo-inner {
     transform: scale(1.04);
+  }
+
+  /* ---- Fluid display roles ---------------------------------------- */
+  .text-mega {
+    font-size: var(--fs-mega);
+    line-height: 0.92;
+    letter-spacing: -0.005em;
+  }
+  .text-display {
+    font-size: var(--fs-display);
+    line-height: 0.98;
+  }
+  .text-h1 {
+    font-size: var(--fs-h1);
+    line-height: 1.04;
+  }
+  .text-h2 {
+    font-size: var(--fs-h2);
+    line-height: 1.08;
+  }
+  .text-h3 {
+    font-size: var(--fs-h3);
+    line-height: 1.18;
+  }
+  .text-lead {
+    font-size: var(--fs-lead);
+    line-height: 1.6;
+  }
+
+  /* Oversized index numeral — the brochure's numbered-contents device,
+     pushed up in scale. Mono keeps the digits from wobbling as they animate. */
+  .num-index {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  /* Hairline used to separate editorial rows. */
+  .hairline {
+    border-top: 1px solid var(--color-line-200);
+  }
+  .on-navy .hairline {
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+
+  /* Link with an underline that wipes in from the left on hover. Uses
+     transform on a pseudo-element, so it never triggers layout. */
+  .link-wipe {
+    position: relative;
+  }
+  .link-wipe::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--dur-base) var(--ease-standard);
+  }
+  .link-wipe:hover::after,
+  .link-wipe:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* Scroll-progress rail, driven by GSAP ScrollTrigger on service pages. */
+  .progress-rail {
+    transform-origin: left center;
+    transform: scaleX(0);
+    will-change: transform;
+  }
+
+  /* Marquee track. Duplicated content + 50% translation = seamless loop. */
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 42s linear infinite;
+  }
+  @keyframes marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+  .marquee-mask {
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   }
 
   /* Scroll reveal — a fade with a 12px lift, per the Subtle motion tier.

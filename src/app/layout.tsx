@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { JsonLd } from "@/components/json-ld";
+import { ScrollTriggerRefresh } from "@/components/motion/scroll-fx";
 import { BASE_URL, organizationSchema, websiteSchema } from "@/lib/seo";
 import { siteConfig } from "@/lib/site";
 
@@ -129,6 +130,11 @@ export default function RootLayout({
         >
           Skip to content
         </a>
+
+        {/* ScrollTrigger caches document height on creation; after a
+            client-side route change those measurements describe the previous
+            page. This re-measures once the new route has painted. */}
+        <ScrollTriggerRefresh />
 
         <SiteHeader />
         <main id="main">{children}</main>
