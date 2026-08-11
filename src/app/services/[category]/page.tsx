@@ -8,6 +8,7 @@ import { ServiceCard } from "@/components/service-cards";
 import { JsonLd } from "@/components/json-ld";
 import { SectionHeading } from "@/components/ui";
 import { getCategory, serviceCategories } from "@/lib/services";
+import { heroMediaFor } from "@/lib/service-media";
 import {
   breadcrumbSchema,
   buildMetadata,
@@ -65,6 +66,7 @@ export default async function CategoryPage({ params }: Params) {
         title={category.name}
         description={category.summary}
         trail={trail}
+        media={heroMediaFor(category.slug)}
       />
 
       {/* ---------- Introduction ---------- */}

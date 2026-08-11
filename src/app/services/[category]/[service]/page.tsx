@@ -15,6 +15,7 @@ import { Button, CheckList } from "@/components/ui";
 import { ArrowIcon, CategoryIcon, PhoneIcon } from "@/components/icons";
 import { allServicePaths, getService, relatedServices } from "@/lib/services";
 import { siteConfig } from "@/lib/site";
+import { heroMediaFor } from "@/lib/service-media";
 import {
   breadcrumbSchema,
   buildMetadata,
@@ -85,6 +86,7 @@ export default async function ServicePage({ params }: Params) {
         title={service.name}
         description={service.tagline}
         trail={trail}
+        media={heroMediaFor(category.slug, service.slug)}
       />
 
       <section className="bg-white">
