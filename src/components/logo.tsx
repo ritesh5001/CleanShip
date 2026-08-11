@@ -33,7 +33,10 @@ export function Logo({
       width={950}
       height={250}
       priority={priority}
-      className={`h-auto w-auto ${className}`}
+      /* Sizing comes entirely from `className` — a hardcoded `h-auto` here
+         collided with the caller's `h-9`, and Tailwind resolves same-specificity
+         conflicts by stylesheet order, not class order. */
+      className={className}
       style={onNavy ? { filter: "brightness(0) invert(1)" } : undefined}
     />
   );
