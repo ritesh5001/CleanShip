@@ -50,671 +50,7 @@ export type IconKey =
 
 export const serviceCategories: ServiceCategory[] = [
   /* ------------------------------------------------------------------ */
-  /* 1. HOLD CLEANING                                                    */
-  /* ------------------------------------------------------------------ */
-  {
-    slug: "hold-cleaning",
-    name: "Hold Cleaning",
-    icon: "hold",
-    seoTitle: "Cargo Hold Cleaning Services | Bulk Carriers & Container Ships",
-    metaDescription:
-      "Professional cargo hold cleaning for bulk carriers and container ships. Shore gangs, riding crews and rope access teams delivering grain-clean and hold-inspection-ready results worldwide.",
-    tagline: "Grain-clean holds, on schedule, first inspection",
-    summary:
-      "Shore gangs, riding crews and rope access teams that take cargo holds from previous-cargo dirty to grain-clean and inspection-ready.",
-    keywords: [
-      "cargo hold cleaning",
-      "hold cleaning services",
-      "grain clean holds",
-      "bulk carrier hold cleaning",
-      "hold cleaning company UAE",
-    ],
-    intro: [
-      "A failed hold inspection is one of the most expensive delays a bulk carrier can suffer. Cleanship exists to make sure that call never comes. We prepare cargo holds to the standard your next fixture demands — whether that is normal clean, grain clean, or the hospital-clean condition required for sensitive cargoes.",
-      "Our teams mobilise to vessels at anchorage, alongside, or under way. We arrive with our own chemicals, high-pressure equipment, staging and PPE, and we work to a documented procedure that satisfies both the surveyor and the port's environmental regime.",
-    ],
-    faqs: [
-      {
-        q: "What cleanliness standards do you work to?",
-        a: "We routinely deliver normal clean, grain clean and hospital clean conditions. The target standard is agreed before mobilisation and confirmed against the charterer's or surveyor's requirements so there is no ambiguity at inspection.",
-      },
-      {
-        q: "Can hold cleaning be carried out while the vessel is on passage?",
-        a: "Yes. Our riding crews join at one port and work throughout the sea passage, so the vessel arrives at the load port already inspection-ready. This is usually the fastest and most economical option.",
-      },
-      {
-        q: "Do you handle the residue and washwater disposal?",
-        a: "We follow MARPOL Annex V and the receiving port's regulations. Residues are collected, bagged and landed to an approved reception facility, with documentation provided for the vessel's records.",
-      },
-    ],
-    services: [
-      {
-        slug: "shore-gang",
-        name: "Hold Cleaning Shore Gang",
-        seoTitle: "Hold Cleaning Shore Gang | Fast In-Port Cargo Hold Cleaning",
-        metaDescription:
-          "Experienced hold cleaning shore gangs mobilised to your berth or anchorage. High-volume cargo hold cleaning between discharge and load, completed within the port stay.",
-        tagline: "Full crews, mobilised to your berth or anchorage",
-        summary:
-          "Large shore-based teams that clean every hold inside the port stay, between discharge and next load.",
-        keywords: [
-          "hold cleaning shore gang",
-          "shore gang cargo hold cleaning",
-          "in port hold cleaning",
-        ],
-        intro: [
-          "When the schedule is tight and every hold has to be ready before the next fixture, volume of labour is what wins. Our shore gangs put a full complement of trained cleaners on board the moment the last grab lifts, so cleaning runs in parallel with your other port operations rather than after them.",
-          "Gang size is matched to the number of holds, the previous cargo and the hours available. We bring our own high-pressure units, chemicals, lighting and safety equipment, so nothing is drawn from the ship's stores or the crew's working hours.",
-        ],
-        highlights: [
-          "Gangs scaled to the vessel — from 6 to 40+ cleaners",
-          "Mobilisation at berth, anchorage or during STS operations",
-          "Own equipment, chemicals, lighting and PPE",
-          "Sweeping, washing, rinsing and drying in one continuous sequence",
-          "Hold inspection attended and defects rectified on the spot",
-        ],
-        scope: [
-          {
-            title: "Sweeping and residue removal",
-            body: "Full manual and mechanical sweep of tank tops, hoppers, brackets and frames, with residues bagged for landing ashore in line with MARPOL Annex V.",
-          },
-          {
-            title: "High-pressure washing",
-            body: "Fresh or sea water washing at working pressures suited to the coating condition, covering tank top, hopper plating, side frames, bulkheads and the underside of hatch covers.",
-          },
-          {
-            title: "Chemical treatment",
-            body: "Application of marine-approved, biodegradable degreasers and hold cleaners where previous cargoes have left oily, staining or odour-bearing residues.",
-          },
-          {
-            title: "Rinsing and drying",
-            body: "Fresh water rinse to remove salt and chemical traces, followed by forced drying and bilge drying so holds present dry, odour-free and free of loose scale.",
-          },
-          {
-            title: "Bilge wells and hatch coamings",
-            body: "Bilge wells cleaned, strainers cleared and non-return valves tested; coamings, drain channels and compression bars cleaned so hatch covers seal correctly.",
-          },
-        ],
-        process: [
-          {
-            title: "Pre-arrival briefing",
-            body: "We confirm previous cargo, next cargo, required standard, coating condition and available working window with the master and superintendent.",
-          },
-          {
-            title: "Mobilisation and safety",
-            body: "Gang boards with a toolbox talk, enclosed-space entry permits, gas readings and rescue arrangements agreed with the ship's command.",
-          },
-          {
-            title: "Cleaning sequence",
-            body: "Holds are worked in a planned order so drying time is maximised and completed holds are never re-contaminated by adjacent work.",
-          },
-          {
-            title: "Inspection and handover",
-            body: "We attend the surveyor's inspection, rectify any observations immediately, and hand over a photographic completion report.",
-          },
-        ],
-        appliesTo: [
-          "Bulk carriers",
-          "Container ships",
-          "General cargo vessels",
-          "Self-unloaders",
-        ],
-        faqs: [
-          {
-            q: "How quickly can a shore gang mobilise?",
-            a: "In our core UAE ports we typically mobilise within 12 to 24 hours of firm nomination. For other ports we advise a realistic mobilisation window at the time of quoting rather than promising a figure we cannot hold.",
-          },
-          {
-            q: "Does the ship's crew need to assist?",
-            a: "No. The gang is self-sufficient in labour, equipment and consumables. We only ask the ship for standard support such as access, power where available, and permission-to-work coordination.",
-          },
-        ],
-      },
-      {
-        slug: "riding-crew",
-        name: "Hold Cleaning Riding Crew",
-        seoTitle: "Hold Cleaning Riding Crew | Cleaning During Sea Passage",
-        metaDescription:
-          "Certified hold cleaning riding crews that sail with your vessel and clean cargo holds on passage, so the ship arrives at the load port grain-clean and inspection-ready.",
-        tagline: "Cleaning that happens while you are already earning",
-        summary:
-          "Certified teams that sail with the vessel and complete every hold on passage — zero port time lost.",
-        keywords: [
-          "hold cleaning riding crew",
-          "riding squad hold cleaning",
-          "cleaning during sea passage",
-        ],
-        intro: [
-          "The most economical hold cleaning is the cleaning that costs you no port time at all. Our riding crews join at the discharge port, sail with the vessel, and work through the ballast passage so the holds are finished before the load port pilot is even ordered.",
-          "Riding crews carry full seafarer documentation, medicals and flag-state paperwork, and integrate with the ship's safety management system from the moment they board. They work under the master's authority and to the ship's permit-to-work regime throughout.",
-        ],
-        highlights: [
-          "Vessel loses zero commercial time to cleaning",
-          "Fully documented seafarers — STCW, medicals, visas, flag endorsements",
-          "Work continues in transit, weather and sea state permitting",
-          "Team sizes from 4 to 20 depending on holds and passage length",
-          "Crew can disembark at the load port or continue for further voyages",
-        ],
-        scope: [
-          {
-            title: "Passage planning of the cleaning programme",
-            body: "The cleaning sequence is planned against the passage length, expected weather and ballast condition so every hold is completed with drying time in hand.",
-          },
-          {
-            title: "Complete hold preparation",
-            body: "Sweeping, washing, chemical treatment, rinsing and drying of all cargo holds to the agreed standard, exactly as delivered by a shore gang.",
-          },
-          {
-            title: "Hatch cover and coaming work",
-            body: "Cleaning of compression bars, drain channels and gaskets, with defects reported to the chief officer for rectification before loading.",
-          },
-          {
-            title: "Bilge and drainage systems",
-            body: "Bilge wells emptied and cleaned, strainers cleared and non-return valves tested so holds pass the water-ingress checks at inspection.",
-          },
-          {
-            title: "Additional deck work",
-            body: "Where the passage allows, the crew can extend to deck chipping, spot priming and painting under the same mobilisation.",
-          },
-        ],
-        process: [
-          {
-            title: "Documentation and clearance",
-            body: "We prepare crew documents, flag-state approvals, visas and P&I notifications well ahead of the join port so boarding is never the bottleneck.",
-          },
-          {
-            title: "Joining and familiarisation",
-            body: "The crew boards, completes ship familiarisation and safety induction, and agrees the working programme with the chief officer.",
-          },
-          {
-            title: "Cleaning on passage",
-            body: "Work proceeds hold by hold under the ship's permit-to-work system, with daily progress reported to the master and to your office.",
-          },
-          {
-            title: "Completion and disembarkation",
-            body: "Holds are presented for the master's inspection, a photographic report is issued, and the crew disembarks at the agreed port.",
-          },
-        ],
-        appliesTo: [
-          "Bulk carriers on ballast passage",
-          "Container ships",
-          "General cargo vessels",
-          "Vessels between long-haul fixtures",
-        ],
-        faqs: [
-          {
-            q: "How long does a riding crew need on passage?",
-            a: "As a guide, a Supramax with five holds and a normal previous cargo is comfortably completed on a five to seven day passage with a crew of eight. Difficult cargoes such as cement, sulphur or petcoke need longer, and we will say so at quoting stage rather than under-crewing the job.",
-          },
-          {
-            q: "Who is responsible for the riding crew on board?",
-            a: "The crew works under the master's overall authority and within the ship's safety management system, while remaining our employees for contractual, payroll, insurance and welfare purposes.",
-          },
-          {
-            q: "What happens if the weather stops work?",
-            a: "Safety governs. Work in holds stops when sea state or motion makes it unsafe, and the programme is rebalanced across the remaining passage. We build realistic weather allowance into the plan from the start.",
-          },
-        ],
-      },
-      {
-        slug: "rope-access",
-        name: "Hold Cleaning Rope Access",
-        seoTitle: "Rope Access Hold Cleaning | IRATA Teams for Ships",
-        metaDescription:
-          "IRATA-certified rope access teams for cargo hold cleaning, inspection and coating work at height. Safe access to upper frames, bulkheads and hatch structures without staging.",
-        tagline: "Every surface reachable — without a single stage board",
-        summary:
-          "IRATA-certified technicians reaching upper frames, bulkheads and overheads without scaffolding or cherry pickers.",
-        keywords: [
-          "rope access hold cleaning",
-          "IRATA marine rope access",
-          "cargo hold cleaning at height",
-        ],
-        intro: [
-          "The parts of a cargo hold that fail inspection are almost always the parts nobody could reach. Upper side frames, the underside of hatch covers, transverse bulkhead stiffeners and the hold overhead sit far beyond the reach of deck-level equipment, and building staging for them consumes days the schedule rarely has.",
-          "Rope access solves it. Our IRATA-certified technicians descend from anchor points at the coaming and work the full height of the hold with hand tools, lances and inspection equipment. There is no scaffolding to erect, no cherry picker to land on board, and no hold left half-prepared because access ran out.",
-        ],
-        highlights: [
-          "IRATA Level 1, 2 and 3 certified technicians",
-          "No staging, scaffolding or heavy access equipment required",
-          "Full-height access to frames, bulkheads and hold overheads",
-          "Combined cleaning, close-up inspection and spot coating in one descent",
-          "Independent rigging and rescue plan for every work site",
-        ],
-        scope: [
-          {
-            title: "Upper frame and bulkhead cleaning",
-            body: "Washing and residue removal on upper side frames, brackets, stiffeners and transverse bulkheads that deck-level equipment cannot reach.",
-          },
-          {
-            title: "Hold overhead and hatch underside",
-            body: "Cleaning of the hold overhead, hatch cover undersides and coaming internals, where cargo dust and previous-cargo residue routinely accumulate.",
-          },
-          {
-            title: "Close-up visual inspection",
-            body: "Structural condition, coating breakdown and corrosion recorded at height with photographs, giving you inspection-quality data as a by-product of the clean.",
-          },
-          {
-            title: "Spot preparation and coating",
-            body: "Localised descaling, surface preparation and touch-up coating applied at height, so identified breakdown is treated in the same mobilisation.",
-          },
-          {
-            title: "Rigging, rescue and supervision",
-            body: "Every work site is rigged with independent working and backup lines under a Level 3 supervisor, with a documented rescue plan in place before the first descent.",
-          },
-        ],
-        process: [
-          {
-            title: "Access survey and rigging plan",
-            body: "We assess anchor points, hold geometry and obstructions, then produce a rigging and rescue plan specific to the vessel.",
-          },
-          {
-            title: "Permits and safety brief",
-            body: "Enclosed-space entry, work-at-height and hot-work permits are raised with the ship, and the rescue arrangement is briefed to all parties.",
-          },
-          {
-            title: "Rope access work",
-            body: "Technicians work in pairs under Level 3 supervision, descending in planned passes so no area is missed and progress is auditable.",
-          },
-          {
-            title: "Reporting",
-            body: "A photographic report is issued covering work completed and any structural or coating defects observed at height.",
-          },
-        ],
-        appliesTo: [
-          "Deep-hold bulk carriers",
-          "Container ships and cell guides",
-          "Vessels with restricted staging access",
-          "Combined cleaning and inspection scopes",
-        ],
-        faqs: [
-          {
-            q: "Is rope access safe inside a cargo hold?",
-            a: "It is a highly controlled method. Technicians work on two independent ropes under a Level 3 supervisor, with a rescue plan agreed before work starts and enclosed-space entry procedures running in parallel. IRATA's published incident record compares very favourably with staging-based access.",
-          },
-          {
-            q: "Can rope access replace scaffolding entirely?",
-            a: "For cleaning, inspection and localised coating work, usually yes. For large-area blasting or steel renewal that needs a stable working platform, staging is still the right tool and we will tell you so.",
-          },
-        ],
-      },
-    ],
-  },
-
-  /* ------------------------------------------------------------------ */
-  /* 2. TANK CLEANING                                                    */
-  /* ------------------------------------------------------------------ */
-  {
-    slug: "tank-cleaning",
-    name: "Tank Cleaning",
-    icon: "tank",
-    seoTitle: "Marine Tank Cleaning Services | Oil Tankers & Shore Tanks",
-    metaDescription:
-      "Certified marine tank cleaning for oil tankers carrying DPP and CPP cargoes, plus demucking, shore tank cleaning and offshore vessel tanks. Gas-free, sludge disposal and entry certification.",
-    tagline: "Gas-free, entry-ready, certified",
-    summary:
-      "Cargo and slop tank cleaning for DPP and CPP trades, demucking, shore terminal tanks and offshore vessel tankage.",
-    keywords: [
-      "tank cleaning services",
-      "oil tanker tank cleaning",
-      "marine tank cleaning UAE",
-      "sludge removal vessel",
-    ],
-    intro: [
-      "Tank cleaning is where marine cleaning stops being housekeeping and becomes a safety-critical operation. Hydrocarbon vapour, oxygen deficiency, residual toxicity and confined geometry combine into a job that punishes shortcuts, and we treat it accordingly.",
-      "Cleanship cleans cargo tanks, slop tanks, bunker tanks, cofferdams and shore terminal tanks — from a simple grade change to a full gas-free-for-hot-work certification ahead of dry dock. Every operation runs under a written procedure with continuous atmospheric monitoring and a standby rescue team.",
-    ],
-    faqs: [
-      {
-        q: "Do you provide gas-free certification?",
-        a: "We prepare the tank to the required condition and coordinate with an independent, accredited marine chemist or competent person who issues the certificate. Keeping certification independent of the contractor doing the cleaning is the correct arrangement and we do not deviate from it.",
-      },
-      {
-        q: "How is sludge and slop disposed of?",
-        a: "Recovered sludge, slops and oily residues are transferred to approved reception facilities or licensed waste contractors, with manifests and disposal certificates provided for the vessel's MARPOL records.",
-      },
-      {
-        q: "Can you clean tanks between different cargo grades?",
-        a: "Yes. Grade-change cleaning is planned against the previous and next cargo specification, the wall-wash requirement and the charterer's acceptance criteria, then verified by test before the tank is presented.",
-      },
-    ],
-    services: [
-      {
-        slug: "oil-tanker-dpp-cpp",
-        name: "Oil Tanker Cleaning — DPP & CPP",
-        seoTitle: "Oil Tanker Tank Cleaning | DPP & CPP Grade Change",
-        metaDescription:
-          "Cargo tank cleaning for oil tankers in DPP and CPP trades. Crude oil washing support, grade-change cleaning, wall wash preparation, gas-freeing and slop handling.",
-        tagline: "Crude, fuel oil or clean products — cleaned to specification",
-        summary:
-          "Cargo tank cleaning for dirty and clean petroleum product trades, including grade changes and wall-wash preparation.",
-        keywords: [
-          "DPP tank cleaning",
-          "CPP tank cleaning",
-          "oil tanker cargo tank cleaning",
-          "wall wash preparation",
-        ],
-        intro: [
-          "Dirty petroleum product and clean petroleum product trades demand very different things from a tank cleaning contractor. DPP work is a fight against heavy residue, wax and sludge. CPP work is a fight against the last few parts per million of contamination standing between you and a passed wall wash.",
-          "We do both, and we plan each one from the cargo pair rather than from a generic procedure. The previous cargo, the nominated cargo, the coating condition and the charterer's acceptance criteria determine the wash media, temperature, cycle count and verification method before a single machine is dropped.",
-        ],
-        highlights: [
-          "DPP: crude, fuel oil, bitumen and heavy residue removal",
-          "CPP: gasoil, jet, naphtha and chemical-grade preparation",
-          "Crude oil washing support and post-COW hand hosing",
-          "Wall wash preparation to hydrocarbon and colour test criteria",
-          "Slop consolidation, decanting and disposal documentation",
-        ],
-        scope: [
-          {
-            title: "Pre-clean assessment",
-            body: "Cargo history, tank coating condition, heating coil status and the next cargo specification are reviewed to fix the cleaning method and realistic acceptance criteria.",
-          },
-          {
-            title: "Machine washing",
-            body: "Fixed and portable tank cleaning machines run to a calculated cycle programme, using hot or cold sea water, fresh water and approved chemicals as the cargo pair requires.",
-          },
-          {
-            title: "Hand hosing and manual finishing",
-            body: "Bellmouths, suction wells, framing, heating coils and structural shadows are hand-hosed and manually finished — the areas machines geometrically cannot reach.",
-          },
-          {
-            title: "Draining, mopping and drying",
-            body: "Tanks are stripped, mopped and dried so no free water or residue remains to contaminate the next grade or skew the wall wash result.",
-          },
-          {
-            title: "Gas-freeing and verification",
-            body: "Ventilation to safe-for-entry or gas-free-for-hot-work condition, with continuous monitoring and independent certification arranged where required.",
-          },
-        ],
-        process: [
-          {
-            title: "Method statement and risk assessment",
-            body: "A cargo-pair-specific procedure, JSA and permit package is agreed with the vessel and, where applicable, the charterer's inspector.",
-          },
-          {
-            title: "Washing and stripping",
-            body: "Machine cycles run to plan with stripping, recirculation and slop management controlled throughout the operation.",
-          },
-          {
-            title: "Manual finishing and inspection",
-            body: "Teams enter under full enclosed-space procedure to finish shadow areas and confirm the tank visually before testing.",
-          },
-          {
-            title: "Testing and presentation",
-            body: "Wall wash or visual inspection is carried out with the surveyor, and the tank is presented for acceptance with full documentation.",
-          },
-        ],
-        appliesTo: [
-          "Crude oil tankers (VLCC, Suezmax, Aframax)",
-          "Product tankers (MR, LR1, LR2)",
-          "Chemical and IMO II/III tankers",
-          "Bunker barges and small tankers",
-        ],
-        faqs: [
-          {
-            q: "Can you guarantee a passed wall wash?",
-            a: "No contractor honestly can, because the result also depends on coating age and condition, the previous cargo history and the inspector's criteria. What we do guarantee is that the method is correct for the cargo pair, that we will tell you before mobilisation if the tank condition makes the target unrealistic, and that we will keep working until the agreed standard is met or the limiting factor is clearly identified.",
-          },
-          {
-            q: "Do you supply the tank cleaning chemicals?",
-            a: "Yes. We supply marine-approved cleaning chemicals with current safety data sheets, selected for the cargo pair and compatible with the tank coating system.",
-          },
-        ],
-      },
-      {
-        slug: "demucking",
-        name: "Demucking",
-        seoTitle: "Tank Demucking Services | Sludge & Residue Removal",
-        metaDescription:
-          "Manual and mechanical tank demucking for oil tankers and bulk carriers. Removal of sludge, scale, wax and solid residue from cargo tanks, slop tanks and bunker tanks.",
-        tagline: "The heavy residue that washing alone will not lift",
-        summary:
-          "Manual and mechanical removal of sludge, scale and solid residue from tanks before survey, repair or grade change.",
-        keywords: [
-          "tank demucking",
-          "sludge removal tanker",
-          "mucking out cargo tanks",
-        ],
-        intro: [
-          "After enough voyages, every tank accumulates material that no cleaning machine will move — settled sludge, oxidised wax, rust scale and cargo solids compacted around bellmouths, framing and suction wells. Demucking is the physical removal of that material, and it is the step that usually stands between a tank and a class survey or a hot-work permit.",
-          "Our teams work under full enclosed-space entry procedure with continuous gas monitoring, forced ventilation and a standby rescue team. Material is bagged or pumped out, quantified, and landed to an approved reception facility with full disposal documentation.",
-        ],
-        highlights: [
-          "Manual mucking of sludge, wax, scale and cargo solids",
-          "Vacuum and pump-out recovery for pumpable residues",
-          "Full enclosed-space entry regime with standby rescue",
-          "Quantified removal with disposal manifests",
-          "Prepares tanks for survey, repair or hot work",
-        ],
-        scope: [
-          {
-            title: "Tank entry preparation",
-            body: "Ventilation, gas testing, lighting, access rigging and rescue arrangements are established before any entry is authorised.",
-          },
-          {
-            title: "Manual residue removal",
-            body: "Sludge, wax and scale are removed by hand from tank bottoms, suction wells, bellmouths, heating coils and structural pockets.",
-          },
-          {
-            title: "Vacuum and pump-out",
-            body: "Pumpable residues are recovered by vacuum unit or portable pump directly to slop tanks, road tankers or barges.",
-          },
-          {
-            title: "Scale and hard deposit removal",
-            body: "Adhered rust scale and hardened deposits are removed by scraping, chipping or hydroblasting where the coating system permits.",
-          },
-          {
-            title: "Waste handling and documentation",
-            body: "Recovered material is quantified, transferred to licensed reception facilities and documented with manifests for the vessel's MARPOL records.",
-          },
-        ],
-        process: [
-          {
-            title: "Assessment and quantification",
-            body: "Tank condition is surveyed and the residue volume estimated so manpower, equipment and disposal capacity are correctly sized.",
-          },
-          {
-            title: "Permit and entry setup",
-            body: "Enclosed-space entry permits are raised, ventilation established and atmosphere confirmed and continuously monitored.",
-          },
-          {
-            title: "Removal operations",
-            body: "Teams work in controlled rotations with an attendant at the entry point and rescue equipment rigged and manned.",
-          },
-          {
-            title: "Final clean and handover",
-            body: "The tank is washed down, drained and presented for inspection, with disposal documentation issued.",
-          },
-        ],
-        appliesTo: [
-          "Crude and product tankers",
-          "Bunker and slop tanks",
-          "Bulk carrier ballast and void spaces",
-          "Pre-drydock and pre-survey preparation",
-        ],
-        faqs: [
-          {
-            q: "How long does demucking take?",
-            a: "It scales with residue volume rather than tank size. A lightly fouled tank may take a shift; heavily compacted sludge in a large crude tank can run several days with multiple rotating teams. We survey first and quote against an estimated volume rather than a flat guess.",
-          },
-          {
-            q: "Is hot work possible immediately after demucking?",
-            a: "Not automatically. Demucking removes the material, but hot work requires a gas-free-for-hot-work certificate issued by a competent person after testing, which we arrange as a separate and independent step.",
-          },
-        ],
-      },
-      {
-        slug: "shore-tank-cleaning",
-        name: "Shore Tank Cleaning",
-        seoTitle: "Shore Tank Cleaning | Terminal & Storage Tank Services",
-        metaDescription:
-          "Storage and terminal tank cleaning for oil and chemical facilities. Sludge removal, gas-freeing, confined space entry and inspection preparation for API 653 and statutory surveys.",
-        tagline: "Terminal tanks turned around for inspection and service",
-        summary:
-          "Storage tank cleaning at terminals and depots, prepared for internal inspection, repair or product change.",
-        keywords: [
-          "shore tank cleaning",
-          "storage tank cleaning",
-          "terminal tank cleaning UAE",
-          "API 653 inspection preparation",
-        ],
-        intro: [
-          "Shore tanks come out of service for a reason — a statutory internal inspection, a product change, a repair, or a decommissioning. Whichever it is, the tank has to go from full of product to safe, clean and open for entry, and every day of that transition is a day of lost storage revenue.",
-          "We work to a written, client-approved procedure covering product removal, sludge recovery, washing, gas-freeing and waste disposal, so the tank is handed to the inspector or contractor in a condition that lets them start immediately rather than waiting on rework.",
-        ],
-        highlights: [
-          "Crude, product, chemical and vegetable oil storage tanks",
-          "Sludge recovery with volume reduction and oil recovery options",
-          "Gas-freeing to safe-for-entry and hot-work conditions",
-          "Confined space entry teams with standby rescue",
-          "Prepared for API 653 internal inspection and statutory survey",
-        ],
-        scope: [
-          {
-            title: "Product and residue removal",
-            body: "Remaining product is stripped and transferred, and pumpable sludge is recovered to nominated tankage or road tankers.",
-          },
-          {
-            title: "Sludge treatment and oil recovery",
-            body: "Where volumes justify it, sludge is treated to recover saleable hydrocarbon and reduce the mass sent to disposal.",
-          },
-          {
-            title: "Washing and degreasing",
-            body: "Shell, floor, roof structure and internal fittings are washed and degreased to the standard required by the next activity.",
-          },
-          {
-            title: "Gas-freeing and monitoring",
-            body: "Forced ventilation to safe-for-entry or gas-free-for-hot-work condition, with continuous atmospheric monitoring throughout occupancy.",
-          },
-          {
-            title: "Inspection preparation",
-            body: "Floor plates, annular rings, weld seams and roof supports are cleaned to a condition that allows meaningful thickness measurement and visual inspection.",
-          },
-        ],
-        process: [
-          {
-            title: "Procedure and permits",
-            body: "A site-specific method statement, risk assessment and permit package is agreed with the terminal's HSE function before mobilisation.",
-          },
-          {
-            title: "Isolation and de-inventory",
-            body: "The tank is isolated, blinded and de-inventoried under the terminal's lock-out procedures.",
-          },
-          {
-            title: "Cleaning and gas-freeing",
-            body: "Sludge recovery, washing and ventilation proceed to plan under continuous monitoring and confined-space control.",
-          },
-          {
-            title: "Handover for inspection",
-            body: "The tank is presented clean, dry and certified for entry, with waste manifests and a completion report issued.",
-          },
-        ],
-        appliesTo: [
-          "Crude and product storage tanks",
-          "Chemical and vegetable oil tanks",
-          "Bunker and lube oil depots",
-          "Free zone and terminal facilities",
-        ],
-        faqs: [
-          {
-            q: "Do you work to the terminal's permit system or your own?",
-            a: "Always the terminal's. Our procedures are written to integrate with the site's permit-to-work, isolation and emergency response arrangements, not to run alongside them.",
-          },
-          {
-            q: "Can cleaning be done without man entry?",
-            a: "For some tanks, non-man-entry techniques using automated equipment and recirculation are viable and reduce risk considerably. Whether that applies depends on tank geometry, sludge character and what the next activity requires, and we will assess it at survey.",
-          },
-        ],
-      },
-      {
-        slug: "offshore-vessel-tank-cleaning",
-        name: "Offshore Vessel Tank Cleaning",
-        seoTitle: "Offshore Vessel Tank Cleaning | OSV, PSV & Barge Tanks",
-        metaDescription:
-          "Tank cleaning for offshore support vessels, platform supply vessels and barges. Mud, brine, base oil and drill water tanks cleaned for cargo change, survey or layup.",
-        tagline: "Mud, brine and base oil tanks turned around fast",
-        summary:
-          "Cleaning of mud, brine, base oil and drill water tanks on OSVs, PSVs and offshore barges.",
-        keywords: [
-          "offshore vessel tank cleaning",
-          "OSV tank cleaning",
-          "PSV mud tank cleaning",
-          "brine tank cleaning",
-        ],
-        intro: [
-          "Offshore support vessels carry a product mix that no conventional tanker deals with — drilling mud, brine, base oil, drill water, cement and completion fluids, often in the same voyage cycle. Cross-contamination between them is expensive, and the turnaround windows between charters are short.",
-          "We clean OSV and PSV tankage for cargo change, class survey, layup or reactivation, working to the vessel's and the charterer's cleanliness criteria and handling the recovered fluid streams with the documentation the operator's HSE regime requires.",
-        ],
-        highlights: [
-          "Mud, brine, base oil, drill water and cement tanks",
-          "Cargo-change cleaning between incompatible fluids",
-          "Preparation for class survey and coating inspection",
-          "Layup preparation and reactivation cleaning",
-          "Recovered fluids handled with full disposal documentation",
-        ],
-        scope: [
-          {
-            title: "Fluid recovery and stripping",
-            body: "Residual mud, brine and base oil are recovered and transferred to nominated tanks, road tankers or shore reception.",
-          },
-          {
-            title: "Tank washing",
-            body: "Machine and manual washing appropriate to the fluid type, with particular attention to settled solids in mud and cement tanks.",
-          },
-          {
-            title: "Line and pump flushing",
-            body: "Associated pipework, pumps and manifolds are flushed so cross-contamination does not reappear from the system after the tank is clean.",
-          },
-          {
-            title: "Survey preparation",
-            body: "Tanks are cleaned and dried to a condition suitable for coating inspection and class survey attendance.",
-          },
-          {
-            title: "Waste management",
-            body: "Recovered fluids and solids are consolidated and landed to licensed facilities with manifests issued.",
-          },
-        ],
-        process: [
-          {
-            title: "Scope and fluid assessment",
-            body: "Previous and next cargo, tank arrangement and system layout are reviewed to set the cleaning standard and method.",
-          },
-          {
-            title: "Mobilisation",
-            body: "Teams, pumps, vacuum units and consumables are mobilised to the quay or offshore base within the vessel's window.",
-          },
-          {
-            title: "Cleaning and flushing",
-            body: "Tanks and associated systems are cleaned under enclosed-space entry control with continuous monitoring.",
-          },
-          {
-            title: "Acceptance",
-            body: "Tanks are presented to the vessel, charterer or surveyor, with completion and disposal documentation issued.",
-          },
-        ],
-        appliesTo: [
-          "Platform supply vessels (PSV)",
-          "Offshore support vessels (OSV)",
-          "Anchor handling tugs (AHTS)",
-          "Offshore and accommodation barges",
-        ],
-        faqs: [
-          {
-            q: "Can you work at an offshore base rather than a commercial quay?",
-            a: "Yes. We regularly mobilise to offshore supply bases and work within the base operator's HSE and permit regime.",
-          },
-          {
-            q: "How is cross-contamination between charters prevented?",
-            a: "By cleaning the system, not just the tank. Pipework, pumps and manifolds retain residue that will re-contaminate a clean tank on the first transfer, so line flushing is part of the standard scope rather than an extra.",
-          },
-        ],
-      },
-    ],
-  },
-
-  /* ------------------------------------------------------------------ */
-  /* 3. HULL CLEANING                                                    */
+  /* 1. HULL CLEANING                                                    */
   /* ------------------------------------------------------------------ */
   {
     slug: "hull-cleaning",
@@ -1145,6 +481,670 @@ export const serviceCategories: ServiceCategory[] = [
           {
             q: "How far in advance should UWILD be arranged?",
             a: "Earlier than most people expect. Class liaison, surveyor availability, port approval and a suitable weather and water-clarity window all have to align, so we recommend starting the conversation several weeks ahead of the survey window.",
+          },
+        ],
+      },
+    ],
+  },
+
+  /* ------------------------------------------------------------------ */
+  /* 2. HOLD CLEANING                                                    */
+  /* ------------------------------------------------------------------ */
+  {
+    slug: "hold-cleaning",
+    name: "Hold Cleaning",
+    icon: "hold",
+    seoTitle: "Cargo Hold Cleaning Services | Bulk Carriers & Container Ships",
+    metaDescription:
+      "Professional cargo hold cleaning for bulk carriers and container ships. Shore gangs, riding crews and rope access teams delivering grain-clean and hold-inspection-ready results worldwide.",
+    tagline: "Grain-clean holds, on schedule, first inspection",
+    summary:
+      "Shore gangs, riding crews and rope access teams that take cargo holds from previous-cargo dirty to grain-clean and inspection-ready.",
+    keywords: [
+      "cargo hold cleaning",
+      "hold cleaning services",
+      "grain clean holds",
+      "bulk carrier hold cleaning",
+      "hold cleaning company UAE",
+    ],
+    intro: [
+      "A failed hold inspection is one of the most expensive delays a bulk carrier can suffer. Cleanship exists to make sure that call never comes. We prepare cargo holds to the standard your next fixture demands — whether that is normal clean, grain clean, or the hospital-clean condition required for sensitive cargoes.",
+      "Our teams mobilise to vessels at anchorage, alongside, or under way. We arrive with our own chemicals, high-pressure equipment, staging and PPE, and we work to a documented procedure that satisfies both the surveyor and the port's environmental regime.",
+    ],
+    faqs: [
+      {
+        q: "What cleanliness standards do you work to?",
+        a: "We routinely deliver normal clean, grain clean and hospital clean conditions. The target standard is agreed before mobilisation and confirmed against the charterer's or surveyor's requirements so there is no ambiguity at inspection.",
+      },
+      {
+        q: "Can hold cleaning be carried out while the vessel is on passage?",
+        a: "Yes. Our riding crews join at one port and work throughout the sea passage, so the vessel arrives at the load port already inspection-ready. This is usually the fastest and most economical option.",
+      },
+      {
+        q: "Do you handle the residue and washwater disposal?",
+        a: "We follow MARPOL Annex V and the receiving port's regulations. Residues are collected, bagged and landed to an approved reception facility, with documentation provided for the vessel's records.",
+      },
+    ],
+    services: [
+      {
+        slug: "shore-gang",
+        name: "Hold Cleaning Shore Gang",
+        seoTitle: "Hold Cleaning Shore Gang | Fast In-Port Cargo Hold Cleaning",
+        metaDescription:
+          "Experienced hold cleaning shore gangs mobilised to your berth or anchorage. High-volume cargo hold cleaning between discharge and load, completed within the port stay.",
+        tagline: "Full crews, mobilised to your berth or anchorage",
+        summary:
+          "Large shore-based teams that clean every hold inside the port stay, between discharge and next load.",
+        keywords: [
+          "hold cleaning shore gang",
+          "shore gang cargo hold cleaning",
+          "in port hold cleaning",
+        ],
+        intro: [
+          "When the schedule is tight and every hold has to be ready before the next fixture, volume of labour is what wins. Our shore gangs put a full complement of trained cleaners on board the moment the last grab lifts, so cleaning runs in parallel with your other port operations rather than after them.",
+          "Gang size is matched to the number of holds, the previous cargo and the hours available. We bring our own high-pressure units, chemicals, lighting and safety equipment, so nothing is drawn from the ship's stores or the crew's working hours.",
+        ],
+        highlights: [
+          "Gangs scaled to the vessel — from 6 to 40+ cleaners",
+          "Mobilisation at berth, anchorage or during STS operations",
+          "Own equipment, chemicals, lighting and PPE",
+          "Sweeping, washing, rinsing and drying in one continuous sequence",
+          "Hold inspection attended and defects rectified on the spot",
+        ],
+        scope: [
+          {
+            title: "Sweeping and residue removal",
+            body: "Full manual and mechanical sweep of tank tops, hoppers, brackets and frames, with residues bagged for landing ashore in line with MARPOL Annex V.",
+          },
+          {
+            title: "High-pressure washing",
+            body: "Fresh or sea water washing at working pressures suited to the coating condition, covering tank top, hopper plating, side frames, bulkheads and the underside of hatch covers.",
+          },
+          {
+            title: "Chemical treatment",
+            body: "Application of marine-approved, biodegradable degreasers and hold cleaners where previous cargoes have left oily, staining or odour-bearing residues.",
+          },
+          {
+            title: "Rinsing and drying",
+            body: "Fresh water rinse to remove salt and chemical traces, followed by forced drying and bilge drying so holds present dry, odour-free and free of loose scale.",
+          },
+          {
+            title: "Bilge wells and hatch coamings",
+            body: "Bilge wells cleaned, strainers cleared and non-return valves tested; coamings, drain channels and compression bars cleaned so hatch covers seal correctly.",
+          },
+        ],
+        process: [
+          {
+            title: "Pre-arrival briefing",
+            body: "We confirm previous cargo, next cargo, required standard, coating condition and available working window with the master and superintendent.",
+          },
+          {
+            title: "Mobilisation and safety",
+            body: "Gang boards with a toolbox talk, enclosed-space entry permits, gas readings and rescue arrangements agreed with the ship's command.",
+          },
+          {
+            title: "Cleaning sequence",
+            body: "Holds are worked in a planned order so drying time is maximised and completed holds are never re-contaminated by adjacent work.",
+          },
+          {
+            title: "Inspection and handover",
+            body: "We attend the surveyor's inspection, rectify any observations immediately, and hand over a photographic completion report.",
+          },
+        ],
+        appliesTo: [
+          "Bulk carriers",
+          "Container ships",
+          "General cargo vessels",
+          "Self-unloaders",
+        ],
+        faqs: [
+          {
+            q: "How quickly can a shore gang mobilise?",
+            a: "In our core UAE ports we typically mobilise within 12 to 24 hours of firm nomination. For other ports we advise a realistic mobilisation window at the time of quoting rather than promising a figure we cannot hold.",
+          },
+          {
+            q: "Does the ship's crew need to assist?",
+            a: "No. The gang is self-sufficient in labour, equipment and consumables. We only ask the ship for standard support such as access, power where available, and permission-to-work coordination.",
+          },
+        ],
+      },
+      {
+        slug: "riding-crew",
+        name: "Hold Cleaning Riding Crew",
+        seoTitle: "Hold Cleaning Riding Crew | Cleaning During Sea Passage",
+        metaDescription:
+          "Certified hold cleaning riding crews that sail with your vessel and clean cargo holds on passage, so the ship arrives at the load port grain-clean and inspection-ready.",
+        tagline: "Cleaning that happens while you are already earning",
+        summary:
+          "Certified teams that sail with the vessel and complete every hold on passage — zero port time lost.",
+        keywords: [
+          "hold cleaning riding crew",
+          "riding squad hold cleaning",
+          "cleaning during sea passage",
+        ],
+        intro: [
+          "The most economical hold cleaning is the cleaning that costs you no port time at all. Our riding crews join at the discharge port, sail with the vessel, and work through the ballast passage so the holds are finished before the load port pilot is even ordered.",
+          "Riding crews carry full seafarer documentation, medicals and flag-state paperwork, and integrate with the ship's safety management system from the moment they board. They work under the master's authority and to the ship's permit-to-work regime throughout.",
+        ],
+        highlights: [
+          "Vessel loses zero commercial time to cleaning",
+          "Fully documented seafarers — STCW, medicals, visas, flag endorsements",
+          "Work continues in transit, weather and sea state permitting",
+          "Team sizes from 4 to 20 depending on holds and passage length",
+          "Crew can disembark at the load port or continue for further voyages",
+        ],
+        scope: [
+          {
+            title: "Passage planning of the cleaning programme",
+            body: "The cleaning sequence is planned against the passage length, expected weather and ballast condition so every hold is completed with drying time in hand.",
+          },
+          {
+            title: "Complete hold preparation",
+            body: "Sweeping, washing, chemical treatment, rinsing and drying of all cargo holds to the agreed standard, exactly as delivered by a shore gang.",
+          },
+          {
+            title: "Hatch cover and coaming work",
+            body: "Cleaning of compression bars, drain channels and gaskets, with defects reported to the chief officer for rectification before loading.",
+          },
+          {
+            title: "Bilge and drainage systems",
+            body: "Bilge wells emptied and cleaned, strainers cleared and non-return valves tested so holds pass the water-ingress checks at inspection.",
+          },
+          {
+            title: "Additional deck work",
+            body: "Where the passage allows, the crew can extend to deck chipping, spot priming and painting under the same mobilisation.",
+          },
+        ],
+        process: [
+          {
+            title: "Documentation and clearance",
+            body: "We prepare crew documents, flag-state approvals, visas and P&I notifications well ahead of the join port so boarding is never the bottleneck.",
+          },
+          {
+            title: "Joining and familiarisation",
+            body: "The crew boards, completes ship familiarisation and safety induction, and agrees the working programme with the chief officer.",
+          },
+          {
+            title: "Cleaning on passage",
+            body: "Work proceeds hold by hold under the ship's permit-to-work system, with daily progress reported to the master and to your office.",
+          },
+          {
+            title: "Completion and disembarkation",
+            body: "Holds are presented for the master's inspection, a photographic report is issued, and the crew disembarks at the agreed port.",
+          },
+        ],
+        appliesTo: [
+          "Bulk carriers on ballast passage",
+          "Container ships",
+          "General cargo vessels",
+          "Vessels between long-haul fixtures",
+        ],
+        faqs: [
+          {
+            q: "How long does a riding crew need on passage?",
+            a: "As a guide, a Supramax with five holds and a normal previous cargo is comfortably completed on a five to seven day passage with a crew of eight. Difficult cargoes such as cement, sulphur or petcoke need longer, and we will say so at quoting stage rather than under-crewing the job.",
+          },
+          {
+            q: "Who is responsible for the riding crew on board?",
+            a: "The crew works under the master's overall authority and within the ship's safety management system, while remaining our employees for contractual, payroll, insurance and welfare purposes.",
+          },
+          {
+            q: "What happens if the weather stops work?",
+            a: "Safety governs. Work in holds stops when sea state or motion makes it unsafe, and the programme is rebalanced across the remaining passage. We build realistic weather allowance into the plan from the start.",
+          },
+        ],
+      },
+      {
+        slug: "rope-access",
+        name: "Hold Cleaning Rope Access",
+        seoTitle: "Rope Access Hold Cleaning | IRATA Teams for Ships",
+        metaDescription:
+          "IRATA-certified rope access teams for cargo hold cleaning, inspection and coating work at height. Safe access to upper frames, bulkheads and hatch structures without staging.",
+        tagline: "Every surface reachable — without a single stage board",
+        summary:
+          "IRATA-certified technicians reaching upper frames, bulkheads and overheads without scaffolding or cherry pickers.",
+        keywords: [
+          "rope access hold cleaning",
+          "IRATA marine rope access",
+          "cargo hold cleaning at height",
+        ],
+        intro: [
+          "The parts of a cargo hold that fail inspection are almost always the parts nobody could reach. Upper side frames, the underside of hatch covers, transverse bulkhead stiffeners and the hold overhead sit far beyond the reach of deck-level equipment, and building staging for them consumes days the schedule rarely has.",
+          "Rope access solves it. Our IRATA-certified technicians descend from anchor points at the coaming and work the full height of the hold with hand tools, lances and inspection equipment. There is no scaffolding to erect, no cherry picker to land on board, and no hold left half-prepared because access ran out.",
+        ],
+        highlights: [
+          "IRATA Level 1, 2 and 3 certified technicians",
+          "No staging, scaffolding or heavy access equipment required",
+          "Full-height access to frames, bulkheads and hold overheads",
+          "Combined cleaning, close-up inspection and spot coating in one descent",
+          "Independent rigging and rescue plan for every work site",
+        ],
+        scope: [
+          {
+            title: "Upper frame and bulkhead cleaning",
+            body: "Washing and residue removal on upper side frames, brackets, stiffeners and transverse bulkheads that deck-level equipment cannot reach.",
+          },
+          {
+            title: "Hold overhead and hatch underside",
+            body: "Cleaning of the hold overhead, hatch cover undersides and coaming internals, where cargo dust and previous-cargo residue routinely accumulate.",
+          },
+          {
+            title: "Close-up visual inspection",
+            body: "Structural condition, coating breakdown and corrosion recorded at height with photographs, giving you inspection-quality data as a by-product of the clean.",
+          },
+          {
+            title: "Spot preparation and coating",
+            body: "Localised descaling, surface preparation and touch-up coating applied at height, so identified breakdown is treated in the same mobilisation.",
+          },
+          {
+            title: "Rigging, rescue and supervision",
+            body: "Every work site is rigged with independent working and backup lines under a Level 3 supervisor, with a documented rescue plan in place before the first descent.",
+          },
+        ],
+        process: [
+          {
+            title: "Access survey and rigging plan",
+            body: "We assess anchor points, hold geometry and obstructions, then produce a rigging and rescue plan specific to the vessel.",
+          },
+          {
+            title: "Permits and safety brief",
+            body: "Enclosed-space entry, work-at-height and hot-work permits are raised with the ship, and the rescue arrangement is briefed to all parties.",
+          },
+          {
+            title: "Rope access work",
+            body: "Technicians work in pairs under Level 3 supervision, descending in planned passes so no area is missed and progress is auditable.",
+          },
+          {
+            title: "Reporting",
+            body: "A photographic report is issued covering work completed and any structural or coating defects observed at height.",
+          },
+        ],
+        appliesTo: [
+          "Deep-hold bulk carriers",
+          "Container ships and cell guides",
+          "Vessels with restricted staging access",
+          "Combined cleaning and inspection scopes",
+        ],
+        faqs: [
+          {
+            q: "Is rope access safe inside a cargo hold?",
+            a: "It is a highly controlled method. Technicians work on two independent ropes under a Level 3 supervisor, with a rescue plan agreed before work starts and enclosed-space entry procedures running in parallel. IRATA's published incident record compares very favourably with staging-based access.",
+          },
+          {
+            q: "Can rope access replace scaffolding entirely?",
+            a: "For cleaning, inspection and localised coating work, usually yes. For large-area blasting or steel renewal that needs a stable working platform, staging is still the right tool and we will tell you so.",
+          },
+        ],
+      },
+    ],
+  },
+
+  /* ------------------------------------------------------------------ */
+  /* 3. TANK CLEANING                                                    */
+  /* ------------------------------------------------------------------ */
+  {
+    slug: "tank-cleaning",
+    name: "Tank Cleaning",
+    icon: "tank",
+    seoTitle: "Marine Tank Cleaning Services | Oil Tankers & Shore Tanks",
+    metaDescription:
+      "Certified marine tank cleaning for oil tankers carrying DPP and CPP cargoes, plus demucking, shore tank cleaning and offshore vessel tanks. Gas-free, sludge disposal and entry certification.",
+    tagline: "Gas-free, entry-ready, certified",
+    summary:
+      "Cargo and slop tank cleaning for DPP and CPP trades, demucking, shore terminal tanks and offshore vessel tankage.",
+    keywords: [
+      "tank cleaning services",
+      "oil tanker tank cleaning",
+      "marine tank cleaning UAE",
+      "sludge removal vessel",
+    ],
+    intro: [
+      "Tank cleaning is where marine cleaning stops being housekeeping and becomes a safety-critical operation. Hydrocarbon vapour, oxygen deficiency, residual toxicity and confined geometry combine into a job that punishes shortcuts, and we treat it accordingly.",
+      "Cleanship cleans cargo tanks, slop tanks, bunker tanks, cofferdams and shore terminal tanks — from a simple grade change to a full gas-free-for-hot-work certification ahead of dry dock. Every operation runs under a written procedure with continuous atmospheric monitoring and a standby rescue team.",
+    ],
+    faqs: [
+      {
+        q: "Do you provide gas-free certification?",
+        a: "We prepare the tank to the required condition and coordinate with an independent, accredited marine chemist or competent person who issues the certificate. Keeping certification independent of the contractor doing the cleaning is the correct arrangement and we do not deviate from it.",
+      },
+      {
+        q: "How is sludge and slop disposed of?",
+        a: "Recovered sludge, slops and oily residues are transferred to approved reception facilities or licensed waste contractors, with manifests and disposal certificates provided for the vessel's MARPOL records.",
+      },
+      {
+        q: "Can you clean tanks between different cargo grades?",
+        a: "Yes. Grade-change cleaning is planned against the previous and next cargo specification, the wall-wash requirement and the charterer's acceptance criteria, then verified by test before the tank is presented.",
+      },
+    ],
+    services: [
+      {
+        slug: "oil-tanker-dpp-cpp",
+        name: "Oil Tanker Cleaning — DPP & CPP",
+        seoTitle: "Oil Tanker Tank Cleaning | DPP & CPP Grade Change",
+        metaDescription:
+          "Cargo tank cleaning for oil tankers in DPP and CPP trades. Crude oil washing support, grade-change cleaning, wall wash preparation, gas-freeing and slop handling.",
+        tagline: "Crude, fuel oil or clean products — cleaned to specification",
+        summary:
+          "Cargo tank cleaning for dirty and clean petroleum product trades, including grade changes and wall-wash preparation.",
+        keywords: [
+          "DPP tank cleaning",
+          "CPP tank cleaning",
+          "oil tanker cargo tank cleaning",
+          "wall wash preparation",
+        ],
+        intro: [
+          "Dirty petroleum product and clean petroleum product trades demand very different things from a tank cleaning contractor. DPP work is a fight against heavy residue, wax and sludge. CPP work is a fight against the last few parts per million of contamination standing between you and a passed wall wash.",
+          "We do both, and we plan each one from the cargo pair rather than from a generic procedure. The previous cargo, the nominated cargo, the coating condition and the charterer's acceptance criteria determine the wash media, temperature, cycle count and verification method before a single machine is dropped.",
+        ],
+        highlights: [
+          "DPP: crude, fuel oil, bitumen and heavy residue removal",
+          "CPP: gasoil, jet, naphtha and chemical-grade preparation",
+          "Crude oil washing support and post-COW hand hosing",
+          "Wall wash preparation to hydrocarbon and colour test criteria",
+          "Slop consolidation, decanting and disposal documentation",
+        ],
+        scope: [
+          {
+            title: "Pre-clean assessment",
+            body: "Cargo history, tank coating condition, heating coil status and the next cargo specification are reviewed to fix the cleaning method and realistic acceptance criteria.",
+          },
+          {
+            title: "Machine washing",
+            body: "Fixed and portable tank cleaning machines run to a calculated cycle programme, using hot or cold sea water, fresh water and approved chemicals as the cargo pair requires.",
+          },
+          {
+            title: "Hand hosing and manual finishing",
+            body: "Bellmouths, suction wells, framing, heating coils and structural shadows are hand-hosed and manually finished — the areas machines geometrically cannot reach.",
+          },
+          {
+            title: "Draining, mopping and drying",
+            body: "Tanks are stripped, mopped and dried so no free water or residue remains to contaminate the next grade or skew the wall wash result.",
+          },
+          {
+            title: "Gas-freeing and verification",
+            body: "Ventilation to safe-for-entry or gas-free-for-hot-work condition, with continuous monitoring and independent certification arranged where required.",
+          },
+        ],
+        process: [
+          {
+            title: "Method statement and risk assessment",
+            body: "A cargo-pair-specific procedure, JSA and permit package is agreed with the vessel and, where applicable, the charterer's inspector.",
+          },
+          {
+            title: "Washing and stripping",
+            body: "Machine cycles run to plan with stripping, recirculation and slop management controlled throughout the operation.",
+          },
+          {
+            title: "Manual finishing and inspection",
+            body: "Teams enter under full enclosed-space procedure to finish shadow areas and confirm the tank visually before testing.",
+          },
+          {
+            title: "Testing and presentation",
+            body: "Wall wash or visual inspection is carried out with the surveyor, and the tank is presented for acceptance with full documentation.",
+          },
+        ],
+        appliesTo: [
+          "Crude oil tankers (VLCC, Suezmax, Aframax)",
+          "Product tankers (MR, LR1, LR2)",
+          "Chemical and IMO II/III tankers",
+          "Bunker barges and small tankers",
+        ],
+        faqs: [
+          {
+            q: "Can you guarantee a passed wall wash?",
+            a: "No contractor honestly can, because the result also depends on coating age and condition, the previous cargo history and the inspector's criteria. What we do guarantee is that the method is correct for the cargo pair, that we will tell you before mobilisation if the tank condition makes the target unrealistic, and that we will keep working until the agreed standard is met or the limiting factor is clearly identified.",
+          },
+          {
+            q: "Do you supply the tank cleaning chemicals?",
+            a: "Yes. We supply marine-approved cleaning chemicals with current safety data sheets, selected for the cargo pair and compatible with the tank coating system.",
+          },
+        ],
+      },
+      {
+        slug: "demucking",
+        name: "Demucking",
+        seoTitle: "Tank Demucking Services | Sludge & Residue Removal",
+        metaDescription:
+          "Manual and mechanical tank demucking for oil tankers and bulk carriers. Removal of sludge, scale, wax and solid residue from cargo tanks, slop tanks and bunker tanks.",
+        tagline: "The heavy residue that washing alone will not lift",
+        summary:
+          "Manual and mechanical removal of sludge, scale and solid residue from tanks before survey, repair or grade change.",
+        keywords: [
+          "tank demucking",
+          "sludge removal tanker",
+          "mucking out cargo tanks",
+        ],
+        intro: [
+          "After enough voyages, every tank accumulates material that no cleaning machine will move — settled sludge, oxidised wax, rust scale and cargo solids compacted around bellmouths, framing and suction wells. Demucking is the physical removal of that material, and it is the step that usually stands between a tank and a class survey or a hot-work permit.",
+          "Our teams work under full enclosed-space entry procedure with continuous gas monitoring, forced ventilation and a standby rescue team. Material is bagged or pumped out, quantified, and landed to an approved reception facility with full disposal documentation.",
+        ],
+        highlights: [
+          "Manual mucking of sludge, wax, scale and cargo solids",
+          "Vacuum and pump-out recovery for pumpable residues",
+          "Full enclosed-space entry regime with standby rescue",
+          "Quantified removal with disposal manifests",
+          "Prepares tanks for survey, repair or hot work",
+        ],
+        scope: [
+          {
+            title: "Tank entry preparation",
+            body: "Ventilation, gas testing, lighting, access rigging and rescue arrangements are established before any entry is authorised.",
+          },
+          {
+            title: "Manual residue removal",
+            body: "Sludge, wax and scale are removed by hand from tank bottoms, suction wells, bellmouths, heating coils and structural pockets.",
+          },
+          {
+            title: "Vacuum and pump-out",
+            body: "Pumpable residues are recovered by vacuum unit or portable pump directly to slop tanks, road tankers or barges.",
+          },
+          {
+            title: "Scale and hard deposit removal",
+            body: "Adhered rust scale and hardened deposits are removed by scraping, chipping or hydroblasting where the coating system permits.",
+          },
+          {
+            title: "Waste handling and documentation",
+            body: "Recovered material is quantified, transferred to licensed reception facilities and documented with manifests for the vessel's MARPOL records.",
+          },
+        ],
+        process: [
+          {
+            title: "Assessment and quantification",
+            body: "Tank condition is surveyed and the residue volume estimated so manpower, equipment and disposal capacity are correctly sized.",
+          },
+          {
+            title: "Permit and entry setup",
+            body: "Enclosed-space entry permits are raised, ventilation established and atmosphere confirmed and continuously monitored.",
+          },
+          {
+            title: "Removal operations",
+            body: "Teams work in controlled rotations with an attendant at the entry point and rescue equipment rigged and manned.",
+          },
+          {
+            title: "Final clean and handover",
+            body: "The tank is washed down, drained and presented for inspection, with disposal documentation issued.",
+          },
+        ],
+        appliesTo: [
+          "Crude and product tankers",
+          "Bunker and slop tanks",
+          "Bulk carrier ballast and void spaces",
+          "Pre-drydock and pre-survey preparation",
+        ],
+        faqs: [
+          {
+            q: "How long does demucking take?",
+            a: "It scales with residue volume rather than tank size. A lightly fouled tank may take a shift; heavily compacted sludge in a large crude tank can run several days with multiple rotating teams. We survey first and quote against an estimated volume rather than a flat guess.",
+          },
+          {
+            q: "Is hot work possible immediately after demucking?",
+            a: "Not automatically. Demucking removes the material, but hot work requires a gas-free-for-hot-work certificate issued by a competent person after testing, which we arrange as a separate and independent step.",
+          },
+        ],
+      },
+      {
+        slug: "shore-tank-cleaning",
+        name: "Shore Tank Cleaning",
+        seoTitle: "Shore Tank Cleaning | Terminal & Storage Tank Services",
+        metaDescription:
+          "Storage and terminal tank cleaning for oil and chemical facilities. Sludge removal, gas-freeing, confined space entry and inspection preparation for API 653 and statutory surveys.",
+        tagline: "Terminal tanks turned around for inspection and service",
+        summary:
+          "Storage tank cleaning at terminals and depots, prepared for internal inspection, repair or product change.",
+        keywords: [
+          "shore tank cleaning",
+          "storage tank cleaning",
+          "terminal tank cleaning UAE",
+          "API 653 inspection preparation",
+        ],
+        intro: [
+          "Shore tanks come out of service for a reason — a statutory internal inspection, a product change, a repair, or a decommissioning. Whichever it is, the tank has to go from full of product to safe, clean and open for entry, and every day of that transition is a day of lost storage revenue.",
+          "We work to a written, client-approved procedure covering product removal, sludge recovery, washing, gas-freeing and waste disposal, so the tank is handed to the inspector or contractor in a condition that lets them start immediately rather than waiting on rework.",
+        ],
+        highlights: [
+          "Crude, product, chemical and vegetable oil storage tanks",
+          "Sludge recovery with volume reduction and oil recovery options",
+          "Gas-freeing to safe-for-entry and hot-work conditions",
+          "Confined space entry teams with standby rescue",
+          "Prepared for API 653 internal inspection and statutory survey",
+        ],
+        scope: [
+          {
+            title: "Product and residue removal",
+            body: "Remaining product is stripped and transferred, and pumpable sludge is recovered to nominated tankage or road tankers.",
+          },
+          {
+            title: "Sludge treatment and oil recovery",
+            body: "Where volumes justify it, sludge is treated to recover saleable hydrocarbon and reduce the mass sent to disposal.",
+          },
+          {
+            title: "Washing and degreasing",
+            body: "Shell, floor, roof structure and internal fittings are washed and degreased to the standard required by the next activity.",
+          },
+          {
+            title: "Gas-freeing and monitoring",
+            body: "Forced ventilation to safe-for-entry or gas-free-for-hot-work condition, with continuous atmospheric monitoring throughout occupancy.",
+          },
+          {
+            title: "Inspection preparation",
+            body: "Floor plates, annular rings, weld seams and roof supports are cleaned to a condition that allows meaningful thickness measurement and visual inspection.",
+          },
+        ],
+        process: [
+          {
+            title: "Procedure and permits",
+            body: "A site-specific method statement, risk assessment and permit package is agreed with the terminal's HSE function before mobilisation.",
+          },
+          {
+            title: "Isolation and de-inventory",
+            body: "The tank is isolated, blinded and de-inventoried under the terminal's lock-out procedures.",
+          },
+          {
+            title: "Cleaning and gas-freeing",
+            body: "Sludge recovery, washing and ventilation proceed to plan under continuous monitoring and confined-space control.",
+          },
+          {
+            title: "Handover for inspection",
+            body: "The tank is presented clean, dry and certified for entry, with waste manifests and a completion report issued.",
+          },
+        ],
+        appliesTo: [
+          "Crude and product storage tanks",
+          "Chemical and vegetable oil tanks",
+          "Bunker and lube oil depots",
+          "Free zone and terminal facilities",
+        ],
+        faqs: [
+          {
+            q: "Do you work to the terminal's permit system or your own?",
+            a: "Always the terminal's. Our procedures are written to integrate with the site's permit-to-work, isolation and emergency response arrangements, not to run alongside them.",
+          },
+          {
+            q: "Can cleaning be done without man entry?",
+            a: "For some tanks, non-man-entry techniques using automated equipment and recirculation are viable and reduce risk considerably. Whether that applies depends on tank geometry, sludge character and what the next activity requires, and we will assess it at survey.",
+          },
+        ],
+      },
+      {
+        slug: "offshore-vessel-tank-cleaning",
+        name: "Offshore Vessel Tank Cleaning",
+        seoTitle: "Offshore Vessel Tank Cleaning | OSV, PSV & Barge Tanks",
+        metaDescription:
+          "Tank cleaning for offshore support vessels, platform supply vessels and barges. Mud, brine, base oil and drill water tanks cleaned for cargo change, survey or layup.",
+        tagline: "Mud, brine and base oil tanks turned around fast",
+        summary:
+          "Cleaning of mud, brine, base oil and drill water tanks on OSVs, PSVs and offshore barges.",
+        keywords: [
+          "offshore vessel tank cleaning",
+          "OSV tank cleaning",
+          "PSV mud tank cleaning",
+          "brine tank cleaning",
+        ],
+        intro: [
+          "Offshore support vessels carry a product mix that no conventional tanker deals with — drilling mud, brine, base oil, drill water, cement and completion fluids, often in the same voyage cycle. Cross-contamination between them is expensive, and the turnaround windows between charters are short.",
+          "We clean OSV and PSV tankage for cargo change, class survey, layup or reactivation, working to the vessel's and the charterer's cleanliness criteria and handling the recovered fluid streams with the documentation the operator's HSE regime requires.",
+        ],
+        highlights: [
+          "Mud, brine, base oil, drill water and cement tanks",
+          "Cargo-change cleaning between incompatible fluids",
+          "Preparation for class survey and coating inspection",
+          "Layup preparation and reactivation cleaning",
+          "Recovered fluids handled with full disposal documentation",
+        ],
+        scope: [
+          {
+            title: "Fluid recovery and stripping",
+            body: "Residual mud, brine and base oil are recovered and transferred to nominated tanks, road tankers or shore reception.",
+          },
+          {
+            title: "Tank washing",
+            body: "Machine and manual washing appropriate to the fluid type, with particular attention to settled solids in mud and cement tanks.",
+          },
+          {
+            title: "Line and pump flushing",
+            body: "Associated pipework, pumps and manifolds are flushed so cross-contamination does not reappear from the system after the tank is clean.",
+          },
+          {
+            title: "Survey preparation",
+            body: "Tanks are cleaned and dried to a condition suitable for coating inspection and class survey attendance.",
+          },
+          {
+            title: "Waste management",
+            body: "Recovered fluids and solids are consolidated and landed to licensed facilities with manifests issued.",
+          },
+        ],
+        process: [
+          {
+            title: "Scope and fluid assessment",
+            body: "Previous and next cargo, tank arrangement and system layout are reviewed to set the cleaning standard and method.",
+          },
+          {
+            title: "Mobilisation",
+            body: "Teams, pumps, vacuum units and consumables are mobilised to the quay or offshore base within the vessel's window.",
+          },
+          {
+            title: "Cleaning and flushing",
+            body: "Tanks and associated systems are cleaned under enclosed-space entry control with continuous monitoring.",
+          },
+          {
+            title: "Acceptance",
+            body: "Tanks are presented to the vessel, charterer or surveyor, with completion and disposal documentation issued.",
+          },
+        ],
+        appliesTo: [
+          "Platform supply vessels (PSV)",
+          "Offshore support vessels (OSV)",
+          "Anchor handling tugs (AHTS)",
+          "Offshore and accommodation barges",
+        ],
+        faqs: [
+          {
+            q: "Can you work at an offshore base rather than a commercial quay?",
+            a: "Yes. We regularly mobilise to offshore supply bases and work within the base operator's HSE and permit regime.",
+          },
+          {
+            q: "How is cross-contamination between charters prevented?",
+            a: "By cleaning the system, not just the tank. Pipework, pumps and manifolds retain residue that will re-contaminate a clean tank on the first transfer, so line flushing is part of the standard scope rather than an extra.",
           },
         ],
       },

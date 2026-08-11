@@ -9,9 +9,9 @@ import { serviceCategories, totalServiceCount } from "@/lib/services";
 import { BASE_URL, breadcrumbSchema, buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Marine Services — Hold, Tank, Hull, Offshore & NDT",
+  title: "Marine Services — Hull, Hold, Tank, Offshore & NDT",
   description:
-    "Explore Cleanship's full marine service range: cargo hold cleaning, tank cleaning, underwater hull cleaning and propeller polishing, offshore support, and NDT inspection with repair, hydroblasting and painting.",
+    "Explore Cleanship's full marine service range: underwater hull cleaning and propeller polishing, cargo hold cleaning, tank cleaning, offshore support, and NDT inspection with repair, hydroblasting and painting.",
   path: "/services",
   keywords: [
     "marine services UAE",

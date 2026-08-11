@@ -16,9 +16,9 @@ import { siteConfig } from "@/lib/site";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "About Cleanship Marine Services | Hold & Tank Cleaning Specialists",
+  title: "About Cleanship | Underwater Hull Cleaning Specialists",
   description:
-    "Cleanship Marine Services FZE is a trusted hold and tank cleaning provider based in Ajman Free Zone, UAE. Certified crews, IMO-compliant procedures and eco-friendly methods for vessels worldwide.",
+    "Cleanship Marine Services FZE is a trusted underwater hull cleaning specialist, and a hold and tank cleaning provider, based in Ajman Free Zone, UAE. Certified crews, IMO-compliant procedures and eco-friendly methods for vessels worldwide.",
   path: "/about",
   keywords: [
     "about Cleanship",
@@ -71,7 +71,11 @@ export default function AboutPage() {
       <PageHero
         eyebrow="About Cleanship"
         title="Why will you choose our services?"
-        description="Cleanship is a trusted hold and tank cleaning service provider, offering professional cleaning for cargo holds on all types of ships — including bulk carriers, tankers and container ships."
+        // Reordered to lead with hull cleaning at the brand owner's direction.
+        // The original site string opened "a trusted hold and tank cleaning
+        // service provider" — the DS asks for source copy to be kept verbatim,
+        // so this is a deliberate, instructed departure rather than a rewrite.
+        description="Cleanship is a trusted underwater hull cleaning specialist and hold and tank cleaning service provider, offering professional cleaning for hulls, propellers and cargo holds on all types of ships — including bulk carriers, tankers and container ships."
         trail={trail}
       />
 

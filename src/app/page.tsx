@@ -21,16 +21,16 @@ import { serviceAreas, siteConfig } from "@/lib/site";
 import { buildMetadata, faqSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Hold, Tank & Hull Cleaning Specialists | Cleanship Marine Services",
+  title: "Underwater Hull Cleaning & Marine Services | Cleanship",
   description: siteConfig.shortDescription,
   path: "/",
   keywords: [
+    "underwater hull cleaning",
+    "propeller polishing UAE",
+    "in-water hull cleaning Fujairah",
     "hold cleaning services",
     "tank cleaning company UAE",
-    "underwater hull cleaning",
     "marine cleaning Ajman",
-    "riding crew hold cleaning",
-    "propeller polishing UAE",
   ],
 });
 
@@ -87,7 +87,7 @@ const stats = [
 const homeFaqs = [
   {
     q: "What does Cleanship do?",
-    a: "Cleanship Marine Services is a marine cleaning and support contractor. We deliver cargo hold cleaning, tank cleaning, underwater hull cleaning and propeller polishing, offshore support services, and NDT inspection with repair, blasting and painting — for bulk carriers, tankers, container ships and offshore vessels.",
+    a: "Cleanship Marine Services is a marine cleaning and support contractor. We deliver underwater hull cleaning and propeller polishing, cargo hold cleaning, tank cleaning, offshore support services, and NDT inspection with repair, blasting and painting — for bulk carriers, tankers, container ships and offshore vessels.",
   },
   {
     q: "Where are you based and where do you operate?",
@@ -182,7 +182,7 @@ export default function HomePage() {
                 <SectionHeading
                   eyebrow="About Cleanship"
                   title="Why will you choose our services?"
-                  description="We are a hold and tank cleaning specialist first. Everything else we do grew out of what our clients kept asking us to solve on the same mobilisation."
+                  description="We are an underwater hull cleaning specialist first. Everything else we do grew out of what our clients kept asking us to solve on the same mobilisation."
                 />
                 <CheckList
                   className="mt-8"

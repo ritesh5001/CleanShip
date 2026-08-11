@@ -58,10 +58,10 @@ export function Hero() {
                 data-mount
                 className="mt-6 max-w-[54ch] text-[17px] leading-[1.6] text-white/80"
               >
-                Cleanship is a trusted hold and tank cleaning service provider,
-                preparing cargo holds, tanks and hulls on bulk carriers,
-                tankers, container ships and offshore vessels — with certified
-                crews and equipment we bring ourselves.
+                Cleanship is a trusted underwater hull cleaning specialist —
+                cleaning hulls, propellers and thrusters in the water, and
+                preparing cargo holds and tanks on bulk carriers, tankers,
+                container ships and offshore vessels.
               </p>
 
               <div data-mount className="mt-8">

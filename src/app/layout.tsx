@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
     default:
-      "Cleanship Marine Services | Hold, Tank & Hull Cleaning Specialists",
+      "Cleanship Marine Services | Underwater Hull, Hold & Tank Cleaning",
     // Every child page supplies only its own title; the brand is appended here.
     template: `%s | ${siteConfig.name} Marine Services`,
   },
@@ -48,10 +48,11 @@ export const metadata: Metadata = {
   publisher: siteConfig.legalName,
   category: "Marine Services",
   keywords: [
-    "hold cleaning",
-    "tank cleaning",
     "underwater hull cleaning",
     "propeller polishing",
+    "in-water survey",
+    "hold cleaning",
+    "tank cleaning",
     "riding crew",
     "marine NDT",
     "hydroblasting",
@@ -64,7 +65,7 @@ export const metadata: Metadata = {
     locale: "en_AE",
     url: BASE_URL,
     siteName: siteConfig.name,
-    title: "Cleanship Marine Services | Hold, Tank & Hull Cleaning Specialists",
+    title: "Cleanship Marine Services | Underwater Hull, Hold & Tank Cleaning",
     description: siteConfig.shortDescription,
   },
   twitter: {

@@ -12,7 +12,7 @@ import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "Projects & Case Studies | Marine Cleaning Work",
   description:
-    "Representative Cleanship marine cleaning projects — cargo hold cleaning, tank cleaning, underwater hull work and offshore support across bulk carriers, tankers, container ships and OSVs.",
+    "Representative Cleanship marine cleaning projects — underwater hull work, cargo hold cleaning, tank cleaning and offshore support across bulk carriers, tankers, container ships and OSVs.",
   path: "/projects",
   keywords: [
     "marine cleaning projects",
