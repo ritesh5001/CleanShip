@@ -126,12 +126,25 @@ export function VideoBackdrop({
       {/* Navy scrims — the design system's only sanctioned gradients. The
           left wash carries the copy; the bottom fade seats the section into
           the page below it. */}
-      {/* Held at >=0.72 across the whole copy column. Against the worst case
-          (a blown-out white frame) that still composites to ~#4a545e, which
-          keeps white body text at ~6.3:1 — comfortably past AA. Lighter than
-          that and bright footage could drop the lead paragraph below 4.5:1. */}
+      {/* Scrim direction follows the copy.
+          On desktop the copy sits in a left column, so the wash runs
+          left-to-right and the footage stays visible on the right. On mobile
+          the copy is full-width and bottom-anchored, so a horizontal wash
+          would leave the end of the heading over bright video — there it runs
+          bottom-up instead.
+
+          Both hold >=0.72 wherever text lands. Against the worst case (a
+          blown-out white frame) that composites to ~#4a545e, keeping white
+          text at ~6.3:1 — comfortably past AA. */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 sm:hidden"
+        style={{
+          background:
+            "linear-gradient(0deg, rgba(3,16,31,.92) 0%, rgba(3,16,31,.80) 45%, rgba(3,16,31,.38) 100%)",
+        }}
+      />
+      <div
+        className="absolute inset-0 hidden sm:block"
         style={{
           background:
             "linear-gradient(90deg, rgba(3,16,31,.90) 0%, rgba(3,16,31,.74) 48%, rgba(3,16,31,.32) 100%)",
