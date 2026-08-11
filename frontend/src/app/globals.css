@@ -141,8 +141,9 @@
 
   html {
     scroll-behavior: smooth;
-    /* Keeps anchored headings clear of the sticky header. */
-    scroll-padding-top: 6rem;
+    /* Clears the sticky header (72px, 112px from lg) plus breathing room,
+       so an anchored heading is never parked underneath it. */
+    scroll-padding-top: 88px;
     -webkit-text-size-adjust: 100%;
   }
 

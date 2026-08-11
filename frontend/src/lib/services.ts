@@ -819,7 +819,7 @@ export const serviceCategories: ServiceCategory[] = [
     services: [
       {
         slug: "oil-tanker-dpp-cpp",
-        name: "Oil Tanker Cleaning — DPP & CPP",
+        name: "Tanker Cleaning — DPP & CPP",
         seoTitle: "Oil Tanker Tank Cleaning | DPP & CPP Grade Change",
         metaDescription:
           "Cargo tank cleaning for oil tankers in DPP and CPP trades. Crude oil washing support, grade-change cleaning, wall wash preparation, gas-freeing and slop handling.",

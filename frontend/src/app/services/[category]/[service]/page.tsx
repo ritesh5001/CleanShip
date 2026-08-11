@@ -89,9 +89,11 @@ export default async function ServicePage({ params }: Params) {
       {/* Reading-progress rail. Long service pages benefit most from an
           explicit "how much is left" signal, which matters more to a
           scanning superintendent than to a casual reader. */}
+      {/* Offsets match the sticky header (72px, 112px from lg). At top-0 it
+          sat behind the z-50 header and was never visible once scrolled. */}
       <div
         aria-hidden="true"
-        className="sticky top-0 z-40 h-[3px] w-full bg-line-100"
+        className="sticky top-[72px] z-40 h-[3px] w-full bg-line-100 lg:top-[112px]"
       >
         <ScrollProgress className="h-full w-full bg-aqua-500" />
       </div>
@@ -210,7 +212,7 @@ export default async function ServicePage({ params }: Params) {
 
           {/* ============ Sidebar ============ */}
           <aside className="lg:col-span-4">
-            <div className="space-y-6 lg:sticky lg:top-28">
+            <div className="space-y-6 lg:sticky lg:top-[128px]">
               {/* Enquiry */}
               <div className="on-navy rule-accent-top bg-navy-800 p-6 text-white">
                 <h2 className="font-display text-[20px] font-bold uppercase leading-tight">

@@ -72,8 +72,17 @@ export function SiteHeader() {
 
   return (
     <>
-      {/* ---------- Utility bar (navy) ---------- */}
-      <div className="on-navy hidden bg-navy-900 text-white/70 lg:block">
+      {/* The utility bar and the main header stick together as one unit, so
+          the phone / email / WhatsApp line stays reachable at any scroll
+          depth. Combined height: 72px below lg, 112px from lg up (40 + 72) —
+          every other sticky offset on the site is derived from that, so
+          changing either height means updating them too:
+            · the service page progress rail
+            · the service page sidebar
+            · scroll-padding-top in globals.css */}
+      <div className="sticky top-0 z-50">
+        {/* ---------- Utility bar (navy) ---------- */}
+        <div className="on-navy hidden bg-navy-900 text-white/70 lg:block">
         <div className="container-page flex h-10 items-center justify-between text-[13px]">
           <p>Marine Cleaning You Can Trust — hold, tank, hull and offshore</p>
           <div className="flex items-center gap-7">
@@ -104,9 +113,9 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {/* ---------- Main header (white) ---------- */}
-      <header
-        className={`sticky top-0 z-50 border-b bg-white transition-shadow duration-[220ms] ${
+        {/* ---------- Main header (white) ---------- */}
+        <header
+          className={`relative border-b bg-white transition-shadow duration-[220ms] ${
           scrolled ? "border-line-200 shadow-sm" : "border-line-100"
         }`}
       >
@@ -245,7 +254,8 @@ export function SiteHeader() {
             </div>
           </div>
         </div>
-      </header>
+        </header>
+      </div>
 
       {/* ---------- Mobile drawer ---------- */}
       <div
