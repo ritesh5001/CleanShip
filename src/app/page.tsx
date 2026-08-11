@@ -18,6 +18,7 @@ import {
 } from "@/components/icons";
 import { serviceCategories } from "@/lib/services";
 import { serviceAreas, siteConfig } from "@/lib/site";
+import { LocationsGrid } from "@/components/locations";
 import { buildMetadata, faqSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -91,7 +92,7 @@ const homeFaqs = [
   },
   {
     q: "Where are you based and where do you operate?",
-    a: `We are based at ${siteConfig.address.full}, and operate across the UAE and wider Gulf including Fujairah, Khor Fakkan, Jebel Ali, Sharjah and Abu Dhabi. Riding crews and specialist teams travel worldwide to join vessels wherever the fixture requires.`,
+    a: `Our head office is at ${siteConfig.address.full}, and we run eight bases across three regions — Ajman, Fujairah and Khorfakkan in the UAE; Dammam in Saudi Arabia; Kandla and Visakhapatnam in India; Colombo in Sri Lanka; and Conakry in Guinea. Coverage differs by service: hull cleaning runs across the West African range from Senegal to Togo, tank cleaning covers the UAE, Singapore, India, Sri Lanka and Lomé, and riding crews join vessels worldwide.`,
   },
   {
     q: "How quickly can you mobilise?",
@@ -261,26 +262,37 @@ export default function HomePage() {
         <div className="container-page py-16 lg:py-20">
           <Reveal>
             <SectionHeading
-              eyebrow="Coverage"
-              title="Where we mobilise"
-              description="Core coverage across the UAE and the Gulf, with crews that travel to join vessels worldwide."
-              align="center"
+              eyebrow="Our Locations"
+              title="Eight bases, three regions"
+              description="Offices and operating bases across the Middle East, South Asia and West Africa — with riding crews that join the vessel wherever the fixture takes it."
             />
           </Reveal>
+
+          {/* Offices first: a named address in a named city is the strongest
+              proof of reach. The port list below it is supporting detail. */}
+          <div className="mt-12">
+            <LocationsGrid />
+          </div>
+
           <Reveal delay={80}>
-            <ul className="mx-auto mt-12 flex max-w-4xl flex-wrap justify-center gap-2">
-              {serviceAreas.map((area) => (
-                <li
-                  key={area}
-                  className="border border-line-200 bg-white px-4 py-2 text-[14px] text-ink-700 transition-colors duration-[140ms] hover:border-blue-400 hover:text-blue-600"
-                >
-                  {area}
+            <div className="mt-14 border-t border-line-200 pt-8">
+              <h3 className="label-caps text-[12px] text-slate-500">
+                Ports &amp; regions served
+              </h3>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {serviceAreas.map((area) => (
+                  <li
+                    key={area}
+                    className="border border-line-200 bg-white px-3.5 py-1.5 text-[13px] text-ink-700 transition-colors duration-[140ms] hover:border-blue-400 hover:text-blue-600"
+                  >
+                    {area}
+                  </li>
+                ))}
+                <li className="border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-[13px] text-blue-600">
+                  + worldwide by arrangement
                 </li>
-              ))}
-              <li className="border border-blue-200 bg-blue-50 px-4 py-2 text-[14px] text-blue-600">
-                + worldwide by arrangement
-              </li>
-            </ul>
+              </ul>
+            </div>
           </Reveal>
         </div>
       </section>

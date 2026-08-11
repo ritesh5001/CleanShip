@@ -11,6 +11,8 @@ import {
   WhatsAppIcon,
 } from "@/components/icons";
 import { serviceAreas, siteConfig } from "@/lib/site";
+import { LocationsGrid } from "@/components/locations";
+import { SectionHeading } from "@/components/ui";
 import { BASE_URL, breadcrumbSchema, buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -147,6 +149,22 @@ export default function ContactPage() {
                 </p>
               </div>
             </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Offices ---------- */}
+      <section className="border-t border-line-200 bg-paper">
+        <div className="container-page py-16 lg:py-24">
+          <Reveal>
+            <SectionHeading
+              eyebrow="Our Locations"
+              title="Eight bases across three regions"
+              description="Offices and operating bases in the UAE, Saudi Arabia, India, Sri Lanka and West Africa — so a crew is rarely far from your vessel."
+            />
+          </Reveal>
+          <div className="mt-12">
+            <LocationsGrid />
           </div>
         </div>
       </section>

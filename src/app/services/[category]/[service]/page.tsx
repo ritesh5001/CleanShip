@@ -24,10 +24,11 @@ import {
   relatedServices,
   serviceCategories,
 } from "@/lib/services";
-import { siteConfig } from "@/lib/site";
+import { categoryCoverage, serviceCoverage, siteConfig } from "@/lib/site";
 import { heroMediaFor } from "@/lib/service-media";
 import { HeroEnquiryForm } from "@/components/hero-enquiry-form";
 import { WhatsAppCta } from "@/components/whatsapp-cta";
+import { CoverageNote } from "@/components/locations";
 import {
   breadcrumbSchema,
   buildMetadata,
@@ -65,6 +66,8 @@ export default async function ServicePage({ params }: Params) {
 
   const { category, service } = found;
   const siblings = relatedServices(categorySlug, serviceSlug);
+  const coverage =
+    serviceCoverage[serviceSlug] ?? categoryCoverage[categorySlug];
 
   const trail = [
     { name: "Home", path: "/" },
@@ -144,6 +147,20 @@ export default async function ServicePage({ params }: Params) {
                 <CheckList className="mt-5" items={service.highlights} />
               </div>
             </Reveal>
+
+            {/* Coverage is stated per scope where we have it, falling back to
+                the service line. Hull cleaning runs a West Africa range while
+                riding crews travel anywhere — one company-wide claim would
+                mislead on both. */}
+            {coverage && (
+              <Reveal delay={80}>
+                <CoverageNote
+                  areas={coverage.areas}
+                  worldwide={coverage.worldwide}
+                  className="mt-8"
+                />
+              </Reveal>
+            )}
 
             {/* Scope of work */}
             <section className="mt-14">
