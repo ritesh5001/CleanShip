@@ -1,5 +1,6 @@
 import { siteConfig } from "@/lib/site";
 import { Button } from "./ui";
+import { WhatsAppCta } from "./whatsapp-cta";
 import { PhoneIcon } from "./icons";
 
 /**
@@ -29,6 +30,7 @@ export function CtaBand({
           </div>
 
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+            <WhatsAppCta />
             <Button href="/contact" variant="light">
               Get a quote
             </Button>

@@ -27,12 +27,16 @@
   --color-navy-600: #124e88;
 
   /* ---- Working blue — buttons, links, eyebrows, index numbers ---- */
-  --color-blue-600: #1461a0;
-  --color-blue-500: #1b7bc4;
-  --color-blue-400: #4a9bd8;
-  --color-blue-200: #b7d6ee;
-  --color-blue-100: #dceaf6;
-  --color-blue-50: #f1f7fc;
+  /* blue-600 is the brand blue, sampled from the supplied logo artwork.
+     The rest of the ramp is built around it: 700 for hover (hover darkens,
+     per the DS), 500/400 for on-navy accents, 50-200 as tint surfaces. */
+  --color-blue-700: #013a82;
+  --color-blue-600: #014ba8;
+  --color-blue-500: #1a68c4;
+  --color-blue-400: #4a90d8;
+  --color-blue-200: #b3d0ec;
+  --color-blue-100: #d9e7f6;
+  --color-blue-50: #eff5fc;
 
   /* ---- Aqua — clean-water accent. Rationed: rules, active states ---- */
   --color-aqua-600: #00929b;
@@ -47,8 +51,12 @@
   --color-ink-900: #0f1c27;
   --color-ink-700: #243545;
   --color-slate-600: #4c5c6b;
-  --color-slate-500: #6b7c8b;
-  --color-slate-400: #8a9aa8;
+  /* Darkened from the DS values: at #6b7c8b / #8a9aa8 these sat at
+     4.30 and 2.89 against white, so every caption, label and index numeral
+     set in them failed WCAG AA for small text. Now 5.15+ on white, paper
+     and blue-50 alike. */
+  --color-slate-500: #546472;
+  --color-slate-400: #5e6e7c;
   --color-slate-300: #b9c5cf;
   --color-line-200: #dce4eb;
   --color-line-100: #eaeff4;

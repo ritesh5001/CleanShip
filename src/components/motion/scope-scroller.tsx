@@ -111,7 +111,9 @@ export function ScopeScroller({ items }: { items: ScopeItem[] }) {
                 <div className="flex gap-5 sm:gap-7">
                   <m.span
                     animate={{
-                      color: isActive ? "#00929b" : "#8a9aa8",
+                      // Both clear AA at the 22px mobile size, where "large text"
+                      // relaxations do not apply.
+                      color: isActive ? "#00787f" : "#5e6e7c",
                       scale: isActive ? 1.06 : 1,
                     }}
                     transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}

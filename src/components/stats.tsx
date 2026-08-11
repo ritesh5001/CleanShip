@@ -43,8 +43,10 @@ export function StatsBand({
             }`}
           >
             <CountUp value={stat.value} />
+            {/* aqua-600, not 500: at this size the suffix still needs 3:1 and
+                aqua-500 measures 2.65 against white. */}
             {stat.suffix && (
-              <span className="text-aqua-500">{stat.suffix}</span>
+              <span className="text-aqua-600">{stat.suffix}</span>
             )}
           </dd>
           <dt

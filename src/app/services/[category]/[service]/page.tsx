@@ -18,10 +18,16 @@ import {
   CheckIcon,
   PhoneIcon,
 } from "@/components/icons";
-import { allServicePaths, getService, relatedServices } from "@/lib/services";
+import {
+  allServicePaths,
+  getService,
+  relatedServices,
+  serviceCategories,
+} from "@/lib/services";
 import { siteConfig } from "@/lib/site";
 import { heroMediaFor } from "@/lib/service-media";
 import { HeroEnquiryForm } from "@/components/hero-enquiry-form";
+import { WhatsAppCta } from "@/components/whatsapp-cta";
 import {
   breadcrumbSchema,
   buildMetadata,
@@ -263,6 +269,59 @@ export default async function ServicePage({ params }: Params) {
                   </Link>
                 </div>
               )}
+
+              {/* Other service lines — the sibling block only reaches within
+                  this category, so without this a visitor deep in one line has
+                  no path across to the other four. Also flattens crawl depth
+                  between every branch of the taxonomy. */}
+              <div className="card p-6">
+                <h2 className="label-caps text-[12px] text-slate-500">
+                  Other service lines
+                </h2>
+                <ul className="mt-4 divide-y divide-line-100">
+                  {serviceCategories
+                    .filter((c) => c.slug !== category.slug)
+                    .map((other) => (
+                      <li key={other.slug}>
+                        <Link
+                          href={`/services/${other.slug}`}
+                          className="group flex items-center gap-3 py-3 transition-colors duration-[140ms]"
+                        >
+                          <span className="flex size-9 shrink-0 items-center justify-center bg-blue-50 text-blue-600 transition-colors duration-[140ms] group-hover:bg-blue-100">
+                            <CategoryIcon name={other.icon} className="size-5" />
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className="block font-display text-[16px] font-semibold uppercase leading-tight text-ink-900 transition-colors duration-[140ms] group-hover:text-blue-600">
+                              {other.name}
+                            </span>
+                            <span className="mt-0.5 block text-[12px] text-slate-500">
+                              {other.services.length} scopes
+                            </span>
+                          </span>
+                          <ArrowIcon className="size-4 shrink-0 text-slate-300 transition-transform duration-[140ms] group-hover:translate-x-0.5 group-hover:text-blue-600" />
+                        </Link>
+                      </li>
+                    ))}
+                </ul>
+                <Link
+                  href="/services"
+                  className="label-caps mt-4 inline-flex items-center gap-2 text-blue-600"
+                >
+                  All services
+                  <ArrowIcon className="size-4" />
+                </Link>
+              </div>
+
+              {/* WhatsApp — the channel agents actually reply on. */}
+              <div className="rule-accent-top border border-line-200 bg-paper p-6">
+                <h2 className="font-display text-[17px] font-bold uppercase leading-tight text-ink-900">
+                  Need an answer now?
+                </h2>
+                <p className="mt-2 text-[14px] leading-[1.6] text-slate-600">
+                  The operations desk is manned 24/7.
+                </p>
+                <WhatsAppCta className="mt-4 w-full" />
+              </div>
             </div>
           </aside>
         </div>

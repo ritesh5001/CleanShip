@@ -23,6 +23,12 @@ export const siteConfig = {
     { label: "India", number: "+91 92365 20609", href: "tel:+919236520609" },
   ],
   whatsapp: "971554029954",
+  /**
+   * Pre-filled WhatsApp deep link. The `text` payload is already
+   * percent-encoded — do not re-encode it when building hrefs.
+   */
+  whatsappUrl:
+    "https://api.whatsapp.com/send?phone=971554029954&text=Good%20Day%20Sir%2C%0A%0AI%20have%20an%20urgent%20query%20%26%20I%20want%20to%20discuss%20more!",
 
   address: {
     street: "Ajman Free Zone, C1 Building",

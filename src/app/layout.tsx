@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { JsonLd } from "@/components/json-ld";
 import { ScrollTriggerRefresh } from "@/components/motion/scroll-fx";
+import { WhatsAppFloat } from "@/components/whatsapp-cta";
 import { BASE_URL, organizationSchema, websiteSchema } from "@/lib/seo";
 import { siteConfig } from "@/lib/site";
 
@@ -139,6 +140,10 @@ export default function RootLayout({
         <SiteHeader />
         <main id="main">{children}</main>
         <SiteFooter />
+
+        {/* Persistent enquiry path — WhatsApp is the default channel for
+            agents and superintendents in the Gulf. */}
+        <WhatsAppFloat />
       </body>
     </html>
   );

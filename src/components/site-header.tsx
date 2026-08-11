@@ -13,6 +13,7 @@ import {
   MailIcon,
   MenuIcon,
   PhoneIcon,
+  WhatsAppIcon,
 } from "./icons";
 import { Logo } from "./logo";
 
@@ -90,6 +91,15 @@ export function SiteHeader() {
               <MailIcon className="size-4" />
               {siteConfig.email}
             </a>
+            <a
+              href={siteConfig.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 transition-colors duration-[140ms] hover:text-aqua-500"
+            >
+              <WhatsAppIcon className="size-3.5" />
+              WhatsApp
+            </a>
           </div>
         </div>
       </div>
@@ -102,7 +112,7 @@ export function SiteHeader() {
       >
         <div className="container-page flex h-[72px] items-center justify-between gap-4">
           <Link href="/" aria-label={`${siteConfig.name} — home`}>
-            <Logo />
+            <Logo priority />
           </Link>
 
           <nav aria-label="Main" className="hidden items-center lg:flex">

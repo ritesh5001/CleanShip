@@ -60,7 +60,9 @@ export function PageHero({
         <div
           className={
             hasAside
-              ? "mt-8 grid items-start gap-10 lg:grid-cols-12 lg:gap-14"
+              ? // Centred against the form so neither column hangs; the copy
+                // is shorter than the form on most services.
+                "mt-8 grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-14"
               : "mt-8"
           }
         >
