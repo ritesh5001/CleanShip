@@ -56,10 +56,16 @@ export function ScopeScroller({ items }: { items: ScopeItem[] }) {
       }
 
       // Rows enter once, then report active state on the way past.
+      //
+      // Entrance is on the Y axis deliberately. An X offset looks right but
+      // parks every un-revealed row translated to the right of its box, which
+      // extends the document's scrollable width — a 22px offset here produced
+      // a real 2px horizontal overflow on mobile, where the page gutter is
+      // narrower than the offset. Vertical motion cannot do that.
       const rows = gsap.utils.toArray<HTMLElement>("[data-scope-row]", el);
       rows.forEach((row, i) => {
         gsap.from(row, {
-          x: 22,
+          y: 22,
           opacity: 0,
           duration: DUR.reveal,
           ease: EASE.out,

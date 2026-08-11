@@ -9,6 +9,7 @@ import { JsonLd } from "@/components/json-ld";
 import { SectionHeading } from "@/components/ui";
 import { getCategory, serviceCategories } from "@/lib/services";
 import { heroMediaFor } from "@/lib/service-media";
+import { HeroEnquiryForm } from "@/components/hero-enquiry-form";
 import {
   breadcrumbSchema,
   buildMetadata,
@@ -67,6 +68,7 @@ export default async function CategoryPage({ params }: Params) {
         description={category.summary}
         trail={trail}
         media={heroMediaFor(category.slug)}
+        aside={<HeroEnquiryForm serviceName={category.name} />}
       />
 
       {/* ---------- Introduction ---------- */}

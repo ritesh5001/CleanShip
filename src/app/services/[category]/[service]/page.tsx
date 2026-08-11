@@ -12,10 +12,16 @@ import {
 import { ScrollProgress } from "@/components/motion/scroll-fx";
 import { JsonLd } from "@/components/json-ld";
 import { Button, CheckList } from "@/components/ui";
-import { ArrowIcon, CategoryIcon, PhoneIcon } from "@/components/icons";
+import {
+  ArrowIcon,
+  CategoryIcon,
+  CheckIcon,
+  PhoneIcon,
+} from "@/components/icons";
 import { allServicePaths, getService, relatedServices } from "@/lib/services";
 import { siteConfig } from "@/lib/site";
 import { heroMediaFor } from "@/lib/service-media";
+import { HeroEnquiryForm } from "@/components/hero-enquiry-form";
 import {
   breadcrumbSchema,
   buildMetadata,
@@ -87,7 +93,20 @@ export default async function ServicePage({ params }: Params) {
         description={service.tagline}
         trail={trail}
         media={heroMediaFor(category.slug, service.slug)}
-      />
+        aside={<HeroEnquiryForm serviceName={service.name} />}
+      >
+        {/* Fills the copy column against the taller form, and puts the three
+            strongest selling points above the fold rather than making a
+            superintendent scroll for them. */}
+        <ul className="mt-9 space-y-3 border-t border-white/16 pt-7">
+          {service.highlights.slice(0, 3).map((point) => (
+            <li key={point} className="flex gap-3 text-[15px] text-white/80">
+              <CheckIcon className="mt-1 size-4 shrink-0 text-aqua-500" />
+              {point}
+            </li>
+          ))}
+        </ul>
+      </PageHero>
 
       <section className="bg-white">
         <div className="container-page grid gap-12 py-16 lg:grid-cols-12 lg:gap-16 lg:py-20">
