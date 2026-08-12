@@ -30,6 +30,8 @@ import { heroImageFor } from "@/lib/stock-images";
 import { HeroEnquiryForm } from "@/components/hero-enquiry-form";
 import { WhatsAppCta } from "@/components/whatsapp-cta";
 import { CoverageNote } from "@/components/locations";
+import { PhotoOverlay } from "@/components/photo-overlay";
+import { stockImages } from "@/lib/stock-images";
 import {
   breadcrumbSchema,
   buildMetadata,
@@ -216,7 +218,12 @@ export default async function ServicePage({ params }: Params) {
           <aside className="lg:col-span-4">
             <div className="space-y-6 lg:sticky lg:top-[128px]">
               {/* Enquiry */}
-              <div className="on-navy rule-accent-top bg-navy-800 p-6 text-white">
+              <div className="on-navy rule-accent-top relative isolate overflow-hidden bg-navy-800 p-6 text-white">
+                <PhotoOverlay
+                  image={stockImages.vesselOnPassage}
+                  strength="heavy"
+                  sizes="(min-width: 1024px) 33vw, 100vw"
+                />
                 <h2 className="font-display text-[20px] font-bold uppercase leading-tight">
                   Enquire about this service
                 </h2>

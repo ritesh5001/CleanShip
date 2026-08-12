@@ -36,7 +36,7 @@ export function Button({
   external?: boolean;
   withArrow?: boolean;
 }) {
-  const classes = `label-caps group inline-flex h-11 items-center justify-center gap-2.5 rounded-xs px-6 transition-[background-color,border-color,transform] duration-[140ms] ease-standard active:scale-[.985] ${variants[variant]} ${className}`;
+  const classes = `label-caps group inline-flex h-11 shrink-0 items-center whitespace-nowrap justify-center gap-2.5 rounded-xs px-6 transition-[background-color,border-color,transform] duration-[140ms] ease-standard active:scale-[.985] ${variants[variant]} ${className}`;
 
   const inner = (
     <>

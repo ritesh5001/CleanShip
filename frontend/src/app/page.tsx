@@ -20,6 +20,8 @@ import { serviceCategories } from "@/lib/services";
 import { serviceAreas, siteConfig } from "@/lib/site";
 import { LocationsGrid } from "@/components/locations";
 import { CapabilityGallery } from "@/components/capability-gallery";
+import { PhotoOverlay } from "@/components/photo-overlay";
+import { stockImages } from "@/lib/stock-images";
 import { buildMetadata, faqSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -153,8 +155,13 @@ export default function HomePage() {
             ))}
 
             <div data-stagger className="h-full">
-              <div className="on-navy rule-accent-top flex h-full flex-col justify-between bg-navy-800 p-6 text-white">
-                <div>
+              <div className="on-navy rule-accent-top relative isolate flex h-full flex-col justify-between overflow-hidden bg-navy-800 p-6 text-white">
+                <PhotoOverlay
+                  image={stockImages.weldDetail}
+                  strength="heavy"
+                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                />
+                <div className="relative">
                   <h3 className="font-display text-[22px] font-bold uppercase leading-tight">
                     Not sure which scope you need?
                   </h3>

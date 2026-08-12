@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Button } from "@/components/ui";
 import { serviceCategories } from "@/lib/services";
+import { PhotoOverlay } from "@/components/photo-overlay";
+import { stockImages } from "@/lib/stock-images";
 
 export const metadata: Metadata = {
   title: "Page not found",
@@ -10,8 +12,9 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <section className="on-navy bg-navy-900">
-      <div className="container-page py-28 text-center lg:py-40">
+    <section className="on-navy relative isolate overflow-hidden bg-navy-900">
+      <PhotoOverlay image={stockImages.cargoAerial} />
+      <div className="container-page relative py-28 text-center lg:py-40">
         <p className="tabular text-[64px] leading-none text-aqua-500/40 sm:text-[80px]">
           404
         </p>
