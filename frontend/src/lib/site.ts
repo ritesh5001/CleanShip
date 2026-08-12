@@ -12,7 +12,7 @@ export const siteConfig = {
   shortDescription:
     "Underwater hull cleaning, propeller polishing, hold and tank cleaning, offshore support and NDT services for bulk carriers, tankers and container ships worldwide.",
   description:
-    "Cleanship Marine Services FZE is a trusted underwater hull cleaning specialist delivering professional in-water hull cleaning, propeller polishing, thruster work and UWILD, alongside cargo hold cleaning, tank cleaning, offshore support and NDT & repair services to bulk carriers, tankers, container ships and offshore vessels. IMO and port-compliant procedures, eco-friendly methods, experienced riding crews.",
+    "Cleanship Marine Services FZE is a trusted underwater hull cleaning specialist delivering professional in-water hull cleaning, propeller polishing, thruster work and UWILD, alongside cargo hold cleaning, tank cleaning, offshore support and NDT & repair services to bulk carriers, tankers, container ships and offshore vessels. Industry and port-compliant procedures, eco-friendly methods, experienced riding crews.",
   url: "https://www.cleanship.co",
   licence: "B.C. 1302955",
   foundingYear: 2019,

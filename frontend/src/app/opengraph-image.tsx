@@ -86,7 +86,7 @@ export default function OpengraphImage() {
               maxWidth: "820px",
             }}
           >
-            IMO &amp; port-compliant procedures · Riding crews · Underwater
+            Industry &amp; port-compliant procedures · Riding crews · Underwater
             services · NDT &amp; repair
           </span>
         </div>

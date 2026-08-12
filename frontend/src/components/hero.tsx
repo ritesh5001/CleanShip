@@ -9,7 +9,7 @@ import { serviceCategories, totalServiceCount } from "@/lib/services";
 
 const trustPoints = [
   "Experienced marine cleaning professionals",
-  "IMO & port-compliant procedures",
+  "Industry and port-compliant procedures",
   "Eco-friendly cleaning solutions",
 ];
 
@@ -58,10 +58,10 @@ export function Hero() {
                 data-mount
                 className="mt-6 max-w-[54ch] text-[17px] leading-[1.6] text-white/80"
               >
-                Cleanship is a trusted underwater hull cleaning specialist —
-                cleaning hulls, propellers and thrusters in the water, and
-                preparing cargo holds and tanks on bulk carriers, tankers,
-                container ships and offshore vessels.
+                Trusted marine cleaning across global ports. We specialize in
+                professional Hull, hold, tank, cleaning and maintenance —
+                keeping your assets safe, compliant, and ready for their next
+                voyage.
               </p>
 
               <div data-mount className="mt-8">

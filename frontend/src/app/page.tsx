@@ -82,9 +82,9 @@ const process = [
 
 const stats = [
   { value: 5, suffix: "+", label: "Years Experience" },
-  { value: 300, suffix: "+", label: "Clients" },
+  { value: 30, suffix: "+", label: "Clients" },
   { value: 100, suffix: "+", label: "Project Done" },
-  { value: 10, suffix: "+", label: "Team Member" },
+  { value: 40, suffix: "+", label: "Team Member" },
 ];
 
 /** Homepage FAQs — chosen for the questions people actually search. */
@@ -122,10 +122,6 @@ export default function HomePage() {
       <section className="bg-paper">
         <div className="container-page py-16 lg:py-20">
           <StatsBand stats={stats} />
-          <p className="mt-4 text-[13px] text-slate-400">
-            Figures are indicative of current operating scale — replace with
-            audited numbers before launch.
-          </p>
         </div>
       </section>
 
@@ -136,8 +132,8 @@ export default function HomePage() {
             <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
               <SectionHeading
                 eyebrow="Our Services"
-                title="Comprehensive marine solutions"
-                description="Five service lines covering a vessel from the tank top to the propeller boss — so a single mobilisation can close out work that would otherwise need four separate suppliers."
+                title="One Mobilisation. Multiple Marine Solutions."
+                description="From underwater services to hold preparation to tank cleaning, CleanShip delivers end-to-end solutions through one coordinated teams."
               />
               <Link
                 href="/services"
@@ -190,14 +186,14 @@ export default function HomePage() {
               <Reveal>
                 <SectionHeading
                   eyebrow="About Cleanship"
-                  title="Why will you choose our services?"
-                  description="We are an underwater hull cleaning specialist first. Everything else we do grew out of what our clients kept asking us to solve on the same mobilisation."
+                  title="Why Will You Choose Our Services?"
+                  description="Marine cleaning you can trust, backed by Industry compliant procedures and years of hands-on experience. Every vessel we service reflects our commitment to reliability, efficiency, and care."
                 />
                 <CheckList
                   className="mt-8"
                   items={[
                     "Experienced marine cleaning professionals",
-                    "IMO and port-compliant procedures",
+                    "Industry and port-compliant procedures",
                     "Eco-friendly cleaning solutions",
                     "Self-sufficient crews and equipment",
                   ]}
@@ -239,7 +235,7 @@ export default function HomePage() {
           <Reveal>
             <SectionHeading
               eyebrow="How We Work"
-              title="From enquiry to sign-off"
+              title="From enquiry to Job Done"
               description="No layers, no account managers relaying messages. You speak to the people who plan and run the job."
               align="center"
             />

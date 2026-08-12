@@ -18,7 +18,7 @@ import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "About Cleanship | Underwater Hull Cleaning Specialists",
   description:
-    "Cleanship Marine Services FZE is a trusted underwater hull cleaning specialist, and a hold and tank cleaning provider, based in Ajman Free Zone, UAE. Certified crews, IMO-compliant procedures and eco-friendly methods for vessels worldwide.",
+    "Cleanship Marine Services FZE is a trusted underwater hull cleaning specialist, and a hold and tank cleaning provider, based in Ajman Free Zone, UAE. Certified crews, industry and port-compliant procedures and eco-friendly methods for vessels worldwide.",
   path: "/about",
   keywords: [
     "about Cleanship",
@@ -58,7 +58,7 @@ const values = [
 
 const stats = [
   { value: 5, suffix: "+", label: "Years Experience" },
-  { value: 300, suffix: "+", label: "Clients" },
+  { value: 30, suffix: "+", label: "Clients" },
   { value: 100, suffix: "+", label: "Project Done" },
   { value: 3, suffix: "+", label: "Award Winner" },
 ];
@@ -130,7 +130,7 @@ export default function AboutPage() {
                   className="mt-6"
                   items={[
                     "Experienced marine cleaning professionals",
-                    "IMO and port-compliant procedures",
+                    "Industry and port-compliant procedures",
                     "Eco-friendly cleaning solutions",
                     "Certified riding crews, divers and technicians",
                     "Self-sufficient teams — own equipment and consumables",
@@ -165,10 +165,6 @@ export default function AboutPage() {
       <section className="bg-paper">
         <div className="container-page py-16 lg:py-20">
           <StatsBand stats={stats} />
-          <p className="mt-4 text-[13px] text-slate-400">
-            Figures are indicative of current operating scale — replace with
-            audited numbers before launch.
-          </p>
         </div>
       </section>
 
