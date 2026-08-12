@@ -123,7 +123,19 @@ export function VideoBackdrop({
         </video>
       )}
 
-      {/* Navy scrims — the design system's only sanctioned gradients. The
+      <HeroScrims />
+    </div>
+  );
+}
+
+/**
+ * Navy scrims — the design system's only sanctioned gradients, shared by the
+ * video and photo backdrops so both get identical contrast behaviour.
+ */
+function HeroScrims() {
+  return (
+    <>
+      {/* Direction follows the copy — the design system's only sanctioned gradients. The
           left wash carries the copy; the bottom fade seats the section into
           the page below it. */}
       {/* Scrim direction follows the copy.
@@ -157,6 +169,22 @@ export function VideoBackdrop({
             "linear-gradient(180deg, rgba(3,16,31,0) 0%, rgba(3,16,31,.85) 100%)",
         }}
       />
+    </>
+  );
+}
+
+/**
+ * Photo backdrop for heroes with no footage.
+ *
+ * Same scrims and the same `priority` treatment as the video poster, so a
+ * service page looks and performs the same whether it has a clip or a still.
+ * The image IS the LCP element here, hence priority and no lazy-loading.
+ */
+export function ImageBackdrop({ src, alt }: { src: string; alt: string }) {
+  return (
+    <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
+      <Image src={src} alt={alt} fill priority sizes="100vw" className="object-cover" />
+      <HeroScrims />
     </div>
   );
 }

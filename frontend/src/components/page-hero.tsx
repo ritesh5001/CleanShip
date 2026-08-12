@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { Breadcrumbs } from "./ui";
-import { VideoBackdrop } from "./video-hero";
+import { ImageBackdrop, VideoBackdrop } from "./video-hero";
 import type { HeroMedia } from "@/lib/service-media";
+import type { StockImage } from "@/lib/stock-images";
 
 /**
  * Interior page banner — the breadcrumb trail, the H1 and a lead paragraph.
@@ -18,6 +19,7 @@ export function PageHero({
   description,
   trail,
   media,
+  image,
   aside,
   children,
 }: {
@@ -27,6 +29,8 @@ export function PageHero({
   trail: { name: string; path: string }[];
   /** Supply to render footage behind the copy. */
   media?: HeroMedia | null;
+  /** Fallback backdrop for pages with no footage. Ignored when `media` is set. */
+  image?: StockImage | null;
   /**
    * Right-hand panel — the quote form on service pages. When present the hero
    * splits into copy-left / panel-right; copy narrows so the two columns do
@@ -35,20 +39,27 @@ export function PageHero({
   aside?: ReactNode;
   children?: ReactNode;
 }) {
-  const hasVideo = Boolean(media);
+  // A photo backdrop gets the same treatment as footage — same scrims, same
+  // min-height, same aqua base rule — so the two never look like different
+  // page templates.
+  const backdrop = Boolean(media) || Boolean(image);
   const hasAside = Boolean(aside);
 
   return (
     <section
       className={`on-navy relative isolate overflow-hidden ${
-        hasVideo ? "bg-abyss-950" : "bg-navy-900"
+        backdrop ? "bg-abyss-950" : "bg-navy-900"
       }`}
     >
-      {media && <VideoBackdrop slug={media.slug} alt={media.alt} />}
+      {media ? (
+        <VideoBackdrop slug={media.slug} alt={media.alt} />
+      ) : image ? (
+        <ImageBackdrop src={image.src} alt={image.alt} />
+      ) : null}
 
       <div
         className={`container-page relative ${
-          hasVideo
+          backdrop
             ? `flex flex-col justify-end py-14 lg:py-20 ${
                 hasAside ? "min-h-[auto]" : "min-h-[clamp(420px,58vh,620px)]"
               }`
@@ -83,7 +94,7 @@ export function PageHero({
       </div>
 
       {/* Brand rule seating the hero against the content below. */}
-      {hasVideo && (
+      {backdrop && (
         <span
           aria-hidden="true"
           className="absolute inset-x-0 bottom-0 h-[3px] bg-aqua-500"

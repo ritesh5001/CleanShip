@@ -26,6 +26,7 @@ import {
 } from "@/lib/services";
 import { categoryCoverage, serviceCoverage, siteConfig } from "@/lib/site";
 import { heroMediaFor } from "@/lib/service-media";
+import { heroImageFor } from "@/lib/stock-images";
 import { HeroEnquiryForm } from "@/components/hero-enquiry-form";
 import { WhatsAppCta } from "@/components/whatsapp-cta";
 import { CoverageNote } from "@/components/locations";
@@ -104,6 +105,7 @@ export default async function ServicePage({ params }: Params) {
         description={service.tagline}
         trail={trail}
         media={heroMediaFor(category.slug, service.slug)}
+        image={heroImageFor(category.slug, service.slug)}
         aside={<HeroEnquiryForm serviceName={service.name} />}
       >
         {/* Fills the copy column against the taller form, and puts the three

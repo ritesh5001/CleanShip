@@ -52,6 +52,14 @@ long-running Express process, not serverless functions.
   against** — the `videos/` masters were removed from the repo. The compressed
   output in `frontend/public/videos` and the posters still ship fine; restore
   the masters before re-encoding.
+- **All photography is placeholder stock** (`frontend/public/images`, mapped in
+  `frontend/src/lib/stock-images.ts`). Unsplash licence — free commercially, no
+  attribution needed — downloaded and self-hosted, never hot-linked. Two
+  caveats: they show real, named third-party vessels (unavoidable with marine
+  stock), so they are used only as scrimmed hero backdrops where names are not
+  legible, and they must never be presented as Cleanship's own work or
+  clients. Replace with real photography when available; the source URL for
+  each is recorded in that file.
 - `frontend/src/app/projects/page.tsx` still uses `PLACEHOLDER_PROJECTS`.
   Illustrative scope patterns, not real contracts — replace before launch.
 - Statistics on the home and about pages are indicative, not audited.

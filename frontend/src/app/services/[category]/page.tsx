@@ -9,6 +9,7 @@ import { JsonLd } from "@/components/json-ld";
 import { SectionHeading } from "@/components/ui";
 import { getCategory, serviceCategories } from "@/lib/services";
 import { heroMediaFor } from "@/lib/service-media";
+import { heroImageFor } from "@/lib/stock-images";
 import { CoverageNote } from "@/components/locations";
 import { categoryCoverage } from "@/lib/site";
 import { HeroEnquiryForm } from "@/components/hero-enquiry-form";
@@ -70,6 +71,7 @@ export default async function CategoryPage({ params }: Params) {
         description={category.summary}
         trail={trail}
         media={heroMediaFor(category.slug)}
+        image={heroImageFor(category.slug)}
         aside={<HeroEnquiryForm serviceName={category.name} />}
       />
 

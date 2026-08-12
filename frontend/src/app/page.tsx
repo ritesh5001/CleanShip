@@ -19,6 +19,7 @@ import {
 import { serviceCategories } from "@/lib/services";
 import { serviceAreas, siteConfig } from "@/lib/site";
 import { LocationsGrid } from "@/components/locations";
+import { CapabilityGallery } from "@/components/capability-gallery";
 import { buildMetadata, faqSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -253,6 +254,22 @@ export default function HomePage() {
                 </div>
               </Reveal>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Capability gallery ---------- */}
+      <section className="border-t border-line-200 bg-white">
+        <div className="container-page py-20 lg:py-24">
+          <Reveal>
+            <SectionHeading
+              eyebrow="In the field"
+              title="What the work actually looks like"
+              description="Five service lines, from the propeller boss to the tank top. Every scope is delivered by our own certified crews, with our own equipment."
+            />
+          </Reveal>
+          <div className="mt-12">
+            <CapabilityGallery />
           </div>
         </div>
       </section>

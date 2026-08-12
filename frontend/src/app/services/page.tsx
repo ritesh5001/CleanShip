@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
+import { CapabilityGallery } from "@/components/capability-gallery";
 import { Reveal } from "@/components/reveal";
 import { JsonLd } from "@/components/json-ld";
 import { ArrowIcon, CategoryIcon } from "@/components/icons";
@@ -55,6 +56,13 @@ export default function ServicesPage() {
         description={`${totalServiceCount} distinct scopes across five service lines — covering a vessel from the tank top to the propeller boss, and the inspection and repair work that follows.`}
         trail={trail}
       />
+
+      {/* Visual index of the five lines before the detailed bands below. */}
+      <section className="bg-white">
+        <div className="container-page py-14 lg:py-16">
+          <CapabilityGallery />
+        </div>
+      </section>
 
       {/* One band per category, alternating white / paper — the DS permits
           exactly two background colours per page. */}
