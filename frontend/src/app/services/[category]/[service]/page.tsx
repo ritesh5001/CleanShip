@@ -53,11 +53,22 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
   if (!found) return { title: "Service not found" };
 
+  // Share card: the page's own hero still, so each service link previews as
+  // itself rather than as the generic site card.
+  const media = heroMediaFor(categorySlug, serviceSlug);
+  const still = heroImageFor(categorySlug, serviceSlug);
+  const image = media
+    ? { url: `/posters/${media.slug}.jpg`, alt: media.alt }
+    : still
+      ? { url: still.src, alt: still.alt }
+      : undefined;
+
   return buildMetadata({
     title: found.service.seoTitle,
     description: found.service.metaDescription,
     path: `/services/${categorySlug}/${serviceSlug}`,
     keywords: found.service.keywords,
+    image,
   });
 }
 

@@ -36,7 +36,18 @@ const TILE_IMAGE: Record<string, { src: string; alt: string }> = {
  * beside the lead tile, because a 16:9 tile spanning two columns is taller
  * than a 4:3 tile spanning one.
  */
-export function CapabilityGallery() {
+export function CapabilityGallery({
+  /**
+   * Heading level for the tiles. On the home page the gallery sits under a
+   * section <h2>, so h3 is correct; on /services it follows the <h1> directly
+   * with no h2 between, and h3 there would skip a level — an accessibility
+   * fault and a structure signal search engines read.
+   */
+  headingLevel = "h3",
+}: {
+  headingLevel?: "h2" | "h3";
+} = {}) {
+  const Heading = headingLevel;
   return (
     <StaggerGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {serviceCategories.map((category, i) => {
@@ -84,9 +95,9 @@ export function CapabilityGallery() {
                 <span className="num-index text-[13px] text-aqua-400">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <h3 className="mt-2 font-display text-[22px] font-bold uppercase leading-tight text-white">
+                <Heading className="mt-2 font-display text-[22px] font-bold uppercase leading-tight text-white">
                   {category.name}
-                </h3>
+                </Heading>
                 <p className="mt-1.5 line-clamp-2 max-w-[46ch] text-[14px] leading-[1.5] text-white/75">
                   {category.tagline}
                 </p>

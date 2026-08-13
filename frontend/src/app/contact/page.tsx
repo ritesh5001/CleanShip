@@ -13,12 +13,17 @@ import {
 import { serviceAreas, siteConfig } from "@/lib/site";
 import { LocationsGrid } from "@/components/locations";
 import { SectionHeading } from "@/components/ui";
-import { BASE_URL, breadcrumbSchema, buildMetadata } from "@/lib/seo";
+import {
+  BASE_URL,
+  breadcrumbSchema,
+  buildMetadata,
+  officeSchemas,
+} from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Contact Cleanship Marine Services | 24/7 Operations Desk",
+  title: "Contact Us — 24/7 Operations Desk",
   description:
-    "Contact Cleanship Marine Services for hold cleaning, tank cleaning, hull cleaning, offshore support and NDT enquiries. Ajman Free Zone, UAE. Operations desk manned 24/7.",
+    "Contact Cleanship for hull, hold and tank cleaning, offshore support and NDT enquiries. Eight bases across the Gulf, South Asia and West Africa.",
   path: "/contact",
   keywords: [
     "contact Cleanship",
@@ -26,6 +31,7 @@ export const metadata: Metadata = buildMetadata({
     "hold cleaning enquiry",
     "ship cleaning contact Ajman",
   ],
+  image: { url: "/images/port-terminal.jpg", alt: "Vessels alongside at a container terminal" },
 });
 
 const trail = [
@@ -48,6 +54,8 @@ export default function ContactPage() {
               "Enquiry and contact details for Cleanship Marine Services FZE.",
             mainEntity: { "@id": `${BASE_URL}/#organization` },
           },
+          // Every operating base, so local search can surface the nearest one.
+          ...officeSchemas(),
         ]}
       />
 

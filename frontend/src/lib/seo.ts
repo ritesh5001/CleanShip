@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { siteConfig, serviceAreas } from "./site";
+import { offices, siteConfig, serviceAreas } from "./site";
 import type { Faq, Service, ServiceCategory } from "./services";
 
 /**
@@ -20,6 +20,13 @@ type MetaInput = {
   keywords?: readonly string[];
   /** Set true on pages that should stay out of the index (e.g. thank-you). */
   noIndex?: boolean;
+  /**
+   * Path under public/ for a page-specific share card. Without this a page
+   * falls back to the generated site-wide card, which means every service
+   * link shared on LinkedIn or WhatsApp looks identical — the single biggest
+   * missed signal on an otherwise well-marked-up page.
+   */
+  image?: { url: string; alt: string };
 };
 
 export function buildMetadata({
@@ -28,8 +35,13 @@ export function buildMetadata({
   path,
   keywords,
   noIndex,
+  image,
 }: MetaInput): Metadata {
   const url = `${BASE_URL}${path === "/" ? "" : path}`;
+  // Absolute URLs — relative paths are not resolved by every scraper.
+  const images = image
+    ? [{ url: `${BASE_URL}${image.url}`, width: 1600, height: 900, alt: image.alt }]
+    : undefined;
 
   return {
     title,
@@ -43,11 +55,13 @@ export function buildMetadata({
       title,
       description,
       locale: "en_AE",
+      ...(images ? { images } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      ...(images ? { images } : {}),
     },
     robots: noIndex
       ? { index: false, follow: false }
@@ -215,4 +229,52 @@ export function categorySchema(category: ServiceCategory) {
       })),
     },
   };
+}
+
+/**
+ * One LocalBusiness node per operating base.
+ *
+ * The Organization node carries only the registered head office, so the seven
+ * other bases were invisible to local search — a real gap for a contractor
+ * whose whole pitch is "we have a crew near your vessel". Each is linked back
+ * to the parent organisation via `parentOrganization`, so they read as
+ * branches of one company rather than eight unrelated businesses.
+ *
+ * No coordinates are emitted for the branches: inventing a lat/long is worse
+ * than omitting it, because a wrong pin sends people to the wrong place.
+ * Add them from the Google Business Profile for each base.
+ */
+export function officeSchemas() {
+  return offices.map((office) => ({
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": `${BASE_URL}/#office-${office.city.toLowerCase().replace(/\s+/g, "-")}`,
+    name: `${siteConfig.legalName} — ${office.city}`,
+    parentOrganization: { "@id": ORG_ID },
+    url: `${BASE_URL}/contact`,
+    email: siteConfig.email,
+    telephone: siteConfig.phones.map((p) => p.href.replace("tel:", "")),
+    address: {
+      "@type": "PostalAddress",
+      ...(office.street ? { streetAddress: office.street } : {}),
+      addressLocality: office.city,
+      /* Some entries carry a state, e.g. "Gujarat, India". schema.org expects
+         a country in addressCountry, so anything before the last comma is
+         split out as addressRegion — "Gujarat, India" as a country is invalid
+         and would be discarded by consumers. */
+      ...(office.country.includes(",")
+        ? {
+            addressRegion: office.country
+              .slice(0, office.country.lastIndexOf(","))
+              .trim(),
+            addressCountry: office.country
+              .slice(office.country.lastIndexOf(",") + 1)
+              .trim(),
+          }
+        : { addressCountry: office.country }),
+    },
+    ...(office.head
+      ? { additionalType: "https://schema.org/Organization" }
+      : {}),
+  }));
 }

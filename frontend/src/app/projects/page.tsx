@@ -10,15 +10,16 @@ import { serviceCategories } from "@/lib/services";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Projects & Case Studies | Marine Cleaning Work",
+  title: "Projects & Case Studies",
   description:
-    "Representative Cleanship marine cleaning projects — underwater hull work, cargo hold cleaning, tank cleaning and offshore support across bulk carriers, tankers, container ships and OSVs.",
+    "Representative marine cleaning projects — underwater hull work, cargo hold and tank cleaning, and offshore support across bulk carriers and tankers.",
   path: "/projects",
   keywords: [
     "marine cleaning projects",
     "hold cleaning case study",
     "tank cleaning project UAE",
   ],
+  image: { url: "/images/port-terminal.jpg", alt: "Vessels alongside at a container terminal" },
 });
 
 const trail = [

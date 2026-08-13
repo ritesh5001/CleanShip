@@ -37,9 +37,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
     default:
-      "Cleanship Marine Services | Underwater Hull, Hold & Tank Cleaning",
-    // Every child page supplies only its own title; the brand is appended here.
-    template: `%s | ${siteConfig.name} Marine Services`,
+      "Cleanship Marine Services | Underwater Hull & Tank Cleaning",
+    /* Every child page supplies only its own title; the brand is appended
+       here. Kept to "| Cleanship" — the old "| Cleanship Marine Services"
+       suffix consumed 30 of the ~60 characters Google shows before it
+       truncates, so page titles were being cut mid-phrase in results. */
+    template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.shortDescription,
   applicationName: siteConfig.name,
@@ -65,7 +68,7 @@ export const metadata: Metadata = {
     locale: "en_AE",
     url: BASE_URL,
     siteName: siteConfig.name,
-    title: "Cleanship Marine Services | Underwater Hull, Hold & Tank Cleaning",
+    title: "Cleanship Marine Services | Underwater Hull & Tank Cleaning",
     description: siteConfig.shortDescription,
   },
   twitter: {

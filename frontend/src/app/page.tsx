@@ -25,7 +25,7 @@ import { stockImages } from "@/lib/stock-images";
 import { buildMetadata, faqSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Underwater Hull Cleaning & Marine Services | Cleanship",
+  title: "Underwater Hull Cleaning & Marine Services",
   description: siteConfig.shortDescription,
   path: "/",
   keywords: [
@@ -36,6 +36,7 @@ export const metadata: Metadata = buildMetadata({
     "tank cleaning company UAE",
     "marine cleaning Ajman",
   ],
+  image: { url: "/posters/underwater-hull-cleaning.jpg", alt: "Diver cleaning a vessel's underwater hull" },
 });
 
 const differentiators = [

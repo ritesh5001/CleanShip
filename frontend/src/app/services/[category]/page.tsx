@@ -35,11 +35,20 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
   if (!category) return { title: "Service not found" };
 
+  const media = heroMediaFor(category.slug);
+  const still = heroImageFor(category.slug);
+  const image = media
+    ? { url: `/posters/${media.slug}.jpg`, alt: media.alt }
+    : still
+      ? { url: still.src, alt: still.alt }
+      : undefined;
+
   return buildMetadata({
     title: category.seoTitle,
     description: category.metaDescription,
     path: `/services/${category.slug}`,
     keywords: category.keywords,
+    image,
   });
 }
 

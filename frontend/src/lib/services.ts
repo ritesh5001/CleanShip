@@ -56,9 +56,9 @@ export const serviceCategories: ServiceCategory[] = [
     slug: "hull-cleaning",
     name: "Hull Cleaning",
     icon: "hull",
-    seoTitle: "Underwater Hull Cleaning & Propeller Polishing | Diving Services",
+    seoTitle: "Underwater Hull Cleaning & Propeller Polishing",
     metaDescription:
-      "Underwater hull cleaning, propeller super polishing, thruster cleaning, in-water class survey and UWILD by commercial dive teams. Restore speed, cut fuel burn and stay compliant.",
+      "Underwater hull cleaning, propeller super polishing, thruster cleaning, in-water class survey and UWILD by commercial dive teams.",
     tagline: "Fuel savings that start the moment the divers surface",
     summary:
       "Commercial dive teams delivering hull cleaning, propeller polishing, thruster work, in-water surveys and UWILD.",
@@ -91,9 +91,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "underwater-hull-cleaning",
         name: "Underwater Hull Cleaning",
-        seoTitle: "Underwater Hull Cleaning | In-Water Fouling Removal",
+        seoTitle: "Underwater Hull Cleaning | In-Water Fouling",
         metaDescription:
-          "In-water hull cleaning by commercial divers at anchorage or alongside. Removal of slime, weed and barnacle fouling to restore speed and reduce fuel consumption without off-hire.",
+          "In-water hull cleaning by commercial divers at anchorage or alongside. Removal of slime, weed and barnacle fouling to restore speed and reduce fuel.",
         tagline: "Full hull cleaned in the water, vessel stays on hire",
         summary:
           "Diver-operated brush cart and hand cleaning of the full underwater hull, flat bottom and vertical sides.",
@@ -214,7 +214,7 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "thruster-cleaning-polishing",
         name: "Thruster Cleaning & Polishing",
-        seoTitle: "Thruster Cleaning & Polishing | Bow & Stern Thrusters",
+        seoTitle: "Thruster Cleaning & Polishing | Bow & Stern",
         metaDescription:
           "Underwater bow and stern thruster cleaning and polishing. Tunnel fouling removal, blade polishing and grating clearance to restore full manoeuvring thrust.",
         tagline: "Full thrust restored when you need it most",
@@ -324,9 +324,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "propeller-super-polishing",
         name: "Propeller Super Polishing",
-        seoTitle: "Propeller Super Polishing | Class A Mirror Finish Underwater",
+        seoTitle: "Propeller Super Polishing | Mirror Finish",
         metaDescription:
-          "Underwater propeller super polishing to a Class A mirror finish. Removes fouling, calcareous deposits and roughness to cut fuel consumption and reduce cavitation.",
+          "Underwater propeller super polishing to a Class A mirror finish. Removes fouling, calcareous deposits and roughness to cut fuel consumption and reduce.",
         tagline: "Mirror finish, measurably lower fuel burn",
         summary:
           "Multi-stage underwater polishing of propeller blades to a Class A mirror finish for maximum efficiency.",
@@ -435,9 +435,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "in-water-class-survey",
         name: "In-Water Class Survey",
-        seoTitle: "In-Water Survey | Class-Approved Diver Inspection",
+        seoTitle: "In-Water Class Survey | Diver Inspection",
         metaDescription:
-          "Class-approved in-water surveys with live video and surveyor attendance. Hull, rudder, propeller, sea chest and anode inspection to satisfy classification society requirements.",
+          "Class-approved in-water surveys with live video and surveyor attendance. Hull, rudder, propeller.",
         tagline: "Class attendance without opening a dry dock",
         summary:
           "Class-approved underwater inspection with live video feed and surveyor attendance in real time.",
@@ -549,9 +549,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "uwild",
         name: "UWILD",
-        seoTitle: "UWILD | Underwater Inspection In Lieu of Drydocking",
+        seoTitle: "UWILD | Underwater Inspection In Lieu of Drydock",
         metaDescription:
-          "UWILD — Underwater Inspection In Lieu of Drydocking. Class-approved diver and ROV inspection programmes that satisfy survey requirements without taking the vessel out of service.",
+          "UWILD \u2014 Underwater Inspection In Lieu of Drydocking. Class-approved diver and ROV inspection programmes that satisfy survey requirements without taking the.",
         tagline: "Survey credit earned without leaving the water",
         summary:
           "Full Underwater Inspection In Lieu of Drydocking programmes, executed and documented to class requirements.",
@@ -670,9 +670,9 @@ export const serviceCategories: ServiceCategory[] = [
     slug: "hold-cleaning",
     name: "Hold Cleaning",
     icon: "hold",
-    seoTitle: "Cargo Hold Cleaning Services | Bulk Carriers & Container Ships",
+    seoTitle: "Cargo Hold Cleaning Services | Bulk Carriers",
     metaDescription:
-      "Professional cargo hold cleaning for bulk carriers and container ships. Shore gangs, riding crews and rope access teams delivering grain-clean and hold-inspection-ready results worldwide.",
+      "Professional cargo hold cleaning for bulk carriers and container ships. Shore gangs, riding crews and rope access teams delivering grain-clean and.",
     tagline: "Grain-clean holds, on schedule, first inspection",
     summary:
       "Shore gangs, riding crews and rope access teams that take cargo holds from previous-cargo dirty to grain-clean and inspection-ready.",
@@ -733,9 +733,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "shore-gang",
         name: "Hold Cleaning Shore Gang",
-        seoTitle: "Hold Cleaning Shore Gang | Fast In-Port Cargo Hold Cleaning",
+        seoTitle: "Hold Cleaning Shore Gang | In-Port Cleaning",
         metaDescription:
-          "Experienced hold cleaning shore gangs mobilised to your berth or anchorage. High-volume cargo hold cleaning between discharge and load, completed within the port stay.",
+          "Experienced hold cleaning shore gangs mobilised to your berth or anchorage. High-volume cargo hold cleaning between discharge and load.",
         tagline: "Full crews, mobilised to your berth or anchorage",
         summary:
           "Large shore-based teams that clean every hold inside the port stay, between discharge and next load.",
@@ -843,9 +843,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "riding-crew",
         name: "Hold Cleaning Riding Crew",
-        seoTitle: "Hold Cleaning Riding Crew | Cleaning During Sea Passage",
+        seoTitle: "Hold Cleaning Riding Crew | Cleaning at Sea",
         metaDescription:
-          "Certified hold cleaning riding crews that sail with your vessel and clean cargo holds on passage, so the ship arrives at the load port grain-clean and inspection-ready.",
+          "Certified hold cleaning riding crews that sail with your vessel and clean cargo holds on passage.",
         tagline: "Cleaning that happens while you are already earning",
         summary:
           "Certified teams that sail with the vessel and complete every hold on passage — zero port time lost.",
@@ -957,9 +957,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "rope-access",
         name: "Hold Cleaning Rope Access",
-        seoTitle: "Rope Access Hold Cleaning | IRATA Teams for Ships",
+        seoTitle: "Rope Access Hold Cleaning | IRATA Teams",
         metaDescription:
-          "IRATA-certified rope access teams for cargo hold cleaning, inspection and coating work at height. Safe access to upper frames, bulkheads and hatch structures without staging.",
+          "IRATA-certified rope access teams for cargo hold cleaning, inspection and coating work at height.",
         tagline: "Every surface reachable — without a single stage board",
         summary:
           "IRATA-certified technicians reaching upper frames, bulkheads and overheads without scaffolding or cherry pickers.",
@@ -1078,9 +1078,9 @@ export const serviceCategories: ServiceCategory[] = [
     slug: "tank-cleaning",
     name: "Tank Cleaning",
     icon: "tank",
-    seoTitle: "Marine Tank Cleaning Services | Oil Tankers & Shore Tanks",
+    seoTitle: "Marine Tank Cleaning | Oil & Shore Tanks",
     metaDescription:
-      "Certified marine tank cleaning for oil tankers carrying DPP and CPP cargoes, plus demucking, shore tank cleaning and offshore vessel tanks. Gas-free, sludge disposal and entry certification.",
+      "Certified marine tank cleaning for oil tankers carrying DPP and CPP cargoes, plus demucking, shore tank cleaning and offshore vessel tanks.",
     tagline: "Gas-free, entry-ready, certified",
     summary:
       "Cargo and slop tank cleaning for DPP and CPP trades, demucking, shore terminal tanks and offshore vessel tankage.",
@@ -1112,9 +1112,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "oil-tanker-dpp-cpp",
         name: "Tanker Cleaning — DPP & CPP",
-        seoTitle: "Oil Tanker Tank Cleaning | DPP & CPP Grade Change",
+        seoTitle: "Oil Tanker Tank Cleaning | DPP & CPP Grades",
         metaDescription:
-          "Cargo tank cleaning for oil tankers in DPP and CPP trades. Crude oil washing support, grade-change cleaning, wall wash preparation, gas-freeing and slop handling.",
+          "Cargo tank cleaning for oil tankers in DPP and CPP trades. Crude oil washing support, grade-change cleaning, wall wash preparation.",
         tagline: "Crude, fuel oil or clean products — cleaned to specification",
         summary:
           "Cargo tank cleaning for dirty and clean petroleum product trades, including grade changes and wall-wash preparation.",
@@ -1195,9 +1195,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "demucking",
         name: "Demucking",
-        seoTitle: "Tank Demucking Services | Sludge & Residue Removal",
+        seoTitle: "Tank Demucking | Sludge & Residue Removal",
         metaDescription:
-          "Manual and mechanical tank demucking for oil tankers and bulk carriers. Removal of sludge, scale, wax and solid residue from cargo tanks, slop tanks and bunker tanks.",
+          "Manual and mechanical tank demucking for oil tankers and bulk carriers. Removal of sludge, scale, wax and solid residue from cargo tanks.",
         tagline: "The heavy residue that washing alone will not lift",
         summary:
           "Manual and mechanical removal of sludge, scale and solid residue from tanks before survey, repair or grade change.",
@@ -1277,9 +1277,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "shore-tank-cleaning",
         name: "Shore Tank Cleaning",
-        seoTitle: "Shore Tank Cleaning | Terminal & Storage Tank Services",
+        seoTitle: "Shore Tank Cleaning | Terminal Storage Tanks",
         metaDescription:
-          "Storage and terminal tank cleaning for oil and chemical facilities. Sludge removal, gas-freeing, confined space entry and inspection preparation for API 653 and statutory surveys.",
+          "Storage and terminal tank cleaning for oil and chemical facilities. Sludge removal, gas-freeing.",
         tagline: "Terminal tanks turned around for inspection and service",
         summary:
           "Storage tank cleaning at terminals and depots, prepared for internal inspection, repair or product change.",
@@ -1360,9 +1360,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "offshore-vessel-tank-cleaning",
         name: "Offshore Vessel Tank Cleaning",
-        seoTitle: "Offshore Vessel Tank Cleaning | OSV, PSV & Barge Tanks",
+        seoTitle: "Offshore Vessel Tank Cleaning | OSV & PSV",
         metaDescription:
-          "Tank cleaning for offshore support vessels, platform supply vessels and barges. Mud, brine, base oil and drill water tanks cleaned for cargo change, survey or layup.",
+          "Tank cleaning for offshore support vessels, platform supply vessels and barges. Mud, brine, base oil and drill water tanks cleaned for cargo change.",
         tagline: "Mud, brine and base oil tanks turned around fast",
         summary:
           "Cleaning of mud, brine, base oil and drill water tanks on OSVs, PSVs and offshore barges.",
@@ -1450,9 +1450,9 @@ export const serviceCategories: ServiceCategory[] = [
     slug: "offshore",
     name: "Offshore Services",
     icon: "offshore",
-    seoTitle: "Offshore Support Services | Rigs, Platforms & OSVs",
+    seoTitle: "Offshore Support Services | Rigs & Platforms",
     metaDescription:
-      "Offshore cleaning and support services for rigs, platforms, FPSOs and support vessels. Industrial cleaning, void and cofferdam entry, riding squads and offshore maintenance teams.",
+      "Offshore cleaning and support services for rigs, platforms, FPSOs and support vessels. Industrial cleaning, void and cofferdam entry.",
     tagline: "Certified crews, offshore-ready",
     summary:
       "Industrial cleaning, confined space work and maintenance squads mobilised to rigs, platforms, FPSOs and support vessels.",
@@ -1480,9 +1480,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "offshore-support-vessel-services",
         name: "Offshore Support Vessel Services",
-        seoTitle: "Offshore Support Vessel Cleaning & Maintenance | OSV & PSV",
+        seoTitle: "Offshore Support Vessel Cleaning | OSV & PSV",
         metaDescription:
-          "Cleaning and maintenance services for offshore support vessels, PSVs and anchor handlers. Deck, tank and accommodation cleaning, surface preparation and charter turnaround support.",
+          "Cleaning and maintenance services for offshore support vessels, PSVs and anchor handlers. Deck, tank and accommodation cleaning.",
         tagline: "Charter-ready turnarounds between contracts",
         summary:
           "Deck, tank, void and accommodation work that turns a support vessel around between charters.",
@@ -1558,9 +1558,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "rig-and-platform-cleaning",
         name: "Rig & Platform Cleaning",
-        seoTitle: "Rig & Platform Cleaning Services | Offshore Industrial Cleaning",
+        seoTitle: "Rig & Platform Cleaning | Offshore Industrial",
         metaDescription:
-          "Industrial cleaning for drilling rigs, fixed platforms and FPSOs. Mud pit and tank cleaning, deck degreasing, hydroblasting and confined space work by certified offshore crews.",
+          "Industrial cleaning for drilling rigs, fixed platforms and FPSOs. Mud pit and tank cleaning, deck degreasing.",
         tagline: "Industrial cleaning where the asset sits",
         summary:
           "Mud pits, tanks, decks and structures cleaned in situ on rigs, platforms and FPSOs.",
@@ -1637,9 +1637,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "void-space-and-cofferdam-cleaning",
         name: "Void Space & Cofferdam Cleaning",
-        seoTitle: "Void Space & Cofferdam Cleaning | Confined Space Entry",
+        seoTitle: "Void Space & Cofferdam Cleaning | Confined Space",
         metaDescription:
-          "Void space, cofferdam and ballast tank cleaning by certified confined space entry teams. Sediment removal, gas-freeing and preparation for class survey and coating inspection.",
+          "Void space, cofferdam and ballast tank cleaning by certified confined space entry teams. Sediment removal.",
         tagline: "The spaces nobody wants to enter, entered safely",
         summary:
           "Certified confined space teams cleaning voids, cofferdams and ballast tanks for survey and coating inspection.",
@@ -1716,9 +1716,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "offshore-riding-squad",
         name: "Offshore Riding Squad",
-        seoTitle: "Offshore Riding Squad | Maintenance Crews for Vessels & Rigs",
+        seoTitle: "Offshore Riding Squad | Maintenance Crews",
         metaDescription:
-          "Offshore riding squads for maintenance, surface preparation, painting and fabrication support. Certified multi-skilled crews mobilised to vessels, rigs and offshore units.",
+          "Offshore riding squads for maintenance, surface preparation, painting and fabrication support. Certified multi-skilled crews mobilised to vessels.",
         tagline: "Multi-skilled crews that clear the backlog",
         summary:
           "Multi-skilled maintenance squads mobilised to vessels and offshore units to work down the deferred-maintenance list.",
@@ -1801,9 +1801,9 @@ export const serviceCategories: ServiceCategory[] = [
     slug: "ndt-and-repair",
     name: "NDT & Repair",
     icon: "ndt",
-    seoTitle: "Marine NDT & Repair Services | Inspection, Blasting & Painting",
+    seoTitle: "Marine NDT & Repair | Inspection & Painting",
     metaDescription:
-      "Marine NDT inspection, remote inspection techniques, riding fabricators, hydroblasting and painting. Certified technicians for ships, rigs and offshore structures worldwide.",
+      "Marine NDT inspection, remote inspection techniques, riding fabricators, hydroblasting and painting.",
     tagline: "Find it, prove it, fix it, protect it",
     summary:
       "Certified NDT inspection, remote inspection technology, fabrication, hydroblasting and marine coating application.",
@@ -1831,9 +1831,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "ndt-inspection",
         name: "NDT Inspection",
-        seoTitle: "Marine NDT Inspection | UT, MPI, DPI & Thickness Measurement",
+        seoTitle: "Marine NDT Inspection | UT, MPI & Thickness",
         metaDescription:
-          "Certified marine NDT inspection — ultrasonic thickness measurement, magnetic particle, dye penetrant and radiographic testing for ships, rigs and offshore structures.",
+          "Certified marine NDT inspection \u2014 ultrasonic thickness measurement, magnetic particle, dye penetrant and radiographic testing for ships.",
         tagline: "Certified inspection, class-acceptable reporting",
         summary:
           "Ultrasonic, magnetic particle, dye penetrant and radiographic testing by ISO 9712 certified technicians.",
@@ -1910,9 +1910,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "remote-inspection-technology",
         name: "Remote Inspection Technology",
-        seoTitle: "Remote Inspection Techniques | Drone & ROV Marine Survey",
+        seoTitle: "Remote Inspection | Drone & ROV Marine Survey",
         metaDescription:
-          "Remote inspection techniques (RIT) using drones, crawlers and ROVs for tank, hold and structure inspection. Class-accepted alternative to staging and confined space entry.",
+          "Remote inspection techniques (RIT) using drones, crawlers and ROVs for tank, hold and structure inspection.",
         tagline: "Inspection without staging, without entry, without risk",
         summary:
           "Drones, crawlers and ROVs inspecting tanks, holds and structures without staging or man entry.",
@@ -1993,9 +1993,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "riding-fabricator",
         name: "Riding Fabricator",
-        seoTitle: "Riding Fabricators | Welders & Steel Repair Crews for Ships",
+        seoTitle: "Riding Fabricators | Welders & Steel Repair",
         metaDescription:
-          "Certified riding fabricators and welders for shipboard steel repair, structural renewal and pipe work. Class-approved welders mobilised to vessels in port or on passage.",
+          "Certified riding fabricators and welders for shipboard steel repair, structural renewal and pipe work.",
         tagline: "Class-approved welders, mobilised to the vessel",
         summary:
           "Certified welders and fabricators carrying out steel renewal, structural repair and pipework on board.",
@@ -2072,9 +2072,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "hydroblasting",
         name: "Hydroblasting",
-        seoTitle: "Marine Hydroblasting | High & Ultra High Pressure Water Jetting",
+        seoTitle: "Marine Hydroblasting | UHP Water Jetting",
         metaDescription:
-          "Marine hydroblasting and ultra high pressure water jetting for coating removal, surface preparation and scale removal on ships, tanks, decks and offshore structures.",
+          "Marine hydroblasting and ultra high pressure water jetting for coating removal, surface preparation and scale removal on ships, tanks.",
         tagline: "Surface preparation without a grain of grit",
         summary:
           "High and ultra-high pressure water jetting for coating removal, descaling and surface preparation.",
@@ -2155,9 +2155,9 @@ export const serviceCategories: ServiceCategory[] = [
       {
         slug: "marine-painting",
         name: "Marine Painting",
-        seoTitle: "Marine Painting Services | Ship Coating & Deck Painting",
+        seoTitle: "Marine Painting | Ship Coating & Deck Painting",
         metaDescription:
-          "Marine painting and coating application for ships and offshore structures. Tank coating, deck and superstructure painting, spot repair and full recoating to manufacturer specification.",
+          "Marine painting and coating application for ships and offshore structures. Tank coating, deck and superstructure painting.",
         tagline: "Coatings applied to specification, and documented",
         summary:
           "Coating application for tanks, holds, decks and superstructure, applied and documented to specification.",

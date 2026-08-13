@@ -10,9 +10,9 @@ import { serviceCategories, totalServiceCount } from "@/lib/services";
 import { BASE_URL, breadcrumbSchema, buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Marine Services — Hull, Hold, Tank, Offshore & NDT",
+  title: "Marine Services — Hull, Hold, Tank & Offshore",
   description:
-    "Explore Cleanship's full marine service range: underwater hull cleaning and propeller polishing, cargo hold cleaning, tank cleaning, offshore support, and NDT inspection with repair, hydroblasting and painting.",
+    "Underwater hull cleaning, propeller polishing, cargo hold and tank cleaning, offshore support and NDT inspection — 21 scopes across five service lines.",
   path: "/services",
   keywords: [
     "marine services UAE",
@@ -20,6 +20,7 @@ export const metadata: Metadata = buildMetadata({
     "hold and tank cleaning company",
     "underwater services vessel",
   ],
+  image: { url: "/posters/underwater-hull-cleaning.jpg", alt: "Diver cleaning a vessel's underwater hull" },
 });
 
 const trail = [
@@ -60,7 +61,7 @@ export default function ServicesPage() {
       {/* Visual index of the five lines before the detailed bands below. */}
       <section className="bg-white">
         <div className="container-page py-14 lg:py-16">
-          <CapabilityGallery />
+          <CapabilityGallery headingLevel="h2" />
         </div>
       </section>
 

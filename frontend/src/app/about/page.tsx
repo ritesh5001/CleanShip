@@ -16,9 +16,9 @@ import { siteConfig } from "@/lib/site";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "About Cleanship | Underwater Hull Cleaning Specialists",
+  title: "About Us — Underwater Hull Cleaning Specialists",
   description:
-    "Cleanship Marine Services FZE is a trusted underwater hull cleaning specialist, and a hold and tank cleaning provider, based in Ajman Free Zone, UAE. Certified crews, industry and port-compliant procedures and eco-friendly methods for vessels worldwide.",
+    "Underwater hull cleaning specialist and hold and tank cleaning provider based in Ajman Free Zone, UAE. Certified crews, port-compliant procedures.",
   path: "/about",
   keywords: [
     "about Cleanship",
@@ -26,6 +26,7 @@ export const metadata: Metadata = buildMetadata({
     "Ajman Free Zone marine services",
     "hold cleaning specialists",
   ],
+  image: { url: "/images/crew-at-work.jpg", alt: "Crew working on the deck of a cargo vessel" },
 });
 
 const trail = [
