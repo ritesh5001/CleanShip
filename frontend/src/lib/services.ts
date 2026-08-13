@@ -162,12 +162,52 @@ export const serviceCategories: ServiceCategory[] = [
         ],
         faqs: [
           {
-            q: "Can cleaning be done while cargo operations continue?",
-            a: "In most ports yes, provided the vessel can immobilise propulsion and thrusters and confirm sea suctions are shut. This is agreed with the master and the port before the dive.",
+            q: "What is underwater hull cleaning?",
+            a: "Underwater hull cleaning is the process of removing marine growth, algae, barnacles, and biofouling from a vessel's hull while it remains afloat. CleanShip Marine uses professional divers and specialized equipment to clean hulls without dry-docking, saving time and cost.",
           },
           {
-            q: "Do you capture the removed fouling?",
-            a: "Where the port mandates capture, we deploy equipment with debris capture and filtration. An increasing number of jurisdictions now require this, so tell us the port early and we will confirm what applies.",
+            q: "Why is underwater hull cleaning important for ships?",
+            a: "Marine growth on a hull increases drag, which raises fuel consumption and reduces vessel speed. Regular underwater hull cleaning restores hydrodynamic efficiency, improves fuel efficiency, lowers emissions, and extends the hull's coating life.",
+          },
+          {
+            q: "How often should a ship's hull be cleaned underwater?",
+            a: "Cleaning frequency depends on vessel trading routes, water temperature, and coating type, but most vessels benefit from underwater hull cleaning every 3-6 months to prevent heavy fouling buildup and maintain optimal fuel performance.",
+          },
+          {
+            q: "Does underwater hull cleaning require dry docking?",
+            a: "No. One of the biggest advantages of in-water hull cleaning is that it is performed by divers while the vessel is docked or anchored, eliminating costly dry-dock downtime and keeping the ship in service.",
+          },
+          {
+            q: "What equipment and methods do you use for hull cleaning?",
+            a: "CleanShip Marine uses diver-operated brush systems, ROV-assisted inspection tools, and eco-friendly cleaning techniques designed to remove hull fouling safely without damaging antifouling coatings or the ship's hull surface.",
+          },
+          {
+            q: "Do you offer propeller polishing along with hull cleaning?",
+            a: "Yes. Our underwater hull cleaning service includes propeller polishing, which removes marine growth and corrosion from propeller blades to restore smooth rotation, improve thrust efficiency, and reduce fuel costs.",
+          },
+          {
+            q: "Is underwater hull cleaning safe for the vessel's coating?",
+            a: "Yes. Our divers use controlled-pressure cleaning methods calibrated to the hull's antifouling coating type, ensuring effective marine growth removal without stripping or damaging the paint system.",
+          },
+          {
+            q: "How does underwater hull cleaning improve fuel efficiency?",
+            a: "A clean hull reduces drag through water, allowing the vessel to move more efficiently. Studies show that heavy hull fouling can increase fuel consumption significantly - regular hull cleaning helps recover lost efficiency and cut fuel costs.",
+          },
+          {
+            q: "Do you provide underwater hull inspection and video survey reports?",
+            a: "Yes. Along with cleaning, we offer underwater video survey and hull condition inspection reports, giving shipowners and fleet managers documented evidence of hull condition for compliance and maintenance records.",
+          },
+          {
+            q: "Is underwater hull cleaning environmentally safe?",
+            a: "Yes. CleanShip Marine follows eco-friendly hull cleaning practices and complies with port and environmental regulations to safely capture debris and prevent invasive marine species from spreading during the cleaning process.",
+          },
+          {
+            q: "Which vessels can use your underwater hull cleaning service?",
+            a: "We provide underwater hull cleaning services for bulk carriers, tankers, container ships, and offshore vessels of all sizes, with divers mobilized to ports worldwide on request.",
+          },
+          {
+            q: "How do I book an underwater hull cleaning service?",
+            a: "You can request a quote for underwater hull cleaning directly through our website, or contact our team by phone, email, or WhatsApp, and we'll schedule diver mobilization at your vessel's port of call.",
           },
         ],
       },
@@ -240,8 +280,44 @@ export const serviceCategories: ServiceCategory[] = [
         ],
         faqs: [
           {
-            q: "Is thruster isolation mandatory?",
-            a: "Absolutely and without exception. No diver enters a thruster tunnel until the unit is electrically isolated, locked out and confirmed by the ship's engineers in writing.",
+            q: "What is thruster cleaning and polishing?",
+            a: "Thruster cleaning and polishing is the underwater removal of marine growth, rust, and fouling from a vessel's bow and stern thrusters and thruster tunnels, restoring smooth blade surfaces for optimal maneuvering performance.",
+          },
+          {
+            q: "Why is regular thruster cleaning important?",
+            a: "Fouled or corroded thrusters lose thrust power and maneuvering precision, especially during port entry and dynamic positioning. Bow thruster cleaning restores full thrust output, reduces vibration, and prevents premature blade wear.",
+          },
+          {
+            q: "Can thruster cleaning be done without dry-docking?",
+            a: "Yes. CleanShip Marine's divers perform underwater thruster cleaning and polishing while the vessel is afloat, eliminating the need for dry-docking and keeping the vessel operational.",
+          },
+          {
+            q: "Does thruster polishing improve fuel efficiency?",
+            a: "Yes. A polished, fouling-free thruster blade reduces drag and improves hydrodynamic efficiency, which supports better maneuvering response and lowers unnecessary fuel consumption during port operations.",
+          },
+          {
+            q: "How often should thrusters be cleaned?",
+            a: "Cleaning frequency depends on the vessel's trading pattern and fouling rate, but most operators schedule thruster cleaning services every 6-12 months, or alongside routine hull and propeller maintenance.",
+          },
+          {
+            q: "What vessels need thruster cleaning services?",
+            a: "Any vessel fitted with bow or stern thrusters - including tankers, bulk carriers, container ships, and offshore support vessels - benefits from regular thruster tunnel cleaning to maintain safe, efficient maneuvering.",
+          },
+          {
+            q: "What causes marine growth build-up inside thruster tunnels?",
+            a: "Thruster tunnels create low-flow zones that trap warm, still water, making them highly prone to barnacle and algae growth. Vessels on long port stays or tropical routes need more frequent thruster tunnel cleaning.",
+          },
+          {
+            q: "Is thruster cleaning safe for the thruster's coating and mechanics?",
+            a: "Yes. Our divers use controlled cleaning tools sized specifically for thruster tunnels, removing fouling without damaging blade coatings, seals, or the thruster housing.",
+          },
+          {
+            q: "What equipment is used for underwater thruster polishing?",
+            a: "CleanShip Marine uses diver-operated rotary polishing tools and abrasive pads calibrated for thruster blade alloys, delivering a smooth, low-friction finish similar to propeller super polishing techniques.",
+          },
+          {
+            q: "How do I book a thruster cleaning and polishing service?",
+            a: "You can request a quote for thruster cleaning and polishing through our website, or contact our team by phone, email, or WhatsApp to schedule diver mobilization at your vessel's port of call.",
           },
         ],
       },
@@ -315,12 +391,44 @@ export const serviceCategories: ServiceCategory[] = [
         ],
         faqs: [
           {
-            q: "How often should the propeller be polished?",
-            a: "Many operators polish at every hull cleaning, or at six to twelve month intervals depending on trade and idle time. Vessels spending long periods at anchorage in warm water foul far faster and benefit from shorter intervals.",
+            q: "What is propeller super polishing?",
+            a: "Propeller super polishing is a precision underwater treatment that removes fouling, corrosion, and surface roughness from propeller blades, achieving a mirror-smooth finish that reduces drag and improves propulsion efficiency.",
           },
           {
-            q: "Can polishing repair blade damage?",
-            a: "No. Polishing addresses roughness and fouling. Bent tips, cracks or serious erosion need proper repair, and we will report them to you rather than polish over them.",
+            q: "How is propeller super polishing different from regular cleaning?",
+            a: "While standard cleaning removes marine growth, propeller super polishing goes further - reducing blade surface roughness (Ra value) to near-factory smoothness, delivering measurably better fuel savings and performance.",
+          },
+          {
+            q: "How does propeller polishing save fuel?",
+            a: "A polished propeller moves through water with less resistance, requiring less engine power to maintain speed. Regular propeller super polishing can meaningfully cut fuel consumption and reduce a vessel's carbon emissions.",
+          },
+          {
+            q: "Is propeller polishing done underwater?",
+            a: "Yes. CleanShip Marine's certified divers perform underwater propeller polishing using specialized abrasive systems calibrated for marine-grade propeller alloys, with no need for dry-docking.",
+          },
+          {
+            q: "How often should propellers be polished?",
+            a: "Most vessels benefit from propeller super polishing every 6-12 months, though high-fouling routes or older coatings may require more frequent servicing to maintain peak propulsion efficiency.",
+          },
+          {
+            q: "Does propeller polishing include an inspection report?",
+            a: "Yes. Our propeller polishing service includes before-and-after inspection documentation, giving fleet managers a clear performance and condition record for maintenance planning and class compliance.",
+          },
+          {
+            q: "What is Ra value and why does it matter for propellers?",
+            a: "Ra value measures blade surface roughness at a microscopic level. Lower Ra means smoother blades and less water resistance. Propeller super polishing is designed to reduce Ra to near-original factory specification.",
+          },
+          {
+            q: "Can propeller polishing be combined with hull cleaning?",
+            a: "Yes. Most operators schedule propeller super polishing alongside underwater hull cleaning in a single dive mobilization, saving time and cost while addressing both drag sources together.",
+          },
+          {
+            q: "Does propeller polishing help reduce vibration and noise?",
+            a: "Yes. Removing surface roughness and imbalance-causing fouling from propeller blades helps reduce cavitation, vibration, and underwater noise, contributing to smoother vessel operation and crew comfort.",
+          },
+          {
+            q: "How do I request a propeller super polishing service?",
+            a: "Contact CleanShip Marine with your vessel's propeller specifications and port of call, and our diving team will schedule an underwater propeller polishing service with full inspection reporting.",
           },
         ],
       },
@@ -397,8 +505,44 @@ export const serviceCategories: ServiceCategory[] = [
         ],
         faqs: [
           {
-            q: "Will class accept an in-water survey for my vessel?",
-            a: "It depends on vessel age, type, class notation and survey cycle, and it is the classification society's decision. We work with the approval already in place and can help you confirm eligibility with your society before booking.",
+            q: "What is an In-Water Class Survey?",
+            a: "An In-Water Class Survey (IWS) is a classification society-approved underwater inspection of a vessel's hull, sea chests, propeller, rudder, and appendages, used as an alternative to dry-docking for periodic class renewal.",
+          },
+          {
+            q: "How does an In-Water Class Survey replace dry-docking?",
+            a: "Classification societies permit in-water surveys in place of scheduled dry-dock inspections for eligible vessels, allowing hull and underwater equipment checks to be conducted by approved divers while the ship remains afloat.",
+          },
+          {
+            q: "Who is qualified to carry out an In-Water Class Survey?",
+            a: "CleanShip Marine coordinates in-water class surveys using classification society-approved divers and inspection equipment, ensuring the survey meets the documentation and video standards required for class certification.",
+          },
+          {
+            q: "What does an In-Water Class Survey include?",
+            a: "The survey typically covers hull plating, sea chests, propeller, rudder, bow thruster, anodes, and draft mark verification, with underwater video and photographic evidence submitted to the classifying society.",
+          },
+          {
+            q: "Which vessels are eligible for In-Water Class Survey?",
+            a: "Eligibility depends on vessel age, class notation, and classification society rules. CleanShip Marine can advise whether your vessel qualifies for an in-water survey in place of dry-dock inspection.",
+          },
+          {
+            q: "How do I schedule an In-Water Class Survey?",
+            a: "Contact CleanShip Marine with your vessel's class society, survey due date, and port of call, and our team will coordinate diver mobilization and survey documentation in line with class requirements.",
+          },
+          {
+            q: "How long does an In-Water Class Survey take to complete?",
+            a: "Most in-water class surveys are completed within one to two days depending on vessel size, hull condition, and underwater visibility, with the vessel remaining alongside or at anchor throughout.",
+          },
+          {
+            q: "What documentation is provided after an In-Water Class Survey?",
+            a: "CleanShip Marine provides a full survey report with underwater video footage, photographic evidence, and measurement data formatted to meet classification society submission requirements.",
+          },
+          {
+            q: "Does poor underwater visibility affect an In-Water Class Survey?",
+            a: "Visibility can affect video quality, so surveys are typically scheduled during favorable tidal and weather conditions. Our team assesses site conditions in advance to ensure survey footage meets class standards.",
+          },
+          {
+            q: "What is the difference between an In-Water Class Survey and UWILD?",
+            a: "Both are underwater alternatives to dry-docking, but In-Water Class Survey refers broadly to any class-required underwater inspection, while UWILD specifically denotes inspection in lieu of dry-docking for hull and appendage checks.",
           },
         ],
       },
@@ -475,12 +619,44 @@ export const serviceCategories: ServiceCategory[] = [
         ],
         faqs: [
           {
-            q: "How does UWILD differ from a normal in-water survey?",
-            a: "In practice the diving work is similar, but UWILD is specifically credited against a drydocking survey requirement. That means stricter approval, eligibility and documentation conditions, and the surveyor must attend and be able to direct the inspection live.",
+            q: "What does UWILD mean?",
+            a: "UWILD stands for Underwater Inspection in Lieu of Dry Docking - a diver-based underwater hull and equipment survey accepted by classification societies and flag states as a substitute for a physical dry-dock inspection.",
           },
           {
-            q: "How far in advance should UWILD be arranged?",
-            a: "Earlier than most people expect. Class liaison, surveyor availability, port approval and a suitable weather and water-clarity window all have to align, so we recommend starting the conversation several weeks ahead of the survey window.",
+            q: "What is included in a UWILD survey?",
+            a: "A UWILD survey covers the hull structure, sea chests, propeller, rudder, bow thruster tunnel, cathodic protection anodes, and other underwater fittings, all documented with video and photographic evidence.",
+          },
+          {
+            q: "Why do shipowners choose UWILD over dry-docking?",
+            a: "UWILD allows vessels to remain in service while completing a required class survey, avoiding dry-dock costs and off-hire time, making it a cost-effective option for eligible vessels.",
+          },
+          {
+            q: "Who performs a UWILD survey?",
+            a: "CleanShip Marine's certified diving teams carry out UWILD inspections in accordance with classification society requirements, ensuring the survey is properly documented and accepted for class and statutory purposes.",
+          },
+          {
+            q: "How long does a UWILD survey take?",
+            a: "Duration depends on vessel size and underwater conditions, but most UWILD surveys can be completed within one to two days while the vessel remains alongside or at anchor.",
+          },
+          {
+            q: "Is UWILD accepted by all classification societies?",
+            a: "Most major classification societies accept UWILD for eligible vessels under specific age and class conditions. CleanShip Marine can confirm requirements with your classification society before scheduling the survey.",
+          },
+          {
+            q: "What are the eligibility requirements for a UWILD survey?",
+            a: "Eligibility generally depends on vessel age, class notation, and prior survey history, with most societies requiring the vessel to be under a certain age and free of major outstanding hull conditions.",
+          },
+          {
+            q: "What equipment is used during a UWILD inspection?",
+            a: "CleanShip Marine uses diver-operated cameras, underwater lighting, and measurement tools to capture detailed footage of the hull, sea chests, propeller, and rudder for class-compliant UWILD documentation.",
+          },
+          {
+            q: "Can UWILD be combined with hull cleaning or propeller polishing?",
+            a: "Yes. Many shipowners schedule UWILD inspections alongside underwater hull cleaning or propeller super polishing in the same mobilization, reducing costs and downtime by combining services in one dive operation.",
+          },
+          {
+            q: "How do I arrange a UWILD survey for my vessel?",
+            a: "Contact CleanShip Marine with your vessel's class society, survey due date, and port of call, and our certified dive team will coordinate the UWILD survey and prepare full class-compliant documentation.",
           },
         ],
       },
@@ -513,16 +689,44 @@ export const serviceCategories: ServiceCategory[] = [
     ],
     faqs: [
       {
-        q: "What cleanliness standards do you work to?",
-        a: "We routinely deliver normal clean, grain clean and hospital clean conditions. The target standard is agreed before mobilisation and confirmed against the charterer's or surveyor's requirements so there is no ambiguity at inspection.",
+        q: "What is hold cleaning and why is it important?",
+        a: "Hold cleaning is the process of removing cargo residue, rust, and debris from a ship's cargo holds to prepare the vessel for its next cargo. It ensures cargo hold cleanliness, safety compliance, and prevents cargo contamination.",
       },
       {
-        q: "Can hold cleaning be carried out while the vessel is on passage?",
-        a: "Yes. Our riding crews join at one port and work throughout the sea passage, so the vessel arrives at the load port already inspection-ready. This is usually the fastest and most economical option.",
+        q: "What types of vessels require hold cleaning services?",
+        a: "Cargo hold cleaning is required for bulk carriers and general cargo vessels, especially when switching between different cargo types that demand strict cleanliness standards.",
       },
       {
-        q: "Do you handle the residue and washwater disposal?",
-        a: "We follow MARPOL Annex V and the receiving port's regulations. Residues are collected, bagged and landed to an approved reception facility, with documentation provided for the vessel's records.",
+        q: "How does hold cleaning ensure cargo readiness?",
+        a: "Proper hold cleaning services remove leftover cargo residue, oil stains, and loose rust, ensuring the hold surface meets the next cargo's cleanliness specification and passes surveyor or charterer inspection before loading.",
+      },
+      {
+        q: "Does CleanShip Marine offer hold cleaning at port and at sea?",
+        a: "Yes. We provide hold cleaning at port and hold cleaning at sea, giving shipowners flexibility to complete cleaning during cargo discharge or while the vessel is on passage, minimizing turnaround delays.",
+      },
+      {
+        q: "What cleaning standards do you follow for cargo holds?",
+        a: "Our ship hold cleaning teams follow international cleanliness standards, including grain clean, hospital clean, and load-on-top specifications, depending on the cargo type and charterer or receiver requirements.",
+      },
+      {
+        q: "How long does a typical hold cleaning job take?",
+        a: "Cleaning duration depends on hold size, previous cargo type, and required cleanliness standard, but most cargo hold cleaning jobs are completed within a single port call to avoid vessel delays.",
+      },
+      {
+        q: "Is hold cleaning safe for the ship's coating and structure?",
+        a: "Yes. Our hold cleaning services use controlled cleaning methods and equipment suited to the hold's coating type, removing residue effectively without damaging paintwork or structural surfaces.",
+      },
+      {
+        q: "Do you provide before-and-after inspection reports for hold cleaning?",
+        a: "Yes. CleanShip Marine documents each hold cleaning job with photographic evidence and inspection reports, giving shipowners and charterers verified proof of cleanliness for cargo readiness and compliance.",
+      },
+      {
+        q: "Which ports does CleanShip Marine provide hold cleaning services in?",
+        a: "We provide hold cleaning services across major global ports, with mobilized teams ready to respond quickly wherever your vessel is berthed or scheduled for cargo operations.",
+      },
+      {
+        q: "How do I book a hold cleaning service for my vessel?",
+        a: "You can request a quote for cargo hold cleaning through our website, or contact our team by phone, email, or WhatsApp to arrange scheduling ahead of your vessel's port call.",
       },
     ],
     services: [
@@ -599,12 +803,40 @@ export const serviceCategories: ServiceCategory[] = [
         ],
         faqs: [
           {
-            q: "How quickly can a shore gang mobilise?",
-            a: "In our core UAE ports we typically mobilise within 12 to 24 hours of firm nomination. For other ports we advise a realistic mobilisation window at the time of quoting rather than promising a figure we cannot hold.",
+            q: "What is a hold cleaning shore gang?",
+            a: "A hold cleaning shore gang is a land-based labor team deployed at port to clean cargo holds using shore-supplied equipment and manpower, typically engaged during cargo discharge or before loading operations.",
           },
           {
-            q: "Does the ship's crew need to assist?",
-            a: "No. The gang is self-sufficient in labour, equipment and consumables. We only ask the ship for standard support such as access, power where available, and permission-to-work coordination.",
+            q: "How is a shore gang different from a riding crew?",
+            a: "A shore gang works only while the vessel is in port, whereas a riding crew stays aboard and continues hold cleaning while the vessel is underway between ports.",
+          },
+          {
+            q: "When should a shore gang be used for hold cleaning?",
+            a: "A hold cleaning shore gang is ideal when the vessel has sufficient port time to complete cleaning before the next loading, avoiding the cost of carrying additional crew at sea.",
+          },
+          {
+            q: "What equipment does CleanShip Marine's shore gang use?",
+            a: "Our shore gang cargo hold cleaning teams use pressure washers, scraping tools, sweepers, and approved cleaning agents suited to the cargo residue type and required cleanliness standard.",
+          },
+          {
+            q: "How quickly can a shore gang be mobilized?",
+            a: "CleanShip Marine can mobilize port hold cleaning labor on short notice at major ports, coordinating directly with the vessel's agent to align with the discharge and loading schedule.",
+          },
+          {
+            q: "Does the shore gang work under port safety regulations?",
+            a: "Yes. Our hold cleaning shore gang operates in full compliance with port safety regulations, confined space entry protocols, and the vessel's own safety management procedures.",
+          },
+          {
+            q: "Can shore gangs handle large bulk carrier holds?",
+            a: "Yes. CleanShip Marine deploys scalable shore gang teams sized to the vessel, capable of cleaning multiple large cargo holds on bulk carriers within tight port turnaround windows.",
+          },
+          {
+            q: "How do I arrange a shore gang for hold cleaning?",
+            a: "Contact CleanShip Marine with your vessel's port of call, discharge schedule, and required cleanliness standard, and we'll coordinate a hold cleaning shore gang to meet your turnaround timeline.",
+          },
+          {
+            q: "What cleanliness standards can a shore gang achieve?",
+            a: "Our shore gang cargo hold cleaning teams can achieve standard, grain-clean, and hospital-clean specifications, depending on job scope and time available before the next cargo loading.",
           },
         ],
       },
@@ -681,16 +913,44 @@ export const serviceCategories: ServiceCategory[] = [
         ],
         faqs: [
           {
-            q: "How long does a riding crew need on passage?",
-            a: "As a guide, a Supramax with five holds and a normal previous cargo is comfortably completed on a five to seven day passage with a crew of eight. Difficult cargoes such as cement, sulphur or petcoke need longer, and we will say so at quoting stage rather than under-crewing the job.",
+            q: "What is a hold cleaning riding crew?",
+            a: "A hold cleaning riding crew is a team of cleaning personnel who board the vessel and remain onboard, cleaning cargo holds while the ship is underway between discharge and the next loading port.",
           },
           {
-            q: "Who is responsible for the riding crew on board?",
-            a: "The crew works under the master's overall authority and within the ship's safety management system, while remaining our employees for contractual, payroll, insurance and welfare purposes.",
+            q: "Why choose a riding crew over a shore gang?",
+            a: "A riding crew is ideal when port time is limited, allowing hold cleaning at sea to continue during the voyage so the vessel arrives at the next port fully cargo-ready.",
           },
           {
-            q: "What happens if the weather stops work?",
-            a: "Safety governs. Work in holds stops when sea state or motion makes it unsafe, and the programme is rebalanced across the remaining passage. We build realistic weather allowance into the plan from the start.",
+            q: "How does a riding crew work while the vessel is at sea?",
+            a: "Our onboard hold cleaning crew follows strict safety procedures for working in cargo holds underway, including ventilation checks, confined space protocols, and coordination with the ship's officers.",
+          },
+          {
+            q: "What cleanliness standards can a riding crew achieve during a voyage?",
+            a: "Depending on voyage length and hold condition, our hold cleaning riding crew can achieve standard, grain-clean, or hospital-clean specifications by the time the vessel reaches its next loading port.",
+          },
+          {
+            q: "Is a riding crew safe to deploy during rough sea conditions?",
+            a: "Our teams assess weather and sea conditions continuously, pausing hold cleaning operations when necessary to ensure crew safety, in line with the vessel's safety management system.",
+          },
+          {
+            q: "How many days in advance should I book a riding crew?",
+            a: "We recommend booking a hold cleaning riding crew as early as possible, ideally at the discharge port, to ensure crew availability, visa arrangements, and boarding logistics are completed in time.",
+          },
+          {
+            q: "Does the riding crew bring their own cleaning equipment?",
+            a: "Yes. CleanShip Marine's riding squad cargo hold cleaning teams bring their own rope kits and safety gear, minimizing reliance on the vessel's onboard equipment. Pressure washers, chemical sprayers and other manual tools are required from the vessel.",
+          },
+          {
+            q: "What documentation is provided for insurance and boarding purposes?",
+            a: "We provide crew certificates, safety training records, and boarding documentation required by the vessel and port authorities prior to riding crew embarkation.",
+          },
+          {
+            q: "Can a riding crew handle multiple cargo holds during one voyage?",
+            a: "Yes. Our hold cleaning riding crew teams are sized according to the number of holds and voyage duration, ensuring all holds are cleaned to specification before arrival.",
+          },
+          {
+            q: "How do I book a hold cleaning riding crew for my vessel?",
+            a: "Contact CleanShip Marine with your vessel's discharge port, next loading port, and voyage duration, and we'll arrange a riding crew to board and complete hold cleaning en route.",
           },
         ],
       },
@@ -767,12 +1027,44 @@ export const serviceCategories: ServiceCategory[] = [
         ],
         faqs: [
           {
-            q: "Is rope access safe inside a cargo hold?",
-            a: "It is a highly controlled method. Technicians work on two independent ropes under a Level 3 supervisor, with a rescue plan agreed before work starts and enclosed-space entry procedures running in parallel. IRATA's published incident record compares very favourably with staging-based access.",
+            q: "What is hold cleaning rope access?",
+            a: "Hold cleaning rope access uses trained rope access technicians to reach and clean high or difficult-to-access areas of cargo holds, such as upper bulkheads, hatch coamings, and hopper areas, without scaffolding.",
           },
           {
-            q: "Can rope access replace scaffolding entirely?",
-            a: "For cleaning, inspection and localised coating work, usually yes. For large-area blasting or steel renewal that needs a stable working platform, staging is still the right tool and we will tell you so.",
+            q: "When is rope access needed for hold cleaning?",
+            a: "Rope access hold cleaning is used when cargo holds have tall bulkheads, complex structures, or areas unreachable by standard equipment, requiring technicians to work safely at height using ropes and harnesses.",
+          },
+          {
+            q: "Are your rope access technicians certified?",
+            a: "Yes. CleanShip Marine's IRATA rope access cleaning teams are trained and certified to internationally recognized rope access safety standards for working at height in confined marine spaces.",
+          },
+          {
+            q: "What safety measures are used during rope access hold cleaning?",
+            a: "Our technicians follow strict fall-protection protocols, use redundant rope systems, and conduct pre-job risk assessments to ensure safe operations during high-level hold cleaning.",
+          },
+          {
+            q: "Does rope access reduce hold cleaning time compared to scaffolding?",
+            a: "Yes. Rope access cargo hold cleaning eliminates the time needed to erect scaffolding, allowing technicians to access difficult areas quickly and reduce overall cleaning turnaround time.",
+          },
+          {
+            q: "Can rope access reach areas standard cleaning crews cannot?",
+            a: "Yes. Rope access technicians can clean high bulkheads, ledges, and structural areas that are difficult or unsafe to reach with ladders or scaffolding, ensuring thorough hold cleanliness.",
+          },
+          {
+            q: "Is rope access hold cleaning suitable for all vessel types?",
+            a: "Hold cleaning rope access is particularly effective for bulk carriers and general cargo vessels with tall or structurally complex holds, where full residue removal at height is required.",
+          },
+          {
+            q: "What equipment do rope access technicians use for cleaning?",
+            a: "Our technicians use rope access rigging combined with pressure washing tools, scrapers, and vacuum systems to clean residue from elevated hold surfaces safely and efficiently.",
+          },
+          {
+            q: "Does rope access hold cleaning meet cargo cleanliness certification standards?",
+            a: "Yes. Rope access cleaning is performed to the same grain-clean and hospital-clean standards as standard hold cleaning, with full inspection and documentation provided on completion.",
+          },
+          {
+            q: "How do I request a rope access hold cleaning service?",
+            a: "Contact CleanShip Marine with details of your vessel's hold structure and cleanliness requirements, and our certified rope access hold cleaning team will be mobilized to your port of call.",
           },
         ],
       },

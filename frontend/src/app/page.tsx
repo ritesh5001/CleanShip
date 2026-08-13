@@ -90,24 +90,48 @@ const stats = [
 /** Homepage FAQs — chosen for the questions people actually search. */
 const homeFaqs = [
   {
-    q: "What does Cleanship do?",
-    a: "Cleanship Marine Services is a marine cleaning and support contractor. We deliver underwater hull cleaning and propeller polishing, cargo hold cleaning, tank cleaning, offshore support services, and NDT inspection with repair, blasting and painting — for bulk carriers, tankers, container ships and offshore vessels.",
+    q: "What marine cleaning services does CleanShip Marine offer?",
+    a: "CleanShip Marine offers professional underwater hull cleaning, hold cleaning, tank cleaning, demucking, hydroblasting, marine painting, shore tank cleaning, and offshore vessel cleaning services. We serve bulk carriers, tankers, container ships, and offshore vessels at ports worldwide.",
   },
   {
-    q: "Where are you based and where do you operate?",
-    a: `Our head office is at ${siteConfig.address.full}, and we run eight bases across three regions — Ajman, Fujairah and Khorfakkan in the UAE; Dammam in Saudi Arabia; Kandla and Visakhapatnam in India; Colombo in Sri Lanka; and Conakry in Guinea. Coverage differs by service: hull cleaning runs across the West African range from Senegal to Togo, tank cleaning covers the UAE, Singapore, India, Sri Lanka and Lomé, and riding crews join vessels worldwide.`,
+    q: "Do you provide hold cleaning at port and hold cleaning at sea?",
+    a: "Yes, we offer both hold cleaning at port and hold cleaning at sea, allowing shipowners to schedule cleaning around voyage timelines and minimize vessel downtime and turnaround delays.",
   },
   {
-    q: "How quickly can you mobilise?",
-    a: "In our core UAE ports we typically mobilise a shore gang within 12 to 24 hours of firm nomination. Riding crews and offshore teams need longer because of documentation, visas and flag-state approvals, and we will give you a realistic date rather than an optimistic one.",
+    q: "What is underwater hull cleaning and how does it help?",
+    a: "Underwater hull cleaning removes marine growth, algae, and fouling from a vessel's hull without dry-docking. This improves fuel efficiency, boosts vessel speed and performance, and lowers overall operational costs.",
   },
   {
-    q: "Do you provide the equipment and chemicals?",
-    a: "Yes. Our teams arrive self-sufficient — high-pressure units, chemicals with current safety data sheets, lighting, access equipment and PPE. Nothing is drawn from the ship's stores or the crew's working hours.",
+    q: "What is included in your tank cleaning services?",
+    a: "Our tank cleaning services cover cargo tank cleaning, demucking, shore tank cleaning, and cleaning for offshore vessels, ensuring residue-free tanks that meet safety, compliance, and cargo-readiness requirements.",
   },
   {
-    q: "Can you handle inspection and repair in the same mobilisation?",
-    a: "Yes, and it is usually faster and cheaper that way. Our NDT technicians, riding fabricators and coating teams work together, so a defect can be found, quantified, repaired and re-protected without waiting for a second contractor to mobilise.",
+    q: "What is hydroblasting and when is it used in marine cleaning?",
+    a: "Hydroblasting is a high-pressure water-jet cleaning method used to remove rust, old paint, coatings, and marine deposits from ship surfaces safely and efficiently - without harsh chemicals.",
+  },
+  {
+    q: "Does CleanShip Marine offer ship painting services?",
+    a: "Yes, we provide professional marine painting services that protect vessel surfaces from corrosion, extend hull life, and deliver a durable, high-quality finish for ships of all sizes.",
+  },
+  {
+    q: "Are CleanShip Marine's cleaning methods eco-friendly?",
+    a: "Yes. We use eco-friendly cleaning solutions and advanced marine-grade equipment to minimize environmental impact while maintaining full compliance with international maritime cleaning standards.",
+  },
+  {
+    q: "Which vessel types and ports does CleanShip Marine service?",
+    a: "We provide marine cleaning services for bulk carriers, tankers, container ships, and offshore installations across global ports, with mobilized teams ready to respond quickly wherever your vessel is berthed.",
+  },
+  {
+    q: "Who are the marine cleaning experts at CleanShip Marine?",
+    a: "Our hull cleaning and hold cleaning specialists are experienced marine professionals trained in international safety protocols, delivering reliable, efficient, and industry standard cleaning solutions on every project.",
+  },
+  {
+    q: "How do I request a quote for ship cleaning services?",
+    a: "You can request a marine cleaning quote directly through our website, or contact our team via phone, email, or WhatsApp for a fast response and customized service plan.",
+  },
+  {
+    q: "What are CleanShip Marine's contact details and working hours?",
+    a: "Our team is available for marine cleaning inquiries via phone and email, with support ready to assist ship operators and fleet managers with cleaning schedules and service bookings.",
   },
 ];
 
