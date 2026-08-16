@@ -18,6 +18,36 @@ export default function sitemap(): MetadataRoute.Sitemap {
       { url: `${BASE_URL}/about`, changeFrequency: "yearly", priority: 0.7 },
       { url: `${BASE_URL}/projects`, changeFrequency: "monthly", priority: 0.7 },
       { url: `${BASE_URL}/contact`, changeFrequency: "yearly", priority: 0.8 },
+      // Legal pages (lower priority - supplementary content)
+      { url: `${BASE_URL}/privacy-policy`, changeFrequency: "yearly", priority: 0.5 },
+      { url: `${BASE_URL}/terms-and-conditions`, changeFrequency: "yearly", priority: 0.5 },
+      { url: `${BASE_URL}/disclaimer`, changeFrequency: "yearly", priority: 0.5 },
+    ] as const
+  ).map((route) => ({ ...route, lastModified: now }));
+
+  // Location-specific landing pages (with canonical tags pointing to main services)
+  // These are supplementary for local SEO targeting
+  const locationPages: MetadataRoute.Sitemap = (
+    [
+      { url: `${BASE_URL}/underwater-hull-cleaning`, changeFrequency: "monthly", priority: 0.65 },
+      { url: `${BASE_URL}/hold-cleaning-at-port`, changeFrequency: "monthly", priority: 0.65 },
+      { url: `${BASE_URL}/hold-cleaning-at-sea`, changeFrequency: "monthly", priority: 0.65 },
+      // UAE Port pages (location-specific landing pages)
+      { url: `${BASE_URL}/hold-tank-cleaning-service-at-ruwais-port`, changeFrequency: "monthly", priority: 0.60 },
+      { url: `${BASE_URL}/hold-tank-cleaning-service-at-uaq-port`, changeFrequency: "monthly", priority: 0.60 },
+      { url: `${BASE_URL}/hold-tank-cleaning-service-at-ras-ai-khaimah-port`, changeFrequency: "monthly", priority: 0.60 },
+      { url: `${BASE_URL}/hold-tank-cleaning-service-at-mina-saqr-port`, changeFrequency: "monthly", priority: 0.60 },
+      { url: `${BASE_URL}/hold-tank-cleaning-service-at-ajman-port`, changeFrequency: "monthly", priority: 0.60 },
+      { url: `${BASE_URL}/hold-tank-cleaning-service-at-rashid-port`, changeFrequency: "monthly", priority: 0.60 },
+      { url: `${BASE_URL}/hold-tank-cleaning-service-at-jebel-ali-port`, changeFrequency: "monthly", priority: 0.60 },
+      // International location pages
+      { url: `${BASE_URL}/hold-cleaning-in-brazil`, changeFrequency: "monthly", priority: 0.60 },
+      { url: `${BASE_URL}/hold-cleaning-in-sharjah`, changeFrequency: "monthly", priority: 0.60 },
+      { url: `${BASE_URL}/hold-cleaning-in-khorfakkan`, changeFrequency: "monthly", priority: 0.60 },
+      { url: `${BASE_URL}/hold-cleaning-in-kakinada-port`, changeFrequency: "monthly", priority: 0.60 },
+      { url: `${BASE_URL}/cargo-hold-cleaning-in-vizag-port`, changeFrequency: "monthly", priority: 0.60 },
+      { url: `${BASE_URL}/ship-hold-cleaning-in-kandla-port`, changeFrequency: "monthly", priority: 0.60 },
+      { url: `${BASE_URL}/ship-hold-cleaning-in-mumbai-port`, changeFrequency: "monthly", priority: 0.60 },
     ] as const
   ).map((route) => ({ ...route, lastModified: now }));
 
@@ -65,5 +95,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       }),
   );
 
-  return [...staticRoutes, ...categoryRoutes, ...serviceRoutes];
+  return [...staticRoutes, ...categoryRoutes, ...serviceRoutes, ...locationPages];
 }
