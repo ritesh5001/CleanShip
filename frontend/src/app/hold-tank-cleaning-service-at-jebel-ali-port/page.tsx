@@ -2,15 +2,13 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
 import { JsonLd } from "@/components/json-ld";
-import { buildMetadata, breadcrumbSchema, BASE_URL } from "@/lib/seo";
+import { buildMetadata, breadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Hold Cleaning at Jebel Ali Port, Dubai",
   description: "Hold and tank cleaning services at Jebel Ali Port. Professional cargo preparation for container ships and bulk carriers.",
   path: "/hold-tank-cleaning-service-at-jebel-ali-port",
-  alternates: {
-    canonical: `${BASE_URL}/services/hold-cleaning/shore-gang`,
-  },
+  canonicalPath: "/services/hold-cleaning/shore-gang",
   keywords: ["Jebel Ali port cleaning", "JAFZA hold cleaning", "Dubai cargo hold cleaning"],
 });
 
@@ -29,7 +27,7 @@ export default function JebelAliPortPage() {
         <div className="container-page py-16 lg:py-20">
           <div className="prose prose-sm max-w-3xl">
             <h2>Hold Cleaning at Jebel Ali Port</h2>
-            <p>CleanShip Marine provides hold cleaning services at Jebel Ali Port, Dubai's major international cargo hub. We mobilise shore gangs and riding crews for fast turnarounds.</p>
+            <p>CleanShip Marine provides hold cleaning services at Jebel Ali Port, Dubai&apos;s major international cargo hub. We mobilise shore gangs and riding crews for fast turnarounds.</p>
             <h3>Available Services</h3>
             <ul>
               <li>Shore gang mobilisation for rapid port cleaning</li>

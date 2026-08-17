@@ -2,15 +2,13 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
 import { JsonLd } from "@/components/json-ld";
-import { buildMetadata, breadcrumbSchema, BASE_URL } from "@/lib/seo";
+import { buildMetadata, breadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Cargo Hold Cleaning at Visakhapatnam (Vizag) Port",
   description: "Professional hold and tank cleaning at Vizag Port, India. Cargo hold cleaning for bulk carriers and container ships.",
   path: "/cargo-hold-cleaning-in-vizag-port",
-  alternates: {
-    canonical: `${BASE_URL}/services/hold-cleaning/shore-gang`,
-  },
+  canonicalPath: "/services/hold-cleaning/shore-gang",
   keywords: ["Vizag port cleaning", "Visakhapatnam hold cleaning", "cargo hold cleaning India"],
 });
 
@@ -29,7 +27,7 @@ export default function VizagPortPage() {
         <div className="container-page py-16 lg:py-20">
           <div className="prose prose-sm max-w-3xl">
             <h2>Cargo Hold Cleaning at Visakhapatnam (Vizag) Port</h2>
-            <p>CleanShip Marine provides professional hold and tank cleaning services at Visakhapatnam Port (Vizag), India's largest port by tonnage. Our teams are experienced in rapid turnarounds.</p>
+            <p>CleanShip Marine provides professional hold and tank cleaning services at Visakhapatnam Port (Vizag), India&apos;s largest port by tonnage. Our teams are experienced in rapid turnarounds.</p>
             <h3>Services at Vizag</h3>
             <ul>
               <li>Shore gang cleaning for port operations</li>
@@ -38,7 +36,7 @@ export default function VizagPortPage() {
               <li>Fast turnarounds for bulk and container vessels</li>
             </ul>
             <h3>About Vizag Port</h3>
-            <p>Visakhapatnam Port is India's largest general cargo port, handling significant volumes of iron ore, coal, containerized cargo and other commodities.</p>
+            <p>Visakhapatnam Port is India&apos;s largest general cargo port, handling significant volumes of iron ore, coal, containerized cargo and other commodities.</p>
           </div>
         </div>
       </section>

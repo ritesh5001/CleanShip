@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
 import { JsonLd } from "@/components/json-ld";
-import { buildMetadata, breadcrumbSchema, BASE_URL } from "@/lib/seo";
+import { buildMetadata, breadcrumbSchema } from "@/lib/seo";
 import { ArrowIcon } from "@/components/icons";
 
 export const metadata: Metadata = buildMetadata({
@@ -21,9 +21,7 @@ export const metadata: Metadata = buildMetadata({
     url: "/posters/underwater-hull-cleaning.jpg",
     alt: "Diver cleaning a vessel's underwater hull",
   },
-  alternates: {
-    canonical: `${BASE_URL}/services/hull-cleaning/underwater-hull-cleaning`,
-  },
+  canonicalPath: "/services/hull-cleaning/underwater-hull-cleaning",
 });
 
 const trail = [
@@ -93,7 +91,7 @@ export default function UnderwaterHullCleaningPage() {
                 <div>
                   <h3 className="font-display text-xl font-bold text-ink-900">Overview</h3>
                   <p className="mt-3 text-slate-600">
-                    Hull fouling is the quietest cost on a vessel's P&L. A moderate layer of slime
+                    Hull fouling is the quietest cost on a vessel&apos;s P&L. A moderate layer of slime
                     and barnacle growth can add double-digit percentages to fuel consumption, and it
                     accumulates steadily between dry dockings without ever producing a defect report.
                   </p>

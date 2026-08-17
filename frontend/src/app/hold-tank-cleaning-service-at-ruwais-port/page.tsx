@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
 import { JsonLd } from "@/components/json-ld";
-import { buildMetadata, breadcrumbSchema, BASE_URL } from "@/lib/seo";
+import { buildMetadata, breadcrumbSchema } from "@/lib/seo";
 import { ArrowIcon } from "@/components/icons";
 
 export const metadata: Metadata = buildMetadata({
@@ -17,9 +17,7 @@ export const metadata: Metadata = buildMetadata({
     "cargo hold cleaning Ruwais",
     "Ruwais port cleaning services",
   ],
-  alternates: {
-    canonical: `${BASE_URL}/services/hold-cleaning/shore-gang`,
-  },
+  canonicalPath: "/services/hold-cleaning/shore-gang",
 });
 
 const trail = [

@@ -2,15 +2,13 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
 import { JsonLd } from "@/components/json-ld";
-import { buildMetadata, breadcrumbSchema, BASE_URL } from "@/lib/seo";
+import { buildMetadata, breadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Hold Cleaning at Ras Al Khaimah Port",
   description: "Hold and tank cleaning services at RAK Port. Professional cargo hold cleaning for bulk carriers and tankers.",
   path: "/hold-tank-cleaning-service-at-ras-ai-khaimah-port",
-  alternates: {
-    canonical: `${BASE_URL}/services/hold-cleaning/shore-gang`,
-  },
+  canonicalPath: "/services/hold-cleaning/shore-gang",
   keywords: ["RAK port cleaning", "Ras Al Khaimah hold cleaning"],
 });
 

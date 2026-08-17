@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
 import { JsonLd } from "@/components/json-ld";
-import { buildMetadata, breadcrumbSchema, BASE_URL } from "@/lib/seo";
+import { buildMetadata, breadcrumbSchema } from "@/lib/seo";
 import { ArrowIcon } from "@/components/icons";
 
 export const metadata: Metadata = buildMetadata({
@@ -17,9 +17,7 @@ export const metadata: Metadata = buildMetadata({
     "on-passage hold cleaning",
     "ballast passage cleaning",
   ],
-  alternates: {
-    canonical: `${BASE_URL}/services/hold-cleaning/riding-crew`,
-  },
+  canonicalPath: "/services/hold-cleaning/riding-crew",
 });
 
 const trail = [
@@ -94,8 +92,8 @@ export default function HoldCleaningAtSeaPage() {
                   </p>
                   <p className="mt-3 text-slate-600">
                     Riding crews carry full seafarer documentation, medicals and flag-state paperwork,
-                    and integrate with the ship's safety management system from the moment they board.
-                    They work under the master's authority and to the ship's permit-to-work regime
+                    and integrate with the ship&apos;s safety management system from the moment they board.
+                    They work under the master&apos;s authority and to the ship&apos;s permit-to-work regime
                     throughout.
                   </p>
                 </div>
@@ -153,7 +151,7 @@ export default function HoldCleaningAtSeaPage() {
                       familiarisation with the ship.
                     </p>
                     <p>
-                      <strong>3. Passage work:</strong> Hold cleaning proceeds under the ship's
+                      <strong>3. Passage work:</strong> Hold cleaning proceeds under the ship&apos;s
                       permit-to-work system throughout the voyage.
                     </p>
                     <p>

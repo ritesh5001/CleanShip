@@ -17,6 +17,13 @@ type MetaInput = {
   description: string;
   /** Path with leading slash, e.g. "/services/hold-cleaning". */
   path: string;
+  /**
+   * Overrides the canonical URL. Used by location-targeted landing pages
+   * (e.g. "/hold-cleaning-in-sharjah") that exist for search intent but
+   * should consolidate ranking signal onto the service page they duplicate,
+   * rather than self-canonicalizing off `path`.
+   */
+  canonicalPath?: string;
   keywords?: readonly string[];
   /** Set true on pages that should stay out of the index (e.g. thank-you). */
   noIndex?: boolean;
@@ -33,11 +40,13 @@ export function buildMetadata({
   title,
   description,
   path,
+  canonicalPath,
   keywords,
   noIndex,
   image,
 }: MetaInput): Metadata {
   const url = `${BASE_URL}${path === "/" ? "" : path}`;
+  const canonical = canonicalPath ? `${BASE_URL}${canonicalPath}` : url;
   // Absolute URLs — relative paths are not resolved by every scraper.
   const images = image
     ? [{ url: `${BASE_URL}${image.url}`, width: 1600, height: 900, alt: image.alt }]
@@ -47,7 +56,7 @@ export function buildMetadata({
     title,
     description,
     keywords: keywords ? [...keywords] : undefined,
-    alternates: { canonical: url },
+    alternates: { canonical },
     openGraph: {
       type: "website",
       url,

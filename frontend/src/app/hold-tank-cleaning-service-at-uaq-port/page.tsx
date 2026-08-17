@@ -3,15 +3,13 @@ import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
 import { JsonLd } from "@/components/json-ld";
-import { buildMetadata, breadcrumbSchema, BASE_URL } from "@/lib/seo";
+import { buildMetadata, breadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Hold Cleaning at UAQ Port | Umm Al Quwain",
   description: "Professional hold and tank cleaning services at UAQ Port. Fast turnarounds for bulk carriers and tankers.",
   path: "/hold-tank-cleaning-service-at-uaq-port",
-  alternates: {
-    canonical: `${BASE_URL}/services/hold-cleaning/shore-gang`,
-  },
+  canonicalPath: "/services/hold-cleaning/shore-gang",
   keywords: ["UAQ port cleaning", "Umm Al Quwain hold cleaning", "UAQ cargo hold cleaning"],
 });
 

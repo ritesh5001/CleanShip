@@ -2,15 +2,13 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
 import { JsonLd } from "@/components/json-ld";
-import { buildMetadata, breadcrumbSchema, BASE_URL } from "@/lib/seo";
+import { buildMetadata, breadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Ship Hold Cleaning at Kandla Port, India",
   description: "Professional ship hold cleaning at Kandla Port. Cargo hold and tank cleaning for bulk carriers and tankers.",
   path: "/ship-hold-cleaning-in-kandla-port",
-  alternates: {
-    canonical: `${BASE_URL}/services/hold-cleaning/shore-gang`,
-  },
+  canonicalPath: "/services/hold-cleaning/shore-gang",
   keywords: ["Kandla port cleaning", "ship hold cleaning India", "Kandla cargo cleaning"],
 });
 
@@ -38,7 +36,7 @@ export default function KandlaPortPage() {
               <li>Experienced teams for bulk commodity handling</li>
             </ul>
             <h3>About Kandla Port</h3>
-            <p>Kandla Port is India's largest port by cargo throughput, handling significant volumes of bulk commodities including coal, iron ore, grain and petroleum products.</p>
+            <p>Kandla Port is India&apos;s largest port by cargo throughput, handling significant volumes of bulk commodities including coal, iron ore, grain and petroleum products.</p>
           </div>
         </div>
       </section>

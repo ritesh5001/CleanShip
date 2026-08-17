@@ -34,7 +34,7 @@ export default function PrivacyPolicyPage() {
           <div className="prose prose-sm lg:prose-base max-w-3xl">
             <h2>Introduction</h2>
             <p>
-              CleanShip Marine ("we", "us", "our", or "Company") operates the cleanship.co website.
+              CleanShip Marine (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;, or &quot;Company&quot;) operates the cleanship.co website.
               This page informs you of our policies regarding the collection, use, and disclosure of
               personal data when you use our Service and the choices you have associated with that
               data.
@@ -54,8 +54,8 @@ export default function PrivacyPolicyPage() {
 
             <h3>Usage Data</h3>
             <p>
-              We may also collect information on how the Service is accessed and used ("Usage Data").
-              This may include information such as your computer's Internet Protocol address (e.g. IP
+              We may also collect information on how the Service is accessed and used (&quot;Usage Data&quot;).
+              This may include information such as your computer&apos;s Internet Protocol address (e.g. IP
               address), browser type, browser version, the pages you visit, the time and date of your
               visit, the time spent on those pages, and other diagnostic data.
             </p>
@@ -82,7 +82,7 @@ export default function PrivacyPolicyPage() {
             <h2>Changes to This Privacy Policy</h2>
             <p>
               We may update our Privacy Policy from time to time. We will notify you of any changes
-              by posting the new Privacy Policy on this page and updating the "effective date" at the
+              by posting the new Privacy Policy on this page and updating the &quot;effective date&quot; at the
               top of this Privacy Policy.
             </p>
 

@@ -2,15 +2,13 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
 import { JsonLd } from "@/components/json-ld";
-import { buildMetadata, breadcrumbSchema, BASE_URL } from "@/lib/seo";
+import { buildMetadata, breadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Hold Cleaning at Ajman Port | UAE",
   description: "Professional hold and tank cleaning at Ajman Port. Grain-clean cargo preparation for bulk carriers.",
   path: "/hold-tank-cleaning-service-at-ajman-port",
-  alternates: {
-    canonical: `${BASE_URL}/services/hold-cleaning/shore-gang`,
-  },
+  canonicalPath: "/services/hold-cleaning/shore-gang",
   keywords: ["Ajman port cleaning", "Ajman hold cleaning"],
 });
 

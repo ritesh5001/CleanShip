@@ -2,15 +2,13 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
 import { JsonLd } from "@/components/json-ld";
-import { buildMetadata, breadcrumbSchema, BASE_URL } from "@/lib/seo";
+import { buildMetadata, breadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Hold Cleaning in Brazil | Marine Services",
   description: "Hold and tank cleaning services in Brazilian ports. Cargo hold preparation for bulk carriers and tankers.",
   path: "/hold-cleaning-in-brazil",
-  alternates: {
-    canonical: `${BASE_URL}/services/hold-cleaning/shore-gang`,
-  },
+  canonicalPath: "/services/hold-cleaning/shore-gang",
   keywords: ["hold cleaning Brazil", "cargo hold cleaning Brazil", "tank cleaning Brazil ports"],
 });
 

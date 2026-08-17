@@ -55,14 +55,14 @@ export default function TermsAndConditionsPage() {
               <li>Attempting to decompile or reverse engineer any software contained on the website</li>
               <li>Removing any copyright or other proprietary notations from the materials</li>
               <li>
-                Transferring the materials to another person or "mirroring" the materials on any other
+                Transferring the materials to another person or &quot;mirroring&quot; the materials on any other
                 server
               </li>
             </ul>
 
             <h2>3. Disclaimer</h2>
             <p>
-              The materials on CleanShip Marine website are provided on an 'as is' basis. CleanShip
+              The materials on CleanShip Marine website are provided on an &apos;as is&apos; basis. CleanShip
               Marine makes no warranties, expressed or implied, and hereby disclaims and negates all
               other warranties including, without limitation, implied warranties or conditions of
               merchantability, fitness for a particular purpose, or non-infringement of intellectual
@@ -91,7 +91,7 @@ export default function TermsAndConditionsPage() {
               CleanShip Marine has not reviewed all of the sites linked to its website and is not
               responsible for the contents of any such linked site. The inclusion of any link does not
               imply endorsement by CleanShip Marine of the site. Use of any such linked website is at
-              the user's own risk.
+              the user&apos;s own risk.
             </p>
 
             <h2>7. Modifications</h2>

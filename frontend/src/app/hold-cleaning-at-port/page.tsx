@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
 import { JsonLd } from "@/components/json-ld";
-import { buildMetadata, breadcrumbSchema, BASE_URL } from "@/lib/seo";
+import { buildMetadata, breadcrumbSchema } from "@/lib/seo";
 import { ArrowIcon } from "@/components/icons";
 
 export const metadata: Metadata = buildMetadata({
@@ -17,9 +17,7 @@ export const metadata: Metadata = buildMetadata({
     "shore gang hold cleaning",
     "in-port hold cleaning",
   ],
-  alternates: {
-    canonical: `${BASE_URL}/services/hold-cleaning/shore-gang`,
-  },
+  canonicalPath: "/services/hold-cleaning/shore-gang",
 });
 
 const trail = [
@@ -95,7 +93,7 @@ export default function HoldCleaningAtPortPage() {
                   <p className="mt-3 text-slate-600">
                     Gang size is matched to the number of holds, the previous cargo and the hours
                     available. We bring our own high-pressure units, chemicals, lighting and safety
-                    equipment, so nothing is drawn from the ship's stores or the crew's working hours.
+                    equipment, so nothing is drawn from the ship&apos;s stores or the crew&apos;s working hours.
                   </p>
                 </div>
 
