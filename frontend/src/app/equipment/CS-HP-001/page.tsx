@@ -58,7 +58,7 @@ function FieldGrid({ fields }: { fields: { label: string; value: string | null }
           <dd className="mt-2 text-[17px] leading-[1.4] text-ink-900">
             {field.value ?? (
               <span className="text-[14px] font-normal text-slate-400">
-                Pending — office to update
+                Office Input
               </span>
             )}
           </dd>
