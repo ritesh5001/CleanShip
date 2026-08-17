@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
 import { JsonLd } from "@/components/json-ld";
@@ -83,6 +84,17 @@ export default function EquipmentPage() {
       <section className="bg-white">
         <div className="container-page py-14 lg:py-20">
           <Badge>Rental unit</Badge>
+
+          <div className="mt-8 overflow-hidden border border-line-200 bg-ice-50">
+            <Image
+              src="/images/equipment/cs-hp-001.jpeg"
+              alt="CS-HP-001 FOSES high-pressure pump unit"
+              width={1273}
+              height={1146}
+              className="mx-auto h-auto max-h-[480px] w-auto"
+              priority
+            />
+          </div>
 
           <div className="mt-10">
             <SectionHeading eyebrow="Fixed spec" title="Pump specification" />
