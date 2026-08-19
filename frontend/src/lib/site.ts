@@ -5,6 +5,28 @@
  * consistency actually depends on.
  */
 
+/**
+ * WhatsApp enquiry link, defined once.
+ *
+ * The number and the pre-filled message live here as separate constants and
+ * every link on the site is built from them, so the message can never drift
+ * between the header, the hero, the CTA band, the service sidebars, the
+ * floating bubble and the contact page. The contact page in particular used to
+ * link to a bare `wa.me/<number>` with no text at all, which meant a visitor
+ * arriving from there opened an empty chat and had to introduce themselves.
+ *
+ * `encodeURIComponent` does the escaping — never hand-encode the text, which
+ * is how the previous URL ended up with a literal `%0A%0A` nobody could read.
+ */
+const WHATSAPP_NUMBER = "919236520609";
+
+const WHATSAPP_MESSAGE =
+  "Hi, I found CleanShip Marine Services through your website. I’d like to know more about your marine services.";
+
+export const WHATSAPP_URL = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(
+  WHATSAPP_MESSAGE,
+)}`;
+
 export const siteConfig = {
   name: "Cleanship",
   legalName: "Cleanship Marine Services FZE",
@@ -28,13 +50,15 @@ export const siteConfig = {
     { label: "India", number: "+91 92365 20609", href: "tel:+919236520609" },
     { label: "UAE", number: "+971 55 402 9954", href: "tel:+971554029954" },
   ],
-  whatsapp: "919236520609",
+  whatsapp: WHATSAPP_NUMBER,
+  /** The raw message, for anything that needs the text rather than the link. */
+  whatsappMessage: WHATSAPP_MESSAGE,
   /**
-   * Pre-filled WhatsApp deep link. The `text` payload is already
-   * percent-encoded — do not re-encode it when building hrefs.
+   * Pre-filled WhatsApp deep link. Already percent-encoded — do not re-encode
+   * it when building hrefs. Use this everywhere; never link to a bare
+   * `wa.me/<number>`, which opens a chat with no message in it.
    */
-  whatsappUrl:
-    "https://api.whatsapp.com/send?phone=919236520609&text=Good%20Day%20Sir%2C%0A%0AI%20have%20an%20urgent%20query%20%26%20I%20want%20to%20discuss%20more!",
+  whatsappUrl: WHATSAPP_URL,
 
   address: {
     street: "Ajman Free Zone, C1 Building",

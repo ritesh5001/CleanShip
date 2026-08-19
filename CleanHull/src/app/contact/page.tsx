@@ -115,7 +115,9 @@ export default function ContactPage() {
                   lines={[
                     {
                       text: "Message the dive desk",
-                      href: `https://wa.me/${siteConfig.whatsapp}`,
+                      // The pre-filled link, not a bare wa.me/<number> — this
+                      // row used to open an empty chat.
+                      href: siteConfig.whatsappUrl,
                       external: true,
                     },
                   ]}
