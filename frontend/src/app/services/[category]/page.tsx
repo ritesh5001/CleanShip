@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
@@ -13,6 +14,16 @@ import { heroImageFor } from "@/lib/stock-images";
 import { CoverageNote } from "@/components/locations";
 import { categoryCoverage } from "@/lib/site";
 import { HeroEnquiryForm } from "@/components/hero-enquiry-form";
+import { portLabel } from "@/lib/ports/types";
+import type { LineKey } from "@/lib/ports/types";
+import {
+  getLine,
+  portHubSlug,
+  portLines,
+  portsWithLine,
+  regionHubSlug,
+  regions,
+} from "@/lib/ports/registry";
 import {
   breadcrumbSchema,
   buildMetadata,
@@ -104,6 +115,51 @@ export default async function CategoryPage({ params }: Params) {
                 worldwide={categoryCoverage[category.slug].worldwide}
                 className="mt-8"
               />
+            </Reveal>
+          )}
+
+          {/* Port-level coverage, for any category that has a port
+              programme. The guard is on the data, not on a hard-coded slug,
+              so a new line picks this up the day it has ports. */}
+          {portLines.some((l) => l.key === (category.slug as LineKey)) && (
+            <Reveal delay={100}>
+              <div className="mt-8 border border-line-200 bg-white p-7">
+                <h2 className="font-display text-[20px] font-bold uppercase leading-tight text-ink-900">
+                  {category.name} port by port
+                </h2>
+                <p className="mt-3 max-w-[70ch] text-[15px] leading-[1.62] text-ink-700">
+                  Every port below has its own page covering local working
+                  conditions, the approving authority and the vessel traffic
+                  that calls there — plus each scope at that port.
+                </p>
+                {regions.map((region) => {
+                  const line = getLine(category.slug as LineKey);
+                  const ports = portsWithLine(line.key, region);
+                  if (ports.length === 0) return null;
+                  return (
+                    <div key={region.slug} className="mt-6">
+                      <Link
+                        href={`/${regionHubSlug(line, region)}`}
+                        className="label-caps text-[12px] text-blue-600"
+                      >
+                        {region.name} — {ports.length} ports
+                      </Link>
+                      <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+                        {ports.map((port) => (
+                          <li key={port.slug}>
+                            <Link
+                              href={`/${portHubSlug(port, line)}`}
+                              className="text-[14px] text-slate-600 underline decoration-line-200 underline-offset-4 transition-colors duration-[140ms] hover:text-blue-600 hover:decoration-blue-400"
+                            >
+                              {portLabel(port)}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                })}
+              </div>
             </Reveal>
           )}
         </div>

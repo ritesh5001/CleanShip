@@ -209,7 +209,13 @@ export const serviceCoverage: Record<
   },
   "underwater-hull-cleaning": {
     label: "Hull Cleaning",
+    /* India leads because it is the only region with a published port-level
+       programme behind it — see /hull-cleaning-in-india and the 33 port pages
+       generated from lib/ports. Claiming West Africa alone while shipping 198
+       Indian port pages would contradict the site's own content. */
     areas: [
+      "India (33 ports)",
+      "UAE",
       "Togo",
       "Côte d'Ivoire",
       "Liberia",
@@ -232,6 +238,8 @@ export const categoryCoverage: Record<
   },
   "hull-cleaning": {
     areas: [
+      "India (33 ports)",
+      "UAE",
       "Togo",
       "Côte d'Ivoire",
       "Liberia",

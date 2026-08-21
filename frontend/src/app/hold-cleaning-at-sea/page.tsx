@@ -17,7 +17,6 @@ export const metadata: Metadata = buildMetadata({
     "on-passage hold cleaning",
     "ballast passage cleaning",
   ],
-  canonicalPath: "/services/hold-cleaning/riding-crew",
 });
 
 const trail = [

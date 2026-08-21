@@ -17,7 +17,6 @@ export const metadata: Metadata = buildMetadata({
     "shore gang hold cleaning",
     "in-port hold cleaning",
   ],
-  canonicalPath: "/services/hold-cleaning/shore-gang",
 });
 
 const trail = [

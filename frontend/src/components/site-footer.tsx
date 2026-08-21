@@ -1,4 +1,11 @@
 import Link from "next/link";
+import { portLabel } from "@/lib/ports/types";
+import {
+  getLine,
+  portHubSlug,
+  regionHubSlug,
+  regions,
+} from "@/lib/ports/registry";
 import { serviceAreas, siteConfig } from "@/lib/site";
 import { serviceCategories } from "@/lib/services";
 import {
@@ -111,6 +118,36 @@ export function SiteFooter() {
                         className="text-[14px] leading-snug transition-colors duration-[140ms] hover:text-white"
                       >
                         {service.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {/* Regional port coverage — a site-wide entry point into the port
+              programme, so those pages are never more than one hop from any
+              page on the site rather than reachable only via the sitemap. */}
+          <div className="lg:col-span-8">
+            {regions.map((region) => (
+              <div key={region.slug} className="mt-8 first:mt-0">
+                <h2 className="font-display text-[17px] font-bold uppercase leading-tight text-white">
+                  <Link
+                    href={`/${regionHubSlug(getLine("hull-cleaning"), region)}`}
+                    className="transition-colors duration-[140ms] hover:text-aqua-200"
+                  >
+                    Port services in {region.name}
+                  </Link>
+                </h2>
+                <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[13px]">
+                  {region.ports.map((port) => (
+                    <li key={port.slug}>
+                      <Link
+                        href={`/${portHubSlug(port, getLine("hull-cleaning"))}`}
+                        className="transition-colors duration-[140ms] hover:text-white"
+                      >
+                        {portLabel(port)}
                       </Link>
                     </li>
                   ))}
