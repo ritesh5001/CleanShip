@@ -19,6 +19,7 @@ import {
   areaPhrase,
   cargoFlags,
   listAnd,
+  midSentence,
   portLabel,
   vesselLine,
 } from "./types";
@@ -120,7 +121,7 @@ function hullCargoFinding(port: Port): string {
 
 function holdCargoFinding(port: Port): string {
   const f = cargoFlags(port);
-  const cargo = listAnd(port.cargoes.slice(0, 3)).toLowerCase();
+  const cargo = midSentence(listAnd(port.cargoes.slice(0, 3)));
   if (f.dryBulk && f.agriBulk)
     return `${portLabel(port)} runs ${cargo} through the same holds, and that sequence is where the money is lost: mineral fines and dust from one fixture will fail an inspection for the next if the holds are only swept. The standard that matters is the one the next cargo demands, not the one the last one left.`;
   if (f.dryBulk)
@@ -228,6 +229,23 @@ export function conditionSummary(port: Port, line: LineKey): string {
   return `${WORK_ENV[port.waiting]}${heat}`;
 }
 
+/**
+ * Who actually controls access, by port type.
+ *
+ * The delivery step used to be one string with the authority name substituted
+ * in, which is the shape of copy that reads as generated. The underlying fact
+ * genuinely differs: a major port runs a statutory permit process, a private
+ * port is the terminal operator's commercial decision, a state port goes
+ * through a maritime board and the local harbour master.
+ */
+export function approvalRoute(port: Port): string {
+  if (port.type === "Major Port")
+    return `${port.authority} runs a statutory permit process here, so the lead time is real and the application goes in early rather than on arrival.`;
+  if (port.type === "Private Port")
+    return `Access at ${portLabel(port)} is the terminal operator's decision as much as ${port.authority}'s, so both are in the approval chain from the start — a berth-side refusal discovered at the gangway costs the whole attendance.`;
+  return `${port.authority} approves the work alongside the local harbour master, and at a state port that conversation is quicker but less formal — it is worth having in writing.`;
+}
+
 /** Why this line never takes the vessel off hire. One sentence, per line. */
 export function onHireNote(line: LineKey): string {
   if (line === "hull-cleaning")
@@ -315,14 +333,13 @@ export function findingNotes(port: Port, line: LineKey, extra?: string) {
   if (line === "hull-cleaning") {
     return [hullCargoFinding(port), tail(HULL_FINDING[port.condition])];
   }
+  /* The hand-written hold/tank notes now open their scope pages, so they are
+     deliberately NOT repeated here — the cargo-derived and waiting-derived
+     paragraphs carry this section instead. */
   if (line === "hold-cleaning") {
-    return port.holdNote
-      ? [port.holdNote, tail(holdCargoFinding(port))]
-      : [holdCargoFinding(port), tail(HOLD_FINDING[port.waiting])];
+    return [holdCargoFinding(port), tail(HOLD_FINDING[port.waiting])];
   }
-  return port.tankNote
-    ? [port.tankNote, tail(tankCargoFinding(port))]
-    : [tankCargoFinding(port), tail(TANK_FINDING[port.waiting])];
+  return [tankCargoFinding(port), tail(TANK_FINDING[port.waiting])];
 }
 
 /** Seasonal planning note. Weather sets the regime, the line sets the driver. */
@@ -348,8 +365,15 @@ export function seasonNotes(port: Port, line: LineKey): string[] {
       ? `Work is taken at ${areaPhrase(port)}, and which of those a vessel ends up at changes the dive plan more than the season does. `
       : "";
 
+  const risk =
+    line === "hull-cleaning"
+      ? w.risk
+      : line === "hold-cleaning"
+        ? `For hold work the wind matters less than the rain: holds cannot be washed, dried and closed in wet weather, and a hold shut up damp fails inspection however clean it looks`
+        : `For tank work it is the anchorage that suffers — where the terminal will not permit work alongside, weather that closes the anchorage closes the job`;
+
   return [
-    `The ${w.season} governs the calendar at ${portLabel(port)}, ${w.window}. ${w.risk}. ${driver}`,
+    `The ${w.season} governs the calendar at ${portLabel(port)}, ${w.window}. ${risk}. ${driver}`,
     `${areas}${mobilise}`,
   ];
 }
@@ -580,7 +604,10 @@ const holdScopes: PortScope[] = [
     tagline: "Holds ready for the next fixture before the vessel sails",
     lead: (port) =>
       `Cleanship Marine puts shore gangs on board at ${portLabel(port)}, ${port.state}, to clean cargo holds between fixtures — sweeping, washing, rinsing and drying to the standard the next cargo demands, worked at ${areaPhrase(port, 2)}.`,
-    angle: (port) => port.profile,
+    /* NOT port.profile — that paragraph opens the hull page at this port too,
+       and reproducing it here word for word was the heaviest cross-service
+       duplication in the set. The hold note is the same port's cargo story. */
+    angle: (port) => port.holdNote ?? holdCargoFinding(port),
     localScope: (port) => [
       "Sweeping and removal of cargo residues, dunnage and lashing waste from tank tops, frames and brackets",
       "Fresh or sea water washing with the correct chemical treatment for the residue found, followed by a fresh water rinse",
@@ -680,7 +707,9 @@ const tankScopes: PortScope[] = [
     tagline: "Grade change delivered to the surveyor's standard",
     lead: (port) =>
       `Cleanship Marine carries out cargo tank cleaning on dirty and clean petroleum product tankers at ${portLabel(port)}, ${port.state} — grade changes, wall-wash preparation and gas-freeing worked to the acceptance criteria of the next cargo, not to a generic procedure.`,
-    angle: (port) => port.profile,
+    /* See the note on the shore-gang scope: the port's liquid story, not the
+       shared profile paragraph. */
+    angle: (port) => port.tankNote ?? tankCargoFinding(port),
     localScope: (port) => [
       "Cleaning plan built from the prior-cargo and next-cargo pair, with the acceptance criteria agreed in writing first",
       "Tank washing, steaming and chemical treatment as the grade change requires",
@@ -833,7 +862,7 @@ export const portLines: PortLine[] = [
     eyebrow: "Hold Cleaning",
     hubTagline: "Holds ready for the next fixture",
     hubIntro: (port) =>
-      `Cleanship Marine cleans cargo holds at ${portLabel(port)} (${port.unlocode}), ${port.state} — shore gangs alongside, riding crews on the passage out, and IRATA rope access teams for the upper hold. The standard is the one the next fixture demands, and the residue and washings are disposed of to MARPOL Annex V rather than left with the master.`,
+      `Cleanship Marine cleans cargo holds at ${portLabel(port)} (${port.unlocode}), ${port.state} — shore gangs alongside, riding crews on the passage out, and IRATA rope access teams for the upper hold. ${port.holdNote ?? holdCargoFinding(port)}`,
     scopes: holdScopes,
     keywords: [
       "hold cleaning",
@@ -851,7 +880,7 @@ export const portLines: PortLine[] = [
     eyebrow: "Tank Cleaning",
     hubTagline: "Grade changes, sludge removal and shore tanks",
     hubIntro: (port) =>
-      `Cleanship Marine cleans cargo, bunker and shore tanks at ${portLabel(port)} (${port.unlocode}), ${port.state} — grade changes on product and chemical tankers, sludge demucking, terminal storage tanks and offshore support vessel turnarounds. Gas-freeing, enclosed-space entry certification and licensed slop disposal are part of the scope, not extras.`,
+      `Cleanship Marine cleans cargo, bunker and shore tanks at ${portLabel(port)} (${port.unlocode}), ${port.state} — grade changes on product and chemical tankers, sludge demucking, terminal storage tanks and offshore support vessel turnarounds. ${port.tankNote ?? tankCargoFinding(port)}`,
     scopes: tankScopes,
     keywords: [
       "tank cleaning",

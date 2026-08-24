@@ -49,6 +49,7 @@ import {
   regionHubSlug,
   regionOf,
   scopeFaqs,
+  shouldIndex,
   type PortPage,
 } from "@/lib/ports/registry";
 import {
@@ -114,6 +115,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     path: `/${page.slug}`,
     keywords: pageKeywords(page),
     image: shareImage(page.line, page.kind === "scope" ? page.scope : undefined),
+    /* Scope pages are noindex, follow — see shouldIndex() in lib/ports/
+       registry.ts for why, and how to reverse it. */
+    noIndex: !shouldIndex(page),
   });
 }
 
@@ -561,9 +565,13 @@ function PortHub({ page }: { page: Extract<PortPage, { kind: "port" }> }) {
               <p className="text-[19px] leading-[1.62] text-ink-900">
                 {line.hubIntro(port)}
               </p>
-              <p className="mt-5 text-[16px] leading-[1.62] text-ink-700">
-                {port.profile}
-              </p>
+              {/* Only the hull hub carries the shared port profile — printing
+                  it on all three hubs at one port was straight duplication. */}
+              {line.key === "hull-cleaning" && (
+                <p className="mt-5 text-[16px] leading-[1.62] text-ink-700">
+                  {port.profile}
+                </p>
+              )}
             </Reveal>
 
             <Reveal delay={60}>

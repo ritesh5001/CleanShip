@@ -25,7 +25,12 @@ import { stockImages } from "@/lib/stock-images";
 import { buildMetadata, faqSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Underwater Hull Cleaning & Marine Services",
+  /* The root layout's title template does not apply to the root page, so the
+     brand is written in here explicitly. Every other page gets "| Cleanship"
+     from the template; without this line the homepage was the one page with
+     no brand in its title — on the query most likely to be a brand search. */
+  title:
+    "Underwater Hull, Hold & Tank Cleaning | UAE, India & West Africa | Cleanship",
   description: siteConfig.shortDescription,
   path: "/",
   keywords: [

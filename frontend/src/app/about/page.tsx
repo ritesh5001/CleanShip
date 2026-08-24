@@ -71,7 +71,7 @@ export default function AboutPage() {
 
       <PageHero
         eyebrow="About Cleanship"
-        title="Why will you choose our services?"
+        title="Cleanship Marine Services — in-water and cargo cleaning across three regions"
         // Reordered to lead with hull cleaning at the brand owner's direction.
         // The original site string opened "a trusted hold and tank cleaning
         // service provider" — the DS asks for source copy to be kept verbatim,

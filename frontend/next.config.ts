@@ -84,6 +84,60 @@ const nextConfig: NextConfig = {
         "/hold-tank-cleaning-service-at-ruwais-port",
         "/hold-cleaning-in-ruwais-port",
       ],
+
+      /* ---------------------------------------------------------------- *
+       * WordPress site (pre-rebuild).                                     *
+       *                                                                   *
+       * These are the URLs Google still holds in its index and the ones   *
+       * supplier directories, agent emails and old quotes link to. Every  *
+       * one of them 404'd after the rebuild, which threw away every bit   *
+       * of ranking history and link equity the old site had earned.       *
+       *                                                                   *
+       * ⚠️ THIS LIST IS INCOMPLETE AND CANNOT BE COMPLETED FROM THE REPO. *
+       * It covers the paths verified as live-and-404ing. Export the full  *
+       * set from Search Console (Pages report, last 16 months) plus any   *
+       * old sitemap or server log, and add whatever is missing. Do not    *
+       * rebuild that list from memory.                                    *
+       * ---------------------------------------------------------------- */
+      ["/service/underwater-hull-cleaning", "/services/hull-cleaning/underwater-hull-cleaning"],
+      ["/service/propeller-polishing", "/services/hull-cleaning/propeller-super-polishing"],
+      ["/service/tank-cleaning", "/services/tank-cleaning"],
+      ["/service/shore-tank-cleaning", "/services/tank-cleaning/shore-tank-cleaning"],
+      ["/service/demucking", "/services/tank-cleaning/demucking"],
+      ["/service/hold-cleaning", "/services/hold-cleaning"],
+      ["/service/off-shore-vessels", "/services/offshore"],
+      ["/service/offshore-vessels", "/services/offshore"],
+      ["/service/hydroblasting", "/services/ndt-and-repair/hydroblasting"],
+      ["/service/marine-painting", "/services/ndt-and-repair/marine-painting"],
+      ["/service/ndt-inspection", "/services/ndt-and-repair/ndt-inspection"],
+      ["/contact-us", "/contact"],
+      ["/about-us", "/about"],
+      ["/our-services", "/services"],
+      ["/underwater-hull-cleaning-and-propeller-polishing", "/services/hull-cleaning"],
+
+      /* Old location posts. Where a port page now exists it gets the port
+         page; where it does not, it goes to the service line rather than the
+         homepage — a bulk redirect to / is treated as a soft 404. */
+      ["/hold-tank-cleaning-in-singapore", "/services/hold-cleaning"],
+      ["/hold-tank-cleaning-in-heraklion-port", "/services/hold-cleaning"],
+      ["/hold-tank-cleaning-in-kandla-port", "/hold-cleaning-in-kandla-port"],
+      ["/hold-tank-cleaning-in-mumbai-port", "/hold-cleaning-in-mumbai-port"],
+      ["/hold-tank-cleaning-in-fujairah-port", "/hold-cleaning-in-fujairah-port"],
+      ["/hold-tank-cleaning-in-jebel-ali-port", "/hold-cleaning-in-jebel-ali-port"],
+
+      /* ---------------------------------------------------------------- *
+       * Flat service URLs → the nested hierarchy.                         *
+       *                                                                   *
+       * /underwater-hull-cleaning already canonicalised to the nested page *
+       * but stayed indexable and listed in the sitemap — a contradictory   *
+       * signal. /hold-cleaning-at-port (520 words) and /hold-cleaning-at-  *
+       * sea (1,100) were self-canonical duplicates of nested pages that    *
+       * carry twice the content. One URL per service; the nested path wins *
+       * because it is the hierarchy everything else already uses.          *
+       * ---------------------------------------------------------------- */
+      ["/underwater-hull-cleaning", "/services/hull-cleaning/underwater-hull-cleaning"],
+      ["/hold-cleaning-at-port", "/services/hold-cleaning/shore-gang"],
+      ["/hold-cleaning-at-sea", "/services/hold-cleaning/riding-crew"],
     ];
 
     return moved.map(([source, destination]) => ({

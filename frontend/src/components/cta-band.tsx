@@ -13,7 +13,7 @@ import { stockImages } from "@/lib/stock-images";
  * exactly what this is — the overlay does the work the flat colour used to.
  */
 export function CtaBand({
-  title = "We always ready to serve you.",
+  title = "Ready when you are.",
   description = "Tell us the vessel, the port and the window. You get a scope, a crew size and an honest duration — usually the same working day.",
 }: {
   title?: string;

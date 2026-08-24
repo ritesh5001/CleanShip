@@ -48,11 +48,19 @@ export function Hero() {
                   Sized well below the display scale — at mega the headline ran
                   three lines deep and pushed the whole fold past a laptop
                   viewport. */}
+              {/* The H1 carries the service and the differentiator, because
+                  that is the language a superintendent actually types. The
+                  better sentence — "Cleaning that passes first inspection" —
+                  moved to the sub-headline below, where sentences belong. */}
               <h1 className="mt-6 font-display text-[clamp(32px,4.4vw,62px)] leading-[1.02] text-white">
-                Cleaning that passes
+                In-water hull, hold and tank cleaning
                 <br />
-                <span className="text-aqua-400">first inspection</span>
+                <span className="text-aqua-400">vessel stays on hire</span>
               </h1>
+
+              <p className="mt-5 font-display text-[clamp(18px,2vw,24px)] uppercase leading-tight text-white/80">
+                Cleaning that passes first inspection
+              </p>
 
               <p
                 data-mount

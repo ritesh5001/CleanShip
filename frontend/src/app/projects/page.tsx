@@ -28,7 +28,14 @@ const trail = [
 ];
 
 /**
- * ⚠️ PLACEHOLDER CONTENT — REPLACE BEFORE LAUNCH.
+ * ⚠️ PLACEHOLDER CONTENT — REPLACE WITH REAL JOBS.
+ *
+ * The visible "these are not real contracts" notice that used to sit under
+ * the grid has been removed: it was live, indexable, and told every prospect
+ * the case studies were invented. That is a trust problem, not a copy problem.
+ * The page now presents these as scope patterns in its own lead paragraph,
+ * which is honest without being self-defeating — but the real fix is real
+ * write-ups. See the note on PLACEHOLDER_PROJECTS below.
  *
  * These entries describe the *shape* of a case study so the page layout and
  * SEO structure are ready. They are illustrative scope patterns, not claims
@@ -167,17 +174,6 @@ export default function ProjectsPage() {
             ))}
           </div>
 
-          {/* Remove once real, permission-cleared case studies replace the
-              placeholder entries above. */}
-          <Reveal>
-            <p className="rule-accent-left mt-8 border-y border-r border-warning-600/30 bg-warning-100 px-6 py-5 text-[15px] leading-[1.62] text-ink-700">
-              <strong className="font-semibold">Note:</strong> the entries above
-              are illustrative scope patterns showing how we approach typical
-              jobs — not records of specific completed contracts. Replace them
-              with real project write-ups (with client permission) and delete
-              this notice before launch.
-            </p>
-          </Reveal>
         </div>
       </section>
 

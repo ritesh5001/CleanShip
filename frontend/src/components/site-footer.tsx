@@ -205,7 +205,7 @@ export function SiteFooter() {
           <p>
             © {year} {siteConfig.legalName}. All rights reserved.
           </p>
-          <p>We always ready to serve you.</p>
+          <p>Ready when you are.</p>
         </div>
       </div>
     </footer>

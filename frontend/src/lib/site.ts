@@ -143,7 +143,10 @@ export const offices: Office[] = [
     region: "Middle East",
   },
   {
-    city: "Khorfakkan",
+    /* "Khor Fakkan" everywhere — the site previously used "Khorfakkan" here
+       and "Khor Fakkan" in serviceAreas. Local search matches on exact-string
+       agreement between the site and its citations, so one spelling only. */
+    city: "Khor Fakkan",
     country: "United Arab Emirates",
     region: "Middle East",
   },
@@ -169,9 +172,11 @@ export const offices: Office[] = [
   {
     city: "Colombo",
     country: "Sri Lanka",
-    // Supplied as "Merchantile Logistics, No 23, Alfered Place" — likely
-    // "Mercantile" and "Alfred Place". Left as supplied; confirm the spelling.
-    street: "Merchantile Logistics, No 23, Alfered Place",
+    /* Supplied as "Merchantile Logistics, No 23, Alfered Place". Corrected to
+       the real spellings — local citation matching is exact-string, so a
+       misspelled street means every directory citation built against it fails
+       to match and the office earns nothing. Confirm with the office. */
+    street: "Mercantile Logistics, No 23, Alfred Place",
     region: "South Asia",
   },
   {
@@ -255,6 +260,9 @@ export const categoryCoverage: Record<
 export const mainNav = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
+  // The port network is the largest thing on the site; without a nav link its
+  // several hundred pages were discoverable only via the sitemap and footer.
+  { label: "Ports", href: "/ports" },
   { label: "Projects", href: "/projects" },
   { label: "About Us", href: "/about" },
   { label: "Contact Us", href: "/contact" },

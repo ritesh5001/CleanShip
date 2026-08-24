@@ -50,18 +50,6 @@ export const metadata: Metadata = {
   creator: siteConfig.legalName,
   publisher: siteConfig.legalName,
   category: "Marine Services",
-  keywords: [
-    "underwater hull cleaning",
-    "propeller polishing",
-    "in-water survey",
-    "hold cleaning",
-    "tank cleaning",
-    "riding crew",
-    "marine NDT",
-    "hydroblasting",
-    "ship cleaning UAE",
-    "Ajman marine services",
-  ],
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
@@ -87,7 +75,10 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
     },
   },
-  formatDetection: { telephone: true, address: true, email: true },
+  /* No formatDetection block. Next.js emits `telephone=no` for anything
+     declared here, which switched OFF tap-to-call on mobile — on a site whose
+     primary CTA is "call the 24/7 desk". Omitting it restores the browser
+     default, which is to detect. */
 };
 
 export const viewport: Viewport = {

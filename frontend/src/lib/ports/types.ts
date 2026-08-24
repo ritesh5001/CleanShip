@@ -172,6 +172,38 @@ export function listAnd(
   return `${items.slice(0, -1).join(", ")} ${conjunction} ${items[items.length - 1]}`;
 }
 
+/**
+ * Acronyms that must survive a lowercasing step.
+ *
+ * Cargo and vessel lists are lowercased to sit mid-sentence, which was turning
+ * "POL and edible oils" into "pol and edible oils" in running body copy on
+ * every liquid-bulk port page. Google does not care; a superintendent reading
+ * "pol" does.
+ */
+const ACRONYMS = [
+  "POL",
+  "LNG",
+  "LPG",
+  "RoRo",
+  "UWILD",
+  "NDT",
+  "IRATA",
+  "MARPOL",
+  "CPP",
+  "DPP",
+  "OSV",
+  "IMCA",
+  "ADCI",
+];
+
+/** Lowercases for mid-sentence use without destroying acronyms. */
+export function midSentence(text: string): string {
+  return ACRONYMS.reduce(
+    (out, word) => out.replace(new RegExp(`\\b${word}\\b`, "gi"), word),
+    text.toLowerCase(),
+  );
+}
+
 /** "Kandla Port", but never "Chennai Port Port". */
 export function portLabel(port: Port): string {
   return port.name.toLowerCase().endsWith("port")
@@ -191,5 +223,5 @@ export function airportLine(port: Port): string {
 }
 
 export function vesselLine(port: Port): string {
-  return listAnd(port.vesselTypes.slice(0, 3)).toLowerCase();
+  return midSentence(listAnd(port.vesselTypes.slice(0, 3)));
 }

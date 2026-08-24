@@ -61,7 +61,7 @@ export default function ContactPage() {
 
       <PageHero
         eyebrow="Contact Us"
-        title="Feel free to contact with us for any kind of query"
+        title="Contact the 24/7 operations desk"
         description="Our team is ready to assist with all your marine service needs. The operations desk is manned around the clock — vessels do not arrive at convenient hours."
         trail={trail}
       />

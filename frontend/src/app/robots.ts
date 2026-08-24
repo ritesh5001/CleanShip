@@ -7,9 +7,10 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // Nothing sensitive here yet; listed so the intent is explicit if
-        // API routes are added later.
-        disallow: ["/api/"],
+        /* /admin is also noindex via src/app/admin/layout.tsx — belt and
+           braces, because a disallow alone does not remove an already-indexed
+           URL, and a noindex alone still burns crawl budget. */
+        disallow: ["/api/", "/admin"],
       },
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,

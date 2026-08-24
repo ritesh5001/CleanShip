@@ -3,14 +3,25 @@ import { BASE_URL } from "@/lib/seo";
 import { serviceCategories } from "@/lib/services";
 import { heroMediaFor } from "@/lib/service-media";
 import { heroImageFor } from "@/lib/stock-images";
-import { portPages } from "@/lib/ports/registry";
+import { portPages, shouldIndex } from "@/lib/ports/registry";
 
 /**
  * XML sitemap generated from the service taxonomy, so a new service is
  * submitted to search engines automatically the moment it is added.
  */
+/**
+ * NO `lastModified` ANYWHERE IN HERE — deliberately.
+ *
+ * Every URL previously carried the build timestamp, so all 600+ shared one
+ * date that changed on every deploy whether the page changed or not. Google
+ * treats a lastmod it judges unreliable as noise and stops using it, which
+ * costs you the recrawl signal on the pages that genuinely did change. An
+ * omitted lastmod is strictly better than a uniform false one.
+ *
+ * Reinstate it per-URL only when there is a real content source to date it
+ * from — a CMS record, or the git commit date of the port entry.
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
 
   const staticRoutes: MetadataRoute.Sitemap = (
     [
@@ -24,23 +35,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
       { url: `${BASE_URL}/terms-and-conditions`, changeFrequency: "yearly", priority: 0.5 },
       { url: `${BASE_URL}/disclaimer`, changeFrequency: "yearly", priority: 0.5 },
     ] as const
-  ).map((route) => ({ ...route, lastModified: now }));
+  ).map((route) => ({ ...route }));
 
   /* Standalone landing pages that are NOT part of the generated port
      programme. Everything here self-canonicalises — a page that canonicalises
-     to another page cannot rank for its own term, so anything listed here has
-     to carry content that earns the listing.
+     to another page must never appear in a sitemap, because listing it says
+     "index this" while its canonical says "index that one instead".
 
-     The old thin port pages that used to live here are gone: they are 301s to
-     the port programme now (see next.config.ts). */
-  const locationPages: MetadataRoute.Sitemap = (
-    [
-      { url: `${BASE_URL}/underwater-hull-cleaning`, changeFrequency: "monthly", priority: 0.65 },
-      { url: `${BASE_URL}/hold-cleaning-at-port`, changeFrequency: "monthly", priority: 0.65 },
-      { url: `${BASE_URL}/hold-cleaning-at-sea`, changeFrequency: "monthly", priority: 0.65 },
-      { url: `${BASE_URL}/hold-cleaning-in-brazil`, changeFrequency: "monthly", priority: 0.7 },
-    ] as const
-  ).map((route) => ({ ...route, lastModified: now }));
+     The old thin port pages and the three flat service URLs that used to live
+     here are gone: they are 301s now (see next.config.ts). */
+  const locationPages: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/hold-cleaning-in-brazil`, changeFrequency: "monthly" as const, priority: 0.7 },
+    { url: `${BASE_URL}/ports`, changeFrequency: "weekly" as const, priority: 0.8 },
+  ];
 
   const categoryRoutes: MetadataRoute.Sitemap = serviceCategories.map(
     (category) => {
@@ -54,7 +61,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
       return {
         url: `${BASE_URL}/services/${category.slug}`,
-        lastModified: now,
         changeFrequency: "monthly" as const,
         priority: 0.85,
         ...(image ? { images: [image] } : {}),
@@ -78,7 +84,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
         return {
           url: `${BASE_URL}/services/${category.slug}/${service.slug}`,
-          lastModified: now,
           changeFrequency: "monthly" as const,
           priority: 0.8,
           ...(image ? { images: [image] } : {}),
@@ -94,7 +99,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
      Priorities sit below the canonical service pages deliberately. These
      pages target long-tail port intent and should not compete with
      /services/* for the head terms. */
-  const portRoutes: MetadataRoute.Sitemap = portPages.map((page) => {
+  /* Only indexable pages. The scope pages are noindex, follow — listing a
+     noindex URL in a sitemap tells Google "index this" and "do not index
+     this" at the same time. They stay discoverable through the port hubs,
+     which is what a follow directive is for. */
+  const portRoutes: MetadataRoute.Sitemap = portPages
+    .filter(shouldIndex)
+    .map((page) => {
     const scopeSlug =
       page.kind === "scope"
         ? page.scope.serviceSlug
@@ -113,13 +124,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     return {
       url: `${BASE_URL}/${page.slug}`,
-      lastModified: now,
       changeFrequency:
         page.kind === "region" ? ("weekly" as const) : ("monthly" as const),
       priority: page.kind === "region" ? 0.8 : page.kind === "port" ? 0.7 : 0.65,
       ...(image ? { images: [image] } : {}),
-    };
-  });
+      };
+    });
 
   return [
     ...staticRoutes,

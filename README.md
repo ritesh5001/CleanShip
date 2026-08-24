@@ -52,14 +52,14 @@ Implemented and verified against the running build:
 
 | Area | State |
 | --- | --- |
-| Rendering | All 633 routes statically prerendered; no client-side data fetching |
+| Rendering | All 631 routes statically prerendered; no client-side data fetching |
 | Titles | All ≤ 60 chars incl. the `\| Cleanship` suffix |
 | Descriptions | All ≤ 162 chars |
-| Canonicals | Absolute, no trailing-slash duplicates. Every page self-canonicalises except `/underwater-hull-cleaning` — see below |
+| Canonicals | Absolute, no trailing-slash duplicates. Every indexable page self-canonicalises |
 | Headings | Exactly one `<h1>` per page, no level skips |
 | Structured data | Organization + LocalBusiness, WebSite, BreadcrumbList, Service, FAQPage, ItemList, ContactPage, **plus one LocalBusiness per office (8)** |
 | FAQs | 4,091 questions across 610 pages, in the DOM *and* as `FAQPage` schema |
-| Sitemap | 620 URLs with 607 `<image:image>` entries for Google Images |
+| Sitemap | 157 URLs — indexable pages only. See the indexation policy below |
 | Social | Per-page `og:image` — each service previews as itself |
 | Icons | favicon.ico, icon.png, apple-icon.png, webmanifest |
 | robots.txt | Allow-all with sitemap + host; 404 is `noindex, follow` |
@@ -180,21 +180,53 @@ seasonal window, expected findings, and hold/tank notes for every port that
 has those lines. **Adding a port with templated filler puts the whole set at
 risk, not just the new page.**
 
-### Deliberate exceptions
+### Indexation policy — read this before adding pages
 
-- **`/underwater-hull-cleaning`** still canonicalises to
-  `/services/hull-cleaning/underwater-hull-cleaning`. That is correct: it is a
-  true duplicate of the service page — same title, same description, same
-  content — so consolidating is right and there is no port-specific content to
-  make it its own page. Everything else on the site self-canonicalises.
-- **`/hold-cleaning-at-port`** and **`/hold-cleaning-at-sea`** no longer
-  canonicalise away. They target situational queries the service pages do not
-  ("hold cleaning at sea" vs "Hold Cleaning Riding Crew"), so they now compete
-  on their own.
-- **Brazil has one country page, not 33 port pages.** We do not have the
-  operational depth per Brazilian port that the India and UAE sets have, and
-  publishing 33 pages of filler would endanger the whole programme. See the
-  note at the top of `frontend/src/lib/ports/brazil.ts`.
+**461 of the 583 port pages are `noindex, follow`.** That is deliberate and it
+is reversible with one flag.
+
+Six URLs per port were competing for one query. Someone searching "hull
+cleaning Kandla" could land on the line hub or any of five scope pages, all
+carrying the same facts table, the same working-conditions section and a
+near-identical FAQ block. Google picks one and largely ignores the rest — and
+on a domain with no authority behind it, it may index none.
+
+| | Indexable | In sitemap |
+| --- | --- | --- |
+| Region hubs (`/hull-cleaning-in-india`) | yes | yes |
+| Port line hubs (`/hull-cleaning-in-kandla-port`) | yes | yes |
+| Scope pages (`/propeller-polishing-in-kandla-port`) | **no** | no |
+
+Scope pages stay live, stay linked and still pass signal up to their hub —
+`follow`, never `nofollow`. They just stop competing with it. That takes the
+indexable set from ~600 to ~140, which is a sensible number for this domain's
+authority today.
+
+**To reverse:** flip `INDEX_SCOPE_PAGES` in `lib/ports/registry.ts`. Do it once
+Search Console shows the hubs earning impressions — or sooner, if the Pages
+report shows the scope pages were indexing cleanly all along. To let just one
+scope back in (UWILD is the obvious candidate — distinct query, own
+vocabulary, buyers search it by name), add its `urlPrefix` to `ALWAYS_INDEX`
+rather than flipping the whole set.
+
+### Redirects — do not delete these
+
+`next.config.ts` holds three groups, all 301 (Next emits 308, which Google
+treats identically):
+
+1. **The previous Next.js location pages** — twelve thin URLs that
+   canonicalised away.
+2. **The WordPress site** — `/service/{slug}/`, `/contact-us/`, old location
+   posts. These are the URLs Google still holds and that directories and agent
+   emails link to. **This list is incomplete and cannot be completed from the
+   repo** — export the full set from Search Console (Pages report, last 16
+   months) and add whatever is missing. Do not rebuild it from memory.
+3. **Flat service URLs** — `/underwater-hull-cleaning`,
+   `/hold-cleaning-at-port`, `/hold-cleaning-at-sea` now 301 into the nested
+   hierarchy. One URL per service.
+
+Trailing-slash legacy URLs resolve in two hops (Next normalises the slash,
+then the redirect fires). Verified end-to-end.
 
 ### What it still needs
 

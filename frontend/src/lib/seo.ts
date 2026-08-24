@@ -24,8 +24,24 @@ type MetaInput = {
    * rather than self-canonicalizing off `path`.
    */
   canonicalPath?: string;
+  /**
+   * Target terms for this page.
+   *
+   * NOT emitted as <meta name="keywords">. Google and Bing have ignored that
+   * tag for over a decade, and the one we shipped was a stale UAE-only list on
+   * a site where most pages target India — a tell that the head template was
+   * carried over without review. The arrays stay because they document what
+   * each page is built to rank for, and they feed nothing else.
+   */
   keywords?: readonly string[];
-  /** Set true on pages that should stay out of the index (e.g. thank-you). */
+  /**
+   * Keeps the page out of the index while still following its links.
+   *
+   * Emits `noindex, follow`, never `noindex, nofollow`. The distinction
+   * matters for the port scope pages: they are excluded so they stop
+   * competing with their own port hub, but they still carry internal links
+   * onward and must keep passing that signal. `nofollow` would strand them.
+   */
   noIndex?: boolean;
   /**
    * Path under public/ for a page-specific share card. Without this a page
@@ -52,10 +68,11 @@ export function buildMetadata({
     ? [{ url: `${BASE_URL}${image.url}`, width: 1600, height: 900, alt: image.alt }]
     : undefined;
 
+  void keywords;
+
   return {
     title,
     description,
-    keywords: keywords ? [...keywords] : undefined,
     alternates: { canonical },
     openGraph: {
       type: "website",
@@ -73,7 +90,7 @@ export function buildMetadata({
       ...(images ? { images } : {}),
     },
     robots: noIndex
-      ? { index: false, follow: false }
+      ? { index: false, follow: true }
       : {
           index: true,
           follow: true,

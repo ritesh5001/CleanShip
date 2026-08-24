@@ -39,11 +39,13 @@ import {
   hasLine,
   linesFor,
   listAnd,
+  midSentence,
   portLabel,
 } from "./types";
 import { indiaPorts } from "./india";
 import { uaePorts } from "./uae";
 import {
+  approvalRoute,
   conditionSummary,
   getLineByPrefix,
   getLine,
@@ -95,7 +97,7 @@ export const regions: Region[] = [
     intro:
       "The UAE splits into two working environments that behave nothing alike. Inside the Arabian Gulf the water is shallow, hot and hypersaline, which grows hull fouling faster than almost anywhere the fleet trades and makes summer enclosed-space work a genuine constraint. Outside the Strait of Hormuz, Fujairah and Khor Fakkan sit in deeper, clearer Gulf of Oman water and take Indian Ocean swell instead.",
     regionNote:
-      "Cleanship's registered head office is in Ajman Free Zone, with further bases at Fujairah and Khorfakkan, so the UAE is the shortest mobilisation on the coverage list — both coasts reachable inside a day.",
+      "Cleanship's registered head office is in Ajman Free Zone, with further bases at Fujairah and Khor Fakkan, so the UAE is the shortest mobilisation on the coverage list — both coasts reachable inside a day.",
   },
 ];
 
@@ -223,6 +225,49 @@ if (pageBySlug.size !== portPages.length) {
 export { getLineByPrefix, portLines, getLine };
 
 /* -------------------------------------------------------------------- */
+/* Indexation policy                                                     */
+/* -------------------------------------------------------------------- */
+
+/**
+ * Whether a generated page is allowed into the index.
+ *
+ * THE PROBLEM. Six URLs per port compete for one query. Someone searching
+ * "hull cleaning Kandla" could land on the line hub or any of five scope
+ * pages, all carrying the same port facts table, the same working-conditions
+ * section and a near-identical FAQ block. Google picks one and largely
+ * ignores the rest — and on a domain with no authority behind it, it may
+ * index none of them.
+ *
+ * THE POLICY. Region hubs and port line hubs are indexable. Scope pages are
+ * `noindex, follow`: they stay live, they stay linked, they still pass signal
+ * up to the hub, and a visitor who lands on one from an internal link gets
+ * the detail they came for. They just stop competing with their own hub.
+ *
+ * ~140 indexable pages instead of ~600. That is a sensible number for this
+ * domain's current authority, and it concentrates the ranking signal instead
+ * of splitting it six ways.
+ *
+ * REVERSING IT. Flip `INDEX_SCOPE_PAGES` to true. Do that once Search Console
+ * shows the hubs earning impressions and the site has authority to spend —
+ * or sooner, if the Pages report shows the scope pages were indexing cleanly
+ * all along. This is a bet, not a fact, and it is built to be undone.
+ *
+ * A per-scope carve-out is supported: UWILD is a distinct high-value query
+ * with its own vocabulary and a buyer who searches for it by name, so it is
+ * the obvious first candidate if you want to let one back in. Add its
+ * urlPrefix to `ALWAYS_INDEX` rather than flipping the whole set.
+ */
+const INDEX_SCOPE_PAGES = false;
+
+/** Scope urlPrefixes that stay indexable regardless of the flag above. */
+const ALWAYS_INDEX: string[] = [];
+
+export function shouldIndex(page: PortPage): boolean {
+  if (page.kind !== "scope") return true;
+  return INDEX_SCOPE_PAGES || ALWAYS_INDEX.includes(page.scope.urlPrefix);
+}
+
+/* -------------------------------------------------------------------- */
 /* Titles and descriptions                                              */
 /* -------------------------------------------------------------------- */
 
@@ -243,10 +288,60 @@ function fitTitle(stem: string, port: Port): string {
   return `${stem} — ${port.name}`;
 }
 
+/**
+ * Acronyms that must survive a lowercasing step.
+ *
+ * `scope.titleStem.toLowerCase()` was turning "UWILD Inspection" into "uwild
+ * inspection" in ~1,000 meta descriptions. Google does not care, but a human
+ * scanning a results page does, and click-through is the only lever left once
+ * several hundred near-identical listings are competing.
+ */
+const ACRONYMS = [
+  "UWILD",
+  "NDT",
+  "IRATA",
+  "MARPOL",
+  "POL",
+  "CPP",
+  "DPP",
+  "OSV",
+  "LNG",
+  "LPG",
+  "RoRo",
+  "UN/LOCODE",
+];
+
+function restoreAcronyms(text: string): string {
+  return ACRONYMS.reduce(
+    (out, word) =>
+      out.replace(new RegExp(`\\b${word}\\b`, "gi"), word),
+    text,
+  );
+}
+
+/** Sentence-cases the first character without touching the rest. */
+function sentenceStart(text: string): string {
+  return text ? text[0].toUpperCase() + text.slice(1) : text;
+}
+
+/**
+ * Truncates on a word boundary with an ellipsis — never mid-clause.
+ *
+ * The previous version cut at the limit and appended a full stop, which
+ * produced snippets ending "...permits and." A trailing dangling conjunction
+ * reads as broken, and it was shipping on the region hubs.
+ */
 function clamp(text: string, limit = DESCRIPTION_LIMIT): string {
-  if (text.length <= limit) return text;
-  const cut = text.slice(0, limit - 1);
-  return `${cut.slice(0, cut.lastIndexOf(" "))}.`;
+  const clean = restoreAcronyms(sentenceStart(text.replace(/\s+/g, " ").trim()));
+  if (clean.length <= limit) return clean;
+
+  const cut = clean.slice(0, limit - 1);
+  let end = cut.lastIndexOf(" ");
+  /* Do not end on a dangling connective — walk back another word. */
+  while (end > 0 && /\b(and|or|with|for|at|in|to|the|a|of)$/i.test(cut.slice(0, end))) {
+    end = cut.lastIndexOf(" ", end - 1);
+  }
+  return `${cut.slice(0, end).replace(/[,;:]$/, "")}…`;
 }
 
 export function pageTitle(page: PortPage): string {
@@ -264,18 +359,26 @@ export function pageTitle(page: PortPage): string {
 export function pageDescription(page: PortPage): string {
   if (page.kind === "region") {
     const n = portsWithLine(page.line.key, page.region).length;
-    const scopes = listAnd(page.line.scopes.map((s) => s.titleStem.toLowerCase()));
+    const scopes = listAnd(page.line.scopes.map((s) => s.titleStem));
     return clamp(
-      `${scopes} at ${n} ${page.region.portsLabel}. Local conditions, permits and disposal handled — vessel stays on hire.`,
+      `${scopes} at ${n} ${page.region.portsLabel}. Local conditions, approvals and waste disposal handled — vessel stays on hire.`,
     );
   }
+  /* Emirates and single-port states repeat the port name — "at Fujairah Port,
+     Fujairah." reads as a template bug because it is one. Drop the region
+     when it adds nothing. */
+  const where = (port: typeof page.port) =>
+    port.state.toLowerCase() === port.name.toLowerCase()
+      ? portLabel(port)
+      : `${portLabel(port)}, ${port.state}`;
+
   if (page.kind === "port") {
     return clamp(
-      `${listAnd(page.line.scopes.map((s) => s.titleStem.toLowerCase()))} at ${portLabel(page.port)}, ${page.port.state}. Crews mobilised via ${page.port.airports[0]}.`,
+      `${listAnd(page.line.scopes.map((s) => s.titleStem))} at ${where(page.port)}. Crews, gear and approvals handled — vessel stays on hire.`,
     );
   }
   return clamp(
-    `${page.scope.name} at ${portLabel(page.port)}, ${page.port.state} — ${page.port.hook}. ${page.port.authority} approvals handled, vessel stays on hire.`,
+    `${page.scope.name} at ${where(page.port)}. ${page.port.base ? "Crew and gear held locally" : `Crews mobilised via ${page.port.airports[0]}`}, ${page.port.authority} approvals handled, vessel stays on hire.`,
   );
 }
 
@@ -337,7 +440,7 @@ export function deliverySteps(
       first,
       {
         title: "Permits and approvals",
-        body: `Diving permission is obtained from ${port.authority}, along with terminal approval where the berth requires it and any environmental clearance for in-water work. This is handled by us, not left with the agent to chase.`,
+        body: `${approvalRoute(port)} Diving permission, terminal approval and any environmental clearance for in-water work are handled by us, not left with the agent to chase.`,
       },
       {
         title: `Mobilisation to ${port.name}`,
@@ -356,7 +459,7 @@ export function deliverySteps(
       first,
       {
         title: "Approvals and waste routing",
-        body: `Access and working approval is arranged with ${port.authority} and the terminal, and the disposal route for residues and washings is fixed before the gang boards — MARPOL Annex V compliance is a documented chain at ${port.name}, not an assurance. Where reception is limited, the plan changes rather than the paperwork.`,
+        body: `${approvalRoute(port)} The disposal route for residues and washings is fixed before the gang boards — MARPOL Annex V compliance is a documented chain, not an assurance. Where reception at ${port.name} is limited, the plan changes rather than the paperwork.`,
       },
       {
         title: `Mobilisation to ${port.name}`,
@@ -374,7 +477,7 @@ export function deliverySteps(
     first,
     {
       title: "Approvals, slops and certification",
-      body: `Terminal and port approval for tank work is obtained from ${port.authority} and the terminal operator, licensed slop and sludge reception is booked, and marine chemist attendance is arranged where the grade change requires it. At ${port.name} the disposal route is the item that most often sets the schedule, so it is fixed first.`,
+      body: `${approvalRoute(port)} Licensed slop and sludge reception is booked and marine chemist attendance arranged where the grade change requires it. At ${port.name} the disposal route is the item that most often sets the schedule, so it is fixed first.`,
     },
     {
       title: `Mobilisation to ${port.name}`,
@@ -444,7 +547,7 @@ export function scopeFaqs(port: Port, line: PortLine, scope: PortScope) {
 
   const vessels = {
     q: `Which vessels do you carry out ${scope.noun} on at ${port.name}?`,
-    a: `${listAnd(port.vesselTypes)} — the traffic at ${label} runs to ${listAnd(port.cargoes.slice(0, 3)).toLowerCase()}, so those are the profiles we see most. The scope is sized to the vessel, not to a standard package.`,
+    a: `${listAnd(port.vesselTypes)} — the traffic at ${label} runs to ${midSentence(listAnd(port.cargoes.slice(0, 3)))}, so those are the profiles we see most. The scope is sized to the vessel, not to a standard package.`,
   };
 
   const mobilise = {
@@ -476,7 +579,7 @@ export function portHubFaqs(port: Port, line: PortLine) {
   return [
     {
       q: `Does Cleanship provide ${line.noun} at ${label}?`,
-      a: `Yes. We cover the full ${line.noun} scope at ${label} (${port.unlocode}), ${port.state} — ${listAnd(line.scopes.map((s) => s.name.toLowerCase()))}. ${port.base ? `Cleanship holds an operating base at ${port.name}.` : `Teams mobilise via ${airportLine(port)}.`}`,
+      a: `Yes. We cover the full ${line.noun} scope at ${label} (${port.unlocode}), ${port.state} — ${midSentence(listAnd(line.scopes.map((s) => s.name)))}. ${port.base ? `Cleanship holds an operating base at ${port.name}.` : `Teams mobilise via ${airportLine(port)}.`}`,
     },
     {
       q:
@@ -491,7 +594,13 @@ export function portHubFaqs(port: Port, line: PortLine) {
     },
     {
       q: `Which vessels call at ${port.name}?`,
-      a: `${listAnd(port.vesselTypes)} — ${portLabel(port)} is ${port.hook}, handling ${listAnd(port.cargoes).toLowerCase()}. Those are the profiles we see most, and the scope is sized to the vessel rather than to a standard package.`,
+      a: `${listAnd(port.vesselTypes)} — ${portLabel(port)} is ${port.hook}, handling ${midSentence(listAnd(port.cargoes))}. ${
+        line.key === "hull-cleaning"
+          ? "Wetted area, coating specification and how long the vessel has been sitting are what size a hull job, so the same berth can produce very different attendances."
+          : line.key === "hold-cleaning"
+            ? "What sizes a hold job is the number of holds, the last cargo and the standard the next fixture demands — not the vessel's dimensions."
+            : "What sizes a tank job is the tank count, the prior and next grade and how much sludge is carried, not the vessel's dimensions."
+      }`,
     },
     {
       q: `Can this be done without taking the vessel off hire at ${port.name}?`,
