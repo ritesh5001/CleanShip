@@ -48,6 +48,24 @@ export const WEATHER: Record<
     risk: "The shamal is a wind and sea-state problem rather than a rain one: it builds short, steep seas across the shallow Gulf that stop anchorage work while berths stay usable",
     heat: "The larger constraint here is heat. Between June and September, working temperatures inside a cargo hold or a tank at this port routinely exceed anything a full shift can be worked in, so enclosed-space work runs to shortened cycles with enforced rest, forced ventilation and more people than the same job needs in winter. Pricing a Gulf summer tank entry on a winter productivity assumption is the most common way these jobs overrun.",
   },
+  "red-sea": {
+    season: "northerly Red Sea wind",
+    window: "strongest through the winter and spring",
+    risk: "The Red Sea runs a persistent along-axis wind that builds a short chop at the anchorages while the berths stay workable, so the constraint here is almost always the anchorage rather than the season",
+    heat: "Heat and humidity are the harder constraint. The Red Sea is among the warmest and most saline bodies of water the fleet trades in — which grows fouling faster than the Gulf does — and between June and September enclosed-space work runs to shortened cycles with enforced rest and forced ventilation.",
+  },
+  "sri-lanka": {
+    season: "two monsoons",
+    window: "the south-west from May to September and the north-east from December to February",
+    risk: "Which one matters depends on which coast the port is on — the south-west monsoon closes the western and southern anchorages while the east coast stays workable, and the north-east monsoon reverses it. Sri Lanka is the one market on the coverage list where there is almost always a workable coast",
+    heat: "Humidity is high year-round rather than seasonal, so enclosed-space work here is planned with ventilation and rest cycles in every month, not just the summer.",
+  },
+  "west-africa": {
+    season: "Atlantic swell and the rains",
+    window: "with the heaviest rain from May to October and swell running year-round",
+    risk: "The swell here is long-period Atlantic ground swell rather than wind-driven sea, so it reaches the anchorages on days that look calm from the bridge and it is the single biggest cause of a lost in-water window on this coast",
+    heat: "Humidity is high year-round and the rains make it worse, which matters more than temperature for enclosed-space work: holds will not dry, and a hold that cannot be dried cannot be closed.",
+  },
   "gulf-of-oman": {
     season: "Arabian Sea swell",
     window: "with the sharpest risk around June and again in October and November",

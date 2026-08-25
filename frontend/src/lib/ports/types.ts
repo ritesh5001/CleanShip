@@ -50,7 +50,14 @@ export type Port = {
   countryCode: string;
   coast: string;
   /** Monsoon / weather regime key — see WEATHER in ./lines.ts. */
-  weather: "india-west" | "india-east" | "arabian-gulf" | "gulf-of-oman";
+  weather:
+    | "india-west"
+    | "india-east"
+    | "arabian-gulf"
+    | "gulf-of-oman"
+    | "red-sea"
+    | "sri-lanka"
+    | "west-africa";
   waterBody: string;
   /** Who issues the permit. Named on every page for a reason. */
   authority: string;

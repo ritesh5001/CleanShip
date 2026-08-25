@@ -4,6 +4,9 @@ import { serviceCategories } from "@/lib/services";
 import { heroMediaFor } from "@/lib/service-media";
 import { heroImageFor } from "@/lib/stock-images";
 import { portPages, shouldIndex } from "@/lib/ports/registry";
+import { offices } from "@/lib/site";
+import { realProjects } from "@/lib/projects";
+import { insights } from "@/lib/insights";
 
 /**
  * XML sitemap generated from the service taxonomy, so a new service is
@@ -30,6 +33,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       { url: `${BASE_URL}/about`, changeFrequency: "yearly", priority: 0.7 },
       { url: `${BASE_URL}/projects`, changeFrequency: "monthly", priority: 0.7 },
       { url: `${BASE_URL}/contact`, changeFrequency: "yearly", priority: 0.8 },
+      { url: `${BASE_URL}/locations`, changeFrequency: "monthly", priority: 0.8 },
+      { url: `${BASE_URL}/insights`, changeFrequency: "weekly", priority: 0.8 },
       // Legal pages (lower priority - supplementary content)
       { url: `${BASE_URL}/privacy-policy`, changeFrequency: "yearly", priority: 0.5 },
       { url: `${BASE_URL}/terms-and-conditions`, changeFrequency: "yearly", priority: 0.5 },
@@ -48,6 +53,30 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/hold-cleaning-in-brazil`, changeFrequency: "monthly" as const, priority: 0.7 },
     { url: `${BASE_URL}/ports`, changeFrequency: "weekly" as const, priority: 0.8 },
   ];
+
+  /* One LocalBusiness page per operating base. These are the pages that
+     support a Google Business Profile claim, so they carry a high priority
+     despite being few. */
+  const officeRoutes: MetadataRoute.Sitemap = offices.map((office) => ({
+    url: `${BASE_URL}/locations/${office.slug}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.75,
+  }));
+
+  /* Only case studies describing real, completed work. Illustrative scope
+     patterns are noindex, so listing them here would contradict the page. */
+  const projectRoutes: MetadataRoute.Sitemap = realProjects.map((project) => ({
+    url: `${BASE_URL}/projects/${project.slug}`,
+    changeFrequency: "yearly" as const,
+    priority: 0.7,
+  }));
+
+  const insightRoutes: MetadataRoute.Sitemap = insights.map((post) => ({
+    url: `${BASE_URL}/insights/${post.slug}`,
+    lastModified: new Date(post.date),
+    changeFrequency: "yearly" as const,
+    priority: 0.7,
+  }));
 
   const categoryRoutes: MetadataRoute.Sitemap = serviceCategories.map(
     (category) => {
@@ -136,6 +165,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...categoryRoutes,
     ...serviceRoutes,
     ...locationPages,
+    ...officeRoutes,
+    ...projectRoutes,
+    ...insightRoutes,
     ...portRoutes,
   ];
 }

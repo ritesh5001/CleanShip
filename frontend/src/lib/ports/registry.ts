@@ -44,6 +44,9 @@ import {
 } from "./types";
 import { indiaPorts } from "./india";
 import { uaePorts } from "./uae";
+import { saudiPorts } from "./saudi";
+import { sriLankaPorts } from "./sri-lanka";
+import { westAfricaPorts } from "./west-africa";
 import {
   approvalRoute,
   conditionSummary,
@@ -98,6 +101,39 @@ export const regions: Region[] = [
       "The UAE splits into two working environments that behave nothing alike. Inside the Arabian Gulf the water is shallow, hot and hypersaline, which grows hull fouling faster than almost anywhere the fleet trades and makes summer enclosed-space work a genuine constraint. Outside the Strait of Hormuz, Fujairah and Khor Fakkan sit in deeper, clearer Gulf of Oman water and take Indian Ocean swell instead.",
     regionNote:
       "Cleanship's registered head office is in Ajman Free Zone, with further bases at Fujairah and Khor Fakkan, so the UAE is the shortest mobilisation on the coverage list — both coasts reachable inside a day.",
+  },
+  {
+    slug: "saudi-arabia",
+    name: "Saudi Arabia",
+    portsLabel: "Saudi ports",
+    groupNoun: "province",
+    ports: saudiPorts,
+    intro:
+      "Saudi Arabia is two coasts with nothing in common but the flag. Dammam and Jubail sit in the shallow, hypersaline Arabian Gulf under the shamal; Jeddah, King Abdullah and Yanbu sit on the Red Sea, warmer and saltier still, under a persistent along-axis wind. Both grow fouling faster than owners plan for, and on both the summer heat — not access — is what sizes an enclosed-space job.",
+    regionNote:
+      "Cleanship holds an office at Dammam, so the Gulf coast is a short mobilisation. The Red Sea ports are worked from there and from the UAE bases, and the industrial ports at Jubail and Yanbu need their permit lead time built into the plan rather than discovered at the gate.",
+  },
+  {
+    slug: "sri-lanka",
+    name: "Sri Lanka",
+    portsLabel: "Sri Lankan ports",
+    groupNoun: "province",
+    ports: sriLankaPorts,
+    intro:
+      "Sri Lanka is the one market on this list where there is almost always a workable coast. The south-west monsoon closes Colombo and Galle from May to September while Trincomalee on the east stays open; the north-east monsoon from December to February reverses it. Planned properly, that means a vessel on an Indian Ocean rotation can nearly always be met somewhere on the island.",
+    regionNote:
+      "Cleanship holds an office in Colombo, which sits directly on the rotation for vessels working the Indian coverage — a single mobilisation frequently covers a Colombo call and an Indian port on the same trip.",
+  },
+  {
+    slug: "west-africa",
+    name: "West Africa",
+    portsLabel: "West African ports",
+    groupNoun: "country",
+    ports: westAfricaPorts,
+    intro:
+      "West Africa is defined by two things: long-period Atlantic ground swell that reaches the anchorages on days that look calm, and congestion severe enough that waiting for a berth is the normal state rather than the exception. The swell costs windows; the waiting creates them. Between them they explain why so much in-water work on this coast is done at anchor and why the fouling found is heavier than the trading pattern predicts.",
+    regionNote:
+      "Cleanship holds a base at Conakry, and the West African range has been part of the hull-cleaning service coverage since before the port programme existed. Ports along this coast sit close enough that a single mobilisation routinely covers two or three attendances on one trip.",
   },
 ];
 

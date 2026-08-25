@@ -52,14 +52,14 @@ Implemented and verified against the running build:
 
 | Area | State |
 | --- | --- |
-| Rendering | All 631 routes statically prerendered; no client-side data fetching |
+| Rendering | All 884 routes statically prerendered; no client-side data fetching |
 | Titles | All ≤ 60 chars incl. the `\| Cleanship` suffix |
 | Descriptions | All ≤ 162 chars |
 | Canonicals | Absolute, no trailing-slash duplicates. Every indexable page self-canonicalises |
 | Headings | Exactly one `<h1>` per page, no level skips |
 | Structured data | Organization + LocalBusiness, WebSite, BreadcrumbList, Service, FAQPage, ItemList, ContactPage, **plus one LocalBusiness per office (8)** |
-| FAQs | 4,091 questions across 610 pages, in the DOM *and* as `FAQPage` schema |
-| Sitemap | 157 URLs — indexable pages only. See the indexation policy below |
+| FAQs | 5,690 questions, in the DOM *and* as `FAQPage` schema |
+| Sitemap | 223 URLs — indexable pages only. See the indexation policy below |
 | Social | Per-page `og:image` — each service previews as itself |
 | Icons | favicon.ico, icon.png, apple-icon.png, webmanifest |
 | robots.txt | Allow-all with sitemap + host; 404 is `noindex, follow` |
@@ -86,25 +86,30 @@ Implemented and verified against the running build:
 
 ## Port programme
 
-The largest thing on the site. **583 generated port pages** across two regions
-and three service lines, plus six region hubs, all from one root `[portPage]`
-route:
+The largest thing on the site. **~800 generated port pages** across five
+regions and three service lines, plus fifteen region hubs, all from one root
+`[portPage]` route:
 
 ```
 /hull-cleaning-in-india                      region hub, one line
-/hold-cleaning-in-uae
+/hold-cleaning-in-west-africa
 /hull-cleaning-in-kandla-port                port hub, one line
 /underwater-hull-cleaning-in-kandla-port     one scope at one port
 /cargo-hold-cleaning-in-kandla-port
 /tanker-tank-cleaning-in-kandla-port
 ```
 
-| | India | UAE |
+| Region | Ports | Base |
 | --- | --- | --- |
-| Ports | 33 | 13 |
-| Hull cleaning | 33 ports × 5 scopes | 13 × 5 |
-| Hold cleaning | 32 ports × 3 scopes | 13 × 3 |
-| Tank cleaning | 20 ports × 4 scopes | 4 × 4 |
+| India | 33 | Kandla, Visakhapatnam |
+| UAE | 13 | Ajman (HQ), Fujairah, Khor Fakkan |
+| West Africa | 10 | Conakry |
+| Saudi Arabia | 5 | Dammam |
+| Sri Lanka | 4 | Colombo |
+| Brazil | 33 | — *(country page only, see below)* |
+
+Every advertised office now has port pages behind it and its own
+`/locations/{city}` page carrying a `LocalBusiness` node.
 
 ### Where it lives
 
@@ -112,6 +117,9 @@ route:
 src/lib/ports/types.ts      Port shape, cargo classification, line gating
 src/lib/ports/india.ts      33 ports
 src/lib/ports/uae.ts        13 ports
+src/lib/ports/west-africa.ts 10 ports
+src/lib/ports/saudi.ts       5 ports
+src/lib/ports/sri-lanka.ts   4 ports
 src/lib/ports/brazil.ts     33 ports, LIST ONLY — no landing pages
 src/lib/ports/lines.ts      3 lines, 12 scopes, all port-aware copy builders
 src/lib/ports/registry.ts   regions, route registry, titles, FAQs, facts
@@ -241,6 +249,36 @@ and `categoryCoverage["hull-cleaning"]` in `lib/site.ts` now lead with India
 and the UAE — publishing 583 port pages while the coverage note said West
 Africa only would have contradicted the site's own content. Check it is
 accurate before launch.
+
+## Other content routes
+
+| Route | What it is | Gate |
+| --- | --- | --- |
+| `/ports` | Crawl hub for the whole port network, linked from main nav | — |
+| `/locations` + `/locations/{city}` | One `LocalBusiness` page per operating base | — |
+| `/projects` + `/projects/{slug}` | Case studies, one URL each | `real: false` ⇒ **noindex** |
+| `/insights` + `/insights/{slug}` | Editorial. Replaces the deleted WordPress blog | — |
+
+**`/projects/{slug}` is gated on `project.real` in `lib/projects.ts`.** Every
+entry is currently `false`, so the detail pages are `noindex, follow` and stay
+out of the sitemap — nothing invented reaches the index. Flip the flag when a
+real write-up replaces one and it becomes indexable automatically. Add `port`
+and `date` at the same time; the template already renders them.
+
+**`/insights` has two posts and needs more.** They are process explainers that
+deliberately name no class society, no certification, no client and no cost
+figure, because none of those can be verified from the repo. The posts that
+actually earn links are the ones only the operations desk can write — see the
+list at the top of `lib/insights.ts`. Two a month is enough, and they should
+be attributed to a named person rather than to the company.
+
+## Title and description lengths
+
+`buildMetadata` clamps both, on a word boundary, never mid-word and never on a
+dangling connective. This is enforced centrally on purpose: titles and
+descriptions are assembled from free text in several generated templates, and
+a template that fits one entry overflows for the next. Verified at 0 overflows
+across all 884 routes.
 
 ## Known gaps
 

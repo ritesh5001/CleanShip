@@ -12,6 +12,41 @@ import type { Faq, Service, ServiceCategory } from "./services";
 
 export const BASE_URL = siteConfig.url;
 
+/* -------------------------------------------------------------------- */
+/* Length guards                                                         */
+/*                                                                       */
+/* Enforced HERE rather than left to each caller. Titles and descriptions */
+/* are assembled from free text in several generated templates — project  */
+/* write-ups, port pages, insight posts — and a template that fits for    */
+/* one entry overflows for the next. Trimming each string by hand fixes   */
+/* today's overflow and none of tomorrow's.                               */
+/*                                                                       */
+/* Google truncates around 60 characters of title and ~160 of description */
+/* including the brand suffix. A snippet cut mid-word by the SERP reads   */
+/* worse than one we ended deliberately.                                  */
+/* -------------------------------------------------------------------- */
+
+/** " | Cleanship" appended by the root layout's title template. */
+const BRAND_SUFFIX_LENGTH = 12;
+const TITLE_BUDGET = 60 - BRAND_SUFFIX_LENGTH;
+const DESCRIPTION_BUDGET = 162;
+
+/** Truncates on a word boundary, never mid-word and never on a connective. */
+function fit(text: string, budget: number): string {
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (clean.length <= budget) return clean;
+
+  const cut = clean.slice(0, budget - 1);
+  let end = cut.lastIndexOf(" ");
+  while (
+    end > 0 &&
+    /\b(and|or|with|for|at|in|to|the|a|of|on|by)$/i.test(cut.slice(0, end))
+  ) {
+    end = cut.lastIndexOf(" ", end - 1);
+  }
+  return `${cut.slice(0, end > 0 ? end : budget - 1).replace(/[,;:—-]$/, "")}…`;
+}
+
 type MetaInput = {
   title: string;
   description: string;
@@ -61,6 +96,8 @@ export function buildMetadata({
   noIndex,
   image,
 }: MetaInput): Metadata {
+  const fittedTitle = fit(title, TITLE_BUDGET);
+  const fittedDescription = fit(description, DESCRIPTION_BUDGET);
   const url = `${BASE_URL}${path === "/" ? "" : path}`;
   const canonical = canonicalPath ? `${BASE_URL}${canonicalPath}` : url;
   // Absolute URLs — relative paths are not resolved by every scraper.
@@ -71,22 +108,22 @@ export function buildMetadata({
   void keywords;
 
   return {
-    title,
-    description,
+    title: fittedTitle,
+    description: fittedDescription,
     alternates: { canonical },
     openGraph: {
       type: "website",
       url,
       siteName: siteConfig.name,
-      title,
-      description,
+      title: fittedTitle,
+      description: fittedDescription,
       locale: "en_AE",
       ...(images ? { images } : {}),
     },
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
+      title: fittedTitle,
+      description: fittedDescription,
       ...(images ? { images } : {}),
     },
     robots: noIndex

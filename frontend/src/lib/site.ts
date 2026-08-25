@@ -145,6 +145,16 @@ export type Office = {
   region: "Middle East" | "South Asia" | "West Africa";
   /** Marks the registered head office. */
   head?: boolean;
+  /** URL fragment for /locations/{slug}. */
+  slug: string;
+  /** The port page for this city, where one exists in the port programme. */
+  portSlug?: string;
+  /** The region hub this base works out to. Matches lib/ports/registry.ts. */
+  regionSlug?: string;
+  /** Which phone number reaches this base. Index into siteConfig.phones. */
+  phone: 0 | 1;
+  /** One line on what this base actually does. Hand-written per office. */
+  role: string;
 };
 
 export const offices: Office[] = [
@@ -154,12 +164,22 @@ export const offices: Office[] = [
     street: "Ajman Free Zone, C1 Building",
     region: "Middle East",
     head: true,
+    slug: "ajman",
+    portSlug: "ajman-port",
+    regionSlug: "uae",
+    phone: 1,
+    role: "Registered head office and the commercial base for the northern emirates. Crews, equipment and dive spread are held here and reach any UAE port inside a day.",
   },
   {
     city: "Fujairah",
     country: "United Arab Emirates",
     street: "Al Hail",
     region: "Middle East",
+    slug: "fujairah",
+    portSlug: "fujairah-port",
+    regionSlug: "uae",
+    phone: 1,
+    role: "The east coast base, outside the Strait of Hormuz. It covers the Fujairah bunkering anchorage — the largest concentration of idle tonnage on the coverage list — and the transhipment terminal at Khor Fakkan.",
   },
   {
     /* "Khor Fakkan" everywhere — the site previously used "Khorfakkan" here
@@ -168,6 +188,11 @@ export const offices: Office[] = [
     city: "Khor Fakkan",
     country: "United Arab Emirates",
     region: "Middle East",
+    slug: "khor-fakkan",
+    portSlug: "khor-fakkan-port",
+    regionSlug: "uae",
+    phone: 1,
+    role: "Alongside the deep-water transhipment terminal on the Gulf of Oman, where the water is clear enough that in-water survey work produces evidence a surveyor can actually read.",
   },
   {
     city: "Dammam",
@@ -176,17 +201,32 @@ export const offices: Office[] = [
     // building name looks truncated. Confirm before launch.
     street: "Commercial Centre, 1st Floor, Office 106",
     region: "Middle East",
+    slug: "dammam",
+    portSlug: "dammam-port",
+    regionSlug: "saudi-arabia",
+    phone: 1,
+    role: "The Kingdom base, covering the Arabian Gulf coast at Dammam and Jubail and working out to the Red Sea ports at Jeddah, King Abdullah and Yanbu.",
   },
   {
     city: "Kandla",
     country: "Gujarat, India",
     region: "South Asia",
+    slug: "kandla",
+    portSlug: "kandla-port",
+    regionSlug: "india",
+    phone: 0,
+    role: "The Gujarat base. Divers, compressors, brush carts and gangs are held here for Kandla itself and the Kutch range — Mundra, Navlakhi, Jakhau — rather than mobilised against a berth window.",
   },
   {
     city: "Visakhapatnam",
     country: "India",
     street: "Nad Kotha Road",
     region: "South Asia",
+    slug: "visakhapatnam",
+    portSlug: "visakhapatnam-port",
+    regionSlug: "india",
+    phone: 0,
+    role: "The east coast base. It covers Visakhapatnam and the neighbouring deep-water bulk ports at Gangavaram and Kakinada, where a single mobilisation routinely takes in more than one vessel.",
   },
   {
     city: "Colombo",
@@ -197,12 +237,22 @@ export const offices: Office[] = [
        to match and the office earns nothing. Confirm with the office. */
     street: "Mercantile Logistics, No 23, Alfred Place",
     region: "South Asia",
+    slug: "colombo",
+    portSlug: "colombo-port",
+    regionSlug: "sri-lanka",
+    phone: 0,
+    role: "The Sri Lanka base, on the transhipment and bunkering anchorage at Colombo and working out to Galle, Trincomalee and Puttalam — an island where one monsoon or the other always leaves a workable coast.",
   },
   {
     city: "Conakry",
     country: "Guinea",
     street: "Sonoco Trade Center",
     region: "West Africa",
+    slug: "conakry",
+    portSlug: "conakry-port",
+    regionSlug: "west-africa",
+    phone: 1,
+    role: "The West African base. It covers the Conakry bauxite anchorage and works out along the coast to Dakar, Monrovia, Abidjan and the Gulf of Guinea ports, where almost no contractor publishes anything specific about local conditions.",
   },
 ];
 
@@ -276,6 +326,12 @@ export const categoryCoverage: Record<
   },
 };
 
+const officeBySlug = new Map(offices.map((o) => [o.slug, o]));
+
+export function getOffice(slug: string): Office | undefined {
+  return officeBySlug.get(slug);
+}
+
 export const mainNav = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
@@ -283,6 +339,8 @@ export const mainNav = [
   // several hundred pages were discoverable only via the sitemap and footer.
   { label: "Ports", href: "/ports" },
   { label: "Projects", href: "/projects" },
+  { label: "Insights", href: "/insights" },
+  { label: "Locations", href: "/locations" },
   { label: "About Us", href: "/about" },
   { label: "Contact Us", href: "/contact" },
 ] as const;
