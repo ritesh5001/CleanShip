@@ -39,7 +39,26 @@ export const siteConfig = {
   licence: "B.C. 1302955",
   foundingYear: 2019,
 
-  email: "ops@cleanship.co",
+  /**
+   * The one public address for the business.
+   *
+   * Everything reads this: the header, the footer, the contact page, the
+   * legal pages, the Organization and LocalBusiness schema, the reply-to on
+   * outgoing mail, and — importantly — the DEFAULT DELIVERY ADDRESS for
+   * website enquiries (lib/email.ts falls back to it when ENQUIRY_TO_EMAIL is
+   * unset).
+   *
+   * ⚠️ `ENQUIRY_TO_EMAIL` in the deployment environment OVERRIDES this for
+   * delivery. If enquiries are still landing somewhere else after changing
+   * this line, that env var is set in Vercel and is winning. Changing this
+   * value alone will move the displayed address but not the inbox.
+   *
+   * The site previously showed three different addresses — ops@ here, info@
+   * on the three legal pages, sales@cleanship.ae in the deployment env.
+   * Local search matches businesses on exact-string agreement between the
+   * site and its directory citations, so one address, used everywhere.
+   */
+  email: "admin@cleanship.co",
   /**
    * phones[0] is the primary line — every CTA, the header, the hero and the
    * service sidebars read it directly. The India number leads at the brand

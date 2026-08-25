@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { siteConfig } from "@/lib/site";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
 import { JsonLd } from "@/components/json-ld";
@@ -111,7 +112,7 @@ export default function TermsAndConditionsPage() {
             <h2>Contact Us</h2>
             <p>
               If you have any questions about these Terms and Conditions, please contact us at{" "}
-              <a href="mailto:info@cleanship.co">info@cleanship.co</a>.
+              <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>.
             </p>
           </div>
         </div>

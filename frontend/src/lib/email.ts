@@ -32,6 +32,18 @@ const FROM =
   process.env.RESEND_FROM_EMAIL ?? `Cleanship Website <website@cleanship.co>`;
 
 /** Where enquiries land. Defaults to the published address. */
+/**
+ * Where enquiries land.
+ *
+ * Defaults to the single public address in lib/site.ts, so the address the
+ * site displays is the address that receives — which is what you want unless
+ * there is a specific reason to split them.
+ *
+ * ⚠️ ENQUIRY_TO_EMAIL overrides it. If enquiries are not arriving where you
+ * expect after changing siteConfig.email, check that env var in Vercel first;
+ * a stale value there is the usual cause and nothing in the code will warn
+ * you about it.
+ */
 const TO_COMPANY = process.env.ENQUIRY_TO_EMAIL ?? siteConfig.email;
 
 /** Escapes user input before it is interpolated into HTML email bodies. */
