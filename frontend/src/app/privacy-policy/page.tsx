@@ -61,6 +61,47 @@ export default function PrivacyPolicyPage() {
               visit, the time spent on those pages, and other diagnostic data.
             </p>
 
+            {/* Added when Google Analytics 4 was installed. A privacy policy
+                that does not name the analytics processor is inaccurate the
+                moment the tag goes live, and "Cookies and Usage Data" in a
+                list is not a disclosure. */}
+            <h3>Cookies and analytics</h3>
+            <p>
+              We use Google Analytics 4, a web analytics service provided by
+              Google LLC, to understand how visitors use this website. It sets
+              cookies in your browser that record information such as the pages
+              you view, how you arrived at the site and roughly where in the
+              world you are. This data is processed by Google on our behalf and
+              is used only in aggregate — we do not use it to identify
+              individual visitors, and we do not sell it.
+            </p>
+            <p>
+              You can prevent this collection by using your browser&apos;s
+              cookie controls, by enabling &quot;Do Not Track&quot;, or by
+              installing Google&apos;s official opt-out browser add-on at{" "}
+              <a
+                href="https://tools.google.com/dlpage/gaoptout"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                tools.google.com/dlpage/gaoptout
+              </a>
+              . Blocking analytics cookies does not affect any part of this
+              website&apos;s functionality.
+            </p>
+            <p>
+              Google&apos;s own handling of this data is governed by its
+              privacy policy, which is published at{" "}
+              <a
+                href="https://policies.google.com/privacy"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                policies.google.com/privacy
+              </a>
+              .
+            </p>
+
             <h2>Use of Data</h2>
             <p>CleanShip Marine uses the collected data for various purposes:</p>
             <ul>

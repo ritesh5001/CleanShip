@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { JsonLd } from "@/components/json-ld";
 import { ScrollTriggerRefresh } from "@/components/motion/scroll-fx";
 import { WhatsAppFloat } from "@/components/whatsapp-cta";
+import { Analytics } from "@/components/analytics";
 import { BASE_URL, organizationSchema, websiteSchema } from "@/lib/seo";
 import { siteConfig } from "@/lib/site";
 
@@ -139,6 +140,10 @@ export default function RootLayout({
         {/* Persistent enquiry path — WhatsApp is the default channel for
             agents and superintendents in the Gulf. */}
         <WhatsAppFloat />
+
+        {/* Last in the body and afterInteractive, so the tag never competes
+            with LCP. See the notes in the component. */}
+        <Analytics />
       </body>
     </html>
   );
