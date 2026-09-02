@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Barlow, Barlow_Condensed, IBM_Plex_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -12,24 +12,52 @@ import { siteConfig } from "@/lib/site";
 
 /* The DS specifies Barlow Condensed for display, Barlow for body and IBM Plex
    Mono for spec figures. These are flagged in the DS as substitutions for the
-   brochure's industrial sans — swap them here if licensed faces arrive. */
-const barlowCondensed = Barlow_Condensed({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
+   brochure's industrial sans — swap them here if licensed faces arrive.
+ *
+ * SELF-HOSTED via next/font/local, not next/font/google.
+ *
+ * next/font/google downloads its font files from Google's servers DURING THE
+ * BUILD, not at request time. That network call worked on Vercel and locally
+ * but failed silently on Render's build sandbox, and a failed font fetch
+ * surfaces as a wildly misleading error — Next falls back to rendering its
+ * default error page and trips over an unrelated internal check, producing
+ * "<Html> should not be imported outside of pages/_document" with no mention
+ * of fonts anywhere in the trace.
+ *
+ * The .woff2 files below are vendored into the repo (latin subset, the exact
+ * weights this file requests, fetched from the same Google Fonts CDN
+ * next/font/google would have called) so the build depends on nothing outside
+ * the repository, on every host, forever. Barlow, Barlow Condensed and IBM
+ * Plex Mono are all licensed under the SIL Open Font License — see
+ * src/app/fonts/OFL.txt.
+ */
+const barlowCondensed = localFont({
+  src: [
+    { path: "./fonts/barlow-condensed-500.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/barlow-condensed-600.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/barlow-condensed-700.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-barlow-condensed",
   display: "swap",
 });
 
-const barlow = Barlow({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+const barlow = localFont({
+  src: [
+    { path: "./fonts/barlow-300.woff2", weight: "300", style: "normal" },
+    { path: "./fonts/barlow-400.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/barlow-500.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/barlow-600.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/barlow-700.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-barlow",
   display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
+const plexMono = localFont({
+  src: [
+    { path: "./fonts/ibm-plex-mono-400.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/ibm-plex-mono-500.woff2", weight: "500", style: "normal" },
+  ],
   variable: "--font-plex-mono",
   display: "swap",
 });
