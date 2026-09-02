@@ -24,7 +24,14 @@ export const SESSION_COOKIE = "cleanship_session";
 const BCRYPT_ROUNDS = 12;
 const MAX_AGE_SECONDS = 7 * 24 * 60 * 60;
 
-const secret = new TextEncoder().encode(env.SESSION_SECRET);
+/* Resolved on first use, not at import. Reading env at module scope made a
+   missing SESSION_SECRET fail the whole build rather than only the pages that
+   need a session — see the note in lib/env.ts. */
+let cachedSecret: Uint8Array | null = null;
+function secretKey() {
+  if (!cachedSecret) cachedSecret = new TextEncoder().encode(env.SESSION_SECRET);
+  return cachedSecret;
+}
 
 export type Role = "admin" | "editor" | "supervisor" | "client";
 
@@ -60,7 +67,7 @@ export async function createSession(session: Session) {
     .setIssuedAt()
     .setIssuer("cleanship")
     .setExpirationTime(`${MAX_AGE_SECONDS}s`)
-    .sign(secret);
+    .sign(secretKey());
 
   const store = await cookies();
   store.set(SESSION_COOKIE, token, {
@@ -91,7 +98,7 @@ export async function getSession(): Promise<Session | null> {
   const token = store.get(SESSION_COOKIE)?.value;
   if (!token) return null;
   try {
-    const { payload } = await jwtVerify(token, secret, { issuer: "cleanship" });
+    const { payload } = await jwtVerify(token, secretKey(), { issuer: "cleanship" });
     return {
       sub: Number(payload.uid ?? payload.sub),
       email: String(payload.email),

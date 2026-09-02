@@ -1,7 +1,7 @@
 import "../load-env";
 import crypto from "node:crypto";
 import { eq } from "drizzle-orm";
-import { db, pool } from "./index";
+import { closeDb, db } from "./index";
 import { users } from "./schema";
 import { hashPassword } from "../auth-node";
 
@@ -80,9 +80,9 @@ Sign in at /cleantrack/login, then add supervisors, clients and\neditors from /c
 }
 
 main()
-  .then(() => pool.end())
-  .catch((err) => {
+  .then(() => closeDb())
+  .catch(async (err) => {
     console.error(err);
-    pool.end();
+    await closeDb();
     process.exit(1);
   });
