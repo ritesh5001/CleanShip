@@ -14,6 +14,7 @@ import {
   InstagramIcon,
   LinkedInIcon,
   MailIcon,
+  YouTubeIcon,
   PhoneIcon,
   PinIcon,
 } from "./icons";
@@ -23,6 +24,7 @@ const socialLinks = [
   { href: siteConfig.social.linkedin, label: "LinkedIn", Icon: LinkedInIcon },
   { href: siteConfig.social.instagram, label: "Instagram", Icon: InstagramIcon },
   { href: siteConfig.social.facebook, label: "Facebook", Icon: FacebookIcon },
+  { href: siteConfig.social.youtube, label: "YouTube", Icon: YouTubeIcon },
 ];
 
 export function SiteFooter() {

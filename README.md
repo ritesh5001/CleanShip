@@ -72,8 +72,10 @@ Implemented and verified against the running build:
    `LocalBusiness` nodes give search engines the structure, but only a
    verified profile earns a map pack listing — and the branch nodes carry no
    coordinates because inventing a pin is worse than omitting one.
-3. **Fix or remove `siteConfig.social`** — those handles are assumed. `sameAs`
-   pointing at profiles that do not exist is worse than omitting it.
+3. ~~**Fix or remove `siteConfig.social`**~~ — done. The four live profiles
+   (LinkedIn, Instagram, Facebook, YouTube) are in `siteConfig.social` and feed
+   both the footer icons and `sameAs` in the Organization schema. Adding a
+   profile there is the only step needed; both surfaces pick it up.
 4. **Publish real case studies.** `/projects` is placeholder, so it currently
    earns nothing.
 5. **Consider a blog.** There is no blog route yet. The port programme below

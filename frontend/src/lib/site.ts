@@ -97,10 +97,22 @@ export const siteConfig = {
     operations: "Operations desk manned 24 / 7, 365 days",
   },
 
+  /**
+   * Live profile URLs. These were previously assumed handles that did not
+   * resolve — which mattered beyond the broken links, because they feed
+   * `sameAs` in the Organization schema. A `sameAs` pointing at profiles that
+   * do not exist is worse than omitting it: it is how Google is told which
+   * accounts are this company, and a wrong answer stops it resolving Cleanship
+   * as an entity rather than a string.
+   *
+   * Anything added here appears automatically in the footer and in `sameAs`.
+   * Only add a profile that is live and actually ours.
+   */
   social: {
-    linkedin: "https://www.linkedin.com/company/cleanship",
-    instagram: "https://www.instagram.com/cleanship",
-    facebook: "https://www.facebook.com/cleanship",
+    linkedin: "https://www.linkedin.com/company/cleanshipmarine",
+    instagram: "https://www.instagram.com/cleanship_marine_services/",
+    facebook: "https://www.facebook.com/profile.php?id=61581138043689",
+    youtube: "https://www.youtube.com/@Cleanshipmarineservices",
   },
 } as const;
 
