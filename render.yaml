@@ -1,0 +1,49 @@
+# Render Blueprint.
+#
+# ⚠️ THE COMMON MISTAKE THIS FILE EXISTS TO PREVENT
+#
+# `backend/` is a library, not a service — no server, no port, no entry point.
+# A Render service with its Root Directory set to `backend` will fail on every
+# deploy, which is exactly what happened to the service left over from the
+# Express API that used to live there.
+#
+# The whole system is ONE Next.js app. Deploy from the repository ROOT:
+# npm workspaces are detected there, so backend/ is installed as a dependency
+# of frontend/ automatically.
+#
+# For an EXISTING Render service, this file changes nothing — edit the service
+# in the dashboard instead:
+#
+#   Settings → Root Directory   →  (leave blank)
+#   Settings → Build Command    →  npm install && npm run build
+#   Settings → Start Command    →  npm start
+#
+# You almost certainly do not want this AND Vercel serving the same site. Pick
+# one and delete the other, or the two will drift and you will debug a bug that
+# only exists on whichever host you are not looking at.
+
+services:
+  - type: web
+    name: cleanship
+    runtime: node
+    plan: starter
+    rootDir: .
+    buildCommand: npm install && npm run build
+    # `next start` reads PORT from the environment, which Render sets.
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Marked `sync: false` so Render prompts for them rather than storing
+      # secrets in this file.
+      - key: DATABASE_URL
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+      - key: APP_URL
+        sync: false
+      - key: CLEANTRACK_URL
+        sync: false
+      - key: COOKIE_DOMAIN
+        sync: false

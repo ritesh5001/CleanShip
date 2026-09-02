@@ -82,6 +82,43 @@ long-running Express process, not serverless functions.
 - Contact forms send email through Resend. Once the API is wired in, the
   database becomes the record and email stays the notification.
 
+## Deploying
+
+The whole system is one Next.js app. **Deploy from the repository root** —
+npm workspaces are detected there, so `backend/` is installed as a dependency
+of `frontend/` automatically.
+
+| | |
+| --- | --- |
+| Build command | `npm install && npm run build` |
+| Start command | `npm start` (Next reads `PORT` from the environment) |
+| Root directory | the repository root — **not** `backend/` |
+
+`backend/` is a library: no server, no port, no entry point. A deployment
+pointed at it fails on every push, and its `build` script says so. That
+misconfiguration is the leftover Express API service; delete it or repoint it.
+
+On **Vercel**, Root Directory `frontend` also works and is what is configured
+today. On **Render**, see `render.yaml`.
+
+**Do not run the same site on two hosts.** Pick one and delete the other, or
+the two will drift and you will spend an evening on a bug that only exists on
+whichever one you are not looking at.
+
+### Environment
+
+| Variable | Required | What it does |
+| --- | --- | --- |
+| `DATABASE_URL` | yes | Neon Postgres. Without it the site still builds and serves; the admin and CleanTrack do not work. |
+| `SESSION_SECRET` | yes | Signs the session cookie. 32+ characters. |
+| `APP_URL` | yes | Absolute origin of the marketing site. |
+| `CLEANTRACK_URL` | yes | Where CleanTrack is served. Client share links are built from it. |
+| `COOKIE_DOMAIN` | production | `.cleanship.co` — the leading dot is what makes one sign-in work on both the site and the CleanTrack subdomain. |
+| `NEXT_PUBLIC_GA_ID` | no | Overrides the hardcoded GA4 id. |
+
+Adding variables does not trigger a rebuild on either host. **Redeploy after
+setting them.**
+
 ## SEO
 
 Implemented and verified against the running build:

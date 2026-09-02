@@ -15,20 +15,30 @@ console.error(`
 ╰──────────────────────────────────────────────────────────────────────╯
 
 This package holds the database schema, auth primitives and CleanTrack domain
-logic. It is imported directly by the Next app in ../frontend, which is the
-only thing that gets deployed.
+logic. It is imported directly by the Next app in ../frontend. It has no
+server, no port and no entry point.
 
-If you are seeing this in a Render (or similar) build log, that service is a
-leftover from the Express API that used to live here. It was retired when
+If a deploy brought you here, its Root Directory is set to "backend". That is
+a leftover from the Express API this folder used to hold, retired when
 everything moved into the one Next app.
 
-  → Delete the service. Nothing depends on it.
+TWO WAYS OUT — pick one:
 
-If you meant to deploy the site, deploy frontend/ — on Vercel, with Root
-Directory set to "frontend". npm workspaces are detected from the repository
-root, so backend/ is installed automatically.
+  1. Delete the service. Nothing depends on it. Correct if the site is
+     already deployed elsewhere (Vercel).
 
-Database commands run from the repository root, not a deployment:
+  2. Point it at the whole app instead. In the service settings:
+
+       Root Directory   (leave blank)
+       Build Command    npm install && npm run build
+       Start Command    npm start
+
+     Then set DATABASE_URL, SESSION_SECRET, APP_URL, CLEANTRACK_URL and
+     COOKIE_DOMAIN. See render.yaml in the repository root.
+
+Do not run the same site on two hosts. Pick one.
+
+Database commands run from the repository root, not from a deployment:
 
   npm run db:push
   npm run db:bootstrap -- "you@cleanship.co" "Your Name"
