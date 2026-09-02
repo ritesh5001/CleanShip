@@ -5,7 +5,12 @@ Two applications, deployed independently.
 ```
 frontend/   Next.js 15 marketing site — statically prerendered, SEO-first
 backend/    Express + Drizzle API on Neon Postgres — enquiries, content, admin
+holdwatch/  Hold Watch — live cleaning progress for supervisors and clients
 ```
+
+`holdwatch/` is a separate product on its own subdomain, not part of the
+marketing site. It shares the Postgres instance (its tables are all prefixed
+`hw_`) and nothing else. See [holdwatch/README.md](holdwatch/README.md).
 
 They share no code at runtime. Each has its own `package.json`, `node_modules`,
 build and deploy.
