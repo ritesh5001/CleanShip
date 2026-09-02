@@ -3,10 +3,21 @@
 Two applications, deployed independently.
 
 ```
-frontend/   Next.js 15 marketing site — statically prerendered, SEO-first
-backend/    Express + Drizzle API on Neon Postgres — enquiries, content, admin
-holdwatch/  Hold Watch — live cleaning progress for supervisors and clients
+frontend/   The whole system — one Next.js app, one deploy, one database
 ```
+
+- `www.cleanship.co` — the marketing site, statically prerendered
+- `www.cleanship.co/admin` — the enquiry inbox
+- `holdwatch.cleanship.co` — Hold Watch, live cleaning progress
+
+All three come out of `frontend/`. There is no separate API service: the
+Express backend and the standalone Hold Watch app were merged into this one
+app, because they were always one database and keeping three deployments in
+step bought nothing.
+
+One `users` table means one password per person, and the session cookie is
+scoped to `.cleanship.co` so a single sign-in works on the site and the
+Hold Watch subdomain alike.
 
 `holdwatch/` is a separate product on its own subdomain, not part of the
 marketing site. It shares the Postgres instance (its tables are all prefixed
