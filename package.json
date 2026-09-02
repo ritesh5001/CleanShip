@@ -16,5 +16,8 @@
     "db:generate": "npm run db:generate --workspace backend",
     "db:bootstrap": "npm run db:bootstrap --workspace backend",
     "db:studio": "npm run db:studio --workspace backend"
+  },
+  "engines": {
+    "node": "22.x"
   }
 }

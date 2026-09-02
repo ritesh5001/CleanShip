@@ -29,5 +29,8 @@
     "tailwindcss": "^4.1.13",
     "typescript": "^5.9.2",
     "dotenv": "^17.2.3"
+  },
+  "engines": {
+    "node": "22.x"
   }
 }
