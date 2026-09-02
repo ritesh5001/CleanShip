@@ -1,8 +1,8 @@
-import { requireSession } from "@/lib/auth";
+import { requireSession } from "@/lib/session";
 import { AppShell } from "@/components/cleantrack/app-shell";
 import { JobCard } from "@/components/cleantrack/job-card";
 import { EmptyState, PageTitle } from "@/components/cleantrack/ui";
-import { getJobDetail, jobProgress, listJobsForSupervisor } from "@/lib/cleantrack/jobs";
+import { getJobDetail, jobProgress, listJobsForSupervisor } from "@cleanship/backend/cleantrack/jobs";
 import { InstallPrompt } from "@/components/cleantrack/install-prompt";
 
 export const dynamic = "force-dynamic";

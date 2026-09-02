@@ -3,17 +3,37 @@
 Two applications, deployed independently.
 
 ```
-frontend/   The whole system — one Next.js app, one deploy, one database
+backend/    Database, auth and CleanTrack domain logic — a package, not a service
+frontend/   The Next.js app: marketing site, admin, CleanTrack
 ```
+
+**One deployment.** `backend/` is an npm workspace package that `frontend/`
+imports directly. There is no API between them and no second process — an HTTP
+hop between two halves of the same codebase talking to the same Postgres would
+buy latency and nothing else.
+
+The split is about ownership, not deployment:
+
+| `backend/` | `frontend/` |
+| --- | --- |
+| Database schema and queries | Pages, components, server actions |
+| Password hashing, token signing | Cookie handling (`next/headers`) |
+| Access rules — who may see a job | Which page to redirect to |
+| CleanTrack domain: stages, progress | Marketing content, SEO, port data |
+
+**Nothing in `backend/` imports from Next.** That is the rule that keeps the
+boundary real — the moment it needs `next/headers`, it has stopped being a
+backend and become part of the app. Cookies are the clearest case: signing the
+session token is cryptography and lives in `backend/`; reading and writing the
+cookie is framework plumbing and lives in `frontend/src/lib/session.ts`.
 
 - `www.cleanship.co` — the marketing site, statically prerendered
 - `www.cleanship.co/admin` — the enquiry inbox
 - `cleantrack.cleanship.co` — CleanTrack, live cleaning progress
 
-All three come out of `frontend/`. There is no separate API service: the
-Express backend and the standalone job-tracker app were merged into this one
-app, because they were always one database and keeping three deployments in
-step bought nothing.
+Three surfaces, one build. The old Express API and the standalone job-tracker
+app were merged in, because they were always one database and keeping three
+deployments in step bought nothing.
 
 One `users` table means one password per person, and the session cookie is
 scoped to `.cleanship.co` so a single sign-in works on the site and the

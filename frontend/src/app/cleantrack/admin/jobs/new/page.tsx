@@ -1,9 +1,9 @@
 import { asc, eq } from "drizzle-orm";
-import { requireSession } from "@/lib/auth";
+import { requireSession } from "@/lib/session";
 import { AppShell } from "@/components/cleantrack/app-shell";
 import { PageTitle } from "@/components/cleantrack/ui";
-import { db } from "@/lib/db";
-import { ctClients as clients, users } from "@/lib/db/schema";
+import { db } from "@cleanship/backend/db";
+import { ctClients as clients, users } from "@cleanship/backend/db/schema";
 import { NewJobForm } from "./form";
 
 export const dynamic = "force-dynamic";

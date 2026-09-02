@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 import { eq } from "drizzle-orm";
 import { closeDb, db } from "./index";
 import { users } from "./schema";
-import { hashPassword } from "../auth-node";
+import { hashPassword } from "../auth/passwords";
 
 /**
  * Creates the first admin account.

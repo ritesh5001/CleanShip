@@ -4,10 +4,11 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { requireSession, hashPassword } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { ctClients as clients, ctJobs as jobs, users } from "@/lib/db/schema";
-import { createJob, newShareToken } from "@/lib/cleantrack/jobs";
+import { requireSession } from "@/lib/session";
+import { hashPassword } from "@cleanship/backend/auth/passwords";
+import { db } from "@cleanship/backend/db";
+import { ctClients as clients, ctJobs as jobs, users } from "@cleanship/backend/db/schema";
+import { createJob, newShareToken } from "@cleanship/backend/cleantrack/jobs";
 
 export type FormState = { error?: string; ok?: string };
 

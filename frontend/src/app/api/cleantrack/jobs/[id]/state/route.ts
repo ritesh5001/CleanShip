@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
-import { canViewJob, getJobDetail } from "@/lib/cleantrack/jobs";
+import { getSession } from "@/lib/session";
+import { canViewJob, getJobDetail } from "@cleanship/backend/cleantrack/jobs";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

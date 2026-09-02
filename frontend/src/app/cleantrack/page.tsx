@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSession, landingFor } from "@/lib/auth";
+import { getSession, landingFor } from "@/lib/session";
 
 /** Sends each role to its own surface. Nothing lives at the CleanTrack root. */
 export default async function CleanTrackRoot() {

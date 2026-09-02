@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { createJobAction, type FormState } from "../../actions";
 import { Button, Card, Field, inputClass } from "@/components/cleantrack/ui";
-import { compartmentLabel, compartmentNoun, stagesFor, type JobType } from "@/lib/cleantrack/stages";
+import { compartmentLabel, compartmentNoun, stagesFor, type JobType } from "@cleanship/backend/cleantrack/stages";
 
 const initial: FormState = {};
 

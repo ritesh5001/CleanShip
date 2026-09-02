@@ -1,8 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getJobByShareToken } from "@/lib/cleantrack/jobs";
-import { grantShareAccess, imoMatches } from "@/lib/share-access";
+import { getJobByShareToken } from "@cleanship/backend/cleantrack/jobs";
+import { grantShareAccess } from "@/lib/share-session";
+import { imoMatches } from "@cleanship/backend/cleantrack/share";
 
 export type GateState = { error?: string };
 

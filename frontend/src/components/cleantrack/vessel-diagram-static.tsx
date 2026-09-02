@@ -1,7 +1,7 @@
 "use client";
 
 import { VesselDiagram, type DiagramCompartment } from "./vessel-diagram";
-import type { JobType } from "@/lib/cleantrack/stages";
+import type { JobType } from "@cleanship/backend/cleantrack/stages";
 
 /**
  * The diagram without interaction, for client-facing views.

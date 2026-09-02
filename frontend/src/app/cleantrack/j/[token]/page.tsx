@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ClientJobView } from "@/components/cleantrack/client-job-view";
-import { getJobByShareToken } from "@/lib/cleantrack/jobs";
-import { hasShareAccess } from "@/lib/share-access";
+import { getJobByShareToken } from "@cleanship/backend/cleantrack/jobs";
+import { hasShareAccess } from "@/lib/share-session";
 import { ShareGate } from "./gate";
 
 export const dynamic = "force-dynamic";

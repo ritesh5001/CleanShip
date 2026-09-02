@@ -1,4 +1,3 @@
-import "server-only";
 import crypto from "node:crypto";
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "../db";

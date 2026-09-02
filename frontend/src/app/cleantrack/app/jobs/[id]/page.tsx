@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireSession } from "@/lib/auth";
+import { requireSession } from "@/lib/session";
 import { AppShell } from "@/components/cleantrack/app-shell";
 import { StageBoard } from "@/components/cleantrack/stage-board";
 import { Card, JobStatusChip } from "@/components/cleantrack/ui";
-import { canUpdateJob, canViewJob, getJobDetail } from "@/lib/cleantrack/jobs";
+import { canUpdateJob, canViewJob, getJobDetail } from "@cleanship/backend/cleantrack/jobs";
 import { formatDate } from "@/lib/format";
-import type { JobType } from "@/lib/cleantrack/stages";
+import type { JobType } from "@cleanship/backend/cleantrack/stages";
 
 export const dynamic = "force-dynamic";
 

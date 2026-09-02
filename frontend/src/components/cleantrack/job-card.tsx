@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { JobStatusChip, ProgressBar } from "./ui";
-import { compartmentNoun } from "@/lib/cleantrack/stages";
+import { compartmentNoun } from "@cleanship/backend/cleantrack/stages";
 import { formatDate, relativeTime } from "@/lib/format";
 
 export type JobCardData = {

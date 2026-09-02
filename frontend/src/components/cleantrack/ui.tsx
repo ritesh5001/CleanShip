@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { STATE_STYLE, type CompartmentState } from "@/lib/cleantrack/stages";
+import { STATE_STYLE, type CompartmentState } from "@cleanship/backend/cleantrack/stages";
 
 export function Card({
   children,

@@ -1,9 +1,9 @@
 import { asc } from "drizzle-orm";
-import { requireSession } from "@/lib/auth";
+import { requireSession } from "@/lib/session";
 import { AppShell } from "@/components/cleantrack/app-shell";
 import { Card, PageTitle } from "@/components/cleantrack/ui";
-import { db } from "@/lib/db";
-import { users } from "@/lib/db/schema";
+import { db } from "@cleanship/backend/db";
+import { users } from "@cleanship/backend/db/schema";
 import { toggleUserActiveAction } from "../actions";
 import { NewUserForm } from "./form";
 

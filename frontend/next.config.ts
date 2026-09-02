@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  /* @cleanship/backend is a workspace package shipped as TypeScript source
+     rather than a build artefact — there is no reason to compile it twice. */
+  transpilePackages: ["@cleanship/backend"],
   poweredByHeader: false,
   compress: true,
   images: {

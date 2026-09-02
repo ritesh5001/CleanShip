@@ -1,10 +1,7 @@
-/* Next reads .env.local; dotenv/config alone reads only .env. Loading both
-   here means drizzle-kit and the app never disagree about which database they
-   are pointed at — a mismatch that is invisible until a push lands somewhere
-   unexpected. */
-import { config } from "dotenv";
-config({ path: ".env.local" });
-config();
+/* See src/load-env.ts — the env file lives in frontend/, because that is what
+   Next reads and keeping two copies in step is how a script ends up pointed at
+   the wrong database. */
+import "./src/load-env";
 import type { Config } from "drizzle-kit";
 
 /**
@@ -15,7 +12,7 @@ import type { Config } from "drizzle-kit";
  * a second drizzle.config.ts in this repository, something has regressed.
  */
 export default {
-  schema: "./src/lib/db/schema.ts",
+  schema: "./src/db/schema.ts",
   out: "./drizzle",
   dialect: "postgresql",
   dbCredentials: { url: process.env.DATABASE_URL! },

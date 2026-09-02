@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { destroySession } from "@/lib/auth";
-import { env } from "@/lib/env";
+import { destroySession } from "@/lib/session";
+import { env } from "@cleanship/backend/env";
 
 /**
  * POST, not GET — a GET logout can be fired by any image tag pointing at it,

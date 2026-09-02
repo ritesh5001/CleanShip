@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import type { Session } from "@/lib/auth";
+import type { Session } from "@/lib/session";
 
 /**
  * Shared chrome for all three signed-in surfaces.

@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { getSession } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { ctJobs as jobs } from "@/lib/db/schema";
-import { applyStageChange, canUpdateJob } from "@/lib/cleantrack/jobs";
+import { getSession } from "@/lib/session";
+import { db } from "@cleanship/backend/db";
+import { ctJobs as jobs } from "@cleanship/backend/db/schema";
+import { applyStageChange, canUpdateJob } from "@cleanship/backend/cleantrack/jobs";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

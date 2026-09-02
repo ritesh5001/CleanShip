@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { landingFor } from "@/lib/auth";
+import { landingFor } from "@/lib/session";
 import { attemptLogin, type LoginState } from "@/lib/login";
 
 export type { LoginState };

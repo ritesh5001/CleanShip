@@ -10,7 +10,7 @@ import {
   stagesFor,
   stateOf,
   type JobType,
-} from "@/lib/cleantrack/stages";
+} from "@cleanship/backend/cleantrack/stages";
 
 export type BoardCompartment = {
   id: number;

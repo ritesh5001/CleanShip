@@ -6,7 +6,7 @@ import {
   progressOf,
   stateOf,
   type JobType,
-} from "@/lib/cleantrack/stages";
+} from "@cleanship/backend/cleantrack/stages";
 
 export type DiagramCompartment = {
   id: number;

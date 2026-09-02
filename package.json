@@ -1,0 +1,16 @@
+{
+  "name": "cleanship",
+  "private": true,
+  "workspaces": ["backend", "frontend"],
+  "scripts": {
+    "dev": "npm run dev --workspace frontend",
+    "build": "npm run build --workspace frontend",
+    "start": "npm run start --workspace frontend",
+    "lint": "npm run lint --workspace frontend",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "db:push": "npm run db:push --workspace backend",
+    "db:generate": "npm run db:generate --workspace backend",
+    "db:bootstrap": "npm run db:bootstrap --workspace backend",
+    "db:studio": "npm run db:studio --workspace backend"
+  }
+}

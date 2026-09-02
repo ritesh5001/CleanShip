@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { desc, sql } from "drizzle-orm";
-import { requireSession } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { enquiries } from "@/lib/db/schema";
+import { requireSession } from "@/lib/session";
+import {
+  ENQUIRY_STATUSES,
+  enquiryCounts,
+  listEnquiries,
+} from "@cleanship/backend/enquiries";
 import { formatDateTime, relativeTime } from "@/lib/format";
 import { setEnquiryStatusAction } from "./actions";
 
@@ -12,8 +14,6 @@ export const metadata: Metadata = {
   title: "Enquiries",
   robots: { index: false, follow: false },
 };
-
-const STATUSES = ["new", "in-progress", "quoted", "won", "lost", "spam"] as const;
 
 const STATUS_STYLE: Record<string, string> = {
   new: "bg-blue-100 text-blue-800 border-blue-300",
@@ -35,13 +35,7 @@ const STATUS_STYLE: Record<string, string> = {
 export default async function AdminInboxPage() {
   const session = await requireSession("admin", "editor");
 
-  const [rows, counts] = await Promise.all([
-    db.select().from(enquiries).orderBy(desc(enquiries.createdAt)).limit(200),
-    db
-      .select({ status: enquiries.status, n: sql<number>`count(*)::int` })
-      .from(enquiries)
-      .groupBy(enquiries.status),
-  ]);
+  const [rows, counts] = await Promise.all([listEnquiries(), enquiryCounts()]);
 
   const total = counts.reduce((n, c) => n + c.n, 0);
 
@@ -153,7 +147,7 @@ export default async function AdminInboxPage() {
                     defaultValue={e.status}
                     className="min-h-9 rounded-md border border-slate-300 px-2 text-[13px]"
                   >
-                    {STATUSES.map((s) => (
+                    {ENQUIRY_STATUSES.map((s) => (
                       <option key={s} value={s}>
                         {s.replace("-", " ")}
                       </option>

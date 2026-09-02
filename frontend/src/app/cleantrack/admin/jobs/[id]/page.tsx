@@ -1,16 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { asc, eq } from "drizzle-orm";
-import { requireSession } from "@/lib/auth";
+import { requireSession } from "@/lib/session";
 import { AppShell } from "@/components/cleantrack/app-shell";
 import { StageBoard } from "@/components/cleantrack/stage-board";
 import { Card, JobStatusChip, PageTitle } from "@/components/cleantrack/ui";
-import { db } from "@/lib/db";
-import { users } from "@/lib/db/schema";
-import { getJobDetail, getJobEvents, jobProgress } from "@/lib/cleantrack/jobs";
-import { env } from "@/lib/env";
+import { db } from "@cleanship/backend/db";
+import { users } from "@cleanship/backend/db/schema";
+import { getJobDetail, getJobEvents, jobProgress } from "@cleanship/backend/cleantrack/jobs";
+import { env } from "@cleanship/backend/env";
 import { formatDate, formatDateTime } from "@/lib/format";
-import type { JobType } from "@/lib/cleantrack/stages";
+import type { JobType } from "@cleanship/backend/cleantrack/stages";
 import {
   assignSupervisorAction,
   rotateShareLinkAction,

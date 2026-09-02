@@ -7,9 +7,9 @@ import {
   stagesFor,
   stateOf,
   type JobType,
-} from "@/lib/cleantrack/stages";
-import type { JobDetail } from "@/lib/cleantrack/jobs";
-import { jobProgress } from "@/lib/cleantrack/jobs";
+} from "@cleanship/backend/cleantrack/stages";
+import type { JobDetail } from "@cleanship/backend/cleantrack/jobs";
+import { jobProgress } from "@cleanship/backend/cleantrack/jobs";
 import { LiveRefresh } from "./live-refresh";
 
 /**

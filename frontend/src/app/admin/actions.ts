@@ -1,22 +1,15 @@
 "use server";
 
-import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { requireSession } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { enquiries } from "@/lib/db/schema";
-
-const STATUSES = ["new", "in-progress", "quoted", "won", "lost", "spam"] as const;
+import { requireSession } from "@/lib/session";
+import { isEnquiryStatus, setEnquiryStatus } from "@cleanship/backend/enquiries";
 
 export async function setEnquiryStatusAction(formData: FormData) {
   await requireSession("admin", "editor");
   const id = Number(formData.get("id"));
   const status = String(formData.get("status"));
-  if (!STATUSES.includes(status as (typeof STATUSES)[number])) return;
+  if (!isEnquiryStatus(status)) return;
 
-  await db
-    .update(enquiries)
-    .set({ status: status as (typeof STATUSES)[number] })
-    .where(eq(enquiries.id, id));
+  await setEnquiryStatus(id, status);
   revalidatePath("/admin");
 }

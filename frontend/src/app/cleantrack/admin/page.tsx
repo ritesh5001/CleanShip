@@ -1,8 +1,8 @@
-import { requireSession } from "@/lib/auth";
+import { requireSession } from "@/lib/session";
 import { AppShell } from "@/components/cleantrack/app-shell";
 import { JobCard } from "@/components/cleantrack/job-card";
 import { EmptyState, LinkButton, PageTitle } from "@/components/cleantrack/ui";
-import { getJobDetail, jobProgress, listAllJobs } from "@/lib/cleantrack/jobs";
+import { getJobDetail, jobProgress, listAllJobs } from "@cleanship/backend/cleantrack/jobs";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Jobs" };
