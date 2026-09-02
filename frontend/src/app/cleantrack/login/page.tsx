@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { login, type LoginState } from "./actions";
@@ -21,7 +22,7 @@ export default function LoginPage() {
             CleanTrack
           </h1>
           <p className="mt-2 text-sm text-slate-600">
-            Live cleaning progress, from the vessel to the client.
+            Supervisor sign-in. Update job progress from the vessel.
           </p>
         </div>
 
@@ -63,7 +64,11 @@ export default function LoginPage() {
         </form>
 
         <p className="mt-6 text-center text-[13px] text-slate-500">
-          Clients with a share link do not need an account.
+          Office staff sign in at{" "}
+          <Link href="/admin/login" className="text-blue-700 hover:underline">
+            the admin login
+          </Link>
+          . Customers need no account — they open the link they were sent.
         </p>
       </div>
     </main>

@@ -22,7 +22,6 @@ const NAV: Record<Session["role"], { href: string; label: string }[]> = {
      an empty nav. */
   editor: [{ href: "/admin", label: "Enquiries" }],
   supervisor: [{ href: "/cleantrack/app", label: "My jobs" }],
-  client: [{ href: "/cleantrack/client", label: "Our jobs" }],
 };
 
 export function AppShell({

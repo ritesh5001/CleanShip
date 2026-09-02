@@ -63,6 +63,7 @@ export const listJobsForSupervisor = (userId: number) =>
 export const listJobsForClient = (clientId: number) =>
   listJobsWhere(eq(jobs.clientId, clientId));
 
+
 export async function getJobDetail(jobId: number): Promise<JobDetail | null> {
   const [row] = await db
     .select(jobSelect)
@@ -355,16 +356,18 @@ export async function getJobVersion(jobId: number) {
  * Whether a session may view a job. Called by every job route.
  *
  * Written as one function rather than inline checks because "supervisors see
- * only their jobs, clients see only their company's" is exactly the rule that
- * rots when it is restated in six places.
+ * only the jobs they are assigned to" is exactly the rule that rots when it is
+ * restated in six places.
+ *
+ * Customers are not here on purpose: they have no account. Their access runs
+ * through the share link and the IMO gate instead — see the share page.
  */
 export function canViewJob(
-  session: { role: string; sub: number; clientId: number | null },
-  job: { supervisorId: number | null; clientId: number },
+  session: { role: string; sub: number },
+  job: { supervisorId: number | null },
 ) {
   if (session.role === "admin") return true;
   if (session.role === "supervisor") return job.supervisorId === session.sub;
-  if (session.role === "client") return job.clientId === session.clientId;
   return false;
 }
 

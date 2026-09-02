@@ -166,8 +166,9 @@ export default async function AdminJobPage({
               Client link
             </h2>
             <p className="mt-2 text-[13px] text-slate-600">
-              Read-only live view. Anyone with this link can see the job — send
-              it, do not publish it.
+              Read-only live view, no account needed. {job.imo
+                ? "The customer enters the vessel's IMO number to open it."
+                : "This vessel has no IMO on record, so the link opens directly — add an IMO above to gate it."}
             </p>
             {job.shareRevoked ? (
               <p className="mt-3 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-[13px] text-amber-900">

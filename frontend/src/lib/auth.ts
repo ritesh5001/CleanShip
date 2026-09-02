@@ -33,15 +33,13 @@ function secretKey() {
   return cachedSecret;
 }
 
-export type Role = "admin" | "editor" | "supervisor" | "client";
+export type Role = "admin" | "editor" | "supervisor";
 
 export type Session = {
   sub: number;
   email: string;
   name: string;
   role: Role;
-  /** Present for role "client" — scopes CleanTrack queries to their company. */
-  clientId: number | null;
 };
 
 export async function hashPassword(plain: string) {
@@ -60,7 +58,6 @@ export async function createSession(session: Session) {
     email: session.email,
     name: session.name,
     role: session.role,
-    clientId: session.clientId,
   })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(String(session.sub))
@@ -104,7 +101,6 @@ export async function getSession(): Promise<Session | null> {
       email: String(payload.email),
       name: String(payload.name),
       role: payload.role as Role,
-      clientId: (payload.clientId as number | null) ?? null,
     };
   } catch {
     return null;
@@ -118,7 +114,13 @@ export async function getSession(): Promise<Session | null> {
  */
 export async function requireSession(...roles: Role[]): Promise<Session> {
   const session = await getSession();
-  if (!session) redirect("/cleantrack/login");
+
+  /* Sent to the door that matches what they were reaching for. A supervisor
+     bounced to the office login, or an admin bounced to the crew login, is a
+     support call — the two entrances exist precisely so neither happens. */
+  if (!session) {
+    redirect(roles.includes("supervisor") ? "/cleantrack/login" : "/admin/login");
+  }
   if (roles.length && !roles.includes(session.role)) {
     redirect(landingFor(session.role));
   }
@@ -128,7 +130,11 @@ export async function requireSession(...roles: Role[]): Promise<Session> {
 /** Where a role belongs after signing in. One definition, every redirect. */
 export function landingFor(role: Role) {
   if (role === "supervisor") return "/cleantrack/app";
-  if (role === "client") return "/cleantrack/client";
   if (role === "editor") return "/admin";
   return "/cleantrack/admin";
+}
+
+/** Which sign-in page a role belongs at. Used by both login screens. */
+export function loginPageFor(role: Role) {
+  return role === "supervisor" ? "/cleantrack/login" : "/admin/login";
 }

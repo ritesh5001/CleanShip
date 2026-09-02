@@ -151,19 +151,15 @@ export async function createClientAction(
 /* People                                                                */
 /* -------------------------------------------------------------------- */
 
-const userSchema = z
-  .object({
-    name: z.string().min(2, "Enter a name.").max(120),
-    email: z.string().email("Enter a valid email."),
-    password: z.string().min(10, "Password must be at least 10 characters."),
-    role: z.enum(["admin", "supervisor", "client"]),
-    clientId: z.string().optional(),
-    phone: z.string().max(40).optional(),
-  })
-  .refine((v) => v.role !== "client" || Boolean(v.clientId), {
-    message: "A client login must be tied to a company.",
-    path: ["clientId"],
-  });
+const userSchema = z.object({
+  name: z.string().min(2, "Enter a name.").max(120),
+  email: z.string().email("Enter a valid email."),
+  password: z.string().min(10, "Password must be at least 10 characters."),
+  /* No "client": customers have no account. They watch a job through the
+     share link and the vessel's IMO. */
+  role: z.enum(["admin", "editor", "supervisor"]),
+  phone: z.string().max(40).optional(),
+});
 
 export async function createUserAction(
   _prev: FormState,
@@ -186,7 +182,6 @@ export async function createUserAction(
     email,
     passwordHash: await hashPassword(parsed.data.password),
     role: parsed.data.role,
-    clientId: parsed.data.clientId ? Number(parsed.data.clientId) : null,
     phone: parsed.data.phone || null,
   });
 

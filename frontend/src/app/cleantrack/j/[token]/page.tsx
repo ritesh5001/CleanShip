@@ -2,19 +2,21 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ClientJobView } from "@/components/cleantrack/client-job-view";
 import { getJobByShareToken } from "@/lib/cleantrack/jobs";
+import { hasShareAccess } from "@/lib/share-access";
+import { ShareGate } from "./gate";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Public read-only job view, reached by an unguessable link.
+ * The customer's view. No account, ever.
  *
- * The whole point is that a client can watch progress without an account —
- * the fastest thing to put in front of someone on day one. The trade-off is
- * that the URL is the credential, so:
- *   - it is noindex (also set globally in the root layout)
- *   - it can be revoked and rotated from the admin job page
- *   - it shows the job and nothing else: no client list, no other vessels,
- *     no way to walk to another job from here
+ * Access is the share link plus the vessel's IMO number. See lib/share-access
+ * for what that does and does not protect against — briefly, an IMO is public
+ * information, so this stops a forwarded link opening straight into a job but
+ * does not stop someone who knows the vessel.
+ *
+ * The page shows this job and nothing else: no client list, no other vessels,
+ * no navigation to walk anywhere from here.
  */
 export const metadata: Metadata = {
   title: "Cleaning progress",
@@ -29,6 +31,16 @@ export default async function SharedJobPage({
   const { token } = await params;
   const job = await getJobByShareToken(token);
   if (!job) notFound();
+
+  /* A vessel with no IMO — a barge, a workboat — has nothing to gate on.
+     Inventing a challenge it cannot answer would lock the customer out of
+     their own job, so those open on the link alone. Admins can still revoke. */
+  const gated = Boolean(job.imo);
+  const unlocked = !gated || (await hasShareAccess(token));
+
+  if (!unlocked) {
+    return <ShareGate token={token} vesselHint={job.vesselName} />;
+  }
 
   return (
     <div className="min-h-screen">

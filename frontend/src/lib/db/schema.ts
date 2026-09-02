@@ -36,22 +36,18 @@ import {
 /* ------------------------------------------------------------------ */
 
 /**
- * Roles across both products.
+ * Roles. All three are staff — there is no customer login.
  *
- *   admin       everything, both the enquiry inbox and CleanTrack
+ *   admin       everything: the enquiry inbox and CleanTrack
  *   editor      the enquiry inbox only
- *   supervisor  CleanTrack — updates jobs they are assigned to
- *   client      CleanTrack — read-only, their own company's jobs
+ *   supervisor  CleanTrack — updates the jobs they are assigned to
  *
- * One table, so one person has one password. Previously there were two user
- * tables in two services and an admin needed a login for each.
+ * Customers deliberately have NO account. They watch a job through a share
+ * link plus the vessel's IMO number, which means nothing to issue, nothing to
+ * reset, and nobody chasing the office for a password at 02:00 because a
+ * vessel sailed. See src/app/cleantrack/j/[token].
  */
-export const userRole = pgEnum("user_role", [
-  "admin",
-  "editor",
-  "supervisor",
-  "client",
-]);
+export const userRole = pgEnum("user_role", ["admin", "editor", "supervisor"]);
 
 export const users = pgTable(
   "users",
@@ -62,8 +58,6 @@ export const users = pgTable(
     passwordHash: text("password_hash").notNull(),
     name: varchar("name", { length: 120 }).notNull(),
     role: userRole("role").notNull().default("editor"),
-    /** Set for role "client" only — scopes CleanTrack queries to their company. */
-    clientId: integer("client_id"),
     phone: varchar("phone", { length: 40 }),
     active: integer("active").notNull().default(1),
     lastLoginAt: timestamp("last_login_at", { withTimezone: true }),

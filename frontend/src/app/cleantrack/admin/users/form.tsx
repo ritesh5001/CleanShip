@@ -7,7 +7,7 @@ import { Button, Card, Field, inputClass } from "@/components/cleantrack/ui";
 
 const initial: FormState = {};
 
-export function NewUserForm({ clients }: { clients: { id: number; name: string }[] }) {
+export function NewUserForm() {
   const [state, action] = useActionState(createUserAction, initial);
   const [role, setRole] = useState("supervisor");
 
@@ -40,21 +40,11 @@ export function NewUserForm({ clients }: { clients: { id: number; name: string }
             className={inputClass}
           >
             <option value="supervisor">Supervisor — updates jobs on site</option>
-            <option value="client">Client — read-only, their company only</option>
+            <option value="editor">Editor — enquiry inbox only</option>
             <option value="admin">Admin — everything</option>
           </select>
         </Field>
 
-        {role === "client" && (
-          <Field label="Company" hint="Which client's jobs they can see.">
-            <select name="clientId" required defaultValue="" className={inputClass}>
-              <option value="" disabled>Choose a company</option>
-              {clients.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-          </Field>
-        )}
 
         <Field label="Phone" hint="Optional">
           <input name="phone" className={inputClass} />

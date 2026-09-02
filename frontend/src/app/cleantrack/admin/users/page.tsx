@@ -3,7 +3,7 @@ import { requireSession } from "@/lib/auth";
 import { AppShell } from "@/components/cleantrack/app-shell";
 import { Card, PageTitle } from "@/components/cleantrack/ui";
 import { db } from "@/lib/db";
-import { ctClients as clients, users } from "@/lib/db/schema";
+import { users } from "@/lib/db/schema";
 import { toggleUserActiveAction } from "../actions";
 import { NewUserForm } from "./form";
 
@@ -19,12 +19,10 @@ const ROLE_STYLE: Record<string, string> = {
 export default async function UsersPage() {
   const session = await requireSession("admin");
 
-  const [people, clientRows] = await Promise.all([
-    db.select().from(users).orderBy(asc(users.role), asc(users.name)),
-    db.select({ id: clients.id, name: clients.name }).from(clients).orderBy(asc(clients.name)),
-  ]);
-
-  const clientName = new Map(clientRows.map((c) => [c.id, c.name]));
+  const people = await db
+    .select()
+    .from(users)
+    .orderBy(asc(users.role), asc(users.name));
 
   return (
     <AppShell session={session}>
@@ -49,7 +47,6 @@ export default async function UsersPage() {
                   </div>
                   <p className="mt-0.5 truncate text-[13px] text-slate-600">
                     {u.email}
-                    {u.clientId ? ` · ${clientName.get(u.clientId) ?? "Unknown company"}` : ""}
                   </p>
                 </div>
                 {u.id !== session.sub && (
@@ -69,7 +66,7 @@ export default async function UsersPage() {
           </ul>
         </Card>
 
-        <NewUserForm clients={clientRows} />
+        <NewUserForm />
       </div>
     </AppShell>
   );
