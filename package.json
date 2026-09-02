@@ -1,9 +1,13 @@
 {
   "name": "cleanship",
   "private": true,
-  "workspaces": ["backend", "frontend"],
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "scripts": {
     "dev": "npm run dev --workspace frontend",
+    "prebuild": "npm install --no-audit --no-fund --silent",
     "build": "npm run build --workspace frontend",
     "start": "npm run start --workspace frontend",
     "lint": "npm run lint --workspace frontend",
