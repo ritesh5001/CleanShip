@@ -2,8 +2,10 @@ import Link from "next/link";
 import { Button, CheckList } from "./ui";
 import { ArrowIcon } from "./icons";
 import { MountTimeline } from "./motion/scroll-reveal";
-import { VideoBackdrop } from "./video-hero";
+import { ImageBackdrop } from "./video-hero";
+import { stockImages } from "@/lib/stock-images";
 import { WhatsAppCta } from "./whatsapp-cta";
+import { HeroMiniForm } from "./hero-mini-form";
 import { Magnetic } from "./motion/magnetic";
 import { serviceCategories, totalServiceCount } from "@/lib/services";
 
@@ -28,11 +30,13 @@ const trustPoints = [
 export function Hero() {
   return (
     <section className="on-navy relative isolate overflow-hidden bg-abyss-950">
-      {/* Thruster footage behind the copy. VideoBackdrop owns the poster-first
-          loading, the reduced-motion / Save-Data opt-outs and the navy scrims. */}
-      <VideoBackdrop
-        slug="thruster-cleaning-polishing"
-        alt="Diver cleaning and polishing a vessel's thruster underwater"
+      {/* Bulk carrier still rather than the thruster footage. A photograph of
+          the vessel type most visitors operate reads faster than close-up
+          underwater work, and dropping the video removes ~2MB from the
+          critical path on the page that carries the LCP. */}
+      <ImageBackdrop
+        src={stockImages.bulkCarrier.src}
+        alt="Bulk carrier alongside at berth"
       />
 
       <div className="container-page relative">
@@ -48,14 +52,11 @@ export function Hero() {
                   Sized well below the display scale — at mega the headline ran
                   three lines deep and pushed the whole fold past a laptop
                   viewport. */}
-              {/* The H1 carries the service and the differentiator, because
-                  that is the language a superintendent actually types. The
-                  better sentence — "Cleaning that passes first inspection" —
-                  moved to the sub-headline below, where sentences belong. */}
-              <h1 className="mt-6 font-display text-[clamp(32px,4.4vw,62px)] leading-[1.02] text-white">
-                In-water hull, hold and tank cleaning
+              {/* Not data-mount: this is the LCP text element. */}
+              <h1 className="mt-6 font-display text-[clamp(32px,4.4vw,62px)] uppercase leading-[1.02] text-white">
+                Keeping your vessel
                 <br />
-                <span className="text-aqua-400">vessel stays on hire</span>
+                <span className="text-aqua-400">clean &amp; ready</span>
               </h1>
 
               <p className="mt-5 font-display text-[clamp(18px,2vw,24px)] uppercase leading-tight text-white/80">
@@ -66,10 +67,10 @@ export function Hero() {
                 data-mount
                 className="mt-6 max-w-[54ch] text-[17px] leading-[1.6] text-white/80"
               >
-                Trusted marine cleaning across global ports. We specialize in
-                professional Hull, hold, tank, cleaning and maintenance —
-                keeping your assets safe, compliant, and ready for their next
-                voyage.
+                Professional marine cleaning services for vessels worldwide.
+                We specialise in cargo hold cleaning, tank cleaning and
+                underwater hull cleaning — helping keep your vessel safe,
+                efficient, compliant and ready for its next voyage.
               </p>
 
               <div data-mount className="mt-8">
@@ -89,8 +90,10 @@ export function Hero() {
               </div>
             </div>
 
-            {/* ---------- Numbered contents index ---------- */}
-            <div data-mount className="lg:col-span-5">
+            {/* ---------- Enquiry form + contents index ---------- */}
+            <div data-mount className="space-y-5 lg:col-span-5">
+              <HeroMiniForm />
+
               {/* Near-opaque: at 4% white the footage read straight through the panel
                   and the scope counts became unreadable. */}
               <div className="rule-accent-top border border-white/20 bg-abyss-950/80">

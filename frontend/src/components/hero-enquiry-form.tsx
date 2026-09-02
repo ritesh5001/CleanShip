@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { serviceCategories } from "@/lib/services";
 import { useFormStatus } from "react-dom";
 import { submitEnquiry, type EnquiryState } from "@/app/contact/actions";
 import { ArrowIcon, CheckIcon } from "./icons";
@@ -28,7 +29,12 @@ const labelClass = "label-caps mb-1.5 block text-[11px] text-white/60";
  * for six fields in a hero is how you get an empty inbox; the full form on
  * /contact is still there for anyone who wants to give more detail.
  */
-export function HeroEnquiryForm({ serviceName }: { serviceName: string }) {
+export function HeroEnquiryForm({
+  serviceName,
+}: {
+  /** Omit on the homepage to render a Service dropdown instead. */
+  serviceName?: string;
+}) {
   const [state, formAction] = useActionState(submitEnquiry, initialState);
 
   if (state.status === "success") {
@@ -58,8 +64,63 @@ export function HeroEnquiryForm({ serviceName }: { serviceName: string }) {
       </p>
 
       <form action={formAction} className="mt-5 space-y-3.5" noValidate>
-        {/* Attributes the enquiry to this page without asking the user. */}
-        <input type="hidden" name="service" value={serviceName} />
+        {/* On a service or port page the enquiry is attributed to that page
+            without asking. On the homepage there is nothing to attribute it
+            to, so the visitor chooses — which is also the single most useful
+            field for routing the enquiry to the right desk. */}
+        {serviceName ? (
+          <input type="hidden" name="service" value={serviceName} />
+        ) : (
+          <div>
+            <label htmlFor="hero-service" className={labelClass}>
+              Service <span className="text-aqua-500">*</span>
+            </label>
+            <select
+              id="hero-service"
+              name="service"
+              required
+              defaultValue=""
+              aria-invalid={state.errors?.service ? true : undefined}
+              aria-describedby={
+                state.errors?.service ? "hero-service-err" : undefined
+              }
+              className={`${fieldBase} appearance-none bg-[length:16px] bg-[right_0.75rem_center] bg-no-repeat pr-10`}
+              style={{
+                backgroundImage:
+                  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300b0b9' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\")",
+              }}
+            >
+              <option value="" disabled>
+                Select a service
+              </option>
+              {serviceCategories.map((category) => (
+                <optgroup key={category.slug} label={category.name}>
+                  {category.services.map((service) => (
+                    <option
+                      key={service.slug}
+                      value={service.name}
+                      className="text-ink-900"
+                    >
+                      {service.name}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+              <option value="Other / not sure" className="text-ink-900">
+                Other / not sure
+              </option>
+            </select>
+            {state.errors?.service && (
+              <p
+                id="hero-service-err"
+                role="alert"
+                className="mt-1.5 text-[12px] text-aqua-200"
+              >
+                {state.errors.service}
+              </p>
+            )}
+          </div>
+        )}
 
         {state.status === "error" && !state.errors && (
           <p

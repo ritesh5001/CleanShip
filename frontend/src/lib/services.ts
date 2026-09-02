@@ -54,14 +54,14 @@ export const serviceCategories: ServiceCategory[] = [
   /* ------------------------------------------------------------------ */
   {
     slug: "hull-cleaning",
-    name: "Hull Cleaning",
+    name: "Underwater Hull Cleaning",
     icon: "hull",
     seoTitle: "Underwater Hull Cleaning & Propeller Polishing",
     metaDescription:
       "Underwater hull cleaning, propeller super polishing, thruster cleaning, in-water class survey and UWILD by commercial dive teams.",
     tagline: "Fuel savings that start the moment the divers surface",
     summary:
-      "Commercial dive teams delivering hull cleaning, propeller polishing, thruster work, in-water surveys and UWILD.",
+      "Professional underwater hull cleaning to remove marine growth, improve vessel performance and support fuel efficiency without dry-docking.",
     keywords: [
       "underwater hull cleaning",
       "propeller polishing",
@@ -94,7 +94,7 @@ export const serviceCategories: ServiceCategory[] = [
         seoTitle: "Underwater Hull Cleaning | In-Water Fouling",
         metaDescription:
           "In-water hull cleaning by commercial divers at anchorage or alongside. Removal of slime, weed and barnacle fouling to restore speed and reduce fuel.",
-        tagline: "Full hull cleaned in the water, vessel stays on hire",
+        tagline: "Keep your hull clean. Keep your vessel moving.",
         summary:
           "Diver-operated brush cart and hand cleaning of the full underwater hull, flat bottom and vertical sides.",
         keywords: [
@@ -104,15 +104,15 @@ export const serviceCategories: ServiceCategory[] = [
           "brush cart hull cleaning",
         ],
         intro: [
-          "We clean the complete underwater hull in the water — vertical sides, bilge keels, flat bottom, sea chests and niche areas — using diver-operated brush carts for large flat areas and hand tools for the geometry a cart cannot follow.",
-          "The result is a hull returned to a hydrodynamically smooth condition, with the fouling removed before it reaches the calcareous stage where it starts damaging the coating itself. Work is carried out at anchorage or alongside, day or night, without interrupting cargo operations.",
+          "Cleanship provides comprehensive underwater hull cleaning while the vessel remains afloat, covering vertical sides, flat bottoms, bilge keels, sea chests and difficult-to-reach areas. Our trained marine teams use professional diver-operated equipment and specialised hand tools to ensure thorough and controlled cleaning.",
+          "Regular hull cleaning helps remove marine growth before it becomes firmly established, supporting a smoother hull surface, better vessel performance and improved fuel efficiency. Operations can be carried out alongside or at anchorage, day or night, with minimal disruption to normal vessel activities.",
         ],
         highlights: [
-          "Full hull: vertical sides, flat bottom, bilge keels and niches",
-          "Brush hardness selected against the antifouling specification",
-          "Sea chests, gratings and inlet areas cleared",
-          "Before-and-after video and photographic records",
-          "No off-hire — work runs alongside cargo operations",
+          "Complete underwater hull cleaning — vertical sides, flat bottom, bilge keels, sea chests and hard-to-reach areas",
+          "Coating-safe cleaning — brush hardness and method selected against the vessel's antifouling coating",
+          "Thorough marine growth removal from critical underwater areas and hull surfaces",
+          "Before-and-after documentation — photographic and video records that verify the result",
+          "Minimal operational disruption — carried out alongside or at anchorage while vessel operations continue",
         ],
         scope: [
           {
@@ -217,7 +217,7 @@ export const serviceCategories: ServiceCategory[] = [
         seoTitle: "Thruster Cleaning & Polishing | Bow & Stern",
         metaDescription:
           "Underwater bow and stern thruster cleaning and polishing. Tunnel fouling removal, blade polishing and grating clearance to restore full manoeuvring thrust.",
-        tagline: "Full thrust restored when you need it most",
+        tagline: "Cleaner thrusters. Better manoeuvrability. Reliable performance.",
         summary:
           "Tunnel, blade and grating cleaning that restores lost manoeuvring thrust on bow and stern units.",
         keywords: [
@@ -226,8 +226,8 @@ export const serviceCategories: ServiceCategory[] = [
           "thruster tunnel cleaning",
         ],
         intro: [
-          "Thruster tunnels are among the worst fouling traps on any vessel. They are sheltered, they sit in still water for long periods, and they are rarely inspected — so growth accumulates on tunnel walls, blades and gratings until manoeuvring performance is noticeably down at exactly the moment it matters.",
-          "We clean the full tunnel bore, polish the propeller blades and hub, and clear the gratings, restoring flow and thrust. Blade and seal condition is inspected and reported during the same dive.",
+          "Thruster tunnels accumulate marine growth in areas where water circulation is limited, affecting water flow and reducing manoeuvring efficiency at exactly the moment reliable thruster performance is essential.",
+          "Cleanship provides professional thruster tunnel cleaning and inspection, removing marine growth from tunnel surfaces, propeller blades, hubs and gratings. Our team restores cleaner water flow, supports thruster efficiency, and inspects key components during the same underwater operation.",
         ],
         highlights: [
           "Bow and stern tunnel thrusters, and azimuth units",
@@ -322,12 +322,16 @@ export const serviceCategories: ServiceCategory[] = [
         ],
       },
       {
+        /* Slug stays `propeller-super-polishing` deliberately: the display
+           name changed, the URL must not. Renaming the slug would 404 every
+           existing link to /services/hull-cleaning/propeller-super-polishing
+           and every port page built on it. */
         slug: "propeller-super-polishing",
-        name: "Propeller Super Polishing",
-        seoTitle: "Propeller Super Polishing | Mirror Finish",
+        name: "Propeller Polishing",
+        seoTitle: "Propeller Polishing | Class A Mirror Finish",
         metaDescription:
           "Underwater propeller super polishing to a Class A mirror finish. Removes fouling, calcareous deposits and roughness to cut fuel consumption and reduce.",
-        tagline: "Mirror finish, measurably lower fuel burn",
+        tagline: "Smoother blades. Lower resistance. Better fuel efficiency.",
         summary:
           "Multi-stage underwater polishing of propeller blades to a Class A mirror finish for maximum efficiency.",
         keywords: [
@@ -337,8 +341,8 @@ export const serviceCategories: ServiceCategory[] = [
           "underwater propeller cleaning",
         ],
         intro: [
-          "The propeller is the single highest-leverage surface on the vessel. It operates at high relative velocity, so roughness there costs disproportionately more than the same roughness on the hull — which is why propeller polishing consistently returns among the best fuel-saving-per-dirham figures in ship operation.",
-          "We polish in progressive stages, working from coarse abrasives that remove calcareous deposits and marine growth through to fine grades that bring the blade to a Class A mirror finish, on both pressure and suction faces from boss to tip.",
+          "The propeller is one of the most critical surfaces for vessel efficiency. Marine growth, scale and surface roughness increase resistance and reduce propulsion efficiency, leading to higher fuel consumption and operating costs.",
+          "Our professional propeller polishing service removes fouling and deposits through progressive polishing stages, from heavy-duty cleaning to fine finishing. We restore both pressure and suction faces from boss to tip, achieving a smooth, Class A-quality finish.",
         ],
         highlights: [
           "Progressive multi-stage polish to Class A mirror finish",
@@ -447,8 +451,8 @@ export const serviceCategories: ServiceCategory[] = [
           "underwater survey ship",
         ],
         intro: [
-          "Classification societies accept in-water survey in place of drydocking for many vessels and inspection scopes, provided the work is carried out by an approved diving contractor to a defined procedure with the surveyor able to see the structure in real time.",
-          "We provide that service — a documented inspection programme, high-definition live video to a surface monitoring station, diver-to-surveyor communications, and a full report package for the class file.",
+          "Avoid unnecessary drydocking while keeping your vessel compliant and thoroughly inspected. Our professional diving team provides reliable in-water surveys and underwater inspections in accordance with approved procedures and project requirements.",
+          "Using high-definition live video, real-time diver-to-surface communication and detailed documentation, we enable surveyors and vessel representatives to monitor the inspection as it happens.",
         ],
         highlights: [
           "Live high-definition video to the surveyor's monitor",
@@ -561,8 +565,8 @@ export const serviceCategories: ServiceCategory[] = [
           "UWILD diving contractor",
         ],
         intro: [
-          "UWILD — Underwater Inspection In Lieu of Drydocking — lets a vessel satisfy a survey requirement that would otherwise mean a dry docking, at a fraction of the cost and with none of the off-hire. For vessels on a five-year cycle it is one of the most significant savings available to a technical department.",
-          "The requirements are exacting. The contractor must hold class approval, the vessel must be eligible, hull markings and reference points must allow the surveyor to locate features precisely, and the inspection must be delivered live with a documented record. We handle the whole programme, from eligibility discussion through to the final report package.",
+          "Underwater Inspection In Lieu of Drydocking (UWILD) allows your vessel to meet mandatory class survey standards at a fraction of drydocking costs — keeping the vessel in service and earning.",
+          "Because the requirements are exacting, Cleanship delivers a complete, class-approved end-to-end service. From verifying vessel eligibility and setting precise hull markings to delivering live-feed video and complete report packages, we manage the entire programme.",
         ],
         highlights: [
           "Complete UWILD programmes to classification society requirements",
@@ -673,9 +677,9 @@ export const serviceCategories: ServiceCategory[] = [
     seoTitle: "Cargo Hold Cleaning Services | Bulk Carriers",
     metaDescription:
       "Professional cargo hold cleaning for bulk carriers and container ships. Shore gangs, riding crews and rope access teams delivering grain-clean and.",
-    tagline: "Grain-clean holds, on schedule, first inspection",
+    tagline: "Grain-clean standards | Zero off-hire delays",
     summary:
-      "Shore gangs, riding crews and rope access teams that take cargo holds from previous-cargo dirty to grain-clean and inspection-ready.",
+      "From heavy cargo residue to grain-clean standards, Cleanship provides expert shore gangs, riding crews and certified rope access teams so your cargo holds pass surveyor inspection on the first try.",
     keywords: [
       "cargo hold cleaning",
       "hold cleaning services",
@@ -745,8 +749,8 @@ export const serviceCategories: ServiceCategory[] = [
           "in port hold cleaning",
         ],
         intro: [
-          "When the schedule is tight and every hold has to be ready before the next fixture, volume of labour is what wins. Our shore gangs put a full complement of trained cleaners on board the moment the last grab lifts, so cleaning runs in parallel with your other port operations rather than after them.",
-          "Gang size is matched to the number of holds, the previous cargo and the hours available. We bring our own high-pressure units, chemicals, lighting and safety equipment, so nothing is drawn from the ship's stores or the crew's working hours.",
+          "When port schedules are tight and every hold must be ready for the next fixture, manpower and efficiency are what win. Cleanship puts a fully trained shore gang on board the second cargo discharge finishes, so hold washing runs simultaneously with your remaining port operations rather than after them.",
+          "We scale gang size precisely to your vessel's cargo history and timeline. Equipped with our own heavy-duty high-pressure units, eco-friendly chemicals, temporary lighting and certified safety gear, we deliver complete operational autonomy without drawing from the ship's stores or the crew's hours.",
         ],
         highlights: [
           "Gangs scaled to the vessel — from 6 to 40+ cleaners",
@@ -855,8 +859,8 @@ export const serviceCategories: ServiceCategory[] = [
           "cleaning during sea passage",
         ],
         intro: [
-          "The most economical hold cleaning is the cleaning that costs you no port time at all. Our riding crews join at the discharge port, sail with the vessel, and work through the ballast passage so the holds are finished before the load port pilot is even ordered.",
-          "Riding crews carry full seafarer documentation, medicals and flag-state paperwork, and integrate with the ship's safety management system from the moment they board. They work under the master's authority and to the ship's permit-to-work regime throughout.",
+          "Eliminate costly port delays entirely. Cleanship riding squads board at the discharge port and work continuously during the ballast passage, so your cargo holds are grain-clean and surveyor-ready before the load port pilot is even requested.",
+          "Our riding crews carry comprehensive seafarer documentation, valid medicals and flag-state endorsements. Operating strictly under the master's authority and the ship's permit-to-work system, they integrate seamlessly into your vessel's Safety Management System with no added administrative burden for your crew.",
         ],
         highlights: [
           "Vessel loses zero commercial time to cleaning",

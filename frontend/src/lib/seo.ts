@@ -96,7 +96,12 @@ export function buildMetadata({
   noIndex,
   image,
 }: MetaInput): Metadata {
-  const fittedTitle = fit(title, TITLE_BUDGET);
+  /* The root layout's title template appends " | Cleanship" to child pages,
+     so their budget is 60 minus that. The homepage is not a child of the
+     template and writes the brand inline, so it gets the full 60 — budgeting
+     it at 48 clamped a title that already fitted. */
+  const carriesBrand = title.includes(`| ${siteConfig.name}`);
+  const fittedTitle = fit(title, carriesBrand ? 60 : TITLE_BUDGET);
   const fittedDescription = fit(description, DESCRIPTION_BUDGET);
   const url = `${BASE_URL}${path === "/" ? "" : path}`;
   const canonical = canonicalPath ? `${BASE_URL}${canonicalPath}` : url;

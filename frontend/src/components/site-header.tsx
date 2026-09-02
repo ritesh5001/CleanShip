@@ -82,20 +82,24 @@ export function SiteHeader() {
             · scroll-padding-top in globals.css */}
       <div className="sticky top-0 z-50">
         {/* ---------- Utility bar (navy) ---------- */}
-        <div className="on-navy hidden bg-navy-900 text-white/70 lg:block">
-        <div className="container-page flex h-10 items-center justify-between text-[13px]">
+        {/* Contrast raised from white/70 on navy-900, which measured below
+            the WCAG AA threshold for small text and read as disabled rather
+            than as a live contact bar. The bar is also a touch taller so the
+            phone and email are comfortable tap targets. */}
+        <div className="on-navy hidden bg-navy-900 text-white/90 lg:block">
+        <div className="container-page flex h-11 items-center justify-between text-[13.5px] font-medium">
           <p>Marine Cleaning You Can Trust — hold, tank, hull and offshore</p>
           <div className="flex items-center gap-7">
             <a
               href={siteConfig.phones[0].href}
-              className="flex items-center gap-2 transition-colors duration-[140ms] hover:text-aqua-200"
+              className="flex items-center gap-2 text-white transition-colors duration-[140ms] hover:text-aqua-200"
             >
               <PhoneIcon className="size-4" />
               {siteConfig.phones[0].number}
             </a>
             <a
               href={`mailto:${siteConfig.email}`}
-              className="flex items-center gap-2 transition-colors duration-[140ms] hover:text-aqua-200"
+              className="flex items-center gap-2 text-white transition-colors duration-[140ms] hover:text-aqua-200"
             >
               <MailIcon className="size-4" />
               {siteConfig.email}

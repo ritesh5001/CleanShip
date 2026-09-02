@@ -114,6 +114,8 @@ export const siteConfig = {
     facebook: "https://www.facebook.com/profile.php?id=61581138043689",
     youtube: "https://www.youtube.com/@Cleanshipmarineservices",
   },
+
+  
 } as const;
 
 /** Ports and regions we mention for local / long-tail SEO reach. */

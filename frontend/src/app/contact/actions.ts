@@ -45,6 +45,12 @@ export async function submitEnquiry(
 
   const errors: Record<string, string> = {};
 
+  /* The homepage hero form renders Service as a required dropdown (elsewhere
+     it is a hidden field carrying the page's own service). `required` on the
+     element is a browser hint, not a guarantee — anything can POST this form,
+     so it is checked here too. */
+  if (!service) errors.service = "Please choose a service.";
+
   if (name.length < 2) errors.name = "Please enter your name.";
   else if (name.length > MAX.name) errors.name = "That name is too long.";
 
