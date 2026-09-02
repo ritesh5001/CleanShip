@@ -1,0 +1,13 @@
+{
+  "name": "Cleanship Marine Services FZE",
+  "short_name": "Cleanship",
+  "description": "Underwater hull cleaning, propeller polishing, hold and tank cleaning, offshore support and NDT services for bulk carriers, tankers and container ships worldwide.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#06203a",
+  "icons": [
+    { "src": "/icon.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/apple-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

@@ -16,9 +16,9 @@ const loginSchema = z.object({
 });
 
 /**
- * The single sign-in for the whole system — enquiry inbox and Hold Watch
+ * The single sign-in for the whole system — enquiry inbox and CleanTrack
  * alike. Previously the CMS authenticated against an Express API on another
- * origin and Hold Watch had its own login; one users table means one door.
+ * origin and CleanTrack had its own login; one users table means one door.
  */
 export async function login(
   _prev: LoginState,

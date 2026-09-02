@@ -15,7 +15,7 @@ import {
  * The database. All of it.
  *
  * This file replaces two schemas that used to live in separate services — the
- * Express API's and Hold Watch's. They are merged because they were always one
+ * Express API's and CleanTrack's. They are merged because they were always one
  * database, and keeping two definitions of it meant two migration histories
  * racing to modify the same instance.
  *
@@ -38,10 +38,10 @@ import {
 /**
  * Roles across both products.
  *
- *   admin       everything, both the enquiry inbox and Hold Watch
+ *   admin       everything, both the enquiry inbox and CleanTrack
  *   editor      the enquiry inbox only
- *   supervisor  Hold Watch — updates jobs they are assigned to
- *   client      Hold Watch — read-only, their own company's jobs
+ *   supervisor  CleanTrack — updates jobs they are assigned to
+ *   client      CleanTrack — read-only, their own company's jobs
  *
  * One table, so one person has one password. Previously there were two user
  * tables in two services and an admin needed a login for each.
@@ -62,7 +62,7 @@ export const users = pgTable(
     passwordHash: text("password_hash").notNull(),
     name: varchar("name", { length: 120 }).notNull(),
     role: userRole("role").notNull().default("editor"),
-    /** Set for role "client" only — scopes Hold Watch queries to their company. */
+    /** Set for role "client" only — scopes CleanTrack queries to their company. */
     clientId: integer("client_id"),
     phone: varchar("phone", { length: 40 }),
     active: integer("active").notNull().default(1),
@@ -112,14 +112,13 @@ export const enquiries = pgTable(
 );
 
 /* ------------------------------------------------------------------ */
-/* Hold Watch                                                          */
+/* CleanTrack                                                          */
 /*                                                                     */
-/* Still prefixed `hw_`. The prefix is no longer a collision guard —    */
-/* there is only one schema now — but renaming five tables would mean a */
-/* migration on live data to buy nothing.                              */
+/* Prefixed `ct_` so the job-tracking tables are obvious at a glance in  */
+/* a database that also holds the website's users and enquiries.        */
 /* ------------------------------------------------------------------ */
 
-export const hwClients = pgTable("hw_clients", {
+export const ctClients = pgTable("ct_clients", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 160 }).notNull(),
   contactName: varchar("contact_name", { length: 120 }),
@@ -130,20 +129,20 @@ export const hwClients = pgTable("hw_clients", {
     .defaultNow(),
 });
 
-export const hwJobType = pgEnum("hw_job_type", [
+export const ctJobType = pgEnum("ct_job_type", [
   "hold-cleaning",
   "tank-cleaning",
 ]);
 
-export const hwJobStatus = pgEnum("hw_job_status", [
+export const ctJobStatus = pgEnum("ct_job_status", [
   "scheduled",
   "in-progress",
   "complete",
   "cancelled",
 ]);
 
-export const hwJobs = pgTable(
-  "hw_jobs",
+export const ctJobs = pgTable(
+  "ct_jobs",
   {
     id: serial("id").primaryKey(),
     reference: varchar("reference", { length: 32 }).notNull(),
@@ -151,8 +150,8 @@ export const hwJobs = pgTable(
     imo: varchar("imo", { length: 16 }),
     port: varchar("port", { length: 160 }).notNull(),
     berth: varchar("berth", { length: 120 }),
-    jobType: hwJobType("job_type").notNull().default("hold-cleaning"),
-    status: hwJobStatus("status").notNull().default("scheduled"),
+    jobType: ctJobType("job_type").notNull().default("hold-cleaning"),
+    status: ctJobStatus("status").notNull().default("scheduled"),
     clientId: integer("client_id").notNull(),
     supervisorId: integer("supervisor_id"),
     compartmentCount: integer("compartment_count").notNull().default(5),
@@ -179,16 +178,16 @@ export const hwJobs = pgTable(
       .defaultNow(),
   },
   (t) => [
-    uniqueIndex("hw_jobs_reference_idx").on(t.reference),
-    uniqueIndex("hw_jobs_share_token_idx").on(t.shareToken),
-    index("hw_jobs_client_idx").on(t.clientId),
-    index("hw_jobs_supervisor_idx").on(t.supervisorId),
+    uniqueIndex("ct_jobs_reference_idx").on(t.reference),
+    uniqueIndex("ct_jobs_share_token_idx").on(t.shareToken),
+    index("ct_jobs_client_idx").on(t.clientId),
+    index("ct_jobs_supervisor_idx").on(t.supervisorId),
   ],
 );
 
 /**
  * A compartment's completed stages are stored TWICE: as an array here, and as
- * an append-only log in hw_stage_events.
+ * an append-only log in ct_stage_events.
  *
  * The array is what every screen reads — one row per compartment, no joins,
  * cheap enough to poll on a dock connection. The log answers "when exactly was
@@ -197,8 +196,8 @@ export const hwJobs = pgTable(
  *
  * The array is derived state. If the two disagree, the log is the truth.
  */
-export const hwCompartments = pgTable(
-  "hw_compartments",
+export const ctCompartments = pgTable(
+  "ct_compartments",
   {
     id: serial("id").primaryKey(),
     jobId: integer("job_id").notNull(),
@@ -211,21 +210,21 @@ export const hwCompartments = pgTable(
       .defaultNow(),
   },
   (t) => [
-    uniqueIndex("hw_compartments_job_position_idx").on(t.jobId, t.position),
-    index("hw_compartments_job_idx").on(t.jobId),
+    uniqueIndex("ct_compartments_job_position_idx").on(t.jobId, t.position),
+    index("ct_compartments_job_idx").on(t.jobId),
   ],
 );
 
-export const hwStageAction = pgEnum("hw_stage_action", ["completed", "undone"]);
+export const ctStageAction = pgEnum("ct_stage_action", ["completed", "undone"]);
 
-export const hwStageEvents = pgTable(
-  "hw_stage_events",
+export const ctStageEvents = pgTable(
+  "ct_stage_events",
   {
     id: serial("id").primaryKey(),
     jobId: integer("job_id").notNull(),
     compartmentId: integer("compartment_id").notNull(),
     stageKey: varchar("stage_key", { length: 40 }).notNull(),
-    action: hwStageAction("action").notNull(),
+    action: ctStageAction("action").notNull(),
     userId: integer("user_id").notNull(),
     /** Denormalised so a deleted or renamed user cannot erase the trail. */
     userName: varchar("user_name", { length: 120 }).notNull(),
@@ -244,15 +243,15 @@ export const hwStageEvents = pgTable(
     idempotencyKey: varchar("idempotency_key", { length: 64 }),
   },
   (t) => [
-    index("hw_stage_events_job_idx").on(t.jobId),
-    index("hw_stage_events_compartment_idx").on(t.compartmentId),
-    uniqueIndex("hw_stage_events_idem_idx").on(t.idempotencyKey),
+    index("ct_stage_events_job_idx").on(t.jobId),
+    index("ct_stage_events_compartment_idx").on(t.compartmentId),
+    uniqueIndex("ct_stage_events_idem_idx").on(t.idempotencyKey),
   ],
 );
 
 export type User = typeof users.$inferSelect;
 export type Enquiry = typeof enquiries.$inferSelect;
-export type HwClient = typeof hwClients.$inferSelect;
-export type HwJob = typeof hwJobs.$inferSelect;
-export type HwCompartment = typeof hwCompartments.$inferSelect;
-export type HwStageEvent = typeof hwStageEvents.$inferSelect;
+export type CtClient = typeof ctClients.$inferSelect;
+export type CtJob = typeof ctJobs.$inferSelect;
+export type CtCompartment = typeof ctCompartments.$inferSelect;
+export type CtStageEvent = typeof ctStageEvents.$inferSelect;

@@ -8,20 +8,20 @@ frontend/   The whole system — one Next.js app, one deploy, one database
 
 - `www.cleanship.co` — the marketing site, statically prerendered
 - `www.cleanship.co/admin` — the enquiry inbox
-- `holdwatch.cleanship.co` — Hold Watch, live cleaning progress
+- `cleantrack.cleanship.co` — CleanTrack, live cleaning progress
 
 All three come out of `frontend/`. There is no separate API service: the
-Express backend and the standalone Hold Watch app were merged into this one
+Express backend and the standalone job-tracker app were merged into this one
 app, because they were always one database and keeping three deployments in
 step bought nothing.
 
 One `users` table means one password per person, and the session cookie is
 scoped to `.cleanship.co` so a single sign-in works on the site and the
-Hold Watch subdomain alike.
+CleanTrack subdomain alike.
 
-`holdwatch/` is a separate product on its own subdomain, not part of the
+`cleantrack/` is a separate product on its own subdomain, not part of the
 marketing site. It shares the Postgres instance (its tables are all prefixed
-`hw_`) and nothing else. See [holdwatch/README.md](holdwatch/README.md).
+`hw_`) and nothing else. See [cleantrack/README.md](cleantrack/README.md).
 
 They share no code at runtime. Each has its own `package.json`, `node_modules`,
 build and deploy.

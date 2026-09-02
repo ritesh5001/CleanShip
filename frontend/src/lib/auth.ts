@@ -9,11 +9,11 @@ import { env } from "./env";
  * One session for the whole system.
  *
  * Previously the Express API minted a `cleanship_session` cookie for the CMS
- * and Hold Watch minted its own `hw_session`. Two cookies, two secrets, two
+ * and the job tracker minted its own. Two cookies, two secrets, two
  * user tables, two passwords per person. This is the single replacement.
  *
  * The cookie is scoped to COOKIE_DOMAIN (".cleanship.co" in production) so one
- * sign-in works on the marketing admin AND the Hold Watch subdomain. Locally
+ * sign-in works on the marketing admin AND the CleanTrack subdomain. Locally
  * it is left unset, where host-only on localhost is correct.
  *
  * `jose` rather than `jsonwebtoken` because this may be evaluated in the Edge
@@ -33,7 +33,7 @@ export type Session = {
   email: string;
   name: string;
   role: Role;
-  /** Present for role "client" — scopes Hold Watch queries to their company. */
+  /** Present for role "client" — scopes CleanTrack queries to their company. */
   clientId: number | null;
 };
 
@@ -111,7 +111,7 @@ export async function getSession(): Promise<Session | null> {
  */
 export async function requireSession(...roles: Role[]): Promise<Session> {
   const session = await getSession();
-  if (!session) redirect("/holdwatch/login");
+  if (!session) redirect("/cleantrack/login");
   if (roles.length && !roles.includes(session.role)) {
     redirect(landingFor(session.role));
   }
@@ -120,8 +120,8 @@ export async function requireSession(...roles: Role[]): Promise<Session> {
 
 /** Where a role belongs after signing in. One definition, every redirect. */
 export function landingFor(role: Role) {
-  if (role === "supervisor") return "/holdwatch/app";
-  if (role === "client") return "/holdwatch/client";
+  if (role === "supervisor") return "/cleantrack/app";
+  if (role === "client") return "/cleantrack/client";
   if (role === "editor") return "/admin";
-  return "/holdwatch/admin";
+  return "/cleantrack/admin";
 }

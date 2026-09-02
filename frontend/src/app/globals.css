@@ -466,29 +466,29 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* Hold Watch                                                          */
+/* CleanTrack                                                          */
 /*                                                                     */
-/* Hold Watch shares this stylesheet but is a different product with    */
+/* CleanTrack shares this stylesheet but is a different product with    */
 /* different needs: it is a tool used one-handed on a deck, not a       */
-/* marketing site read at a desk. These rules are scoped to .hw-root so */
+/* marketing site read at a desk. These rules are scoped to .ct-root so */
 /* they cannot leak into the site.                                     */
 /* ------------------------------------------------------------------ */
 
-.hw-root {
+.ct-root {
   /* The marketing body sets a 1.62 line height tuned for long prose. In a
      dense job table that is wasteful vertical space on a phone. */
   line-height: 1.5;
 }
 
-.hw-root button,
-.hw-root [role="button"],
-.hw-root a[href] {
+.ct-root button,
+.ct-root [role="button"],
+.ct-root a[href] {
   -webkit-tap-highlight-color: transparent;
 }
 
 @media (max-width: 640px) {
-  .hw-root button,
-  .hw-root [role="button"] {
+  .ct-root button,
+  .ct-root [role="button"] {
     /* Stops a mis-tap being interpreted as a double-tap zoom, which on a
        stage checklist means the tap is simply lost. */
     touch-action: manipulation;
@@ -497,8 +497,8 @@
 
 /* iOS zooms the viewport when a focused input is under 16px. On a supervisor's
    phone that reflows the page mid-entry. */
-.hw-root input,
-.hw-root select,
-.hw-root textarea {
+.ct-root input,
+.ct-root select,
+.ct-root textarea {
   font-size: 16px;
 }

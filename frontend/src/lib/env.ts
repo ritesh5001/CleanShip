@@ -5,7 +5,7 @@ import { z } from "zod";
  *
  * Only the database and session variables are required. The marketing site
  * itself is statically prerendered and needs none of them at build time, so a
- * missing DATABASE_URL breaks the admin and Hold Watch and leaves the public
+ * missing DATABASE_URL breaks the admin and CleanTrack and leaves the public
  * site working — which is the right failure shape for a marketing site.
  */
 const schema = z.object({
@@ -17,13 +17,13 @@ const schema = z.object({
   /** Absolute origin of the marketing site. */
   APP_URL: z.string().url().default("http://localhost:3000"),
   /**
-   * Origin Hold Watch is served from. Client share links are built from it, so
+   * Origin CleanTrack is served from. Client share links are built from it, so
    * a wrong value sends every link you issue to the wrong host.
    */
-  HOLDWATCH_URL: z.string().url().default("http://localhost:3000/holdwatch"),
+  CLEANTRACK_URL: z.string().url().default("http://localhost:3000/cleantrack"),
   /**
    * Domain the session cookie is scoped to. Set to ".cleanship.co" in
-   * production so one sign-in works on both the site and the Hold Watch
+   * production so one sign-in works on both the site and the CleanTrack
    * subdomain — that is the whole point of the merge. Leave unset locally,
    * where everything is on localhost anyway.
    */

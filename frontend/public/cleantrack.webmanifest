@@ -1,0 +1,31 @@
+{
+  "name": "CleanTrack \u2014 Cleanship",
+  "short_name": "CleanTrack",
+  "description": "Update hold and tank cleaning progress from the vessel.",
+  "start_url": "/cleantrack/app",
+  "scope": "/cleantrack",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f8fa",
+  "theme_color": "#0a2e52",
+  "icons": [
+    {
+      "src": "/cleantrack-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/cleantrack-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/cleantrack-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

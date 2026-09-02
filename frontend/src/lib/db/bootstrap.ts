@@ -45,7 +45,7 @@ async function main() {
   if (existingAdmins.length > 0) {
     console.error(
       `\nAn admin already exists (${existingAdmins[0].email}).\n` +
-        "Create further accounts from /holdwatch/admin/users while signed in " +
+        "Create further accounts from /cleantrack/admin/users while signed in " +
         "as that account — this script only bootstraps an empty system.\n",
     );
     process.exit(1);
@@ -75,7 +75,7 @@ This password is shown ONCE and is not stored anywhere in plaintext. Save it
 now. If you lose it there is no reset flow yet — the recovery path is to delete
 the row and run this again.
 
-Sign in at /holdwatch/login, then add supervisors, clients and\neditors from /holdwatch/admin/users.
+Sign in at /cleantrack/login, then add supervisors, clients and\neditors from /cleantrack/admin/users.
 `);
 }
 

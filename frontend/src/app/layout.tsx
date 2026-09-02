@@ -52,6 +52,10 @@ export const metadata: Metadata = {
   publisher: siteConfig.legalName,
   category: "Marine Services",
   alternates: { canonical: "/" },
+  /* A plain file rather than app/manifest.ts. The file convention injects its
+     link globally and cannot be overridden by a nested layout, which meant
+     CleanTrack's install prompt served the marketing manifest. */
+  manifest: "/manifest.webmanifest",
   openGraph: {
     type: "website",
     locale: "en_AE",

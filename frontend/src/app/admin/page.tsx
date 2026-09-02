@@ -54,13 +54,13 @@ export default async function AdminInboxPage() {
               Cleanship admin
             </span>
             <Link
-              href="/holdwatch/admin"
+              href="/cleantrack/admin"
               className="text-[13px] font-medium text-blue-700 hover:underline"
             >
-              Hold Watch →
+              CleanTrack →
             </Link>
           </div>
-          <form action="/holdwatch/logout" method="post">
+          <form action="/cleantrack/logout" method="post">
             <button
               type="submit"
               className="rounded-md px-3 py-2 text-[14px] font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-900"
