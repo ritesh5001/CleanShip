@@ -7,6 +7,17 @@ in `../frontend`, which is the only thing deployed. There is no API between
 them and no second process to run — an HTTP hop between two pieces of the same
 codebase talking to the same Postgres would buy latency and nothing else.
 
+> ### Nothing here is deployable
+>
+> `npm run build` and `npm run start` in this package deliberately fail with an
+> explanation. This folder used to hold an Express API deployed on Render; that
+> service was retired when everything moved into the one Next app. If a build
+> log brought you here, **delete that service** — nothing depends on it.
+>
+> The site deploys from `frontend/` on Vercel, with Root Directory set to
+> `frontend`. npm workspaces are detected from the repository root, so this
+> package is installed automatically.
+
 ## The line between here and frontend
 
 | Here | `frontend/` |
