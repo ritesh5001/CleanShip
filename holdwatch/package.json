@@ -2,7 +2,7 @@
   "name": "holdwatch",
   "version": "0.1.0",
   "private": true,
-  "description": "Hold Watch — live ship cleaning progress for supervisors, admin and clients.",
+  "description": "Hold Watch \u2014 live ship cleaning progress for supervisors, admin and clients.",
   "scripts": {
     "dev": "next dev -p 3200",
     "build": "next build",
@@ -12,7 +12,8 @@
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:seed": "tsx src/lib/db/seed.ts",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:bootstrap": "tsx src/lib/db/bootstrap.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

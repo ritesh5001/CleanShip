@@ -25,14 +25,39 @@ backend/       the marketing API (unrelated deploy, shares the database)
 ```bash
 cd holdwatch
 npm install
-cp .env.example .env          # fill in DATABASE_URL and SESSION_SECRET
+cp .env.example .env          # DATABASE_URL is the same one as backend/.env
 npm run db:push               # creates the hw_* tables
-npm run db:seed               # demo accounts + three jobs
+npm run db:bootstrap -- "you@cleanship.co" "Your Name"
 npm run dev                   # http://localhost:3200
 ```
 
-The seed prints three logins. **They share one published password — delete
-them or change every password before this touches anything real.**
+`db:bootstrap` creates one admin, prints a generated password **once**, and
+refuses to run if an admin already exists. Everyone else is added from
+`/admin/users` once you are signed in.
+
+There is also `npm run db:seed`, which plants demo accounts and three sample
+jobs. It **refuses to run against anything but localhost**, because it uses a
+password published in this repository. Override with `ALLOW_DEMO_SEED=yes` only
+against a database you are willing to throw away.
+
+## One database, shared with the marketing API
+
+Hold Watch uses the **same Neon instance** as `backend/`. `DATABASE_URL` is
+copied from `backend/.env` verbatim.
+
+Two things make that safe:
+
+1. Every table here is prefixed `hw_`.
+2. `drizzle.config.ts` sets `tablesFilter: ["hw_*"]`, so drizzle-kit cannot see
+   — and therefore cannot drop — the marketing API's tables.
+
+**Add a table without the `hw_` prefix and it falls outside that filter**, at
+which point the other project's next `db:push` may drop it. The prefix is not
+a naming convention, it is the safety mechanism.
+
+The signing keys are deliberately *not* shared: `SESSION_SECRET` here must
+differ from the API's `JWT_SECRET`, so a leak of one cannot forge sessions in
+the other.
 
 ## Decisions worth knowing before you change anything
 
@@ -119,11 +144,9 @@ directory set to `holdwatch`. Point `holdwatch.cleanship.co` (or similar) at it
 and set `APP_URL` to that exact origin — client share links are built from it,
 so if it is wrong every link you send points at localhost.
 
-Environment: `DATABASE_URL`, `SESSION_SECRET`, `APP_URL`.
-
-Safe to reuse the marketing database. Every table is prefixed `hw_` and
-`drizzle.config.ts` is filtered to that prefix, so a push from either project
-cannot touch the other's tables.
+Environment: `DATABASE_URL` (same value as the marketing API),
+`SESSION_SECRET` (a different value from the API's `JWT_SECRET`), and `APP_URL`
+set to the real public origin.
 
 ## Open questions
 

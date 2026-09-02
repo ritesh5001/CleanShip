@@ -18,6 +18,28 @@ import { newShareToken } from "./seed-helpers";
 const DEMO_PASSWORD = "holdwatch-demo-2026";
 
 async function main() {
+  /* This plants accounts with a password that is published in this file and
+     left in terminal history. That is fine for a throwaway local database and
+     a liability anywhere else — Hold Watch shares its database with the
+     marketing API, so "anywhere else" includes the default configuration.
+     Use `npm run db:bootstrap` for a real system. */
+  const local =
+    /localhost|127\.0\.0\.1|::1/.test(process.env.DATABASE_URL ?? "") ||
+    process.env.ALLOW_DEMO_SEED === "yes";
+
+  if (!local) {
+    console.error(`
+Refusing to seed.
+
+DATABASE_URL does not point at localhost, and this script creates demo accounts
+that share one published password.
+
+  · For a real system:   npm run db:bootstrap -- "you@cleanship.co" "Your Name"
+  · To override anyway:  ALLOW_DEMO_SEED=yes npm run db:seed
+`);
+    process.exit(1);
+  }
+
   console.log("Seeding Hold Watch…\n");
 
   const [acme] = await upsertClient("Meridian Bulk Carriers", "Ops Desk", "ops@example.com");
