@@ -30,6 +30,7 @@
     "plugins": [
       "expo-router",
       "expo-status-bar",
+      "./plugins/with-gradle-wrapper-version",
       "./plugins/with-release-signing"
     ],
     "scheme": "cleantrack",
