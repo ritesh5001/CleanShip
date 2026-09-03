@@ -30,11 +30,21 @@ export function createApp() {
   app.use(
     cors({
       origin(origin, callback) {
-        /* No Origin header means a server-to-server call — the Next app on
-           Vercel, or curl. CORS has nothing to say about those. */
+        /* No Origin header means the caller is not a browser — the Next app
+           on Vercel, the Android app, curl. CORS has nothing to say about
+           those, and the app in particular depends on this: a React Native
+           fetch sends no Origin, so an allow-list that rejected them would
+           break every phone in the fleet. */
         if (!origin) return callback(null, true);
         if (env.corsOrigins.includes(origin)) return callback(null, true);
-        callback(new Error(`Origin ${origin} is not allowed.`));
+
+        /* Refused, but NOT an error. Throwing here surfaces as a 500, which
+           puts a server-fault line in the logs for what is really a routine
+           rejection — and tells the developer staring at it that the API is
+           broken rather than that their origin is missing from the list.
+           Answering without the CORS headers lets the browser block it, which
+           is exactly what should happen. */
+        callback(null, false);
       },
       credentials: true,
       allowedHeaders: ["Content-Type", "Authorization", "X-Share-Proof"],

@@ -45,8 +45,23 @@ else
 fi
 npx expo prebuild "${PREBUILD_ARGS[@]}"
 
-echo "==> gradle assembleRelease"
 cd android
+
+# Generate the autolinking sources before anything asks CMake to compile.
+#
+# OnLoad.cpp does `#include <autolinking.h>`, and that header — along with the
+# Android-autolinking.cmake that CMake reads — is produced by a Gradle task.
+# In an assembleRelease graph that task does not reliably run before the native
+# build configures, so a clean build dies seven minutes in with:
+#
+#   fatal error: 'autolinking.h' file not found
+#
+# Running it explicitly first is deterministic and costs a few seconds. It is
+# a no-op (UP-TO-DATE) once the files exist.
+echo "==> gradle generateAutolinkingNewArchitectureFiles"
+./gradlew :app:generateAutolinkingNewArchitectureFiles --no-daemon
+
+echo "==> gradle assembleRelease"
 ./gradlew assembleRelease --no-daemon \
   -PCLEANTRACK_STORE_FILE="$ROOT/credentials/$CLEANTRACK_STORE_FILE" \
   -PCLEANTRACK_STORE_PASSWORD="$CLEANTRACK_STORE_PASSWORD" \
