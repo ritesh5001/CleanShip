@@ -33,7 +33,7 @@ export function SiteFooter() {
   return (
     /* Solid navy — one of the system's two permitted page backgrounds.
        `on-navy` switches the focus ring and eyebrow to their aqua variants. */
-    <footer className="on-navy bg-navy-900 text-white/72">
+    <footer data-site-chrome="" className="on-navy bg-navy-900 text-white/72">
       <div className="container-page py-16 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-8">
           {/* Brand + NAP */}

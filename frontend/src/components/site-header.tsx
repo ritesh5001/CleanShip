@@ -80,7 +80,9 @@ export function SiteHeader() {
             · the service page progress rail
             · the service page sidebar
             · scroll-padding-top in globals.css */}
-      <div className="sticky top-0 z-50">
+      {/* data-site-chrome marks this for the CleanTrack rule in globals.css,
+          which hides the marketing header on the app's own screens. */}
+      <div data-site-chrome="" className="sticky top-0 z-50">
         {/* ---------- Utility bar (navy) ---------- */}
         {/* Contrast raised from white/70 on navy-900, which measured below
             the WCAG AA threshold for small text and read as disabled rather
@@ -263,6 +265,7 @@ export function SiteHeader() {
 
       {/* ---------- Mobile drawer ---------- */}
       <div
+        data-site-chrome=""
         id="mobile-menu"
         className={`fixed inset-0 z-40 lg:hidden ${
           mobileOpen ? "pointer-events-auto" : "pointer-events-none"

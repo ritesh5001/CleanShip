@@ -1,23 +1,18 @@
 {
   "name": "cleanship",
   "private": true,
-  "workspaces": [
-    "backend",
-    "frontend"
-  ],
   "scripts": {
-    "dev": "npm run dev --workspace frontend",
-    "prebuild": "node scripts/clean-stale-workspace-installs.mjs && npm install --no-audit --no-fund --silent",
-    "build": "npm run build --workspace frontend",
-    "start": "npm run start --workspace frontend",
-    "lint": "npm run lint --workspace frontend",
-    "typecheck": "npm run typecheck --workspaces --if-present",
-    "db:push": "npm run db:push --workspace backend",
-    "db:generate": "npm run db:generate --workspace backend",
-    "db:bootstrap": "npm run db:bootstrap --workspace backend",
-    "db:studio": "npm run db:studio --workspace backend"
+    "install:all": "npm --prefix backend install && npm --prefix frontend install",
+    "dev": "npm --prefix frontend run dev",
+    "dev:api": "npm --prefix backend run dev",
+    "build": "npm --prefix backend run build && npm --prefix frontend run build",
+    "typecheck": "npm --prefix backend run typecheck && npm --prefix frontend run typecheck",
+    "lint": "npm --prefix frontend run lint",
+    "migrate": "npm --prefix backend run migrate",
+    "seed": "npm --prefix backend run seed"
   },
   "engines": {
     "node": "22.x"
-  }
+  },
+  "description": "Two separately deployed apps: backend/ is the CleanTrack API on Render, frontend/ is the Next.js site on Vercel. Neither imports the other; they talk over HTTP."
 }

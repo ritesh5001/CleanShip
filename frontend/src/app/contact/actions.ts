@@ -2,6 +2,7 @@
 
 import { siteConfig } from "@/lib/site";
 import { sendEnquiryEmails, type Enquiry } from "@/lib/email";
+import { submitEnquiry as recordEnquiry } from "@/lib/api";
 
 export type EnquiryState = {
   status: "idle" | "success" | "error";
@@ -96,6 +97,29 @@ export async function submitEnquiry(
   };
 }
 
+/**
+ * Emails first, then the inbox.
+ *
+ * The email is what actually reaches a person, so it decides whether the
+ * submission succeeded — a database that is down must not turn a real enquiry
+ * into an error page for a customer who did nothing wrong. Recording it in
+ * CleanTrack is best-effort on top, and a failure there is logged rather than
+ * shown.
+ */
 async function deliverEnquiry(enquiry: Enquiry): Promise<void> {
   await sendEnquiryEmails(enquiry);
+
+  try {
+    await recordEnquiry({
+      name: enquiry.name,
+      email: enquiry.email,
+      phone: enquiry.phone || null,
+      company: enquiry.company || null,
+      vessel: enquiry.vessel || null,
+      service: enquiry.service || null,
+      message: enquiry.message,
+    });
+  } catch (error) {
+    console.error("[enquiry] not recorded in the inbox", error);
+  }
 }

@@ -1,31 +1,34 @@
 import "server-only";
 import { cookies } from "next/headers";
-import { env } from "@cleanship/backend/env";
-import {
-  SHARE_MAX_AGE_SECONDS,
-  shareCookieName,
-  shareCookieValue,
-} from "@cleanship/backend/cleantrack/share";
 
 /**
- * Cookie half of the customer share gate. The naming and signing live in the
- * backend package; only `next/headers` is here.
+ * Remembers that a customer passed the IMO gate.
+ *
+ * The API hands back a `proof` string when the IMO matches; it is an HMAC of
+ * the share token, so this cookie cannot be forged and is worthless on any
+ * other vessel's link. Keeping it here rather than in localStorage means the
+ * server can render the page already unlocked on a return visit.
  */
 
-export async function grantShareAccess(shareToken: string) {
+const MAX_AGE_SECONDS = 60 * 60 * 12;
+
+function cookieName(shareToken: string) {
+  return `ct_share_${shareToken.slice(0, 12)}`;
+}
+
+export async function grantShareAccess(shareToken: string, proof: string) {
   const store = await cookies();
-  store.set(shareCookieName(shareToken), shareCookieValue(shareToken), {
+  store.set(cookieName(shareToken), proof, {
     httpOnly: true,
-    secure: env.isProduction,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: SHARE_MAX_AGE_SECONDS,
+    maxAge: MAX_AGE_SECONDS,
   });
 }
 
-export async function hasShareAccess(shareToken: string) {
+/** The stored proof for this link, or null if the gate has not been passed. */
+export async function shareProof(shareToken: string) {
   const store = await cookies();
-  return (
-    store.get(shareCookieName(shareToken))?.value === shareCookieValue(shareToken)
-  );
+  return store.get(cookieName(shareToken))?.value ?? null;
 }

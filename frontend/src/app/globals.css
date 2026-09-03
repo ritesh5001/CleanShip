@@ -502,3 +502,35 @@
 .ct-root textarea {
   font-size: 16px;
 }
+
+/*
+ * CleanTrack replaces the marketing chrome rather than sitting inside it.
+ *
+ * The root layout renders the site header, footer and WhatsApp button on every
+ * route. On a supervisor's phone that puts a nav bar above the status grid, a
+ * floating button on top of it, and a footer of 100 port links below it — all
+ * of it useless to someone standing over an open hold, and all of it pushing
+ * the one thing they came for off the screen.
+ *
+ * `:has()` is what makes this possible from a stylesheet: the CleanTrack
+ * subtree marks itself with .ct-root, and the body reacts.
+ *
+ * CSS rather than a conditional render, deliberately. A layout does not
+ * receive the pathname, and a client component reading usePathname would get
+ * the WRONG path here: cleantrack.cleanship.co is served by a middleware
+ * rewrite, so the browser's path is "/app" while the rendered route is
+ * "/cleantrack/app". Keying off what actually rendered is correct on both
+ * hosts; keying off the URL is correct on only one.
+ *
+ * Everything hidden here is still in the DOM for the marketing routes; only
+ * pages that actually render .ct-root are affected.
+ */
+body:has(.ct-root) [data-site-chrome] {
+  display: none;
+}
+
+body:has(.ct-root) > #main {
+  /* The marketing main has no padding of its own; CleanTrack screens bring
+     their own shell, so this only needs to stop the two fighting. */
+  padding: 0;
+}

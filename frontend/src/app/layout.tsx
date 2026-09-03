@@ -165,6 +165,15 @@ export default function RootLayout({
             page. This re-measures once the new route has painted. */}
         <ScrollTriggerRefresh />
 
+        {/* The marketing chrome. It is hidden on CleanTrack screens by the
+            `.ct-root` rule in globals.css — a signed-in supervisor holding a
+            phone over a hold does not need a site nav, a footer of 100 port
+            links, or a WhatsApp bubble sitting on top of the status grid.
+
+            Hidden with CSS rather than a conditional render because layouts
+            do not receive the pathname, and the alternatives (a client
+            component reading usePathname, or a route group that duplicates
+            this file) both cost more than one selector. */}
         <SiteHeader />
         <main id="main">{children}</main>
         <SiteFooter />

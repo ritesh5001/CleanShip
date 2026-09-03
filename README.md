@@ -3,125 +3,119 @@
 Two applications, deployed independently.
 
 ```
-backend/    Database, auth and CleanTrack domain logic — a package, not a service
-frontend/   The Next.js app: marketing site, admin, CleanTrack
+backend/    The CleanTrack API — Express + Postgres, deployed on Render
+frontend/   The Next.js app — marketing site, admin inbox, CleanTrack screens,
+            deployed on Vercel
 ```
 
-**One deployment.** `backend/` is an npm workspace package that `frontend/`
-imports directly. There is no API between them and no second process — an HTTP
-hop between two halves of the same codebase talking to the same Postgres would
-buy latency and nothing else.
-
-The split is about ownership, not deployment:
+They share no code and no `node_modules`. Each has its own `package.json`, its
+own lockfile, its own build and its own host. They talk over HTTPS.
 
 | `backend/` | `frontend/` |
 | --- | --- |
 | Database schema and queries | Pages, components, server actions |
 | Password hashing, token signing | Cookie handling (`next/headers`) |
-| Access rules — who may see a job | Which page to redirect to |
-| CleanTrack domain: stages, progress | Marketing content, SEO, port data |
+| Access rules — who may see a vessel | Which page to redirect to |
+| Vessels, stages, cells, the audit trail | Marketing content, SEO, port data |
 
-**Nothing in `backend/` imports from Next.** That is the rule that keeps the
-boundary real — the moment it needs `next/headers`, it has stopped being a
-backend and become part of the app. Cookies are the clearest case: signing the
-session token is cryptography and lives in `backend/`; reading and writing the
-cookie is framework plumbing and lives in `frontend/src/lib/session.ts`.
+**Nothing in `backend/` imports from Next, and nothing in `frontend/` touches
+Postgres.** The API is the only way to the data, which is what makes an access
+rule enforceable: it is stated once, in `backend/src/auth/roles.ts`, and
+checked on every request regardless of which screen asked.
+
+### Surfaces
 
 - `www.cleanship.co` — the marketing site, statically prerendered
 - `www.cleanship.co/admin` — the enquiry inbox
 - `cleantrack.cleanship.co` — CleanTrack, live cleaning progress
 
-Three surfaces, one build. The old Express API and the standalone job-tracker
-app were merged in, because they were always one database and keeping three
-deployments in step bought nothing.
+The CleanTrack subdomain is served by the same Next app through a middleware
+rewrite, so there is one frontend build and one session cookie rather than two
+projects to keep in step. The cookie is scoped to `.cleanship.co`, so one
+sign-in works on both.
 
-One `users` table means one password per person, and the session cookie is
-scoped to `.cleanship.co` so a single sign-in works on the site and the
-CleanTrack subdomain alike.
+## What CleanTrack does
 
-`cleantrack/` is a separate product on its own subdomain, not part of the
-marketing site. It shares the Postgres instance (its tables are all prefixed
-`hw_`) and nothing else. See [cleantrack/README.md](cleantrack/README.md).
+An **admin** creates a **vessel**: how many holds or tanks it has, and which
+**stages** the crew works through — starting from a template, then renamed,
+reordered, added to or deleted for that vessel. That builds the grid from the
+paper status sheet: one row per hold or tank, one column per stage.
 
-They share no code at runtime. Each has its own `package.json`, `node_modules`,
-build and deploy.
+The admin **assigns a supervisor**, who is then the only person who can update
+it. On their phone the supervisor taps cells between *not started*, *in
+progress*, *done* and *not applicable*, and can leave a note on any cell —
+"Water in tank". Taps are queued in `localStorage` first and sent second, so a
+berth with no signal never loses work.
+
+Customers get a read-only link gated by the vessel's IMO number. No account,
+nothing to issue, nothing to reset.
+
+Every change is appended to an audit trail with who, what and *when they
+tapped* — not when the server heard about it.
 
 ## Running both
 
 ```bash
-# terminal 1 — the site
-cd frontend && npm install && npm run dev        # http://localhost:3000
+# terminal 1 — the API
+cd backend
+cp .env.example .env          # DATABASE_URL + SESSION_SECRET
+npm install
+npm run migrate               # creates the schema
+npm run seed                  # first admin; prints a password once
+npm run dev                   # http://localhost:4000
 
-# terminal 2 — the API
-cd backend && npm install
-cp .env.example .env                             # DATABASE_URL + JWT_SECRET
-npm run db:migrate && npm run db:seed
-npm run dev                                      # http://localhost:4000
+# terminal 2 — the site
+cd frontend
+cp .env.example .env.local    # BACKEND_URL + the SAME SESSION_SECRET
+npm install
+npm run dev                   # http://localhost:3000
 ```
 
-Setup details are in [frontend/README.md](frontend/README.md) and
+Or from the repository root: `npm run install:all`, then `npm run dev:api` and
+`npm run dev` in two terminals.
+
+The API reference and the domain notes are in
 [backend/README.md](backend/README.md).
-
-## ⚠️ Deployment: the Vercel root directory changed
-
-The site used to live at the repository root and now lives in `frontend/`.
-**The existing Vercel project will fail to build until you update it:**
-
-> Project → Settings → General → **Root Directory** → `frontend`
-
-Nothing else about the deployment changes. The API is a separate service and
-needs its own host (Render, Railway, Fly, or a second Vercel project) — it is a
-long-running Express process, not serverless functions.
-
-## Current state
-
-- The site renders from its own typed taxonomy in
-  `frontend/src/lib/services.ts`. **It does not call the API yet** — see the
-  integration notes at the end of `backend/README.md`, and mind the warning
-  there about keeping pages statically prerendered.
-- Contact forms send email through Resend. Once the API is wired in, the
-  database becomes the record and email stays the notification.
 
 ## Deploying
 
-The whole system is one Next.js app. **Deploy from the repository root** —
-npm workspaces are detected there, so `backend/` is installed as a dependency
-of `frontend/` automatically.
+| | Host | Root directory | Build | Start |
+| --- | --- | --- | --- | --- |
+| API | Render | `backend` | `npm ci && npm run build && npm run migrate` | `npm start` |
+| Site | Vercel | `frontend` | `npm run build` | — |
 
-| | |
-| --- | --- |
-| Build command | `npm install && npm run build` |
-| Start command | `npm start` (Next reads `PORT` from the environment) |
-| Root directory | the repository root — **not** `backend/` |
+`render.yaml` carries the API service definition and the ordered first-deploy
+steps. Migrations run in the build command, so every deploy brings the schema
+forward.
 
-`backend/` is a library: no server, no port, no entry point. A deployment
-pointed at it fails on every push, and its `build` script says so. That
-misconfiguration is the leftover Express API service; delete it or repoint it.
-
-On **Vercel**, Root Directory `frontend` also works and is what is configured
-today. On **Render**, see `render.yaml`.
-
-**Do not run the same site on two hosts.** Pick one and delete the other, or
-the two will drift and you will spend an evening on a bug that only exists on
-whichever one you are not looking at.
+**Do not run the site on two hosts.** Pick one and delete the other, or the two
+will drift and you will spend an evening on a bug that only exists on whichever
+one you are not looking at.
 
 ### Environment
 
-All configuration lives in **`backend/.env`** — one file, gitignored, read by
-both halves. `frontend/next.config.ts` loads it before the app boots, because
-Next only reads `.env` files from its own directory and this configuration
-belongs beside the code that owns it. Copy `backend/.env.example` to start.
+Two files, one per app. Neither reads the other's.
 
-Host dashboard variables (Vercel, Render) always override the file, so in
-production the file simply does not exist and nothing has to change.
+**`backend/.env`** — see `backend/.env.example`.
 
 | Variable | Required | What it does |
 | --- | --- | --- |
-| `DATABASE_URL` | yes | Neon Postgres. Without it the site still builds and serves; the admin and CleanTrack do not work. |
-| `SESSION_SECRET` | yes | Signs the session cookie. 32+ characters. |
-| `APP_URL` | yes | Absolute origin of the marketing site. |
-| `CLEANTRACK_URL` | yes | Where CleanTrack is served. Client share links are built from it. |
+| `DATABASE_URL` | yes | Postgres. |
+| `SESSION_SECRET` | yes | Signs session tokens. 32+ characters. |
+| `CLEANTRACK_URL` | yes | Where CleanTrack is served. Customer share links are built from it, so a wrong value sends every link you issue to the wrong host. |
+| `CORS_ORIGINS` | production | Comma-separated browser origins allowed to call the API directly. Server-to-server calls from Next need no entry. |
+| `SESSION_TTL_HOURS` | no | Defaults to 24. Crews work long shifts. |
+| `PORT` | no | Render sets it. |
+
+**`frontend/.env.local`** — see `frontend/.env.example`.
+
+| Variable | Required | What it does |
+| --- | --- | --- |
+| `BACKEND_URL` | yes | The API's origin. Not `NEXT_PUBLIC_`: only the server calls it. |
+| `SESSION_SECRET` | yes | **Byte-identical to the API's.** The API signs session tokens; this app verifies them locally so rendering a page costs no round trip. Mismatched values make every sign-in appear to work and then bounce straight back to the login page. |
 | `COOKIE_DOMAIN` | production | `.cleanship.co` — the leading dot is what makes one sign-in work on both the site and the CleanTrack subdomain. |
+| `RESEND_API_KEY` | yes | The contact forms. |
+| `RESEND_FROM_EMAIL` | yes | Domain must be verified in Resend. |
 | `NEXT_PUBLIC_GA_ID` | no | Overrides the hardcoded GA4 id. |
 
 Adding variables does not trigger a rebuild on either host. **Redeploy after

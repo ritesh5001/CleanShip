@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { STATE_STYLE, type CompartmentState } from "@cleanship/backend/cleantrack/stages";
+import { STATE_STYLE, type CompartmentState } from "@/lib/cleantrack/types";
 
 export function Card({
   children,
@@ -97,18 +97,18 @@ export function StatusChip({ state }: { state: CompartmentState }) {
   );
 }
 
-const JOB_STATUS_STYLE: Record<string, string> = {
+const VESSEL_STATUS_STYLE: Record<string, string> = {
   scheduled: "bg-slate-100 text-slate-700 border-slate-300",
   "in-progress": "bg-amber-100 text-amber-800 border-amber-400",
   complete: "bg-emerald-100 text-emerald-800 border-emerald-400",
   cancelled: "bg-red-100 text-red-800 border-red-300",
 };
 
-export function JobStatusChip({ status }: { status: string }) {
+export function VesselStatusChip({ status }: { status: string }) {
   return (
     <span
       className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[12px] font-semibold capitalize ${
-        JOB_STATUS_STYLE[status] ?? JOB_STATUS_STYLE.scheduled
+        VESSEL_STATUS_STYLE[status] ?? VESSEL_STATUS_STYLE.scheduled
       }`}
     >
       {status.replace("-", " ")}

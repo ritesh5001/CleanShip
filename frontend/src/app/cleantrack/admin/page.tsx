@@ -1,40 +1,51 @@
 import { requireSession } from "@/lib/session";
 import { AppShell } from "@/components/cleantrack/app-shell";
-import { JobCard } from "@/components/cleantrack/job-card";
+import { VesselCard } from "@/components/cleantrack/vessel-card";
 import { EmptyState, LinkButton, PageTitle } from "@/components/cleantrack/ui";
-import { getJobDetail, jobProgress, listAllJobs } from "@cleanship/backend/cleantrack/jobs";
+import { listVessels } from "@/lib/api";
+import { ApiUnavailable } from "@/components/cleantrack/api-unavailable";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Jobs" };
+export const metadata = { title: "Vessels" };
 
-export default async function AdminJobsPage() {
+export default async function AdminVesselsPage() {
   const session = await requireSession("admin");
-  const jobs = await listAllJobs();
 
-  const withProgress = await Promise.all(
-    jobs.map(async (job) => {
-      const detail = await getJobDetail(job.id);
-      return { job, progress: jobProgress(job, detail?.compartments ?? []) };
-    }),
-  );
+  let vessels;
+  try {
+    vessels = await listVessels();
+  } catch (err) {
+    return (
+      <AppShell session={session} wide>
+        <ApiUnavailable error={err} />
+      </AppShell>
+    );
+  }
 
-  const live = withProgress.filter((j) => j.job.status === "in-progress");
-  const rest = withProgress.filter((j) => j.job.status !== "in-progress");
+  const live = vessels.filter((v) => v.status === "in-progress");
+  const rest = vessels.filter((v) => v.status !== "in-progress");
+  const unassigned = vessels.filter((v) => !v.supervisorId).length;
 
   return (
     <AppShell session={session} wide>
       <PageTitle
-        title="Jobs"
-        subtitle={`${jobs.length} total · ${live.length} running now`}
-        action={<LinkButton href="/cleantrack/admin/jobs/new">New job</LinkButton>}
+        title="Vessels"
+        subtitle={`${vessels.length} total · ${live.length} alongside now${
+          unassigned ? ` · ${unassigned} awaiting a supervisor` : ""
+        }`}
+        action={<LinkButton href="/cleantrack/admin/vessels/new">New vessel</LinkButton>}
       />
 
-      {jobs.length === 0 ? (
+      {vessels.length === 0 ? (
         <div className="mt-6">
           <EmptyState
-            title="No jobs yet"
-            body="Create a job with the vessel, client, port and number of holds. Assign a supervisor and they will see it on their phone immediately."
-            action={<LinkButton href="/cleantrack/admin/jobs/new">Create the first job</LinkButton>}
+            title="No vessels yet"
+            body="Create a vessel with its holds or tanks and the stages your crew works through. Assign a supervisor and it appears on their phone immediately."
+            action={
+              <LinkButton href="/cleantrack/admin/vessels/new">
+                Create the first vessel
+              </LinkButton>
+            }
           />
         </div>
       ) : (
@@ -42,11 +53,15 @@ export default async function AdminJobsPage() {
           {live.length > 0 && (
             <section>
               <h2 className="mb-3 text-[13px] font-semibold uppercase tracking-wider text-amber-700">
-                Running now
+                Working now
               </h2>
               <div className="grid gap-3 lg:grid-cols-2">
-                {live.map(({ job, progress }) => (
-                  <JobCard key={job.id} job={job} progress={progress} href={`/cleantrack/admin/jobs/${job.id}`} />
+                {live.map((v) => (
+                  <VesselCard
+                    key={v.id}
+                    vessel={v}
+                    href={`/cleantrack/admin/vessels/${v.id}`}
+                  />
                 ))}
               </div>
             </section>
@@ -58,8 +73,12 @@ export default async function AdminJobsPage() {
               </h2>
             )}
             <div className="grid gap-3 lg:grid-cols-2">
-              {rest.map(({ job, progress }) => (
-                <JobCard key={job.id} job={job} progress={progress} href={`/cleantrack/admin/jobs/${job.id}`} />
+              {rest.map((v) => (
+                <VesselCard
+                  key={v.id}
+                  vessel={v}
+                  href={`/cleantrack/admin/vessels/${v.id}`}
+                />
               ))}
             </div>
           </section>

@@ -1,49 +1,65 @@
-# Render Blueprint.
+# Render Blueprint — the CleanTrack API.
 #
-# ⚠️ THE COMMON MISTAKE THIS FILE EXISTS TO PREVENT
+# WHAT DEPLOYS WHERE
 #
-# `backend/` is a library, not a service — no server, no port, no entry point.
-# A Render service with its Root Directory set to `backend` will fail on every
-# deploy, which is exactly what happened to the service left over from the
-# Express API that used to live there.
+#   backend/   → Render, as the web service below. It is the API: Postgres,
+#                auth, vessels, the status grid, the audit trail.
+#   frontend/  → Vercel. It is the Next.js site and the CleanTrack screens,
+#                and it calls this service over HTTPS.
 #
-# The whole system is ONE Next.js app. Deploy from the repository ROOT:
-# npm workspaces are detected there, so backend/ is installed as a dependency
-# of frontend/ automatically.
+# The two share exactly one secret, SESSION_SECRET, because the frontend
+# verifies the session tokens this service signs instead of asking it who the
+# user is on every page render. Set the SAME value in both places or every
+# sign-in will appear to work and then bounce straight back to the login page.
 #
-# For an EXISTING Render service, this file changes nothing — edit the service
-# in the dashboard instead:
+# FIRST DEPLOY, in order:
+#   1. Apply this blueprint (or create the service by hand with the settings
+#      below). It creates the database and the API.
+#   2. Set SESSION_SECRET when prompted — `openssl rand -base64 48`.
+#   3. Set CLEANTRACK_URL to the public site, e.g.
+#      https://cleantrack.cleanship.co — customer share links are built from
+#      it, so a wrong value sends every link you issue to the wrong host.
+#   4. In the Render shell (or locally against the same DATABASE_URL), run
+#      `npm run seed` once to create the first admin. It prints a temporary
+#      password to the log exactly once.
+#   5. On Vercel, set BACKEND_URL to this service's URL and SESSION_SECRET to
+#      the same value from step 2.
 #
-#   Settings → Root Directory   →  (leave blank)
-#   Settings → Build Command    →  npm install && npm run build
-#   Settings → Start Command    →  npm start
-#
-# You almost certainly do not want this AND Vercel serving the same site. Pick
-# one and delete the other, or the two will drift and you will debug a bug that
-# only exists on whichever host you are not looking at.
+# Migrations run in the build command, so every deploy brings the schema
+# forward. The runner records what it applied and is safe to re-run.
+
+databases:
+  - name: cleanship-db
+    databaseName: cleanship
+    plan: basic-256mb
+    postgresMajorVersion: "16"
 
 services:
   - type: web
-    name: cleanship
+    name: cleanship-api
     runtime: node
     plan: starter
-    rootDir: .
-    buildCommand: npm install && npm run build
-    # `next start` reads PORT from the environment, which Render sets.
+    # The API is its own package. Render installs and builds inside it, so
+    # the Next app in frontend/ is never downloaded or compiled here.
+    rootDir: backend
+    # `npm ci` needs backend/package-lock.json, which exists because
+    # backend/ is a standalone package rather than a workspace member — that
+    # is what lets Render install this and nothing else.
+    buildCommand: npm ci && npm run build && npm run migrate
     startCommand: npm start
-    healthCheckPath: /
+    healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
-      # Marked `sync: false` so Render prompts for them rather than storing
-      # secrets in this file.
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: cleanship-db
+          property: connectionString
+      # `sync: false` makes Render prompt for these rather than storing
+      # secrets and per-environment URLs in a file that is in git.
       - key: SESSION_SECRET
-        sync: false
-      - key: APP_URL
         sync: false
       - key: CLEANTRACK_URL
         sync: false
-      - key: COOKIE_DOMAIN
+      - key: CORS_ORIGINS
         sync: false

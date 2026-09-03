@@ -12,7 +12,7 @@ import type { Session } from "@/lib/session";
 
 const NAV: Record<Session["role"], { href: string; label: string }[]> = {
   admin: [
-    { href: "/cleantrack/admin", label: "Jobs" },
+    { href: "/cleantrack/admin", label: "Vessels" },
     { href: "/cleantrack/admin/clients", label: "Clients" },
     { href: "/cleantrack/admin/users", label: "People" },
     { href: "/admin", label: "Enquiries" },
@@ -21,7 +21,7 @@ const NAV: Record<Session["role"], { href: string; label: string }[]> = {
      reach this shell only by URL, so it points them back rather than showing
      an empty nav. */
   editor: [{ href: "/admin", label: "Enquiries" }],
-  supervisor: [{ href: "/cleantrack/app", label: "My jobs" }],
+  supervisor: [{ href: "/cleantrack/app", label: "My vessels" }],
 };
 
 export function AppShell({

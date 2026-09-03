@@ -1,32 +1,19 @@
-import { config as loadEnv } from "dotenv";
-import { resolve } from "node:path";
 import type { NextConfig } from "next";
 
 /**
- * Configuration lives in ../backend/.env, and this is what lets Next see it.
+ * The marketing site and the CleanTrack screens.
  *
- * Next only reads .env files from its own directory. The database URL and
- * session secret belong to the backend package, so keeping them in
- * frontend/.env.local meant configuration sat in the wrong half of the repo —
- * or, worse, got duplicated into two files that quietly drift apart.
+ * Configuration comes from this app's own environment — .env.local locally,
+ * the Vercel dashboard in production. It needs exactly two values that the
+ * CleanTrack API also has:
  *
- * next.config.ts is evaluated in Node before the app boots, for `dev`, `build`
- * and `start` alike, so loading the file here populates process.env for
- * everything downstream.
+ *   BACKEND_URL      the API's origin (the Render service)
+ *   SESSION_SECRET   identical to the API's, so session tokens verify here
  *
- * dotenv never overwrites a variable that is already set, so a host's
- * dashboard values (Vercel, Render) always win over this file — which is what
- * you want, and why a missing file in production is a harmless no-op rather
- * than an error.
+ * See .env.example. Nothing reads a database directly any more.
  */
-loadEnv({ path: resolve(process.cwd(), "../backend/.env"), quiet: true });
-loadEnv({ path: resolve(process.cwd(), "../backend/.env.local"), quiet: true });
-
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  /* @cleanship/backend is a workspace package shipped as TypeScript source
-     rather than a build artefact — there is no reason to compile it twice. */
-  transpilePackages: ["@cleanship/backend"],
   poweredByHeader: false,
   compress: true,
   images: {

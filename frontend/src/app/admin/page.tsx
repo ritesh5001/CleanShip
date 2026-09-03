@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { requireSession } from "@/lib/session";
-import {
-  ENQUIRY_STATUSES,
-  enquiryCounts,
-  listEnquiries,
-} from "@cleanship/backend/enquiries";
+import { listEnquiries } from "@/lib/api";
 import { formatDateTime, relativeTime } from "@/lib/format";
 import { setEnquiryStatusAction } from "./actions";
 
@@ -27,17 +23,29 @@ const STATUS_STYLE: Record<string, string> = {
 /**
  * The enquiry inbox.
  *
- * Previously a client component fetching an Express API on another origin,
- * with all the cross-origin cookie handling that needed. It is now a server
- * component reading the database directly — same data, no network hop, no
- * loading state, and no second service to deploy.
+ * A server component: it calls the API from Node with the signed-in user's
+ * token, so there is no loading state, no client-side fetch and no token in
+ * the browser.
  */
 export default async function AdminInboxPage() {
   const session = await requireSession("admin", "editor");
 
-  const [rows, counts] = await Promise.all([listEnquiries(), enquiryCounts()]);
+  let rows: Awaited<ReturnType<typeof listEnquiries>>["enquiries"];
+  let counts: Record<string, number>;
+  let statuses: string[];
+  try {
+    const data = await listEnquiries();
+    rows = data.enquiries;
+    counts = data.counts;
+    statuses = data.statuses;
+  } catch (err) {
+    console.error("[inbox] API unavailable", err);
+    rows = [];
+    counts = {};
+    statuses = ["new", "in-progress", "quoted", "won", "lost", "spam"];
+  }
 
-  const total = counts.reduce((n, c) => n + c.n, 0);
+  const total = Object.values(counts).reduce((n, c) => n + c, 0);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -74,12 +82,12 @@ export default async function AdminInboxPage() {
         </p>
 
         <div className="mt-4 flex flex-wrap gap-2">
-          {counts.map((c) => (
+          {statuses.map((status) => (
             <span
-              key={c.status}
-              className={`rounded-full border px-3 py-1 text-[12px] font-semibold capitalize ${STATUS_STYLE[c.status]}`}
+              key={status}
+              className={`rounded-full border px-3 py-1 text-[12px] font-semibold capitalize ${STATUS_STYLE[status]}`}
             >
-              {c.status.replace("-", " ")} · {c.n}
+              {status.replace("-", " ")} · {counts[status] ?? 0}
             </span>
           ))}
         </div>
@@ -147,7 +155,7 @@ export default async function AdminInboxPage() {
                     defaultValue={e.status}
                     className="min-h-9 rounded-md border border-slate-300 px-2 text-[13px]"
                   >
-                    {ENQUIRY_STATUSES.map((s) => (
+                    {statuses.map((s) => (
                       <option key={s} value={s}>
                         {s.replace("-", " ")}
                       </option>

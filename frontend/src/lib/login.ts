@@ -1,23 +1,22 @@
 import "server-only";
-import { checkCredentials } from "@cleanship/backend/users";
-import type { Role } from "@cleanship/backend/auth/roles";
-import { createSession } from "./session";
+import { ApiError, login as apiLogin } from "./api";
+import { createSession, type Role } from "./session";
 
 export type LoginState = { error?: string };
 
 export type LoginResult =
-  | { ok: true; role: Role }
+  | { ok: true; role: Role; landing: string }
   | { ok: false; error: string };
 
 /**
  * Shared sign-in, used by both doors.
  *
  * There are two login pages — `/admin/login` for the office and
- * `/cleantrack/login` for crews — but one credential check behind them. Two
- * copies would be two places for an authentication bug to live.
+ * `/cleantrack/login` for crews — but one credential check behind them, in the
+ * API. Two copies would be two places for an authentication bug to live.
  *
- * The check itself is in the backend package; this turns its result into a
- * message and sets the cookie.
+ * `allow` is passed through so the API can tell someone they are at the wrong
+ * entrance rather than that their password is wrong.
  */
 export async function attemptLogin(
   formData: FormData,
@@ -31,28 +30,20 @@ export async function attemptLogin(
   }
   if (!password) return { ok: false, error: "Enter your password." };
 
-  const result = await checkCredentials(email, password, allow);
-
-  if (!result.ok) {
-    if (result.reason === "unavailable") {
-      return {
-        ok: false,
-        error:
-          "Sign-in is temporarily unavailable — the service cannot reach its database. This is a configuration problem, not your password.",
-      };
+  try {
+    const result = await apiLogin(email, password, allow);
+    await createSession(result.token, result.expiresIn);
+    return { ok: true, role: result.user.role, landing: result.landing };
+  } catch (err) {
+    if (err instanceof ApiError) {
+      /* The API already writes these for a person to read — "that is a
+         supervisor account, sign in at the crew login" and so on. Rewriting
+         them here would put the same sentence in two repositories. */
+      return { ok: false, error: err.message };
     }
-    if (result.reason === "wrong-door") {
-      return {
-        ok: false,
-        error:
-          result.role === "supervisor"
-            ? "That is a supervisor account. Sign in at the CleanTrack crew login instead."
-            : "That is an office account. Sign in at the admin login instead.",
-      };
-    }
-    return { ok: false, error: "Those details do not match an active account." };
+    return {
+      ok: false,
+      error: "Sign-in is temporarily unavailable. Try again in a moment.",
+    };
   }
-
-  await createSession(result.session);
-  return { ok: true, role: result.session.role };
 }

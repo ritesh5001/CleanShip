@@ -3,16 +3,18 @@
 import {
   STATE_STYLE,
   compartmentNoun,
+  compartmentState,
   progressOf,
-  stateOf,
-  type JobType,
-} from "@cleanship/backend/cleantrack/stages";
+  type CellStatus,
+  type Stage,
+  type VesselType,
+} from "@/lib/cleantrack/types";
 
 export type DiagramCompartment = {
   id: number;
   label: string;
   position: number;
-  completed: string[];
+  cells: Record<string, { status: CellStatus; note: string | null }>;
 };
 
 /**
@@ -36,13 +38,16 @@ export type DiagramCompartment = {
  */
 export function VesselDiagram({
   compartments,
-  jobType,
+  stages,
+  vesselType,
   selectedId,
   onSelect,
   className = "",
 }: {
   compartments: DiagramCompartment[];
-  jobType: JobType;
+  /** The vessel's own stage list — never a preset. */
+  stages: Stage[];
+  vesselType: VesselType;
   selectedId?: number | null;
   onSelect?: (id: number) => void;
   className?: string;
@@ -81,7 +86,7 @@ export function VesselDiagram({
         viewBox={`0 0 ${W} ${H}`}
         className="w-full"
         role="img"
-        aria-label={`Vessel plan showing ${n} ${compartmentNoun(jobType, n !== 1).toLowerCase()} and their cleaning status`}
+        aria-label={`Vessel plan showing ${n} ${compartmentNoun(vesselType, n !== 1).toLowerCase()} and their cleaning status`}
       >
         {/* Hull outline */}
         <path d={hullPath} fill="#f2f6f9" stroke="#0a2e52" strokeWidth={3} />
@@ -117,14 +122,15 @@ export function VesselDiagram({
         </text>
 
         {compartments.map((c, i) => {
-          const state = stateOf(c.completed ?? [], jobType);
+          const statuses = stages.map((s) => c.cells[s.key]?.status ?? "pending");
+          const state = compartmentState(statuses);
           const style = STATE_STYLE[state];
-          const { done, total } = progressOf(c.completed ?? [], jobType);
+          const { done, total, ratio } = progressOf(statuses);
           const x = bodyStart + i * (cellW + gap);
           const selected = selectedId === c.id;
           /* Fill from the bottom in proportion to stages done — the bar and
              the diagram then tell the same story at a glance. */
-          const fillH = cellH * (done / total);
+          const fillH = cellH * ratio;
 
           const Tag = interactive ? "g" : "g";
           return (
@@ -165,7 +171,7 @@ export function VesselDiagram({
                 stroke={selected ? "#014ba8" : style.stroke}
                 strokeWidth={selected ? 4 : 2}
               />
-              {done > 0 && (
+              {ratio > 0 && (
                 <rect
                   x={x}
                   y={top + cellH - fillH}
@@ -195,7 +201,7 @@ export function VesselDiagram({
                 fill={style.text}
                 opacity={0.8}
               >
-                {done}/{total}
+                {total === 0 ? "N/A" : `${done}/${total}`}
               </text>
             </Tag>
           );

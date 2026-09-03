@@ -1,12 +1,18 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getJobByShareToken } from "@cleanship/backend/cleantrack/jobs";
+import { ApiError, verifyShare } from "@/lib/api";
 import { grantShareAccess } from "@/lib/share-session";
-import { imoMatches } from "@cleanship/backend/cleantrack/share";
 
 export type GateState = { error?: string };
 
+/**
+ * The IMO gate.
+ *
+ * The comparison happens in the API, in constant time, against a vessel this
+ * app never loads unless the answer is right — so a wrong guess learns
+ * nothing, not even whether the link is live.
+ */
 export async function unlockShare(
   _prev: GateState,
   formData: FormData,
@@ -14,26 +20,23 @@ export async function unlockShare(
   const token = String(formData.get("token") ?? "");
   const imo = String(formData.get("imo") ?? "");
 
-  let job;
   try {
-    job = await getJobByShareToken(token);
+    const { proof } = await verifyShare(token, imo);
+    await grantShareAccess(token, proof);
   } catch (err) {
-    console.error("[share] database unavailable", err);
-    return {
-      error:
-        "This page is temporarily unavailable. Please try again shortly, or contact the operations desk.",
-    };
-  }
-
-  /* Same message whether the link is dead or the IMO is wrong. Distinguishing
-     them confirms to someone holding a stray link that the job is real. */
-  if (!job || !imoMatches(imo, job.imo)) {
+    if (err instanceof ApiError && err.status >= 500) {
+      return {
+        error:
+          "This page is temporarily unavailable. Please try again shortly, or contact the operations desk.",
+      };
+    }
+    /* Same message whether the link is dead or the IMO is wrong. Telling them
+       apart confirms to someone holding a stray link that the vessel is real. */
     return {
       error:
         "That does not match. Check the IMO number on the vessel's particulars and try again.",
     };
   }
 
-  await grantShareAccess(token);
   redirect(`/cleantrack/j/${token}`);
 }

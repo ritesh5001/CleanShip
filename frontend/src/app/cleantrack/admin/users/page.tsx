@@ -1,9 +1,8 @@
-import { asc } from "drizzle-orm";
 import { requireSession } from "@/lib/session";
 import { AppShell } from "@/components/cleantrack/app-shell";
 import { Card, PageTitle } from "@/components/cleantrack/ui";
-import { db } from "@cleanship/backend/db";
-import { users } from "@cleanship/backend/db/schema";
+import { ApiUnavailable } from "@/components/cleantrack/api-unavailable";
+import { listUsers } from "@/lib/api";
 import { toggleUserActiveAction } from "../actions";
 import { NewUserForm } from "./form";
 
@@ -13,16 +12,22 @@ export const metadata = { title: "People" };
 const ROLE_STYLE: Record<string, string> = {
   admin: "bg-blue-100 text-blue-800 border-blue-300",
   supervisor: "bg-amber-100 text-amber-800 border-amber-300",
-  client: "bg-slate-100 text-slate-700 border-slate-300",
+  editor: "bg-slate-100 text-slate-700 border-slate-300",
 };
 
 export default async function UsersPage() {
   const session = await requireSession("admin");
 
-  const people = await db
-    .select()
-    .from(users)
-    .orderBy(asc(users.role), asc(users.name));
+  let people;
+  try {
+    people = await listUsers();
+  } catch (err) {
+    return (
+      <AppShell session={session}>
+        <ApiUnavailable error={err} />
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell session={session}>
@@ -36,7 +41,7 @@ export default async function UsersPage() {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-semibold text-slate-900">{u.name}</p>
-                    <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold capitalize ${ROLE_STYLE[u.role]}`}>
+                    <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold capitalize ${ROLE_STYLE[u.role] ?? ROLE_STYLE.editor}`}>
                       {u.role}
                     </span>
                     {u.active === 0 && (

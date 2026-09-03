@@ -1,42 +1,63 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { env } from "@cleanship/backend/env";
-import {
-  SESSION_COOKIE,
-  SESSION_MAX_AGE_SECONDS,
-  signSession,
-  verifySession,
-} from "@cleanship/backend/auth/tokens";
-import { landingFor, type Role, type Session } from "@cleanship/backend/auth/roles";
+import { jwtVerify } from "jose";
+import { SESSION_COOKIE } from "./session-cookie";
 
 /**
- * Cookie plumbing for sessions.
+ * The signed-in user, as this app sees it.
  *
- * The signing lives in the backend package; this is the half that needs
- * `next/headers` and `next/navigation`. Splitting them is what lets the
- * backend stay free of framework imports — see backend/README.md.
+ * The token is issued by the CleanTrack API and verified HERE, locally, with
+ * the shared SESSION_SECRET. That is the whole reason the secret is shared:
+ * rendering a page would otherwise mean a network round trip to the API just
+ * to learn who is asking, on every navigation.
  *
- * The cookie is scoped to COOKIE_DOMAIN (".cleanship.co" in production) so one
- * sign-in works on the marketing admin AND the CleanTrack subdomain. Locally
- * it is left unset, where host-only on localhost is correct.
+ * Verifying locally decides only what this app SHOWS. Every piece of data
+ * comes from the API, which authorises the token again on its own terms — so a
+ * forged or stale cookie gets an empty shell and a 401, never someone's data.
+ *
+ * ⚠️ SESSION_SECRET must be byte-identical on Vercel and on Render.
  */
 
-export type { Role, Session };
-export { landingFor };
+export type Role = "admin" | "editor" | "supervisor";
 
-export async function createSession(session: Session) {
-  const token = await signSession(session);
+export type Session = {
+  sub: number;
+  email: string;
+  name: string;
+  role: Role;
+};
+
+const ROLES: Role[] = ["admin", "editor", "supervisor"];
+
+function secret() {
+  const value = process.env.SESSION_SECRET;
+  if (!value) {
+    throw new Error(
+      "SESSION_SECRET is not set. It must match the value on the CleanTrack API — see backend/.env.example.",
+    );
+  }
+  return new TextEncoder().encode(value);
+}
+
+/** Where a role lands after signing in. Mirrors the API's own mapping. */
+export function landingFor(role: Role) {
+  if (role === "supervisor") return "/cleantrack/app";
+  if (role === "editor") return "/admin";
+  return "/cleantrack/admin";
+}
+
+export async function createSession(token: string, maxAge: number) {
   const store = await cookies();
   store.set(SESSION_COOKIE, token, {
     httpOnly: true,
-    secure: env.isProduction,
-    /* Same origin family now that there is no cross-origin API, so this never
-       needs to be "none". */
+    secure: process.env.NODE_ENV === "production",
+    /* Every navigation that needs it is same-site, so "lax" is right and
+       "none" would only widen the CSRF surface for nothing. */
     sameSite: "lax",
     path: "/",
-    ...(env.COOKIE_DOMAIN ? { domain: env.COOKIE_DOMAIN } : {}),
-    maxAge: SESSION_MAX_AGE_SECONDS,
+    ...(process.env.COOKIE_DOMAIN ? { domain: process.env.COOKIE_DOMAIN } : {}),
+    maxAge,
   });
 }
 
@@ -45,17 +66,33 @@ export async function destroySession() {
   store.set(SESSION_COOKIE, "", {
     httpOnly: true,
     path: "/",
-    ...(env.COOKIE_DOMAIN ? { domain: env.COOKIE_DOMAIN } : {}),
+    ...(process.env.COOKIE_DOMAIN ? { domain: process.env.COOKIE_DOMAIN } : {}),
     maxAge: 0,
   });
 }
 
 /** The current session, or null. Never throws — callers decide what to do. */
 export async function getSession(): Promise<Session | null> {
-  const store = await cookies();
-  const token = store.get(SESSION_COOKIE)?.value;
+  const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!token) return null;
-  return verifySession(token);
+
+  try {
+    const { payload } = await jwtVerify(token, secret(), {
+      issuer: "cleanship",
+      audience: "cleanship-app",
+    });
+    const sub = Number(payload.sub);
+    const role = payload.role as Role;
+    if (!Number.isInteger(sub) || !ROLES.includes(role)) return null;
+    return {
+      sub,
+      email: String(payload.email ?? ""),
+      name: String(payload.name ?? ""),
+      role,
+    };
+  } catch {
+    return null;
+  }
 }
 
 /**

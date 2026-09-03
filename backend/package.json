@@ -1,0 +1,40 @@
+{
+  "name": "@cleanship/backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CleanTrack API. A standalone Node service: vessels, compartments, cleaning stages, supervisors and the audit trail. Deployed on Render; the Next site on Vercel talks to it over HTTP.",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "migrate": "tsx src/db/migrate.ts",
+    "seed": "tsx src/db/seed.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "drizzle-orm": "^0.44.6",
+    "express": "^5.1.0",
+    "jose": "^6.1.0",
+    "pg": "^8.16.3",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^22.15.3",
+    "@types/pg": "^8.15.5",
+    "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.31.5",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": "22.x"
+  }
+}
