@@ -1,4 +1,26 @@
+import { config as loadEnv } from "dotenv";
+import { resolve } from "node:path";
 import type { NextConfig } from "next";
+
+/**
+ * Configuration lives in ../backend/.env, and this is what lets Next see it.
+ *
+ * Next only reads .env files from its own directory. The database URL and
+ * session secret belong to the backend package, so keeping them in
+ * frontend/.env.local meant configuration sat in the wrong half of the repo —
+ * or, worse, got duplicated into two files that quietly drift apart.
+ *
+ * next.config.ts is evaluated in Node before the app boots, for `dev`, `build`
+ * and `start` alike, so loading the file here populates process.env for
+ * everything downstream.
+ *
+ * dotenv never overwrites a variable that is already set, so a host's
+ * dashboard values (Vercel, Render) always win over this file — which is what
+ * you want, and why a missing file in production is a harmless no-op rather
+ * than an error.
+ */
+loadEnv({ path: resolve(process.cwd(), "../backend/.env"), quiet: true });
+loadEnv({ path: resolve(process.cwd(), "../backend/.env.local"), quiet: true });
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,

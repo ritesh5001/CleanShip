@@ -107,6 +107,14 @@ whichever one you are not looking at.
 
 ### Environment
 
+All configuration lives in **`backend/.env`** — one file, gitignored, read by
+both halves. `frontend/next.config.ts` loads it before the app boots, because
+Next only reads `.env` files from its own directory and this configuration
+belongs beside the code that owns it. Copy `backend/.env.example` to start.
+
+Host dashboard variables (Vercel, Render) always override the file, so in
+production the file simply does not exist and nothing has to change.
+
 | Variable | Required | What it does |
 | --- | --- | --- |
 | `DATABASE_URL` | yes | Neon Postgres. Without it the site still builds and serves; the admin and CleanTrack do not work. |

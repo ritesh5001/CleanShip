@@ -7,12 +7,16 @@
  * it — `config()` inline in a script runs too late, because the imports above
  * it have already been evaluated.
  *
- * THE ENV FILE LIVES IN frontend/, NOT HERE.
+ * THE ENV FILE LIVES HERE: backend/.env
  *
- * Next only reads `.env.local` from its own directory, and it is the thing
- * that actually runs in production. Rather than keep two copies in step — the
- * classic way to spend an afternoon debugging a script pointed at the wrong
- * database — the scripts in this package reach across to the app's file.
+ * It is the single source of truth for the whole system. The Next app reads
+ * the same file — frontend/next.config.ts loads it explicitly, because Next
+ * only reads .env files from its own directory and configuration belongs
+ * beside the code that owns it.
+ *
+ * The frontend paths below are kept purely as a fallback for anyone with an
+ * older checkout that still has frontend/.env.local. backend/.env wins,
+ * because dotenv does not overwrite a variable that is already set.
  */
 import { existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -23,6 +27,10 @@ const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "../..");
 
 for (const candidate of [
+  // Canonical, first — dotenv keeps the first value it sees for a given key.
+  resolve(repoRoot, "backend/.env.local"),
+  resolve(repoRoot, "backend/.env"),
+  // Legacy fallbacks, for older checkouts.
   resolve(repoRoot, "frontend/.env.local"),
   resolve(repoRoot, "frontend/.env"),
   resolve(repoRoot, ".env.local"),
