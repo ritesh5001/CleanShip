@@ -150,6 +150,58 @@ const nextConfig: NextConfig = {
       ["/underwater-hull-cleaning", "/services/hull-cleaning/underwater-hull-cleaning"],
       ["/hold-cleaning-at-port", "/services/hold-cleaning/shore-gang"],
       ["/hold-cleaning-at-sea", "/services/hold-cleaning/riding-crew"],
+
+      /* ---------------------------------------------------------------- *
+       * Legacy location URLs confirmed 404ing on the live site.           *
+       *                                                                   *
+       * Every one of these is a wording variant of a page that now exists  *
+       * under the port programme's own slug — "hold-cleaning-service-in-", *
+       * "ship-hold-cleaning-in-", "bulk-carrier-hold-cleaning-in-",        *
+       * "vessel-hold-cleaning-services-in-" all mean the port hub the      *
+       * programme publishes as "hold-cleaning-in-<port>".                  *
+       *                                                                   *
+       * They are listed one by one rather than matched with a wildcard on  *
+       * purpose. A pattern like /:prefix*-hold-cleaning-in-:port would     *
+       * also swallow slugs that have no destination, turning a clean 404   *
+       * into a 301 to a 404 — worse for both Google and the person         *
+       * clicking. Each line below was checked against the prerendered      *
+       * route list.                                                        *
+       * ---------------------------------------------------------------- */
+      [
+        "/hold-cleaning-service-in-chennai-port",
+        "/hold-cleaning-in-chennai-port",
+      ],
+      [
+        "/hold-cleaning-service-in-haldia-port",
+        "/hold-cleaning-in-haldia-port",
+      ],
+      /* Both legacy Kakinada slugs dropped the "-port" suffix the new
+         programme uses. */
+      ["/ship-hold-cleaning-in-kakinada", "/hold-cleaning-in-kakinada-port"],
+      [
+        "/bulk-carrier-hold-cleaning-in-kakinada",
+        "/hold-cleaning-in-kakinada-port",
+      ],
+      /* A country-level page, so it lands on the India region hub rather
+         than any one port. */
+      ["/bulk-carrier-hold-cleaning-in-india", "/hold-cleaning-in-india"],
+      [
+        "/vessel-hold-cleaning-services-in-ajman-port",
+        "/hold-cleaning-in-ajman-port",
+      ],
+      /* "gujrat" is the legacy spelling, and it shipped that way. */
+      [
+        "/hold-cleaning-in-kandla-port-gujrat",
+        "/hold-cleaning-in-kandla-port",
+      ],
+      /* The old site called it Kochi, the port data calls it Cochin. Same
+         port, different name — which is exactly why the otherwise-matching
+         /cargo-hold-cleaning-in-<port> slugs miss each other and this needs
+         to be stated explicitly. */
+      [
+        "/cargo-hold-cleaning-in-kochi-port",
+        "/cargo-hold-cleaning-in-cochin-port",
+      ],
     ];
 
     return moved.map(([source, destination]) => ({
