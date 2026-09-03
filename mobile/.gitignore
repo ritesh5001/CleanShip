@@ -11,3 +11,8 @@ web-build/
 # Secrets and per-machine config.
 .env
 .env.local
+
+# Signing keys. Back these up off the machine — losing release.keystore means
+# never being able to update an installed app under the same package name.
+/credentials
+/build

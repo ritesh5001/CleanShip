@@ -29,7 +29,8 @@
     },
     "plugins": [
       "expo-router",
-      "expo-status-bar"
+      "expo-status-bar",
+      "./plugins/with-release-signing"
     ],
     "scheme": "cleantrack",
     "primaryColor": "#0a2e52",
