@@ -33,13 +33,29 @@ them that column's history — which is why the UI asks first.
 ```bash
 cp .env.example .env          # then edit DATABASE_URL and SESSION_SECRET
 npm install
-npm run migrate               # creates the schema
-npm run seed                  # creates the first admin, prints a password once
+npm run migrate               # brings the schema forward; safe to re-run
+npm run seed                  # first admin; skips one that already exists
 npm run dev                   # http://localhost:4000
 ```
 
 `SESSION_SECRET` must be at least 32 characters and **identical to the one in
 `../frontend/.env.local`**. See "Sessions" below.
+
+There is one Postgres — Neon — and no staging instance. Pointing `.env` at it
+means a local run is working on production data.
+
+### Passwords
+
+There is no "forgot password" email, deliberately: the users are a handful of
+staff, and an email reset flow is a whole attack surface to maintain for
+something that happens twice a year. An admin resets anyone from the People
+screen. For the one case that screen cannot cover — nobody able to sign in as
+an admin at all — there is a command:
+
+```bash
+npm run set-password -- someone@cleanship.co              # generates one
+npm run set-password -- someone@cleanship.co "a password" # sets one
+```
 
 ## Layout
 
@@ -166,8 +182,13 @@ schema forward.
 See `../render.yaml` — it carries the service definition and the ordered
 first-deploy steps. The short version: `rootDir: backend`, build with
 `npm ci && npm run build && npm run migrate`, start with `npm start`, health
-check `/health`, and set `SESSION_SECRET`, `CLEANTRACK_URL` and `CORS_ORIGINS`
-on the service.
+check `/health`, and set `DATABASE_URL`, `SESSION_SECRET`, `CLEANTRACK_URL`
+and `CORS_ORIGINS` on the service.
+
+**Postgres is Neon, not a Render-managed database.** `render.yaml` has no
+`databases:` block on purpose — one would provision a second, empty instance
+and wire the API to it, and the first symptom would be a working deploy with
+no vessels and no accounts in it, which reads like data loss and is not.
 
 `CLEANTRACK_URL` is what customer share links are built from. A wrong value
 sends every link you issue to the wrong host, and you will not notice until a

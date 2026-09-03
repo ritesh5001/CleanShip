@@ -84,9 +84,17 @@ The API reference and the domain notes are in
 | API | Render | `backend` | `npm ci && npm run build && npm run migrate` | `npm start` |
 | Site | Vercel | `frontend` | `npm run build` | — |
 
+Live at `https://www.cleanship.co` and `https://cleantrack.cleanship.co`.
+
 `render.yaml` carries the API service definition and the ordered first-deploy
 steps. Migrations run in the build command, so every deploy brings the schema
 forward.
+
+**Postgres is Neon**, provisioned outside both hosts. `render.yaml` has no
+`databases:` block on purpose — one would make Render provision a second,
+empty instance and wire the API to it, and the first symptom would be a
+working deploy with no vessels and no accounts in it, which reads like data
+loss and is not.
 
 **Do not run the site on two hosts.** Pick one and delete the other, or the two
 will drift and you will spend an evening on a bug that only exists on whichever
@@ -100,10 +108,10 @@ Two files, one per app. Neither reads the other's.
 
 | Variable | Required | What it does |
 | --- | --- | --- |
-| `DATABASE_URL` | yes | Postgres. |
+| `DATABASE_URL` | yes | Neon, the **pooled** connection string. Keep `?sslmode=require` — `src/db/index.ts` keys its TLS settings off that substring. |
 | `SESSION_SECRET` | yes | Signs session tokens. 32+ characters. |
-| `CLEANTRACK_URL` | yes | Where CleanTrack is served. Customer share links are built from it, so a wrong value sends every link you issue to the wrong host. |
-| `CORS_ORIGINS` | production | Comma-separated browser origins allowed to call the API directly. Server-to-server calls from Next need no entry. |
+| `CLEANTRACK_URL` | yes | `https://cleantrack.cleanship.co`. Customer share links are built from it, so a wrong value sends every link you issue to the wrong host and you will not find out until a customer says so. |
+| `CORS_ORIGINS` | production | `https://cleantrack.cleanship.co,https://www.cleanship.co,https://cleanship.co`. Browser origins allowed to call the API directly; server-to-server calls from Next carry no Origin header and need no entry. |
 | `SESSION_TTL_HOURS` | no | Defaults to 24. Crews work long shifts. |
 | `PORT` | no | Render sets it. |
 
@@ -111,7 +119,7 @@ Two files, one per app. Neither reads the other's.
 
 | Variable | Required | What it does |
 | --- | --- | --- |
-| `BACKEND_URL` | yes | The API's origin. Not `NEXT_PUBLIC_`: only the server calls it. |
+| `BACKEND_URL` | yes | The Render service's URL. Not `NEXT_PUBLIC_`: only the server calls it, which is what keeps the session token out of the browser and CORS out of the picture. |
 | `SESSION_SECRET` | yes | **Byte-identical to the API's.** The API signs session tokens; this app verifies them locally so rendering a page costs no round trip. Mismatched values make every sign-in appear to work and then bounce straight back to the login page. |
 | `COOKIE_DOMAIN` | production | `.cleanship.co` — the leading dot is what makes one sign-in work on both the site and the CleanTrack subdomain. |
 | `RESEND_API_KEY` | yes | The contact forms. |
