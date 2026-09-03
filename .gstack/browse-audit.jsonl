@@ -1,0 +1,12 @@
+{"ts":"2026-08-17T10:36:31.302Z","cmd":"goto","args":"http://localhost:3100/","origin":"http://localhost:3100/","durationMs":80,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-17T10:36:31.364Z","cmd":"viewport","args":"1440x900","origin":"http://localhost:3100/","durationMs":16,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-17T10:36:31.884Z","cmd":"screenshot","args":"/tmp/ch-home.png","origin":"http://localhost:3100/","durationMs":478,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-17T10:36:31.914Z","cmd":"console","args":"--errors","origin":"http://localhost:3100/","durationMs":1,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-17T10:36:31.943Z","cmd":"js","args":"document.title","origin":"http://localhost:3100/","durationMs":0,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-17T10:36:44.639Z","cmd":"goto","args":"http://localhost:3100/","origin":"http://localhost:3100/","durationMs":13,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-17T10:36:44.682Z","cmd":"js","args":"window.scrollTo(0, 1400)","origin":"http://localhost:3100/","durationMs":0,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-17T10:36:45.826Z","cmd":"screenshot","args":"--viewport /tmp/ch-services.png","origin":"http://localhost:3100/","durationMs":71,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-17T10:36:57.852Z","cmd":"goto","args":"http://localhost:3100/","origin":"http://localhost:3100/","durationMs":10,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-17T10:36:58.964Z","cmd":"hover","args":"a[href='/services']","origin":"http://localhost:3100/","durationMs":50,"status":"error","hasCookies":false,"mode":"launched","error":"hover: Error: strict mode violation: locator('a[href=\\'/services\\']') resolved to 7 elements:\n    1) <a href=\"/services\" aria-haspopup=\"true\" aria-expanded=\"false\" class=\"label-caps relative flex h-[72px] items-center gap-1.5 px-4 transition-colors duration-[140ms] text-ink-700 hover:text-blue-600\">…"}
+{"ts":"2026-08-17T10:37:00.162Z","cmd":"screenshot","args":"--viewport /tmp/ch-mega.png","origin":"http://localhost:3100/","durationMs":134,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-17T10:37:10.974Z","cmd":"js","args":"JSON.stringify(Array.from(document.querySelectorAll('.grid-cols-5 a')).map(a=>a.textContent.trim().slice(0,60)))","origin":"http://localhost:3100/","durationMs":1,"status":"ok","hasCookies":false,"mode":"launched"}

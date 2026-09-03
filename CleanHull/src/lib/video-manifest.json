@@ -1,0 +1,52 @@
+{
+  "hydroblasting": {
+    "mp4": 1503049,
+    "webm": 1348872,
+    "preferred": "webm"
+  },
+  "in-water-class-survey": {
+    "mp4": 833836,
+    "webm": 445628,
+    "preferred": "webm"
+  },
+  "marine-painting": {
+    "mp4": 1021542,
+    "webm": 739489,
+    "preferred": "webm"
+  },
+  "ndt-and-repair": {
+    "mp4": 1096861,
+    "webm": 961586,
+    "preferred": "webm"
+  },
+  "ndt-inspection": {
+    "mp4": 1247285,
+    "webm": 958608,
+    "preferred": "webm"
+  },
+  "offshore": {
+    "mp4": 1968969,
+    "webm": 3111638,
+    "preferred": "mp4"
+  },
+  "propeller-super-polishing": {
+    "mp4": 1342938,
+    "webm": 1087183,
+    "preferred": "webm"
+  },
+  "remote-inspection-technology": {
+    "mp4": 622240,
+    "webm": 658524,
+    "preferred": "mp4"
+  },
+  "thruster-cleaning-polishing": {
+    "mp4": 1033067,
+    "webm": 813666,
+    "preferred": "webm"
+  },
+  "underwater-hull-cleaning": {
+    "mp4": 1469488,
+    "webm": 1464408,
+    "preferred": "webm"
+  }
+}

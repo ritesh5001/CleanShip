@@ -1,0 +1,13 @@
+/* Minimal element defaults. Components carry their own styling. */
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font:var(--type-body);color:var(--text-body);background:var(--surface-page);-webkit-font-smoothing:antialiased;text-wrap:pretty}
+h1,h2,h3,h4,h5,h6{margin:0;color:var(--text-strong)}
+h1{font:var(--type-h1)}h2{font:var(--type-h2)}h3{font:var(--type-h3)}h4{font:var(--type-h4)}
+p{margin:0 0 var(--space-4)}
+a{color:var(--text-link);text-decoration:none;transition:color var(--dur-fast) var(--ease-standard)}
+a:hover{color:var(--text-link-hover);text-decoration:underline;text-underline-offset:3px}
+img{max-width:100%;display:block}
+:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.cs-eyebrow{font:var(--type-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--blue-600);display:inline-flex;align-items:center;gap:var(--space-3)}
+.cs-eyebrow::before,.cs-eyebrow::after{content:"";width:20px;height:1px;background:var(--aqua-500)}
+.cs-container{max-width:var(--page-max);margin:0 auto;padding:0 var(--page-pad)}

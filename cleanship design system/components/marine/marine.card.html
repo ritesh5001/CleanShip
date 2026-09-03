@@ -1,0 +1,27 @@
+<!-- @dsCard group="Components" viewport="700x420" name="Marine — service tiles, counters, contact" subtitle="ServiceCard, StatCounter, CheckList, ContactDetail, CtaBanner" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>body{margin:0;padding:20px;background:var(--white);font:var(--type-body)}.row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}.lbl{font:var(--type-label);letter-spacing:var(--ls-label);text-transform:uppercase;color:var(--text-faint)}</style></head><body><div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@0.470.0/dist/umd/lucide.js"></script>
+<script src="../../assets/image-slot.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+const {ServiceCard,StatCounter,CheckList,ContactDetail,CtaBanner}=window.CleanShipDesignSystem_64da38;
+function Demo(){return(<div style={{display:"flex",flexDirection:"column",gap:18}}>
+<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+<ServiceCard index="01" title="Hold Cleaning" icon="container" slotId="card-svc-01" description="Professional cargo hold cleaning service ensures residue-free holds, cargo readiness and safety compliance."/>
+<div style={{display:"flex",flexDirection:"column",gap:16}}>
+<div style={{display:"flex",gap:28}}>
+<StatCounter value={5} label="Years experience" icon="award"/><StatCounter value={300} label="Clients" icon="users"/>
+</div>
+<CheckList items={["IMO & port-compliant procedures","Eco-friendly cleaning solutions"]}/>
+<ContactDetail icon="phone-call" label="Phone Number:" lines={["+971 - 554029954","+91 - 9236520609"]}/>
+</div></div>
+<CtaBanner title="We always ready to serve you." body="Marine cleaning you can trust — Mon–Sun, 24 hours." primaryLabel="Contact us" secondaryLabel="View more services" style={{padding:"28px 32px"}}/>
+</div>);}
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo/>);
+lucide&&lucide.createIcons&&lucide.createIcons();
+</script></body></html>

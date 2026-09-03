@@ -1,0 +1,73 @@
+/* Colors — deep marine navy + working blue, cool neutrals, one aqua accent. */
+:root{
+  /* Navy — hulls, section fills, footer */
+  --navy-900:#06203a;
+  --navy-800:#0a2e52;
+  --navy-700:#0e3d6b;
+  --navy-600:#124e88;
+
+  /* Blue — primary action / brand blue of the brochure spreads */
+  --blue-600:#1461a0;
+  --blue-500:#1b7bc4;
+  --blue-400:#4a9bd8;
+  --blue-200:#b7d6ee;
+  --blue-100:#dceaf6;
+  --blue-50:#f1f7fc;
+
+  /* Aqua — clean-water accent, used sparingly (rules, active states, counters) */
+  --aqua-600:#00929b;
+  --aqua-500:#00b0b9;
+  --aqua-200:#9de3e7;
+
+  /* Neutrals — cool grey, never warm */
+  --ink-900:#0f1c27;
+  --ink-700:#243545;
+  --slate-600:#4c5c6b;
+  --slate-500:#6b7c8b;
+  --slate-400:#8a9aa8;
+  --slate-300:#b9c5cf;
+  --line-200:#dce4eb;
+  --line-100:#eaeff4;
+  --paper:#f6f8fa;
+  --white:#ffffff;
+
+  /* Semantic status */
+  --success-600:#1e9e63;
+  --success-100:#e2f4ea;
+  --warning-600:#c9880d;
+  --warning-100:#fbf0d8;
+  --danger-600:#c6472f;
+  --danger-100:#fae5e0;
+
+  /* Aliases — use these in components */
+  --brand:var(--blue-600);
+  --brand-strong:var(--navy-800);
+  --brand-accent:var(--aqua-500);
+
+  --text-strong:var(--ink-900);
+  --text-body:var(--ink-700);
+  --text-muted:var(--slate-500);
+  --text-faint:var(--slate-400);
+  --text-on-dark:#ffffff;
+  --text-on-dark-muted:rgba(255,255,255,.72);
+  --text-link:var(--blue-600);
+  --text-link-hover:var(--navy-800);
+
+  --surface-page:var(--white);
+  --surface-subtle:var(--paper);
+  --surface-tint:var(--blue-50);
+  --surface-card:var(--white);
+  --surface-dark:var(--navy-800);
+  --surface-darker:var(--navy-900);
+  --surface-inverse-tint:rgba(255,255,255,.08);
+
+  --border-subtle:var(--line-100);
+  --border-default:var(--line-200);
+  --border-strong:var(--slate-300);
+  --border-on-dark:rgba(255,255,255,.16);
+
+  /* Photo scrims — navy, never black */
+  --scrim-navy:linear-gradient(180deg,rgba(6,32,58,.10) 0%,rgba(6,32,58,.78) 100%); /* @kind color */
+  --scrim-navy-left:linear-gradient(90deg,rgba(6,32,58,.88) 0%,rgba(6,32,58,.55) 55%,rgba(6,32,58,.15) 100%); /* @kind color */
+  --scrim-flat:rgba(6,32,58,.62); /* @kind color */
+}

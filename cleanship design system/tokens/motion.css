@@ -1,0 +1,13 @@
+/* Motion — short, flat, no bounce. Photography scales slowly; UI moves quickly. */
+:root{
+  --dur-instant:80ms; /* @kind other */
+  --dur-fast:140ms; /* @kind other */
+  --dur-base:220ms; /* @kind other */
+  --dur-slow:400ms; /* @kind other */
+  --dur-photo:700ms; /* @kind other */
+  --ease-standard:cubic-bezier(.4,0,.2,1); /* @kind other */
+  --ease-out:cubic-bezier(.16,1,.3,1); /* @kind other */
+  --ease-in:cubic-bezier(.4,0,1,1); /* @kind other */
+  --lift-hover:-2px; /* @kind other */
+  --press-scale:.985; /* @kind other */
+}
