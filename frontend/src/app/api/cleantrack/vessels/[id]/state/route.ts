@@ -45,7 +45,12 @@ export async function GET(
           cells: Object.fromEntries(
             Object.entries(c.cells).map(([k, cell]) => [
               k,
-              { status: cell.status, note: cell.note },
+              {
+                status: cell.status,
+                note: cell.note,
+                startedAt: cell.startedAt,
+                completedAt: cell.completedAt,
+              },
             ]),
           ),
         })),

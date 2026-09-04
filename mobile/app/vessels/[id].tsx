@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { ApiError, getVessel } from "../../src/api";
 import { readVessel, writeVessel } from "../../src/cache";
 import { enqueue, forVessel, readQueue, type QueuedChange } from "../../src/queue";
@@ -22,6 +23,8 @@ import {
   CELL_STYLE,
   compartmentNoun,
   compartmentState,
+  formatDuration,
+  formatWorkTime,
   nextStatusOnTap,
   progressOf,
   statusesOf,
@@ -134,6 +137,7 @@ export default function Vessel() {
       stageKey: string,
       status: CellStatus,
       note?: string | null,
+      times?: { startedAt?: string | null; completedAt?: string | null },
     ) => {
       const queue = await enqueue({
         vesselId,
@@ -141,6 +145,7 @@ export default function Vessel() {
         stageKey,
         status,
         note,
+        ...(times ?? {}),
       });
       setPending(forVessel(queue, vesselId));
     },
@@ -258,6 +263,7 @@ function CompartmentCard({
     stageKey: string,
     status: CellStatus,
     note?: string | null,
+    times?: { startedAt?: string | null; completedAt?: string | null },
   ) => void;
 }) {
   const statuses = statusesOf(compartment.cells, stages);
@@ -278,6 +284,19 @@ function CompartmentCard({
           <Text style={styles.compartmentMeta}>
             {total === 0 ? "Not applicable" : `${done} of ${total} stages done`}
           </Text>
+          {(compartment.startedAt || compartment.completedAt) && (
+            <Text style={styles.compartmentTimes}>
+              {compartment.startedAt
+                ? `Started ${formatWorkTime(compartment.startedAt)}`
+                : "Not started"}
+              {compartment.completedAt
+                ? ` · Finished ${formatWorkTime(compartment.completedAt)}`
+                : ""}
+              {formatDuration(compartment.startedAt, compartment.completedAt)
+                ? ` · ${formatDuration(compartment.startedAt, compartment.completedAt)}`
+                : ""}
+            </Text>
+          )}
         </View>
         <Text style={styles.disclosure}>{expanded ? "Close" : "Open"}</Text>
       </Pressable>
@@ -339,11 +358,24 @@ function StageRow({
   onSet,
 }: {
   stage: Stage;
-  cell: { status: CellStatus; note: string | null } | undefined;
-  onSet: (status: CellStatus, note?: string | null) => void;
+  cell:
+    | {
+        status: CellStatus;
+        note: string | null;
+        startedAt?: string | null;
+        completedAt?: string | null;
+      }
+    | undefined;
+  onSet: (
+    status: CellStatus,
+    note?: string | null,
+    times?: { startedAt?: string | null; completedAt?: string | null },
+  ) => void;
 }) {
   const status = cell?.status ?? "pending";
   const [draft, setDraft] = useState(cell?.note ?? "");
+  /* Which field the picker is editing, if any. */
+  const [picking, setPicking] = useState<"startedAt" | "completedAt" | null>(null);
 
   /* The note field is a controlled input that must follow the server when a
      refresh brings a newer value, but must not fight the person typing. */
@@ -388,6 +420,56 @@ function StageRow({
         })}
       </View>
 
+      {/* Work times.
+          Filled in automatically by the status buttons above — the common
+          case is tapping when the work happens, where asking for a time would
+          be friction for no gain. Tapping a time opens a picker, which is the
+          correction path: work finished at 02:10 and entered at 06:00 should
+          read 02:10, not 06:00. */}
+      <View style={styles.timeRow}>
+        <TimeField
+          label="Started"
+          value={cell?.startedAt ?? null}
+          onPress={() => setPicking("startedAt")}
+        />
+        <TimeField
+          label="Finished"
+          value={cell?.completedAt ?? null}
+          onPress={() => setPicking("completedAt")}
+        />
+        {formatDuration(cell?.startedAt, cell?.completedAt) && (
+          <View style={styles.durationChip}>
+            <Text style={styles.durationText}>
+              {formatDuration(cell?.startedAt, cell?.completedAt)}
+            </Text>
+          </View>
+        )}
+      </View>
+
+      {picking && (
+        <DateTimePicker
+          mode="datetime"
+          value={
+            (picking === "startedAt" ? cell?.startedAt : cell?.completedAt)
+              ? new Date(
+                  (picking === "startedAt"
+                    ? cell?.startedAt
+                    : cell?.completedAt) as string,
+                )
+              : new Date()
+          }
+          /* Never offer a future time. A stage cannot have started or finished
+             later than now, and allowing it puts impossible timings in front
+             of a customer. */
+          maximumDate={new Date()}
+          onChange={(event, date) => {
+            setPicking(null);
+            if (event.type !== "set" || !date) return;
+            onSet(status, undefined, { [picking]: date.toISOString() });
+          }}
+        />
+      )}
+
       <TextInput
         value={draft}
         onChangeText={setDraft}
@@ -403,6 +485,36 @@ function StageRow({
         style={styles.noteInput}
       />
     </View>
+  );
+}
+
+/**
+ * One time, tappable to change it.
+ *
+ * Shown even when empty so the pair reads as a record with a gap in it, rather
+ * than as a feature the supervisor has to go looking for.
+ */
+function TimeField({
+  label,
+  value,
+  onPress,
+}: {
+  label: string;
+  value: string | null;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`${label}: ${formatWorkTime(value)}. Tap to change.`}
+      style={({ pressed }) => [styles.timeField, pressed && { opacity: 0.6 }]}
+    >
+      <Text style={styles.timeLabel}>{label}</Text>
+      <Text style={[styles.timeValue, !value && styles.timeValueEmpty]}>
+        {formatWorkTime(value)}
+      </Text>
+    </Pressable>
   );
 }
 
@@ -477,6 +589,43 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   statusButtonText: { fontSize: 13, fontWeight: "700" },
+  compartmentTimes: {
+    marginTop: 3,
+    fontSize: 12,
+    color: colors.muted,
+  },
+  timeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.sm,
+    flexWrap: "wrap",
+  },
+  timeField: {
+    minHeight: 44,
+    justifyContent: "center",
+    paddingHorizontal: space.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    backgroundColor: "#fff",
+    minWidth: 108,
+  },
+  timeLabel: { fontSize: 11, color: colors.muted, fontWeight: "600" },
+  timeValue: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: colors.text,
+    fontVariant: ["tabular-nums"],
+  },
+  timeValueEmpty: { color: colors.faint, fontWeight: "500" },
+  durationChip: {
+    minHeight: 44,
+    justifyContent: "center",
+    paddingHorizontal: space.md,
+    borderRadius: radius.sm,
+    backgroundColor: "#eff6ff",
+  },
+  durationText: { fontSize: 13, fontWeight: "700", color: "#1e40af" },
   noteInput: {
     minHeight: 44,
     borderWidth: 1,

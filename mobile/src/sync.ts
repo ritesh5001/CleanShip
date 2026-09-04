@@ -42,6 +42,8 @@ export async function flushQueue(token: string): Promise<SyncResult> {
       stageKey: c.stageKey,
       status: c.status,
       note: c.note,
+      startedAt: c.startedAt,
+      completedAt: c.completedAt,
       occurredAt: c.occurredAt,
       idempotencyKey: c.key,
     }));
@@ -77,7 +79,18 @@ export async function flushQueue(token: string): Promise<SyncResult> {
  * queue in order reproduces exactly the state they are looking at.
  */
 export function overlayPending<
-  T extends { id: number; cells: Record<string, { status: string; note: string | null }> },
+  T extends {
+    id: number;
+    cells: Record<
+      string,
+      {
+        status: string;
+        note: string | null;
+        startedAt?: string | null;
+        completedAt?: string | null;
+      }
+    >;
+  },
 >(compartments: T[], pending: QueuedChange[]): T[] {
   if (pending.length === 0) return compartments;
 
@@ -95,10 +108,32 @@ export function overlayPending<
     const cells = { ...compartment.cells };
     for (const change of changes) {
       const existing = cells[change.stageKey];
+
+      /* Mirror the API's own rules so the screen does not disagree with the
+         server once the queue drains. See resolveTimes in the backend. */
+      const when = change.occurredAt;
+      let startedAt = existing?.startedAt ?? null;
+      let completedAt = existing?.completedAt ?? null;
+
+      if (change.status === "pending" || change.status === "na") {
+        startedAt = null;
+        completedAt = null;
+      } else if (change.status === "in_progress") {
+        startedAt = startedAt ?? when;
+        completedAt = null;
+      } else if (change.status === "done") {
+        completedAt = completedAt ?? when;
+      }
+
+      if (change.startedAt !== undefined) startedAt = change.startedAt;
+      if (change.completedAt !== undefined) completedAt = change.completedAt;
+
       cells[change.stageKey] = {
         ...(existing ?? { status: "pending", note: null }),
         status: change.status,
         note: change.note === undefined ? (existing?.note ?? null) : change.note,
+        startedAt,
+        completedAt,
       } as (typeof cells)[string];
     }
     return { ...compartment, cells };

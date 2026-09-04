@@ -24,6 +24,8 @@ const schema = z.object({
         stageKey: z.string().min(1).max(40),
         status: z.enum(["pending", "in_progress", "done", "na"]),
         note: z.string().max(160).nullish(),
+        startedAt: z.string().datetime().nullish(),
+        completedAt: z.string().datetime().nullish(),
         occurredAt: z.string().datetime(),
         idempotencyKey: z.string().min(8).max(64),
       }),

@@ -29,6 +29,12 @@ export type QueuedChange = {
   stageKey: string;
   status: CellStatus;
   note?: string | null;
+  /**
+   * Explicit work times, when the supervisor corrected them. Undefined means
+   * "derive it from the status change", which is the normal tap.
+   */
+  startedAt?: string | null;
+  completedAt?: string | null;
   occurredAt: string;
   /** Bumped each time a send fails, so a poison entry can be dropped. */
   attempts: number;

@@ -179,6 +179,9 @@ export type CellChange = {
   stageKey: string;
   status: CellStatus;
   note?: string | null;
+  /** Explicit work times, when the supervisor corrected them. */
+  startedAt?: string | null;
+  completedAt?: string | null;
   occurredAt: string;
   idempotencyKey: string;
 };

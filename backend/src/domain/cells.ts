@@ -26,6 +26,16 @@ export type CellChange = {
   status: CellStatus;
   /** Replaces the note. `null` clears it; omit to leave it alone. */
   note?: string | null;
+  /**
+   * When the work started and finished.
+   *
+   * Omit and they are derived from the status change — which is what happens
+   * on a normal tap, where "now" is the right answer and asking would be
+   * friction. Supply them to correct the record after the fact: a hold
+   * finished at 02:10 and entered at 06:00 should read 02:10. `null` clears.
+   */
+  startedAt?: Date | null;
+  completedAt?: Date | null;
   /** When the supervisor tapped, not when the server heard about it. */
   occurredAt?: Date;
   /** Client-generated. Makes an offline replay safe to retry. */
@@ -102,6 +112,56 @@ async function recomputeStatus(
     .returning({ version: vessels.version, status: vessels.status });
 
   return updated;
+}
+
+/**
+ * Works out a cell's start and finish times from the change being applied.
+ *
+ * The rules, in one place because they are the sort of thing that rots when
+ * restated at each call site:
+ *
+ *   · An explicit time always wins. That is the supervisor correcting the
+ *     record, and their knowledge of the deck beats our inference.
+ *   · Moving to in-progress starts the clock, but never restarts one already
+ *     running — re-tapping a stage must not erase when it actually began.
+ *   · Moving to done stops the clock. If nothing ever started it, the start
+ *     stays null: a stage marked done in one tap has no honest start time,
+ *     and backfilling it from the completion invents a duration of zero.
+ *   · Going back to pending, or to not-applicable, clears both. The work is
+ *     no longer claimed to have happened, so neither is its timing.
+ */
+function resolveTimes(
+  change: CellChange,
+  existing: { startedAt: Date | null; completedAt: Date | null } | undefined,
+  at: Date,
+): { startedAt: Date | null; completedAt: Date | null } {
+  const when = change.occurredAt ?? at;
+  let startedAt = existing?.startedAt ?? null;
+  let completedAt = existing?.completedAt ?? null;
+
+  if (change.status === "pending" || change.status === "na") {
+    startedAt = null;
+    completedAt = null;
+  } else if (change.status === "in_progress") {
+    startedAt = startedAt ?? when;
+    completedAt = null;
+  } else if (change.status === "done") {
+    completedAt = completedAt ?? when;
+  }
+
+  if (change.startedAt !== undefined) startedAt = change.startedAt;
+  if (change.completedAt !== undefined) completedAt = change.completedAt;
+
+  /* A finish before its start is a typo or a wrong device clock, and it
+     produces negative durations in every report downstream. Refusing is
+     louder than silently swapping them, which would hide the mistake. */
+  if (startedAt && completedAt && completedAt.getTime() < startedAt.getTime()) {
+    throw ApiError.badRequest(
+      "The finish time cannot be before the start time.",
+    );
+  }
+
+  return { startedAt, completedAt };
 }
 
 /**
@@ -191,8 +251,23 @@ export async function applyCellChanges(
       const note =
         change.note === undefined ? (existing?.note ?? null) : change.note;
 
-      /* A no-op still records nothing rather than a misleading audit line. */
-      if (existing && from === change.status && (existing.note ?? null) === note) {
+      const times = resolveTimes(change, existing, at);
+
+      /* A no-op still records nothing rather than a misleading audit line.
+         Times count as a change: correcting a start time with the status
+         untouched is exactly the edit this feature exists for. */
+      const sameTimes =
+        (existing?.startedAt?.getTime() ?? null) ===
+          (times.startedAt?.getTime() ?? null) &&
+        (existing?.completedAt?.getTime() ?? null) ===
+          (times.completedAt?.getTime() ?? null);
+
+      if (
+        existing &&
+        from === change.status &&
+        (existing.note ?? null) === note &&
+        sameTimes
+      ) {
         continue;
       }
 
@@ -202,6 +277,8 @@ export async function applyCellChanges(
           .set({
             status: change.status,
             note,
+            startedAt: times.startedAt,
+            completedAt: times.completedAt,
             updatedById: actor.sub,
             updatedByName: actor.name,
             updatedAt: at,
@@ -214,6 +291,8 @@ export async function applyCellChanges(
           stageKey: change.stageKey,
           status: change.status,
           note,
+          startedAt: times.startedAt,
+          completedAt: times.completedAt,
           updatedById: actor.sub,
           updatedByName: actor.name,
           updatedAt: at,

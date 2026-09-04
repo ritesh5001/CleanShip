@@ -220,6 +220,22 @@ export const cells = pgTable(
     status: cellStatus("status").notNull().default("pending"),
     /** Free text the crew adds — "Water in tank", "awaiting surveyor". */
     note: varchar("note", { length: 160 }),
+
+    /**
+     * When the work on this cell actually started and finished.
+     *
+     * Distinct from `updatedAt` and from the audit trail's `occurredAt`, which
+     * both answer "when was this recorded". These answer "when was the work
+     * done" — the question behind an invoice for time, and the two columns the
+     * paper sheet carried by hand.
+     *
+     * Nullable on purpose. A stage marked done without ever passing through
+     * in-progress has no honest start time, and backfilling one from the
+     * completion would put a fabricated number in front of a customer.
+     */
+    startedAt: timestamp("started_at", { withTimezone: true }),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+
     updatedById: integer("updated_by_id").references(() => users.id, {
       onDelete: "set null",
     }),

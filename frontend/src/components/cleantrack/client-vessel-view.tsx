@@ -5,6 +5,8 @@ import { formatDate, formatDateTime, relativeTime } from "@/lib/format";
 import {
   CELL_STYLE,
   compartmentNoun,
+  formatDuration,
+  formatWorkTime,
   progressOf,
   statusesOf,
   type PublicVessel,
@@ -122,6 +124,12 @@ export function ClientVesselView({
                   {s.label}
                 </th>
               ))}
+              <th className="px-3 py-3 text-left font-semibold text-slate-700">
+                Started
+              </th>
+              <th className="px-3 py-3 text-left font-semibold text-slate-700">
+                Finished
+              </th>
               <th className="px-5 py-3 text-right font-semibold text-slate-700">
                 Status
               </th>
@@ -160,6 +168,21 @@ export function ClientVesselView({
                       </td>
                     );
                   })}
+                  {/* When the work happened, per hold. This is the question
+                      a customer is actually asking when they open the link —
+                      "is it done, and when" — and the paper sheet answered it
+                      with two handwritten columns. */}
+                  <td className="whitespace-nowrap px-3 py-3 text-slate-700">
+                    {formatWorkTime(c.startedAt)}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3 text-slate-700">
+                    {formatWorkTime(c.completedAt)}
+                    {formatDuration(c.startedAt, c.completedAt) && (
+                      <span className="ml-1.5 rounded bg-blue-50 px-1.5 py-0.5 text-[11px] font-semibold text-blue-800">
+                        {formatDuration(c.startedAt, c.completedAt)}
+                      </span>
+                    )}
+                  </td>
                   <td className="px-5 py-3 text-right">
                     <StatusChip state={c.state} />
                   </td>

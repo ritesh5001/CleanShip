@@ -37,9 +37,29 @@ export type VesselSummary = Vessel & {
 
 export type CompartmentDetail = Compartment & {
   /** Keyed by stage key, so the grid is a lookup rather than a search. */
-  cells: Record<string, Pick<Cell, "id" | "status" | "note" | "updatedAt" | "updatedByName">>;
+  cells: Record<
+    string,
+    Pick<
+      Cell,
+      | "id"
+      | "status"
+      | "note"
+      | "startedAt"
+      | "completedAt"
+      | "updatedAt"
+      | "updatedByName"
+    >
+  >;
   state: CompartmentState;
   progress: Progress;
+  /**
+   * When work on this compartment began and ended: the earliest start and the
+   * latest finish across its stages. `completedAt` is null until every stage
+   * that applies has one — a hold is not finished while any of it is still
+   * running, and reporting the latest finish so far would overstate it.
+   */
+  startedAt: Date | null;
+  completedAt: Date | null;
 };
 
 export type VesselDetail = VesselSummary & {
@@ -190,6 +210,8 @@ export async function getVesselDetail(id: number): Promise<VesselDetail | null> 
         id: c.id,
         status: c.status,
         note: c.note,
+        startedAt: c.startedAt,
+        completedAt: c.completedAt,
         updatedAt: c.updatedAt,
         updatedByName: c.updatedByName,
       };
@@ -198,11 +220,34 @@ export async function getVesselDetail(id: number): Promise<VesselDetail | null> 
        pending — a vessel whose stage list gained a column should render, not
        throw, before anyone has touched the new column. */
     const statuses = stageKeys.map((k) => map[k]?.status ?? "pending");
+
+    /* Only stages that apply. An `na` cell is not work, so it neither starts
+       the clock nor holds the compartment open. */
+    const live = stageKeys
+      .map((k) => map[k])
+      .filter((cell) => cell && cell.status !== "na");
+
+    const starts = live
+      .map((cell) => cell!.startedAt)
+      .filter((d): d is Date => Boolean(d));
+    const finishes = live
+      .map((cell) => cell!.completedAt)
+      .filter((d): d is Date => Boolean(d));
+
+    const everyLiveStageFinished =
+      live.length > 0 && finishes.length === live.length;
+
     return {
       ...comp,
       cells: map,
       state: compartmentState(statuses),
       progress: progressOf(statuses),
+      startedAt: starts.length
+        ? new Date(Math.min(...starts.map((d) => d.getTime())))
+        : null,
+      completedAt: everyLiveStageFinished
+        ? new Date(Math.max(...finishes.map((d) => d.getTime())))
+        : null,
     };
   });
 

@@ -218,6 +218,10 @@ const changeSchema = z.object({
   stageKey: z.string().min(1).max(40),
   status: z.enum(["pending", "in_progress", "done", "na"]),
   note: z.string().max(160).nullish(),
+  /* Explicit work times. Omitted, they are derived from the status change;
+     supplied, they are the supervisor correcting the record after the fact. */
+  startedAt: z.coerce.date().nullish(),
+  completedAt: z.coerce.date().nullish(),
   occurredAt: z.coerce.date().optional(),
   idempotencyKey: z.string().max(64).nullish(),
 });

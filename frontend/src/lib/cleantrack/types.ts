@@ -21,6 +21,9 @@ export type Cell = {
   id?: number;
   status: CellStatus;
   note: string | null;
+  /** When the work was done — distinct from when it was recorded. */
+  startedAt: string | null;
+  completedAt: string | null;
   updatedAt: string;
   updatedByName?: string | null;
 };
@@ -38,6 +41,9 @@ export type CompartmentDetail = {
   cells: Record<string, Cell>;
   state: CompartmentState;
   progress: Progress;
+  /** Earliest start and latest finish across the stages that apply. */
+  startedAt: string | null;
+  completedAt: string | null;
 };
 
 export type VesselSummary = {
@@ -219,4 +225,53 @@ export const STATE_STYLE: Record<
 export function compartmentNoun(type: VesselType, plural = false) {
   const noun = type === "tank" ? "Tank" : "Hold";
   return plural ? `${noun}s` : noun;
+}
+
+
+/* -------------------------------------------------------------------- */
+/* Work times                                                           */
+/* -------------------------------------------------------------------- */
+
+/**
+ * A start or finish time, for a screen someone reads at a desk.
+ *
+ * Same-day times show as "14:05". Anything older carries the date, because on
+ * a job running past midnight "02:10" alone is genuinely ambiguous about which
+ * night it means — and that ambiguity is what an invoice dispute turns on.
+ */
+export function formatWorkTime(value: string | null | undefined): string {
+  if (!value) return "—";
+  const at = new Date(value);
+  if (Number.isNaN(at.getTime())) return "—";
+
+  const time = at.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const now = new Date();
+  const sameDay =
+    at.getFullYear() === now.getFullYear() &&
+    at.getMonth() === now.getMonth() &&
+    at.getDate() === now.getDate();
+  if (sameDay) return time;
+
+  const date = at.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  return `${date} ${time}`;
+}
+
+/** "3h 20m" — how long a stage took. Null while it is unfinished. */
+export function formatDuration(
+  startedAt: string | null | undefined,
+  completedAt: string | null | undefined,
+): string | null {
+  if (!startedAt || !completedAt) return null;
+  const ms = new Date(completedAt).getTime() - new Date(startedAt).getTime();
+  if (!Number.isFinite(ms) || ms < 0) return null;
+
+  const minutes = Math.round(ms / 60000);
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  return rest === 0 ? `${hours}h` : `${hours}h ${rest}m`;
 }

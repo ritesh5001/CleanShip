@@ -7,6 +7,8 @@ import {
   CELL_STATUSES,
   CELL_STYLE,
   compartmentNoun,
+  formatDuration,
+  formatWorkTime,
   compartmentState,
   nextStatusOnTap,
   progressOf,
@@ -29,7 +31,15 @@ export type GridCompartment = {
   label: string;
   position: number;
   notes: string | null;
-  cells: Record<string, { status: CellStatus; note: string | null }>;
+  cells: Record<
+    string,
+    {
+      status: CellStatus;
+      note: string | null;
+      startedAt?: string | null;
+      completedAt?: string | null;
+    }
+  >;
 };
 
 type QueuedChange = {
@@ -219,21 +229,39 @@ export function StatusGrid({
       if (readOnly) return;
 
       /* Optimistic: the grid moves the instant a thumb lands on it. */
+      const now = new Date().toISOString();
       setComps((prev) =>
-        prev.map((c) =>
-          c.id === compartmentId
-            ? {
-                ...c,
-                cells: {
-                  ...c.cells,
-                  [stageKey]: {
-                    status,
-                    note: note === undefined ? (c.cells[stageKey]?.note ?? null) : note,
-                  },
-                },
-              }
-            : c,
-        ),
+        prev.map((c) => {
+          if (c.id !== compartmentId) return c;
+          const existing = c.cells[stageKey];
+
+          /* Mirror the API's own rules so the board does not disagree with
+             the server a second later. See resolveTimes in the backend. */
+          let startedAt = existing?.startedAt ?? null;
+          let completedAt = existing?.completedAt ?? null;
+          if (status === "pending" || status === "na") {
+            startedAt = null;
+            completedAt = null;
+          } else if (status === "in_progress") {
+            startedAt = startedAt ?? now;
+            completedAt = null;
+          } else if (status === "done") {
+            completedAt = completedAt ?? now;
+          }
+
+          return {
+            ...c,
+            cells: {
+              ...c.cells,
+              [stageKey]: {
+                status,
+                note: note === undefined ? (existing?.note ?? null) : note,
+                startedAt,
+                completedAt,
+              },
+            },
+          };
+        }),
       );
 
       const change: QueuedChange = {
@@ -543,6 +571,23 @@ function CompartmentPanel({
                   })}
                 </div>
               </div>
+
+              {/* When the work actually happened, as opposed to when it was
+                  recorded. Read-only here: correcting a time is a job for the
+                  supervisor on the vessel, in the app, where they know what
+                  the deck was doing. */}
+              <p className="mt-1.5 text-[12px] text-slate-500">
+                <span className="font-medium text-slate-600">Started</span>{" "}
+                {formatWorkTime(cell.startedAt)}
+                <span className="mx-1.5 text-slate-300">·</span>
+                <span className="font-medium text-slate-600">Finished</span>{" "}
+                {formatWorkTime(cell.completedAt)}
+                {formatDuration(cell.startedAt, cell.completedAt) && (
+                  <span className="ml-1.5 rounded bg-blue-50 px-1.5 py-0.5 font-semibold text-blue-800">
+                    {formatDuration(cell.startedAt, cell.completedAt)}
+                  </span>
+                )}
+              </p>
 
               {!readOnly && (
                 <NoteField
