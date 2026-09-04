@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import { TimeAsk } from "../../src/components/time-ask";
 import { ApiError, getVessel } from "../../src/api";
 import { readVessel, writeVessel } from "../../src/cache";
 import { enqueue, forVessel, readQueue, type QueuedChange } from "../../src/queue";
@@ -152,6 +152,53 @@ export default function Vessel() {
     [vesselId],
   );
 
+  /**
+   * A status change waiting on the supervisor to confirm when it happened.
+   *
+   * Marking a stage as working or done asks for the time rather than assuming
+   * "now". On a deck the tap and the work are often hours apart — a hold
+   * finished at 02:10 gets entered when someone next has a free hand — and a
+   * silently assumed time is a wrong time nobody notices until an invoice is
+   * disputed.
+   */
+  const [askTime, setAskTime] = useState<{
+    compartmentId: number;
+    stageKey: string;
+    stageLabel: string;
+    status: CellStatus;
+    /** Pre-fills the picker: the existing time, else now. */
+    initial: Date;
+  } | null>(null);
+
+  /**
+   * The entry point for every status tap.
+   *
+   * `pending` and `na` clear the times outright, so there is nothing to ask
+   * about and prompting would be pure friction. The other two carry a time.
+   */
+  const requestStatus = useCallback(
+    (
+      compartmentId: number,
+      stageKey: string,
+      stageLabel: string,
+      status: CellStatus,
+      existing?: string | null,
+    ) => {
+      if (status !== "in_progress" && status !== "done") {
+        void setCell(compartmentId, stageKey, status);
+        return;
+      }
+      setAskTime({
+        compartmentId,
+        stageKey,
+        stageLabel,
+        status,
+        initial: existing ? new Date(existing) : new Date(),
+      });
+    },
+    [setCell],
+  );
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await Promise.all([load(), refreshPending()]);
@@ -225,6 +272,38 @@ export default function Vessel() {
         for N/A and notes.
       </Text>
 
+      {/* Asked for on every status tap that carries a time.
+          Pre-filled with now, so the ordinary case — recording work as it
+          happens — is a single confirm. Capped at now, because a stage cannot
+          have started or finished in the future. Dismissing changes nothing:
+          a cancelled time means the tap was a mistake, and applying the status
+          anyway would leave a status the supervisor did not agree to. */}
+      <TimeAsk
+        visible={askTime !== null}
+        title={askTime?.stageLabel ?? ""}
+        subtitle={
+          askTime?.status === "in_progress"
+            ? "When did this start?"
+            : "When was this finished?"
+        }
+        initial={askTime?.initial ?? new Date()}
+        onCancel={() => setAskTime(null)}
+        onConfirm={(date) => {
+          const request = askTime;
+          setAskTime(null);
+          if (!request) return;
+          void setCell(
+            request.compartmentId,
+            request.stageKey,
+            request.status,
+            undefined,
+            request.status === "in_progress"
+              ? { startedAt: date.toISOString() }
+              : { completedAt: date.toISOString() },
+          );
+        }}
+      />
+
       <View style={{ gap: space.md }}>
         {compartments.map((compartment) => (
           <CompartmentCard
@@ -238,6 +317,7 @@ export default function Vessel() {
               )
             }
             onSet={setCell}
+            onRequestStatus={requestStatus}
           />
         ))}
       </View>
@@ -253,6 +333,7 @@ function CompartmentCard({
   expanded,
   onToggleExpand,
   onSet,
+  onRequestStatus,
 }: {
   compartment: CompartmentDetail;
   stages: Stage[];
@@ -264,6 +345,14 @@ function CompartmentCard({
     status: CellStatus,
     note?: string | null,
     times?: { startedAt?: string | null; completedAt?: string | null },
+  ) => void;
+  /** Status taps go through here so the time can be confirmed first. */
+  onRequestStatus: (
+    compartmentId: number,
+    stageKey: string,
+    stageLabel: string,
+    status: CellStatus,
+    existing?: string | null,
   ) => void;
 }) {
   const statuses = statusesOf(compartment.cells, stages);
@@ -314,7 +403,16 @@ function CompartmentCard({
           return (
             <Pressable
               key={stage.key}
-              onPress={() => onSet(compartment.id, stage.key, nextStatusOnTap(status))}
+              onPress={() => {
+                const next = nextStatusOnTap(status);
+                onRequestStatus(
+                  compartment.id,
+                  stage.key,
+                  stage.label,
+                  next,
+                  next === "in_progress" ? cell?.startedAt : cell?.completedAt,
+                );
+              }}
               accessibilityRole="button"
               accessibilityLabel={`${compartment.label}, ${stage.label}: ${style.label}. Tap to change.`}
               style={({ pressed }) => [
@@ -341,8 +439,17 @@ function CompartmentCard({
               key={stage.key}
               stage={stage}
               cell={compartment.cells[stage.key]}
-              onSet={(status, note) =>
-                onSet(compartment.id, stage.key, status, note)
+              onSet={(status, note, times) =>
+                onSet(compartment.id, stage.key, status, note, times)
+              }
+              onRequestStatus={(status, existing) =>
+                onRequestStatus(
+                  compartment.id,
+                  stage.key,
+                  stage.label,
+                  status,
+                  existing,
+                )
               }
             />
           ))}
@@ -356,6 +463,7 @@ function StageRow({
   stage,
   cell,
   onSet,
+  onRequestStatus,
 }: {
   stage: Stage;
   cell:
@@ -371,6 +479,8 @@ function StageRow({
     note?: string | null,
     times?: { startedAt?: string | null; completedAt?: string | null },
   ) => void;
+  /** Status taps, which ask for the time before applying anything. */
+  onRequestStatus: (status: CellStatus, existing?: string | null) => void;
 }) {
   const status = cell?.status ?? "pending";
   const [draft, setDraft] = useState(cell?.note ?? "");
@@ -394,7 +504,16 @@ function StageRow({
           return (
             <Pressable
               key={option}
-              onPress={() => onSet(option)}
+              onPress={() =>
+                onRequestStatus(
+                  option,
+                  option === "in_progress"
+                    ? cell?.startedAt
+                    : option === "done"
+                      ? cell?.completedAt
+                      : null,
+                )
+              }
               accessibilityRole="button"
               accessibilityState={{ selected: active }}
               accessibilityLabel={`${stage.label}: ${style.label}`}
@@ -446,29 +565,27 @@ function StageRow({
         )}
       </View>
 
-      {picking && (
-        <DateTimePicker
-          mode="datetime"
-          value={
-            (picking === "startedAt" ? cell?.startedAt : cell?.completedAt)
-              ? new Date(
-                  (picking === "startedAt"
-                    ? cell?.startedAt
-                    : cell?.completedAt) as string,
-                )
-              : new Date()
-          }
-          /* Never offer a future time. A stage cannot have started or finished
-             later than now, and allowing it puts impossible timings in front
-             of a customer. */
-          maximumDate={new Date()}
-          onChange={(event, date) => {
-            setPicking(null);
-            if (event.type !== "set" || !date) return;
-            onSet(status, undefined, { [picking]: date.toISOString() });
-          }}
-        />
-      )}
+      <TimeAsk
+        visible={picking !== null}
+        title={stage.label}
+        subtitle={picking === "startedAt" ? "Start time" : "Finish time"}
+        initial={
+          (picking === "startedAt" ? cell?.startedAt : cell?.completedAt)
+            ? new Date(
+                (picking === "startedAt"
+                  ? cell?.startedAt
+                  : cell?.completedAt) as string,
+              )
+            : new Date()
+        }
+        onCancel={() => setPicking(null)}
+        onConfirm={(date) => {
+          const field = picking;
+          setPicking(null);
+          if (!field) return;
+          onSet(status, undefined, { [field]: date.toISOString() });
+        }}
+      />
 
       <TextInput
         value={draft}
