@@ -1,5 +1,5 @@
 import { ApiError, applyCellChanges, type CellChange } from "./api";
-import { forVessel, penalise, readQueue, removeKeys, type QueuedChange } from "./queue";
+import { forVessel, readQueue, removeKeys, type QueuedChange } from "./queue";
 
 /**
  * Pushing the queue to the API.
@@ -22,16 +22,32 @@ export type SyncResult = {
   offline: boolean;
   /** Set when the API rejected the session. The caller signs out. */
   unauthorized: boolean;
+  /**
+   * Changes the server refused outright, with its reason.
+   *
+   * These are surfaced rather than swallowed. "Waiting to sync" is a promise
+   * that the work will land; when the server has said no, repeating that
+   * promise is a lie that ends with the entry being dropped and a supervisor
+   * believing a hold was recorded when it was not.
+   */
+  rejected: { message: string; count: number }[];
 };
 
 export async function flushQueue(token: string): Promise<SyncResult> {
   let queue = await readQueue();
   if (queue.length === 0) {
-    return { sent: 0, remaining: 0, offline: false, unauthorized: false };
+    return {
+      sent: 0,
+      remaining: 0,
+      offline: false,
+      unauthorized: false,
+      rejected: [],
+    };
   }
 
   const vesselIds = [...new Set(queue.map((c) => c.vesselId))];
   let sent = 0;
+  const rejected: { message: string; count: number }[] = [];
 
   for (const vesselId of vesselIds) {
     const batch = forVessel(queue, vesselId);
@@ -54,21 +70,47 @@ export async function flushQueue(token: string): Promise<SyncResult> {
       sent += batch.length;
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
-        return { sent, remaining: queue.length, offline: false, unauthorized: true };
+        return {
+          sent,
+          remaining: queue.length,
+          offline: false,
+          unauthorized: true,
+          rejected,
+        };
       }
       if (err instanceof ApiError && err.isTransient) {
         /* Still no signal, or the server is waking. Stop the whole flush:
            later vessels would fail the same way, and hammering a cold server
            only makes the wait longer. */
-        return { sent, remaining: queue.length, offline: true, unauthorized: false };
+        return {
+          sent,
+          remaining: queue.length,
+          offline: true,
+          unauthorized: false,
+          rejected,
+        };
       }
-      /* A real refusal. Count it and move on so one bad entry cannot block
-         the vessels queued behind it. */
-      queue = await penalise(new Set(batch.map((c) => c.key)));
+      /* A real refusal — a validation error, a vessel reassigned away, a
+         compartment deleted. Retrying cannot change the answer, so the entry
+         is dropped now rather than after eight pointless attempts, and the
+         reason is handed back so the supervisor is told instead of watching
+         a counter that never clears. */
+      rejected.push({
+        message:
+          err instanceof ApiError ? err.message : "The server refused this update.",
+        count: batch.length,
+      });
+      queue = await removeKeys(new Set(batch.map((c) => c.key)));
     }
   }
 
-  return { sent, remaining: queue.length, offline: false, unauthorized: false };
+  return {
+    sent,
+    remaining: queue.length,
+    offline: false,
+    unauthorized: false,
+    rejected,
+  };
 }
 
 /**

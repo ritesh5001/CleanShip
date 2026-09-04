@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AppState, StyleSheet, Text, View } from "react-native";
+import { AppState, Pressable, StyleSheet, Text, View } from "react-native";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -31,6 +31,14 @@ export default function RootLayout() {
   const [user, setUser] = useState<SessionUser | null>(null);
   const [ready, setReady] = useState(false);
   const [pending, setPending] = useState(0);
+  const [rejection, setRejection] = useState<{
+    message: string;
+    count: number;
+  } | null>(null);
+
+  /* The subscription below is set up once; this keeps it calling the current
+     sync rather than one closed over a stale token. */
+  const syncRef = useRef<(() => Promise<void>) | null>(null);
 
   /* Read in a ref as well as state: the sync callbacks are long-lived and
      would otherwise close over a stale token after a re-sign-in. */
@@ -47,18 +55,56 @@ export default function RootLayout() {
     setPending(0);
   }, []);
 
+  /* One flush at a time. Two overlapping runs would both read the same queue
+     and send the same changes twice — harmless thanks to the idempotency
+     keys, but it doubles the traffic on exactly the connection least able to
+     afford it. */
+  const syncing = useRef(false);
+
   const sync = useCallback(async () => {
     const current = tokenRef.current;
-    if (!current) return;
-    const result = await flushQueue(current);
+    if (!current || syncing.current) return;
+
+    syncing.current = true;
+    let result;
+    try {
+      result = await flushQueue(current);
+    } finally {
+      syncing.current = false;
+    }
     setPending(result.remaining);
+    if (result.rejected.length > 0) {
+      /* Only the latest reason. A supervisor needs to know something did not
+         save and why, not a growing list they cannot act on individually. */
+      setRejection(result.rejected[result.rejected.length - 1]);
+    }
     if (result.unauthorized) await signOut();
   }, [signOut]);
 
-  /* ---- keep the pending count honest ----
+  /* ---- keep the pending count honest, and send promptly ----
      Subscribing rather than polling: a tap made with no signal has to show up
-     in the bar immediately, not on the next sync tick. */
-  useEffect(() => subscribe((queue) => setPending(queue.length)), []);
+     in the bar immediately, not on the next sync tick.
+
+     It also kicks a flush. Without this a tap made WITH signal still sat in
+     the queue until the 60-second timer came round, so the bar read "waiting
+     to sync" for up to a minute on a perfectly good connection — which looks
+     exactly like the app being broken. Debounced so a burst of taps (marking
+     a whole hold) goes out as one batch rather than one request each. */
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const unsubscribe = subscribe((queue) => {
+      setPending(queue.length);
+      if (queue.length === 0) return;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => void syncRef.current?.(), 800);
+    });
+    return () => {
+      if (timer) clearTimeout(timer);
+      unsubscribe();
+    };
+  }, []);
+
+  syncRef.current = sync;
 
   /* ---- restore the stored session ---- */
   useEffect(() => {
@@ -134,6 +180,13 @@ export default function RootLayout() {
           <Stack.Screen name="vessels/index" options={{ title: "My vessels" }} />
           <Stack.Screen name="vessels/[id]" options={{ title: "Vessel" }} />
         </Stack>
+        {rejection && (
+          <RejectedBar
+            message={rejection.message}
+            count={rejection.count}
+            onDismiss={() => setRejection(null)}
+          />
+        )}
         {pending > 0 && <PendingBar count={pending} />}
       </SessionContext.Provider>
     </SafeAreaProvider>
@@ -185,7 +238,58 @@ function PendingBar({ count }: { count: number }) {
   );
 }
 
+/**
+ * Something the server refused.
+ *
+ * Red and dismissible, above the pending count, because it is the one piece
+ * of sync news a supervisor has to act on — the work is not saved and will
+ * not save itself. Silence here is how someone walks off a vessel believing a
+ * hold was signed off.
+ */
+function RejectedBar({
+  message,
+  count,
+  onDismiss,
+}: {
+  message: string;
+  count: number;
+  onDismiss: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={onDismiss}
+      accessibilityRole="alert"
+      accessibilityLabel={`${count} update${count === 1 ? "" : "s"} not saved. ${message}. Tap to dismiss.`}
+      style={styles.rejected}
+    >
+      <Text style={styles.rejectedText}>
+        {count} update{count === 1 ? "" : "s"} not saved — {message}
+      </Text>
+      <Text style={styles.rejectedHint}>Tap to dismiss</Text>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
+  rejected: {
+    backgroundColor: "#fee2e2",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#fca5a5",
+  },
+  rejectedText: {
+    color: "#991b1b",
+    fontSize: 13,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  rejectedHint: {
+    marginTop: 2,
+    color: "#b91c1c",
+    fontSize: 11,
+    textAlign: "center",
+  },
   pending: {
     backgroundColor: "#fde68a",
     paddingVertical: 8,

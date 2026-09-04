@@ -201,6 +201,9 @@ export default function Vessel() {
     status: CellStatus;
     /** Pre-fills the picker: the existing time, else now. */
     initial: Date;
+    /** Narrowed per request — see requestStatus. */
+    min: Date;
+    max: Date;
   } | null>(null);
 
   /**
@@ -216,20 +219,51 @@ export default function Vessel() {
       stageLabel: string,
       status: CellStatus,
       existing?: string | null,
+      /** The cell's OTHER time, which bounds this one. */
+      counterpart?: string | null,
     ) => {
       if (status !== "in_progress" && status !== "done") {
         void setCell(compartmentId, stageKey, status);
         return;
       }
+
+      /* Narrow the window so an impossible time cannot be picked at all.
+         A finish cannot precede its start, and a start cannot follow its
+         finish. Enforcing it here means the supervisor is stopped by a dead
+         arrow rather than by a rejection they only learn about later — the
+         API refuses these, and a refusal that arrives after the fact reads
+         as the app losing their work. */
+      let min = timeWindow.min;
+      let max = timeWindow.max;
+      if (status === "done" && counterpart) {
+        const startedAt = new Date(counterpart);
+        if (startedAt.getTime() > min.getTime()) min = startedAt;
+      }
+      if (status === "in_progress" && counterpart) {
+        const completedAt = new Date(counterpart);
+        if (completedAt.getTime() < max.getTime()) max = completedAt;
+      }
+      if (max.getTime() < min.getTime()) max = new Date(min);
+
+      const initial = existing ? new Date(existing) : new Date();
+      const clamped =
+        initial.getTime() < min.getTime()
+          ? new Date(min)
+          : initial.getTime() > max.getTime()
+            ? new Date(max)
+            : initial;
+
       setAskTime({
         compartmentId,
         stageKey,
         stageLabel,
         status,
-        initial: existing ? new Date(existing) : new Date(),
+        initial: clamped,
+        min,
+        max,
       });
     },
-    [setCell],
+    [setCell, timeWindow],
   );
 
   const onRefresh = useCallback(async () => {
@@ -320,8 +354,8 @@ export default function Vessel() {
             : "When was this finished?"
         }
         initial={askTime?.initial ?? new Date()}
-        minDate={timeWindow.min}
-        maxDate={timeWindow.max}
+        minDate={askTime?.min ?? timeWindow.min}
+        maxDate={askTime?.max ?? timeWindow.max}
         onCancel={() => setAskTime(null)}
         onConfirm={(date) => {
           const request = askTime;
@@ -390,6 +424,7 @@ function CompartmentCard({
     stageLabel: string,
     status: CellStatus,
     existing?: string | null,
+    counterpart?: string | null,
   ) => void;
   /** The dates a time may fall in for this vessel. */
   timeWindow: { min: Date; max: Date };
@@ -450,6 +485,7 @@ function CompartmentCard({
                   stage.label,
                   next,
                   next === "in_progress" ? cell?.startedAt : cell?.completedAt,
+                  next === "in_progress" ? cell?.completedAt : cell?.startedAt,
                 );
               }}
               accessibilityRole="button"
@@ -482,13 +518,14 @@ function CompartmentCard({
                 onSet(compartment.id, stage.key, status, note, times)
               }
               timeWindow={timeWindow}
-              onRequestStatus={(status, existing) =>
+              onRequestStatus={(status, existing, counterpart) =>
                 onRequestStatus(
                   compartment.id,
                   stage.key,
                   stage.label,
                   status,
                   existing,
+                  counterpart,
                 )
               }
             />
@@ -521,7 +558,11 @@ function StageRow({
     times?: { startedAt?: string | null; completedAt?: string | null },
   ) => void;
   /** Status taps, which ask for the time before applying anything. */
-  onRequestStatus: (status: CellStatus, existing?: string | null) => void;
+  onRequestStatus: (
+    status: CellStatus,
+    existing?: string | null,
+    counterpart?: string | null,
+  ) => void;
   timeWindow: { min: Date; max: Date };
 }) {
   const status = cell?.status ?? "pending";
@@ -553,6 +594,11 @@ function StageRow({
                     ? cell?.startedAt
                     : option === "done"
                       ? cell?.completedAt
+                      : null,
+                  option === "in_progress"
+                    ? cell?.completedAt
+                    : option === "done"
+                      ? cell?.startedAt
                       : null,
                 )
               }
