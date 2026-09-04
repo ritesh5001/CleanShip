@@ -124,6 +124,39 @@ export default function Vessel() {
     [vessel, pending],
   );
 
+  /**
+   * The window a time may fall in for this vessel.
+   *
+   * From the day the vessel came onto the books — its scheduled date, or when
+   * the record was created if it was never scheduled — to two months later,
+   * and never past now.
+   *
+   * Bounded because an open-ended date control on a deck is how a cleaning
+   * record ends up dated 2019, and that only ever surfaces when someone is
+   * arguing about an invoice. Two months is comfortably longer than any
+   * turnaround while still ruling out a mistyped year.
+   *
+   * Both ends are capped at now so a vessel scheduled for next week cannot
+   * produce a window that starts in the future.
+   */
+  const timeWindow = useMemo(() => {
+    const now = new Date();
+    const anchor = vessel
+      ? new Date(vessel.scheduledFor ?? vessel.createdAt)
+      : now;
+
+    const twoMonthsOn = new Date(anchor);
+    twoMonthsOn.setMonth(twoMonthsOn.getMonth() + 2);
+
+    /* Start of the anchor DAY, not the instant the record was created — the
+       whole of that day is inside the window, and a vessel added at 15:13
+       should not refuse work recorded at 09:00 the same morning. */
+    const min = new Date(Math.min(anchor.getTime(), now.getTime()));
+    min.setHours(0, 0, 0, 0);
+    const max = new Date(Math.min(twoMonthsOn.getTime(), now.getTime()));
+    return { min, max: max.getTime() < min.getTime() ? new Date(min) : max };
+  }, [vessel]);
+
   const overall = useMemo(() => {
     if (!vessel) return { done: 0, total: 0, ratio: 0 };
     return progressOf(
@@ -287,6 +320,8 @@ export default function Vessel() {
             : "When was this finished?"
         }
         initial={askTime?.initial ?? new Date()}
+        minDate={timeWindow.min}
+        maxDate={timeWindow.max}
         onCancel={() => setAskTime(null)}
         onConfirm={(date) => {
           const request = askTime;
@@ -318,6 +353,7 @@ export default function Vessel() {
             }
             onSet={setCell}
             onRequestStatus={requestStatus}
+            timeWindow={timeWindow}
           />
         ))}
       </View>
@@ -334,6 +370,7 @@ function CompartmentCard({
   onToggleExpand,
   onSet,
   onRequestStatus,
+  timeWindow,
 }: {
   compartment: CompartmentDetail;
   stages: Stage[];
@@ -354,6 +391,8 @@ function CompartmentCard({
     status: CellStatus,
     existing?: string | null,
   ) => void;
+  /** The dates a time may fall in for this vessel. */
+  timeWindow: { min: Date; max: Date };
 }) {
   const statuses = statusesOf(compartment.cells, stages);
   const state = compartmentState(statuses);
@@ -442,6 +481,7 @@ function CompartmentCard({
               onSet={(status, note, times) =>
                 onSet(compartment.id, stage.key, status, note, times)
               }
+              timeWindow={timeWindow}
               onRequestStatus={(status, existing) =>
                 onRequestStatus(
                   compartment.id,
@@ -464,6 +504,7 @@ function StageRow({
   cell,
   onSet,
   onRequestStatus,
+  timeWindow,
 }: {
   stage: Stage;
   cell:
@@ -481,6 +522,7 @@ function StageRow({
   ) => void;
   /** Status taps, which ask for the time before applying anything. */
   onRequestStatus: (status: CellStatus, existing?: string | null) => void;
+  timeWindow: { min: Date; max: Date };
 }) {
   const status = cell?.status ?? "pending";
   const [draft, setDraft] = useState(cell?.note ?? "");
@@ -578,6 +620,8 @@ function StageRow({
               )
             : new Date()
         }
+        minDate={timeWindow.min}
+        maxDate={timeWindow.max}
         onCancel={() => setPicking(null)}
         onConfirm={(date) => {
           const field = picking;

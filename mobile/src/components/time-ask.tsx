@@ -27,6 +27,8 @@ export function TimeAsk({
   title,
   subtitle,
   initial,
+  minDate,
+  maxDate,
   onConfirm,
   onCancel,
 }: {
@@ -34,6 +36,16 @@ export function TimeAsk({
   title: string;
   subtitle: string;
   initial: Date;
+  /**
+   * The window work on this vessel could plausibly have happened in: from the
+   * day it came onto the books to two months later, never past now.
+   *
+   * Bounded on purpose. An open-ended date control on a deck is an invitation
+   * to record 2019 by fat-fingering a year, and a wrong date on a cleaning
+   * record is only ever discovered when someone is arguing about an invoice.
+   */
+  minDate: Date;
+  maxDate: Date;
   onConfirm: (value: Date) => void;
   onCancel: () => void;
 }) {
@@ -41,24 +53,62 @@ export function TimeAsk({
   const [text, setText] = useState(toHHMM(initial));
   const [error, setError] = useState<string | null>(null);
 
+  const clamp = (date: Date) => {
+    if (date.getTime() < minDate.getTime()) return new Date(minDate);
+    if (date.getTime() > maxDate.getTime()) return new Date(maxDate);
+    return date;
+  };
+
   /* Reset each time it is opened for a different stage, or the previous
      stage's time would be sitting there waiting to be confirmed by mistake. */
   useEffect(() => {
     if (!visible) return;
-    setValue(initial);
-    setText(toHHMM(initial));
+    const start = clamp(initial);
+    setValue(start);
+    setText(toHHMM(start));
     setError(null);
-  }, [visible, initial]);
+    /* clamp is derived from the bounds, which are stable for a vessel. */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible, initial, minDate, maxDate]);
 
   function shift(minutes: number) {
-    const next = new Date(value.getTime() + minutes * 60_000);
-    /* Never past now: a stage cannot have started or finished in the future,
-       and allowing it puts impossible timings in front of a customer. */
-    const capped = next.getTime() > Date.now() ? new Date() : next;
+    const capped = clamp(new Date(value.getTime() + minutes * 60_000));
     setValue(capped);
     setText(toHHMM(capped));
     setError(null);
   }
+
+  /**
+   * Steps whole days, stopping at the ends of the vessel's window.
+   *
+   * Compared at DAY granularity, not by instant. The bounds are dates — "the
+   * day the vessel came on, through two months later" — so a step onto a
+   * valid day must be allowed whatever time of day it lands on. Comparing
+   * timestamps instead makes the first and last day of the window
+   * unreachable for half their length, which reads as a dead button.
+   */
+  function shiftDay(days: number) {
+    const next = new Date(value);
+    next.setDate(next.getDate() + days);
+    if (!dayWithin(next, minDate, maxDate)) return;
+
+    /* The day is fine but the time on it may not be — stepping onto today
+       must not land later than now. */
+    setValue(next.getTime() > maxDate.getTime() ? new Date(maxDate) : next);
+    setError(null);
+  }
+
+  const canGoBack = (() => {
+    const previous = new Date(value);
+    previous.setDate(previous.getDate() - 1);
+    return dayWithin(previous, minDate, maxDate);
+  })();
+
+  const canGoForward = (() => {
+    const next = new Date(value);
+    next.setDate(next.getDate() + 1);
+    return dayWithin(next, minDate, maxDate);
+  })();
 
   function commitTyped(raw: string) {
     const match = raw.trim().match(/^(\d{1,2})[:.]?(\d{2})$/);
@@ -76,12 +126,22 @@ export function TimeAsk({
     const next = new Date(value);
     next.setHours(hours, minutes, 0, 0);
     /* Typing a time later than now almost always means yesterday — a night
-       shift entering 23:40 at 00:20. Rolling back a day is what they meant. */
-    if (next.getTime() > Date.now()) next.setDate(next.getDate() - 1);
+       shift entering 23:40 at 00:20. Rolling back a day is what they meant,
+       but only if yesterday is still inside the vessel's window. */
+    if (next.getTime() > maxDate.getTime()) {
+      const previous = new Date(next);
+      previous.setDate(previous.getDate() - 1);
+      if (previous.getTime() >= minDate.getTime()) {
+        next.setTime(previous.getTime());
+      }
+    }
 
-    setValue(next);
-    setText(toHHMM(next));
-    setError(null);
+    const capped = clamp(next);
+    if (capped.getTime() !== next.getTime()) {
+      setError("That is outside this vessel's dates.");
+    }
+    setValue(capped);
+    setText(toHHMM(capped));
   }
 
   return (
@@ -97,8 +157,55 @@ export function TimeAsk({
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.subtitle}>{subtitle}</Text>
 
+          {/* Date, stepped a day at a time and stopped at the ends of the
+              vessel's own window. A stepper rather than a calendar because
+              the realistic correction is "yesterday", not "pick any day", and
+              the arrows go dead at the boundary instead of silently accepting
+              a date that cannot be right. */}
+          <View style={styles.dateRow}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Previous day"
+              accessibilityState={{ disabled: !canGoBack }}
+              disabled={!canGoBack}
+              onPress={() => shiftDay(-1)}
+              style={({ pressed }) => [
+                styles.step,
+                !canGoBack && styles.stepOff,
+                pressed && canGoBack && { opacity: 0.6 },
+              ]}
+            >
+              <Text style={[styles.stepText, !canGoBack && styles.stepTextOff]}>
+                ‹
+              </Text>
+            </Pressable>
+
+            <View style={styles.dateBox}>
+              <Text style={styles.dateText}>{describeDay(value)}</Text>
+              <Text style={styles.dateFull}>{fullDate(value)}</Text>
+            </View>
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Next day"
+              accessibilityState={{ disabled: !canGoForward }}
+              disabled={!canGoForward}
+              onPress={() => shiftDay(1)}
+              style={({ pressed }) => [
+                styles.step,
+                !canGoForward && styles.stepOff,
+                pressed && canGoForward && { opacity: 0.6 },
+              ]}
+            >
+              <Text
+                style={[styles.stepText, !canGoForward && styles.stepTextOff]}
+              >
+                ›
+              </Text>
+            </Pressable>
+          </View>
+
           <Text style={styles.big}>{toHHMM(value)}</Text>
-          <Text style={styles.day}>{describeDay(value)}</Text>
 
           <View style={styles.quickRow}>
             {[
@@ -203,6 +310,27 @@ function describeDay(date: Date) {
   });
 }
 
+function startOfDay(date: Date) {
+  const copy = new Date(date);
+  copy.setHours(0, 0, 0, 0);
+  return copy;
+}
+
+/** Whether a date's DAY falls inside the window, ignoring the time on it. */
+function dayWithin(date: Date, min: Date, max: Date) {
+  const day = startOfDay(date).getTime();
+  return day >= startOfDay(min).getTime() && day <= startOfDay(max).getTime();
+}
+
+/** "4 Sep 2026" — the unambiguous form, for the line under the day name. */
+function fullDate(date: Date) {
+  return date.toLocaleDateString(undefined, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
@@ -217,6 +345,28 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 17, fontWeight: "800", color: colors.text },
   subtitle: { marginTop: 2, fontSize: 13, color: colors.muted },
+  dateRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.sm,
+    marginTop: space.lg,
+  },
+  step: {
+    width: 52,
+    height: 52,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f8fafc",
+  },
+  stepOff: { opacity: 0.35 },
+  stepText: { fontSize: 26, fontWeight: "800", color: colors.navy, lineHeight: 30 },
+  stepTextOff: { color: colors.faint },
+  dateBox: { flex: 1, alignItems: "center" },
+  dateText: { fontSize: 16, fontWeight: "800", color: colors.text },
+  dateFull: { marginTop: 1, fontSize: 12, color: colors.muted },
   big: {
     marginTop: space.lg,
     fontSize: 46,
