@@ -22,6 +22,8 @@ export function VesselDiagramStatic(props: {
   className?: string;
   /** Status colours; pass the dark set on dark surfaces. */
   palette?: typeof STATE_STYLE;
+  /** 0-1 scroll position driving the camera flight. */
+  scrollShot?: number;
 }) {
   return <VesselDiagram3D {...props} />;
 }

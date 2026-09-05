@@ -48,6 +48,14 @@ export type VesselDiagram3DProps = {
    * to know about the other's surface.
    */
   palette?: typeof STATE_STYLE;
+  /**
+   * 0 to 1, driving the camera along its flight path as the page scrolls.
+   *
+   * Omit it and the camera sits where `frameCamera` put it, which is what
+   * every non-scrolling surface (the office board, the supervisor's phone)
+   * wants. The visitor dragging the model takes the camera for good.
+   */
+  scrollShot?: number;
   /** Hide the 3D/Plan switch when the surrounding screen has its own. */
   allowPlanToggle?: boolean;
 };
@@ -70,6 +78,7 @@ export function VesselDiagram3D({
   className = "",
   colourMode = "state",
   palette = STATE_STYLE,
+  scrollShot,
   allowPlanToggle = true,
 }: VesselDiagram3DProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
@@ -174,7 +183,13 @@ export function VesselDiagram3D({
 
   useEffect(() => {
     if (ready) sceneRef.current?.setSelected(selectedId ?? null);
-  }, [selectedId, ready]);
+  }, [ready, selectedId]);
+
+  useEffect(() => {
+    if (ready && typeof scrollShot === "number") {
+      sceneRef.current?.setScrollShot(scrollShot);
+    }
+  }, [scrollShot, ready]);
 
   if (failed || mode === "plan") {
     return (

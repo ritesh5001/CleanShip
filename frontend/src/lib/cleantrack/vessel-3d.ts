@@ -218,6 +218,11 @@ export class VesselScene {
   private scene!: THREE.Scene;
   private camera!: THREE.PerspectiveCamera;
   private controls!: OrbitControls;
+  /** Framing numbers, so the scroll path scales with the ship. */
+  private baseDistance = 0;
+  private baseTarget = new THREE.Vector3();
+  /** True once the visitor has taken the camera by dragging it. */
+  private released = false;
   private pmrem?: THREE.PMREMGenerator;
   private envRT?: THREE.WebGLRenderTarget;
 
@@ -315,6 +320,10 @@ export class VesselScene {
     controls.maxPolarAngle = 1.44;      // never drop below the waterline
     controls.target.set(0, 0.7, 0);
     controls.addEventListener("change", () => this.requestRender());
+    /* `start` fires on a real pointer grab, not on our own programmatic
+       updates, which is what makes it a safe signal that the visitor wants
+       the camera. */
+    controls.addEventListener("start", () => this.releaseCamera());
     this.controls = controls;
 
     this.resizeObserver = new ResizeObserver(() => this.resize());
@@ -532,6 +541,68 @@ export class VesselScene {
     this.requestRender();
   }
 
+  /**
+   * Fly the camera along a fixed path as the page scrolls.
+   *
+   * `t` runs 0 at the top of the pinned hero to 1 at its end. The path is
+   * four keyframes around the ship: a high wide establishing view, a descent
+   * onto the bow, a low run down the line of holds, and a composed
+   * three-quarter frame it comes to rest in.
+   *
+   * The shot is derived from the framing distance, never hardcoded, so a
+   * 4-hold coaster and a 10-hold bulker both stay in frame.
+   *
+   * Orbit control is not removed. The moment the visitor drags, `released`
+   * goes true and scroll stops steering — taking the camera back off someone
+   * who has grabbed it is the kind of thing that makes a page feel broken.
+   */
+  setScrollShot(t: number) {
+    if (this.released || !this.shipGroup) return;
+
+    const clamp = Math.min(1, Math.max(0, t));
+    const d = this.baseDistance || 18;
+    const target = this.baseTarget;
+
+    /* Keyframes as direction + distance multipliers, so the path scales with
+       the ship rather than drifting inside a big one and outside a small. */
+    const shots: { dir: [number, number, number]; mul: number; lift: number }[] = [
+      { dir: [0.55, 0.62, 0.62], mul: 1.55, lift: 1.0 },
+      { dir: [0.85, 0.30, 0.35], mul: 1.05, lift: 0.55 },
+      { dir: [0.20, 0.22, 0.95], mul: 0.85, lift: 0.35 },
+      { dir: [0.52, 0.40, 0.58], mul: 1.12, lift: 0.8 },
+    ];
+
+    const span = shots.length - 1;
+    const scaled = clamp * span;
+    const i = Math.min(span - 1, Math.floor(scaled));
+    /* Smoothstep between keyframes: linear interpolation makes the camera
+       change direction with a visible kink at every waypoint. */
+    const raw = scaled - i;
+    const e = raw * raw * (3 - 2 * raw);
+
+    const a = shots[i];
+    const b = shots[i + 1];
+    const dir = new THREE.Vector3(
+      a.dir[0] + (b.dir[0] - a.dir[0]) * e,
+      a.dir[1] + (b.dir[1] - a.dir[1]) * e,
+      a.dir[2] + (b.dir[2] - a.dir[2]) * e,
+    ).normalize();
+    const mul = a.mul + (b.mul - a.mul) * e;
+    const lift = a.lift + (b.lift - a.lift) * e;
+
+    this.controls.target.set(target.x, target.y * lift, target.z);
+    this.camera.position
+      .copy(this.controls.target)
+      .addScaledVector(dir, d * mul);
+    this.controls.update();
+    this.requestRender();
+  }
+
+  /** Hands the camera back to the visitor for good. */
+  releaseCamera() {
+    this.released = true;
+  }
+
   /** Frame the whole ship, whatever its size. */
   private frameCamera() {
     const box = new THREE.Box3().setFromObject(this.shipGroup);
@@ -556,6 +627,11 @@ export class VesselScene {
     this.controls.minDistance = distance * 0.45;
     this.controls.maxDistance = distance * 2.1;
     this.controls.update();
+
+    /* Kept so setScrollShot can scale its path off the same numbers instead
+       of inventing its own and drifting out of frame on an unusual ship. */
+    this.baseDistance = distance;
+    this.baseTarget.copy(this.controls.target);
   }
 
   /* ---------------------------------------------------------------- */
