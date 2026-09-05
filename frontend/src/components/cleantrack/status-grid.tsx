@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { VesselDiagram } from "./vessel-diagram";
+import { VesselDiagram3D } from "./vessel-diagram-3d";
 import { ProgressBar, StatusChip } from "./ui";
 import {
   CELL_STATUSES,
@@ -314,7 +314,7 @@ export function StatusGrid({
           </span>
         </div>
         <ProgressBar ratio={overall.ratio} />
-        <VesselDiagram
+        <VesselDiagram3D
           className="mt-4"
           compartments={comps}
           stages={stages}

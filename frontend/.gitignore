@@ -11,3 +11,6 @@ npm-debug.log*
 *.tsbuildinfo
 next-env.d.ts
 .gstack/
+
+# Blender build scratch (logs, launcher)
+scripts/.build/
