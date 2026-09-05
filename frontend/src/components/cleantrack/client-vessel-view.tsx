@@ -1,4 +1,4 @@
-import { VesselDiagramStatic } from "./vessel-diagram-static";
+import { VesselScene } from "./vessel-scene";
 import { Card, ProgressBar, StatusChip, VesselStatusChip } from "./ui";
 import { LiveRefresh } from "./live-refresh";
 import { formatDate, formatDateTime, relativeTime } from "@/lib/format";
@@ -88,12 +88,13 @@ export function ClientVesselView({
 
       <Card className="p-5 sm:p-6">
         <h2 className="text-base font-bold text-slate-900">Vessel</h2>
-        <VesselDiagramStatic
+        <VesselScene
           className="mt-4"
           compartments={vessel.compartments.map((c) => ({
             id: c.id,
             label: c.label,
             position: c.position,
+            state: c.state,
             cells: Object.fromEntries(
               Object.entries(c.cells).map(([k, cell]) => [
                 k,
