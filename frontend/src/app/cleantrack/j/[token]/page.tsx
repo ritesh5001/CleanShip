@@ -60,24 +60,39 @@ export default async function SharedVesselPage({
   }
 
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-4">
-          <span className="text-[15px] font-bold tracking-tight text-slate-900">
+    <div className="min-h-dvh bg-[#060b14] text-slate-200">
+      {/* One faint pool of light behind everything, fixed so it does not
+          travel with the scroll. It is what keeps a dark page from reading
+          as an unstyled black background. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0"
+        style={{
+          background:
+            "radial-gradient(70% 45% at 50% 0%, rgba(56,189,248,0.10), transparent 65%)",
+        }}
+      />
+
+      <header className="relative border-b border-white/[0.07]">
+        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-5">
+          <span className="font-[family-name:var(--font-display)] text-[17px] font-bold tracking-tight text-white">
             CleanTrack
           </span>
-          <span className="text-[13px] text-slate-500">
+          <span className="text-[12px] uppercase tracking-[0.14em] text-slate-500">
             Cleanship Marine Services
           </span>
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl px-4 py-6">
+      <main className="relative mx-auto max-w-5xl px-5 py-8 sm:py-10">
         <ClientVesselView vessel={vessel} />
-        <p className="mt-8 text-center text-[12px] text-slate-500">
-          Live progress{vessel.clientName ? ` for ${vessel.clientName}` : ""}.
-          This link is private — please do not share it further.
-        </p>
+
+        <footer className="mt-14 border-t border-white/[0.07] pt-6 text-center">
+          <p className="text-[12px] text-slate-500">
+            Live progress{vessel.clientName ? ` for ${vessel.clientName}` : ""}.
+            This link is private — please do not share it further.
+          </p>
+        </footer>
       </main>
     </div>
   );

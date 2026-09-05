@@ -14,7 +14,14 @@ import { useRouter } from "next/navigation";
  * Paused while the tab is hidden: a client leaving the page open overnight
  * should not poll 3,000 times before morning.
  */
-export function LiveRefresh({ intervalMs = 15_000 }: { intervalMs?: number }) {
+export function LiveRefresh({
+  intervalMs = 15_000,
+  dark = false,
+}: {
+  intervalMs?: number;
+  /** Recolours the label for dark surfaces; the dot stays green either way. */
+  dark?: boolean;
+}) {
   const router = useRouter();
   const [live, setLive] = useState(true);
 
@@ -35,7 +42,11 @@ export function LiveRefresh({ intervalMs = 15_000 }: { intervalMs?: number }) {
   }, [live, intervalMs, router]);
 
   return (
-    <p className="flex items-center gap-2 text-[13px] text-slate-500">
+    <p
+      className={`flex items-center gap-2 text-[13px] ${
+        dark ? "text-slate-400" : "text-slate-500"
+      }`}
+    >
       <span className="relative flex size-2">
         <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
         <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />

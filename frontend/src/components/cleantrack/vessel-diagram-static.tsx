@@ -2,7 +2,7 @@
 
 import { VesselDiagram3D } from "./vessel-diagram-3d";
 import type { DiagramCompartment } from "./vessel-diagram";
-import type { Stage, VesselType } from "@/lib/cleantrack/types";
+import type { STATE_STYLE, Stage, VesselType } from "@/lib/cleantrack/types";
 
 /**
  * The diagram without interaction, for customer-facing views.
@@ -20,6 +20,8 @@ export function VesselDiagramStatic(props: {
   stages: Stage[];
   vesselType: VesselType;
   className?: string;
+  /** Status colours; pass the dark set on dark surfaces. */
+  palette?: typeof STATE_STYLE;
 }) {
   return <VesselDiagram3D {...props} />;
 }

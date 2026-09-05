@@ -275,3 +275,82 @@ export function formatDuration(
   const rest = minutes % 60;
   return rest === 0 ? `${hours}h` : `${hours}h ${rest}m`;
 }
+
+
+/* -------------------------------------------------------------------- */
+/* Dark surfaces                                                        */
+/* -------------------------------------------------------------------- */
+
+/**
+ * The status palette again, for dark backgrounds.
+ *
+ * NOT the light values on a dark ground. Those are pale pastels chosen to sit
+ * on white — on near-black the "not started" grey becomes the brightest thing
+ * on screen, which says "look here" about the compartments nobody has touched.
+ * The meaning would invert.
+ *
+ * These are tonal variants: darker and more saturated, so an untouched hold
+ * recedes into the hull and a finished one lifts off it. Same three states,
+ * same order, same reading — just re-tuned for the surface they sit on.
+ */
+export const STATE_STYLE_DARK: Record<
+  CompartmentState,
+  { label: string; chip: string; fill: string; stroke: string; text: string }
+> = {
+  "not-started": {
+    label: "Not started",
+    chip: "bg-slate-800/70 text-slate-300 border-slate-600",
+    fill: "#243044",
+    stroke: "#3d4b63",
+    text: "#94a3b8",
+  },
+  "in-progress": {
+    label: "In progress",
+    chip: "bg-amber-500/15 text-amber-300 border-amber-500/40",
+    fill: "#b45309",
+    stroke: "#fbbf24",
+    text: "#fde68a",
+  },
+  complete: {
+    label: "Complete",
+    chip: "bg-emerald-500/15 text-emerald-300 border-emerald-500/40",
+    fill: "#15803d",
+    stroke: "#4ade80",
+    text: "#bbf7d0",
+  },
+};
+
+/** Per-cell colours for dark surfaces, matching CELL_STYLE's four states. */
+export const CELL_STYLE_DARK: Record<
+  CellStatus,
+  { label: string; short: string; cell: string; fill: string; stroke: string }
+> = {
+  pending: {
+    label: "Not started",
+    short: "",
+    cell: "bg-slate-800/40 text-slate-500 border-slate-700",
+    fill: "#1e293b",
+    stroke: "#334155",
+  },
+  in_progress: {
+    label: "In progress",
+    short: "Working",
+    cell: "bg-amber-500/15 text-amber-200 border-amber-500/40",
+    fill: "#b45309",
+    stroke: "#fbbf24",
+  },
+  done: {
+    label: "Done",
+    short: "Done",
+    cell: "bg-emerald-500/20 text-emerald-200 border-emerald-500/45",
+    fill: "#15803d",
+    stroke: "#4ade80",
+  },
+  na: {
+    label: "N/A",
+    short: "N/A",
+    cell: "bg-slate-700/50 text-slate-400 border-slate-600",
+    fill: "#475569",
+    stroke: "#64748b",
+  },
+};

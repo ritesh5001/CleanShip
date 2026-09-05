@@ -40,6 +40,14 @@ export type VesselDiagram3DProps = {
    *  percentage — smoother, but then the 3D view and the grid disagree about
    *  what a half-finished hold looks like. */
   colourMode?: "state" | "gradient";
+  /**
+   * Status colours to paint with. Defaults to the light palette.
+   *
+   * Injected rather than read from a module constant so the same scene can sit
+   * on a white admin board and a dark customer page without either one having
+   * to know about the other's surface.
+   */
+  palette?: typeof STATE_STYLE;
   /** Hide the 3D/Plan switch when the surrounding screen has its own. */
   allowPlanToggle?: boolean;
 };
@@ -61,6 +69,7 @@ export function VesselDiagram3D({
   onSelect,
   className = "",
   colourMode = "state",
+  palette = STATE_STYLE,
   allowPlanToggle = true,
 }: VesselDiagram3DProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
@@ -79,12 +88,12 @@ export function VesselDiagram3D({
       const statuses = stages.map((s) => c.cells[s.key]?.status ?? "pending");
       const state = compartmentState(statuses);
       const { done, total, ratio } = progressOf(statuses);
-      const style = STATE_STYLE[state];
+      const style = palette[state];
       const fill =
         colourMode === "gradient"
           ? ratio <= 0.5
-            ? mixHex(STATE_STYLE["not-started"].fill, STATE_STYLE["in-progress"].fill, ratio * 2)
-            : mixHex(STATE_STYLE["in-progress"].fill, STATE_STYLE.complete.fill, (ratio - 0.5) * 2)
+            ? mixHex(palette["not-started"].fill, palette["in-progress"].fill, ratio * 2)
+            : mixHex(palette["in-progress"].fill, palette.complete.fill, (ratio - 0.5) * 2)
           : style.fill;
       return {
         id: c.id,
@@ -97,7 +106,7 @@ export function VesselDiagram3D({
         open: state === "in-progress" && vesselType === "hold",
       };
     });
-  }, [compartments, stages, vesselType, colourMode]);
+  }, [compartments, stages, vesselType, colourMode, palette]);
 
   /* Refs so the build effect never re-runs just because status changed. */
   const viewsRef = useRef(views);
@@ -205,7 +214,7 @@ export function VesselDiagram3D({
         </p>
       </div>
 
-      <Legend />
+      <Legend palette={palette} dark={palette !== STATE_STYLE} />
 
       {/* The canvas cannot be reached by a keyboard or a screen reader, so the
           same information and the same actions exist here as real buttons. */}
@@ -270,19 +279,23 @@ function ViewSwitch({
   );
 }
 
-function Legend() {
+function Legend({ palette = STATE_STYLE, dark = false }: { palette?: typeof STATE_STYLE; dark?: boolean }) {
   return (
-    <ul className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-slate-600">
+    <ul
+      className={`mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] ${
+        dark ? "text-slate-400" : "text-slate-600"
+      }`}
+    >
       {(["not-started", "in-progress", "complete"] as const).map((s) => (
         <li key={s} className="flex items-center gap-2">
           <span
             className="inline-block size-3.5 rounded-[2px] border"
             style={{
-              background: STATE_STYLE[s].fill,
-              borderColor: STATE_STYLE[s].stroke,
+              background: palette[s].fill,
+              borderColor: palette[s].stroke,
             }}
           />
-          {STATE_STYLE[s].label}
+          {palette[s].label}
         </li>
       ))}
     </ul>
