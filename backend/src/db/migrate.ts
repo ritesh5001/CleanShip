@@ -19,9 +19,33 @@ const here = dirname(fileURLToPath(import.meta.url));
 /* src/db in dev, dist/db once compiled — migrations/ sits at the package root. */
 const migrationsDir = resolve(here, "../../migrations");
 
+/**
+ * An arbitrary constant, so every instance asks for the same lock.
+ * Postgres advisory locks are just a number; this one has no meaning beyond
+ * being ours.
+ */
+const LOCK_ID = 4812_7731;
+
 async function main() {
   const pool = rawPool();
 
+  /* One migrator at a time.
+     This runs at boot now, not only in the build, so two instances starting
+     together would otherwise both try to apply the same file. The loser waits
+     here and then finds everything already recorded, which is a no-op. The
+     lock is released when the connection closes, including if we crash. */
+  const lock = await pool.connect();
+  await lock.query("SELECT pg_advisory_lock($1)", [LOCK_ID]);
+
+  try {
+    await runMigrations(pool);
+  } finally {
+    await lock.query("SELECT pg_advisory_unlock($1)", [LOCK_ID]);
+    lock.release();
+  }
+}
+
+async function runMigrations(pool: ReturnType<typeof rawPool>) {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS _migrations (
       name       text PRIMARY KEY,

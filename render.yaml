@@ -60,7 +60,22 @@ services:
     # lets Render install and build this and nothing else — the Next app in
     # frontend/ is never downloaded or compiled here.
     rootDir: backend
-    buildCommand: npm ci && npm run build && npm run migrate
+    buildCommand: npm ci && npm run build
+    # Migrations run here, not in the build.
+    #
+    # A blueprint does NOT reconfigure a service that was created by hand in
+    # the dashboard, so a `npm run migrate` in buildCommand above is only
+    # applied to services created FROM this file. That is exactly how the
+    # cells.started_at column came to be missing in production while the code
+    # that reads it was live: the build command in the dashboard stopped at
+    # `npm run build`, and nothing said so until the first 500.
+    #
+    # Putting it in the start command means it cannot be skipped by a
+    # dashboard field being out of date. It runs from compiled JS, so it needs
+    # no devDependencies, and it takes an advisory lock so two instances
+    # starting together cannot race. A failed migration stops the service from
+    # starting, which is louder and safer than serving 500s against a schema
+    # that is behind the code.
     startCommand: npm start
     # Reports the database too. A service that answers 200 while unable to
     # reach Postgres looks healthy on the dashboard and is useless to
