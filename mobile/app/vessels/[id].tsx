@@ -17,6 +17,8 @@ import { enqueue, forVessel, readQueue, type QueuedChange } from "../../src/queu
 import { overlayPending } from "../../src/sync";
 import { useSession } from "../../src/session";
 import { Banner, Card, ProgressBar } from "../../src/components/ui";
+import { TransposedGrid } from "../../src/components/transposed-grid";
+import { SyncStrip, type SyncState } from "../../src/components/sync-strip";
 import { colors, radius, space, TAP } from "../../src/theme";
 import {
   CELL_STATUSES,
@@ -163,6 +165,25 @@ export default function Vessel() {
       compartments.flatMap((c) => statusesOf(c.cells, vessel.stages)),
     );
   }, [compartments, vessel]);
+
+  /* Which cells still have a tap on this device, keyed the way the grid reads
+     them so drawing the pip costs a set lookup rather than a scan per cell. */
+  const queuedIds = useMemo(
+    () => new Set(pending.map((p) => `${p.compartmentId}:${p.stageKey}`)),
+    [pending],
+  );
+
+  /**
+   * One of four states, derived rather than tracked.
+   *
+   * `attempts > 0` is the tell for failed: the entry has been sent and come
+   * back at least once, which is different from never having been tried.
+   */
+  const syncState: SyncState = useMemo(() => {
+    if (pending.length === 0) return "synced";
+    if (pending.some((p) => p.attempts > 0)) return "failed";
+    return stale ? "queued" : "syncing";
+  }, [pending, stale]);
 
   const setCell = useCallback(
     async (
@@ -334,10 +355,13 @@ export default function Vessel() {
         ) : null}
       </Card>
 
-      <Text style={styles.hint}>
-        Tap a stage to move it on. Open a {compartmentNoun(vessel.type).toLowerCase()}{" "}
-        for N/A and notes.
-      </Text>
+      <View style={{ marginTop: space.md }}>
+        <SyncStrip
+          state={syncState}
+          queued={pending.length}
+          onRetry={() => void onRefresh()}
+        />
+      </View>
 
       {/* Asked for on every status tap that carries a time.
           Pre-filled with now, so the ordinary case — recording work as it
@@ -373,24 +397,53 @@ export default function Vessel() {
         }}
       />
 
-      <View style={{ gap: space.md }}>
-        {compartments.map((compartment) => (
-          <CompartmentCard
-            key={compartment.id}
-            compartment={compartment}
-            stages={vessel.stages}
-            expanded={expanded === compartment.id}
-            onToggleExpand={() =>
-              setExpanded((current) =>
-                current === compartment.id ? null : compartment.id,
-              )
-            }
-            onSet={setCell}
-            onRequestStatus={requestStatus}
-            timeWindow={timeWindow}
-          />
-        ))}
-      </View>
+      {/* The whole vessel, no horizontal scroll: stages down, compartments
+          across. Tapping a column head drills into that hold, which is where
+          notes, times and corrections live — the exceptions are worth the
+          second tap, the fast path is not. */}
+      {expanded === null ? (
+        <TransposedGrid
+          compartments={compartments}
+          stages={vessel.stages}
+          queuedIds={queuedIds}
+          onTapCell={(compartmentId, stage, current) => {
+            const next = nextStatusOnTap(current);
+            /* Moving to working or done carries a time, so it goes through the
+               ask; moving back to blank is a correction and carries none. */
+            if (next === "pending") void setCell(compartmentId, stage.key, next);
+            else requestStatus(compartmentId, stage.key, stage.label, next);
+          }}
+          onHoldCell={(compartmentId, stage) =>
+            void setCell(compartmentId, stage.key, "na")
+          }
+          onOpenCompartment={(compartmentId) => setExpanded(compartmentId)}
+        />
+      ) : (
+        <View style={{ gap: space.md }}>
+          <Pressable
+            onPress={() => setExpanded(null)}
+            style={styles.backRow}
+            accessibilityRole="button"
+          >
+            <Text style={styles.backText}>‹ All {noun.toLowerCase()}</Text>
+          </Pressable>
+
+          {compartments
+            .filter((c) => c.id === expanded)
+            .map((compartment) => (
+              <CompartmentCard
+                key={compartment.id}
+                compartment={compartment}
+                stages={vessel.stages}
+                expanded
+                onToggleExpand={() => setExpanded(null)}
+                onSet={setCell}
+                onRequestStatus={requestStatus}
+                timeWindow={timeWindow}
+              />
+            ))}
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -751,6 +804,8 @@ const styles = StyleSheet.create({
   },
   noteText: { fontSize: 13, color: colors.text, lineHeight: 19 },
   hint: { fontSize: 13, color: colors.muted, paddingHorizontal: space.xs },
+  backRow: { minHeight: TAP, justifyContent: "center", paddingHorizontal: space.xs },
+  backText: { fontSize: 15, fontWeight: "600", color: colors.blue },
   compartmentHead: {
     flexDirection: "row",
     alignItems: "center",

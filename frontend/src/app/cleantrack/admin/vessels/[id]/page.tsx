@@ -5,6 +5,7 @@ import { AppShell } from "@/components/cleantrack/app-shell";
 import { StatusGrid } from "@/components/cleantrack/status-grid";
 import { Card, PageTitle, VesselStatusChip } from "@/components/cleantrack/ui";
 import { CopyField } from "@/components/cleantrack/copy-field";
+import { StageEditor } from "@/components/cleantrack/stage-editor";
 import { ApiUnavailable } from "@/components/cleantrack/api-unavailable";
 import { ApiError, getVessel, getVesselEvents, listSupervisors } from "@/lib/api";
 import { CELL_STYLE, compartmentNoun } from "@/lib/cleantrack/types";
@@ -146,7 +147,6 @@ export default async function AdminVesselPage({
                   "Progress",
                   `${progress.compartmentsComplete}/${progress.compartmentsTotal} ready`,
                 ],
-                ["Stages", String(vessel.stages.length)],
               ].map(([k, v]) => (
                 <div key={k} className="flex justify-between gap-3">
                   <dt className="text-slate-500">{k}</dt>
@@ -154,6 +154,12 @@ export default async function AdminVesselPage({
                 </div>
               ))}
             </dl>
+          </Card>
+
+          {/* The stage list, editable beside the grid it governs rather than
+              behind a modal that hides it. */}
+          <Card className="p-5">
+            <StageEditor vesselId={vessel.id} stages={vessel.stages} />
           </Card>
 
           <Card className="p-5">

@@ -2,8 +2,7 @@ import {
   CELL_STYLE,
   compartmentState,
   progressOf,
-  statusesOf,
-  type CompartmentDetail,
+  type CellStatus,
   type CompartmentState,
   type Stage,
 } from "@/lib/cleantrack/types";
@@ -21,10 +20,54 @@ import {
  * the phone and a supervisor in the hold are looking at one picture.
  */
 
-type Props = {
-  compartments: CompartmentDetail[];
-  stages: Stage[];
+/**
+ * Only what the drawing reads. Both the customer's full `CompartmentDetail`
+ * and the console's lighter grid row satisfy this, so one component serves
+ * both rather than the two drifting apart.
+ */
+type PlanCompartment = {
+  id: number;
+  position: number;
+  cells: Record<string, { status: CellStatus }>;
 };
+
+type Props = {
+  compartments: PlanCompartment[];
+  stages: Stage[];
+  /**
+   * Which ground it is drawn on. The hull outline and the not-started fill are
+   * the only parts that change: the four cell colours are fixed, because a
+   * customer and a supervisor must be looking at the same picture.
+   */
+  tone?: "dark" | "light";
+  /** Optional selection, for the console where the diagram drives the grid. */
+  selectedId?: number | null;
+  onSelect?: (id: number) => void;
+  className?: string;
+};
+
+const GROUND = {
+  dark: {
+    hullFill: "rgba(255,255,255,0.04)",
+    hullEdge: "rgba(255,255,255,0.28)",
+    centreline: "rgba(255,255,255,0.14)",
+    emptyBg: "rgba(255,255,255,0.07)",
+    emptyEdge: "rgba(255,255,255,0.22)",
+    emptyText: "#b9c5cf",
+    caption: "text-white/45",
+    ring: "#00b0b9",
+  },
+  light: {
+    hullFill: "#f1f7fc",
+    hullEdge: "#b9c5cf",
+    centreline: "#dce4eb",
+    emptyBg: "#ffffff",
+    emptyEdge: "#c8d2dc",
+    emptyText: "#6b7c8b",
+    caption: "text-slate-400",
+    ring: "#1461a0",
+  },
+} as const;
 
 /**
  * Hold fills, keyed to the rolled-up state rather than to any single cell.
@@ -33,7 +76,10 @@ type Props = {
  * grid the crew taps. Only the label colours are local: they are the readable
  * ink on each of those fills, which the shared token set does not carry.
  */
-const HOLD_FILL: Record<CompartmentState, { bg: string; text: string; edge: string }> = {
+const HOLD_FILL: Record<
+  Exclude<CompartmentState, "not-started">,
+  { bg: string; text: string; edge: string }
+> = {
   complete: {
     bg: CELL_STYLE.done.fill,
     text: "#14400a",
@@ -44,10 +90,17 @@ const HOLD_FILL: Record<CompartmentState, { bg: string; text: string; edge: stri
     text: "#7d5c00",
     edge: CELL_STYLE.in_progress.stroke,
   },
-  "not-started": { bg: "rgba(255,255,255,0.07)", text: "#b9c5cf", edge: "rgba(255,255,255,0.22)" },
 };
 
-export function VesselPlanView({ compartments, stages }: Props) {
+export function VesselPlanView({
+  compartments,
+  stages,
+  tone = "dark",
+  selectedId = null,
+  onSelect,
+  className,
+}: Props) {
+  const ground = GROUND[tone];
   /* Geometry is computed from the compartment count rather than fixed, because
      a vessel can carry anything from 5 holds to 9 and the drawing has to stay
      the same shape either way. */
@@ -73,7 +126,7 @@ export function VesselPlanView({ compartments, stages }: Props) {
   ].join(" ");
 
   return (
-    <figure className="m-0">
+    <figure className={`m-0 ${className ?? ""}`}>
       <div className="overflow-x-auto">
         <svg
           viewBox={`0 0 ${w} ${h}`}
@@ -81,7 +134,7 @@ export function VesselPlanView({ compartments, stages }: Props) {
           aria-label={`Plan view of ${n} compartments, stern to bow`}
           style={{ minWidth: Math.min(w, 560), width: "100%", height: "auto", display: "block" }}
         >
-          <path d={hull} fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.28)" strokeWidth="1.5" />
+          <path d={hull} fill={ground.hullFill} stroke={ground.hullEdge} strokeWidth="1.5" />
 
           {/* Centreline — a real drawing convention, and it reads as one. */}
           <line
@@ -89,19 +142,31 @@ export function VesselPlanView({ compartments, stages }: Props) {
             y1={h / 2}
             x2={padX + bodyW + 10}
             y2={h / 2}
-            stroke="rgba(255,255,255,0.14)"
+            stroke={ground.centreline}
             strokeWidth="1"
             strokeDasharray="7 6"
           />
 
           {compartments.map((c, i) => {
-            const statuses = statusesOf(c, stages);
+            /* Same read as statusesOf, inlined: this component deliberately
+               accepts a narrower compartment than that helper requires. */
+            const statuses = stages.map(
+              (s) => c.cells[s.key]?.status ?? ("pending" as CellStatus),
+            );
             const state = compartmentState(statuses);
             const pct = Math.round(progressOf(statuses).ratio * 100);
-            const skin = HOLD_FILL[state];
+            const skin =
+              state === "not-started"
+                ? { bg: ground.emptyBg, edge: ground.emptyEdge, text: ground.emptyText }
+                : HOLD_FILL[state];
             const x = padX + i * (holdW + gap);
+            const selected = selectedId === c.id;
             return (
-              <g key={c.id}>
+              <g
+                key={c.id}
+                onClick={onSelect ? () => onSelect(c.id) : undefined}
+                style={onSelect ? { cursor: "pointer" } : undefined}
+              >
                 <rect
                   x={x}
                   y={holdY}
@@ -109,8 +174,8 @@ export function VesselPlanView({ compartments, stages }: Props) {
                   height={holdH}
                   rx="3"
                   fill={skin.bg}
-                  stroke={skin.edge}
-                  strokeWidth="1.5"
+                  stroke={selected ? ground.ring : skin.edge}
+                  strokeWidth={selected ? 3 : 1.5}
                 />
                 <text
                   x={x + holdW / 2}
@@ -139,7 +204,9 @@ export function VesselPlanView({ compartments, stages }: Props) {
         </svg>
       </div>
 
-      <figcaption className="mt-3 flex items-center justify-between text-[11px] uppercase tracking-[0.14em] text-white/45">
+      <figcaption
+        className={`mt-3 flex items-center justify-between text-[11px] uppercase tracking-[0.14em] ${ground.caption}`}
+      >
         <span>Stern</span>
         <span aria-hidden="true">&rarr;</span>
         <span>Bow</span>

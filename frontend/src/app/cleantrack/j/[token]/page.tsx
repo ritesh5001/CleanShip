@@ -3,11 +3,7 @@ import { notFound } from "next/navigation";
 import { ApiError, getSharedVessel } from "@/lib/api";
 import { LiveRefresh } from "@/components/cleantrack/live-refresh";
 import { VesselPlanView } from "@/components/cleantrack/vessel-plan-view";
-import {
-  compartmentState,
-  progressOf,
-  statusesOf,
-} from "@/lib/cleantrack/types";
+import { compartmentState, statusesOf } from "@/lib/cleantrack/types";
 
 export const dynamic = "force-dynamic";
 

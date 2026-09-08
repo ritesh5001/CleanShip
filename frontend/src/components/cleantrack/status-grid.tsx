@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { VesselDiagram3D } from "./vessel-diagram-3d";
+import { VesselPlanView } from "./vessel-plan-view";
 import { ProgressBar, StatusChip } from "./ui";
 import {
   CELL_STATUSES,
@@ -314,11 +314,11 @@ export function StatusGrid({
           </span>
         </div>
         <ProgressBar ratio={overall.ratio} />
-        <VesselDiagram3D
+        <VesselPlanView
           className="mt-4"
+          tone="light"
           compartments={comps}
           stages={stages}
-          vesselType={vesselType}
           selectedId={selectedId}
           onSelect={setSelectedId}
         />
