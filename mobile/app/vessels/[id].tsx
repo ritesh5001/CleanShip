@@ -16,14 +16,15 @@ import { readVessel, writeVessel } from "../../src/cache";
 import { enqueue, forVessel, readQueue, type QueuedChange } from "../../src/queue";
 import { overlayPending } from "../../src/sync";
 import { useSession } from "../../src/session";
-import { Banner, Card, ProgressBar } from "../../src/components/ui";
+import { Banner, Card } from "../../src/components/ui";
 import { TransposedGrid } from "../../src/components/transposed-grid";
 import { SyncStrip, type SyncState } from "../../src/components/sync-strip";
+import { VesselHeader } from "../../src/components/vessel-header";
+import { HoldDetail } from "../../src/components/hold-detail";
 import { colors, radius, space, TAP } from "../../src/theme";
 import {
   CELL_STATUSES,
   CELL_STYLE,
-  compartmentNoun,
   compartmentState,
   formatDuration,
   formatWorkTime,
@@ -63,6 +64,9 @@ export default function Vessel() {
   const [error, setError] = useState<string | null>(null);
   const [stale, setStale] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  /* The note and time editor is the exception path, so it stays folded away
+     until asked for rather than competing with the stage list. */
+  const [editing, setEditing] = useState(false);
 
   const refreshPending = useCallback(async () => {
     const queue = await readQueue();
@@ -170,6 +174,19 @@ export default function Vessel() {
      them so drawing the pip costs a set lookup rather than a scan per cell. */
   const queuedIds = useMemo(
     () => new Set(pending.map((p) => `${p.compartmentId}:${p.stageKey}`)),
+    [pending],
+  );
+
+  /* Sent at least once and come back: the cell keeps its recorded status and
+     takes a rule underneath, rather than being repainted as though the tap
+     never happened. */
+  const failedIds = useMemo(
+    () =>
+      new Set(
+        pending
+          .filter((p) => p.attempts > 0)
+          .map((p) => `${p.compartmentId}:${p.stageKey}`),
+      ),
     [pending],
   );
 
@@ -310,7 +327,6 @@ export default function Vessel() {
     );
   }
 
-  const noun = compartmentNoun(vessel.type, true);
 
   return (
     <ScrollView
@@ -325,43 +341,28 @@ export default function Vessel() {
         </View>
       )}
 
-      <Card style={{ padding: space.lg }}>
-        <Text style={styles.reference}>{vessel.reference}</Text>
-        <Text style={styles.name}>{vessel.name}</Text>
-        <Text style={styles.where}>
-          {vessel.port}
-          {vessel.berth ? ` · ${vessel.berth}` : ""}
-          {vessel.imo ? ` · IMO ${vessel.imo}` : ""}
-        </Text>
-
-        <View style={{ marginTop: space.lg }}>
-          <View style={styles.progressRow}>
-            <Text style={styles.progressLabel}>
-              {noun} · {Math.round(overall.ratio * 100)}% complete
-            </Text>
-            <Text style={styles.percent}>
-              {overall.done}/{overall.total}
-            </Text>
-          </View>
-          <View style={{ marginTop: space.sm }}>
-            <ProgressBar ratio={overall.ratio} />
-          </View>
-        </View>
-
-        {vessel.notes ? (
-          <View style={styles.noteBox}>
-            <Text style={styles.noteText}>{vessel.notes}</Text>
-          </View>
-        ) : null}
-      </Card>
-
-      <View style={{ marginTop: space.md }}>
+      {/* Navy bar then the sync strip, joined as one block: which vessel,
+          and whether the phone is holding anything the server has not got. */}
+      <View style={styles.headBlock}>
+        <VesselHeader
+          name={vessel.name}
+          imo={vessel.imo}
+          port={vessel.port}
+          berth={vessel.berth}
+          percent={Math.round(overall.ratio * 100)}
+        />
         <SyncStrip
           state={syncState}
           queued={pending.length}
           onRetry={() => void onRefresh()}
         />
       </View>
+
+      {vessel.notes ? (
+        <View style={styles.noteBox}>
+          <Text style={styles.noteText}>{vessel.notes}</Text>
+        </View>
+      ) : null}
 
       {/* Asked for on every status tap that carries a time.
           Pre-filled with now, so the ordinary case — recording work as it
@@ -406,6 +407,7 @@ export default function Vessel() {
           compartments={compartments}
           stages={vessel.stages}
           queuedIds={queuedIds}
+          failedIds={failedIds}
           onTapCell={(compartmentId, stage, current) => {
             const next = nextStatusOnTap(current);
             /* Moving to working or done carries a time, so it goes through the
@@ -420,27 +422,51 @@ export default function Vessel() {
         />
       ) : (
         <View style={{ gap: space.md }}>
-          <Pressable
-            onPress={() => setExpanded(null)}
-            style={styles.backRow}
-            accessibilityRole="button"
-          >
-            <Text style={styles.backText}>‹ All {noun.toLowerCase()}</Text>
-          </Pressable>
-
           {compartments
             .filter((c) => c.id === expanded)
             .map((compartment) => (
-              <CompartmentCard
-                key={compartment.id}
-                compartment={compartment}
-                stages={vessel.stages}
-                expanded
-                onToggleExpand={() => setExpanded(null)}
-                onSet={setCell}
-                onRequestStatus={requestStatus}
-                timeWindow={timeWindow}
-              />
+              <View key={compartment.id} style={{ gap: space.md }}>
+                <HoldDetail
+                  compartment={compartment}
+                  stages={vessel.stages}
+                  onBack={() => {
+                    setExpanded(null);
+                    setEditing(false);
+                  }}
+                  onTapStage={(stage, current) => {
+                    const next = nextStatusOnTap(current);
+                    if (next === "pending")
+                      void setCell(compartment.id, stage.key, next);
+                    else
+                      requestStatus(compartment.id, stage.key, stage.label, next);
+                  }}
+                  onHoldStage={(stage) =>
+                    void setCell(compartment.id, stage.key, "na")
+                  }
+                />
+
+                <Pressable
+                  onPress={() => setEditing((v) => !v)}
+                  style={styles.backRow}
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.backText}>
+                    {editing ? "Hide notes and times" : "Notes and times"}
+                  </Text>
+                </Pressable>
+
+                {editing && (
+                  <CompartmentCard
+                    compartment={compartment}
+                    stages={vessel.stages}
+                    expanded
+                    onToggleExpand={() => setEditing(false)}
+                    onSet={setCell}
+                    onRequestStatus={requestStatus}
+                    timeWindow={timeWindow}
+                  />
+                )}
+              </View>
             ))}
         </View>
       )}
@@ -788,12 +814,6 @@ const styles = StyleSheet.create({
     gap: space.md,
   },
   waiting: { color: colors.muted, fontSize: 14 },
-  reference: { fontSize: 12, color: colors.faint },
-  name: { marginTop: 2, fontSize: 22, fontWeight: "800", color: colors.text },
-  where: { marginTop: 4, fontSize: 14, color: colors.muted },
-  progressRow: { flexDirection: "row", justifyContent: "space-between" },
-  progressLabel: { fontSize: 13, fontWeight: "600", color: colors.text },
-  percent: { fontSize: 13, color: colors.muted, fontVariant: ["tabular-nums"] },
   noteBox: {
     marginTop: space.lg,
     padding: space.md,
@@ -804,6 +824,13 @@ const styles = StyleSheet.create({
   },
   noteText: { fontSize: 13, color: colors.text, lineHeight: 19 },
   hint: { fontSize: 13, color: colors.muted, paddingHorizontal: space.xs },
+  headBlock: {
+    borderRadius: radius.lg,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginBottom: space.lg,
+  },
   backRow: { minHeight: TAP, justifyContent: "center", paddingHorizontal: space.xs },
   backText: { fontSize: 15, fontWeight: "600", color: colors.blue },
   compartmentHead: {

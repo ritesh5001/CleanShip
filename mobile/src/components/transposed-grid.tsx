@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { colors, radius, space, CELL_MIN_W, CELL_MIN_H } from "../theme";
 import {
   CELL_STYLE,
@@ -33,8 +33,10 @@ const PER_PAGE = 7;
 type Props = {
   compartments: CompartmentDetail[];
   stages: Stage[];
-  /** Compartment ids with a tap still on the device, for the sync pip. */
+  /** `compartmentId:stageKey` for taps still on the device. */
   queuedIds: Set<string>;
+  /** Same key shape, for taps that have been sent and come back failed. */
+  failedIds?: Set<string>;
   onTapCell: (compartmentId: number, stage: Stage, current: CellStatus) => void;
   onHoldCell: (compartmentId: number, stage: Stage) => void;
   onOpenCompartment: (compartmentId: number) => void;
@@ -44,6 +46,7 @@ export function TransposedGrid({
   compartments,
   stages,
   queuedIds,
+  failedIds,
   onTapCell,
   onHoldCell,
   onOpenCompartment,
@@ -68,9 +71,12 @@ export function TransposedGrid({
               accessibilityState={{ selected: i === page }}
             >
               <Text style={[styles.pageTabText, i === page && styles.pageTabTextOn]}>
-                {compartments[i * PER_PAGE]?.label ?? ""}
-                {" – "}
-                {compartments[Math.min((i + 1) * PER_PAGE, compartments.length) - 1]?.label ?? ""}
+                {shortLabel(compartments[i * PER_PAGE]?.label ?? "")}
+                {"–"}
+                {shortLabel(
+                  compartments[Math.min((i + 1) * PER_PAGE, compartments.length) - 1]
+                    ?.label ?? "",
+                )}
               </Text>
             </Pressable>
           ))}
@@ -78,11 +84,11 @@ export function TransposedGrid({
       )}
 
       <View style={styles.frame}>
-        {/* Column heads: the compartment, its percentage, and a way in to the
-            hold detail where notes and time corrections live. */}
+        {/* Column heads sit on navy so the axis reads as a header rather than
+            as another row of cells. Tapping one drills into that hold. */}
         <View style={styles.row}>
           <View style={styles.stageHeadCell}>
-            <Text style={styles.axisLabel}>Stage</Text>
+            <Text style={styles.axisLabel}>STAGE</Text>
           </View>
           {shown.map((c) => {
             const pct = Math.round(progressOf(statusesOf(c.cells, stages)).ratio * 100);
@@ -115,7 +121,9 @@ export function TransposedGrid({
             {shown.map((c) => {
               const status = c.cells[stage.key]?.status ?? "pending";
               const skin = CELL_STYLE[status];
-              const queued = queuedIds.has(`${c.id}:${stage.key}`);
+              const id = `${c.id}:${stage.key}`;
+              const queued = queuedIds.has(id);
+              const failed = failedIds?.has(id) ?? false;
               return (
                 <Pressable
                   key={c.id}
@@ -124,18 +132,21 @@ export function TransposedGrid({
                   delayLongPress={420}
                   style={[
                     styles.cell,
-                    { backgroundColor: skin.bg, borderColor: skin.border },
+                    { backgroundColor: skin.bg, borderColor: colors.border },
                   ]}
                   accessibilityRole="button"
                   accessibilityLabel={`${c.label}, ${stage.label}, ${skin.label}`}
                 >
-                  <Text style={[styles.cellMark, { color: skin.text }]}>
-                    {status === "done" ? "✓" : status === "na" ? "N/A" : ""}
-                  </Text>
+                  <CellMark status={status} />
                   {/* Queued: a 7px square in the corner, not a banner. The tap
                       is already safe on the device; this only says it has not
                       reached the server yet. */}
-                  {queued && <View style={styles.queuedPip} />}
+                  {queued && !failed && <View style={styles.queuedPip} />}
+                  {/* Failed is the only state that changes colour, and it does
+                      it with a rule under the cell rather than by repainting
+                      the cell — the status the supervisor recorded is still
+                      the truth, it just has not landed. */}
+                  {failed && <View style={styles.failedRule} />}
                 </Pressable>
               );
             })}
@@ -148,14 +159,46 @@ export function TransposedGrid({
         <LegendChip status="in_progress" />
         <LegendChip status="done" />
         <LegendChip status="na" />
+        <View style={styles.legendItem}>
+          <View style={styles.legendSync} />
+          <Text style={styles.legendText}>Waiting to sync</Text>
+        </View>
       </View>
 
-      <Text style={styles.hint}>Tap a cell to advance it · hold for N/A</Text>
-      <Text style={styles.rule}>
-        N/A LEAVES THE DENOMINATOR · WORKING COUNTS AS HALF
-      </Text>
+      <View style={styles.hintBox}>
+        <Text style={styles.hint}>Tap a cell to advance it · hold for N/A</Text>
+        <Text style={styles.rule}>
+          N/A LEAVES THE DENOMINATOR · WORKING COUNTS AS HALF
+        </Text>
+      </View>
     </View>
   );
+}
+
+/**
+ * What a cell shows.
+ *
+ * Done is a tick. Working is a square with its lower half filled — the glyph
+ * says what the arithmetic says, that a stage in progress counts as half a
+ * stage, without a legend having to explain it. Not started shows nothing,
+ * which is the paper sheet's blank.
+ */
+function CellMark({ status }: { status: CellStatus }) {
+  const skin = CELL_STYLE[status];
+  if (status === "done") {
+    return <Text style={[styles.cellTick, { color: skin.text }]}>✓</Text>;
+  }
+  if (status === "na") {
+    return <Text style={[styles.cellNa, { color: skin.text }]}>N/A</Text>;
+  }
+  if (status === "in_progress") {
+    return (
+      <View style={[styles.halfBox, { borderColor: skin.text }]}>
+        <View style={[styles.halfFill, { borderBottomColor: skin.text }]} />
+      </View>
+    );
+  }
+  return null;
 }
 
 function LegendChip({ status }: { status: CellStatus }) {
@@ -186,20 +229,18 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   row: { flexDirection: "row" },
+
   stageHeadCell: {
     width: 104,
     paddingHorizontal: space.sm,
     paddingVertical: space.sm,
     justifyContent: "flex-end",
-    backgroundColor: colors.blueWash,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.navy,
   },
   axisLabel: {
     fontSize: 10,
-    letterSpacing: 1,
-    color: colors.muted,
+    letterSpacing: 1.2,
+    color: colors.onDarkMuted,
     fontWeight: "600",
   },
   colHead: {
@@ -208,13 +249,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: space.sm,
-    backgroundColor: colors.blueWash,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.navy,
+    borderLeftWidth: 1,
+    borderLeftColor: colors.navyLine,
   },
-  colHeadLabel: { fontSize: 14, fontWeight: "700", color: colors.text },
-  colHeadPct: { fontSize: 11, color: colors.muted, marginTop: 2 },
+  colHeadLabel: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: colors.onDark,
+    letterSpacing: 0.5,
+  },
+  colHeadPct: {
+    fontSize: 10,
+    color: colors.aquaTint,
+    marginTop: 2,
+    letterSpacing: 0.3,
+  },
 
   stageCell: {
     width: 104,
@@ -225,9 +275,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: colors.border,
     minHeight: CELL_MIN_H,
+    backgroundColor: colors.card,
   },
-  stageLabel: { fontSize: 13, fontWeight: "600", color: colors.text, lineHeight: 16 },
-  stageShort: { fontSize: 10, color: colors.faint, marginTop: 2, letterSpacing: 0.6 },
+  stageLabel: { fontSize: 13, fontWeight: "700", color: colors.text, lineHeight: 16 },
+  stageShort: {
+    fontSize: 9,
+    color: colors.faint,
+    marginTop: 3,
+    letterSpacing: 1,
+    fontWeight: "600",
+  },
 
   cell: {
     flex: 1,
@@ -238,7 +295,22 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderBottomWidth: 1,
   },
-  cellMark: { fontSize: 15, fontWeight: "700" },
+  cellTick: { fontSize: 18, fontWeight: "700" },
+  cellNa: { fontSize: 12, fontWeight: "700", letterSpacing: 0.5 },
+
+  /* A square with its lower-left half filled: "counts as half", drawn. */
+  halfBox: { width: 17, height: 17, borderWidth: 1.5, overflow: "hidden" },
+  halfFill: {
+    position: "absolute",
+    left: 0,
+    bottom: 0,
+    width: 0,
+    height: 0,
+    borderBottomWidth: 14,
+    borderRightWidth: 14,
+    borderRightColor: "transparent",
+  },
+
   queuedPip: {
     position: "absolute",
     top: 3,
@@ -246,7 +318,15 @@ const styles = StyleSheet.create({
     width: 7,
     height: 7,
     borderRadius: 1,
-    backgroundColor: colors.muted,
+    backgroundColor: colors.navy,
+  },
+  failedRule: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 3,
+    backgroundColor: colors.danger,
   },
 
   legend: {
@@ -254,17 +334,35 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: space.md,
     marginTop: space.md,
+    paddingHorizontal: space.xs,
   },
   legendItem: { flexDirection: "row", alignItems: "center", gap: 6 },
   legendSwatch: { width: 14, height: 14, borderRadius: 2, borderWidth: 1 },
-  legendText: { fontSize: 12, color: colors.muted },
+  legendSync: { width: 10, height: 10, borderRadius: 1, backgroundColor: colors.navy },
+  legendText: { fontSize: 12, color: colors.textBody },
 
-  hint: { marginTop: space.md, fontSize: 13, color: colors.textBody },
+  hintBox: {
+    marginTop: space.lg,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.blue,
+    backgroundColor: colors.card,
+    borderTopWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderTopColor: colors.border,
+    borderRightColor: colors.border,
+    borderBottomColor: colors.border,
+    borderRadius: radius.md,
+    paddingHorizontal: space.md,
+    paddingVertical: space.md,
+  },
+  hint: { fontSize: 14, color: colors.text, fontWeight: "500" },
   rule: {
     marginTop: space.xs,
     fontSize: 10,
     letterSpacing: 0.8,
     color: colors.faint,
+    lineHeight: 15,
   },
 
   pager: { flexDirection: "row", gap: space.sm, marginBottom: space.sm },
@@ -277,6 +375,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
   },
   pageTabOn: { backgroundColor: colors.navy, borderColor: colors.navy },
-  pageTabText: { fontSize: 12, fontWeight: "600", color: colors.muted },
+  pageTabText: { fontSize: 12, fontWeight: "700", color: colors.muted },
   pageTabTextOn: { color: colors.onDark },
 });
