@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -13,7 +13,13 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { TimeAsk } from "../../src/components/time-ask";
 import { ApiError, getVessel } from "../../src/api";
 import { readVessel, writeVessel } from "../../src/cache";
-import { enqueue, forVessel, readQueue, type QueuedChange } from "../../src/queue";
+import {
+  enqueue,
+  forVessel,
+  readQueue,
+  subscribe,
+  type QueuedChange,
+} from "../../src/queue";
 import { overlayPending } from "../../src/sync";
 import { useSession } from "../../src/session";
 import { Banner, Card } from "../../src/components/ui";
@@ -64,13 +70,18 @@ export default function Vessel() {
   const [error, setError] = useState<string | null>(null);
   const [stale, setStale] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  /* How many of this vessel's taps were on the device last time we looked —
+     a drop means the sync landed and the server now has them. */
+  const pendingCount = useRef(0);
   /* The note and time editor is the exception path, so it stays folded away
      until asked for rather than competing with the stage list. */
   const [editing, setEditing] = useState(false);
 
   const refreshPending = useCallback(async () => {
     const queue = await readQueue();
-    setPending(forVessel(queue, vesselId));
+    const mine = forVessel(queue, vesselId);
+    pendingCount.current = mine.length;
+    setPending(mine);
   }, [vesselId]);
 
   const load = useCallback(
@@ -122,6 +133,29 @@ export default function Vessel() {
   useEffect(() => {
     if (vessel) navigation.setOptions({ title: vessel.name });
   }, [vessel, navigation]);
+
+  /**
+   * Follows the queue, and refetches the moment it drains.
+   *
+   * The overlay is the only thing showing a tap that has not reached the
+   * server. When the sync succeeds the entry is dropped from the queue — and
+   * without this, the screen falls back to whatever the server said when the
+   * page was opened, which is the tap undone. A supervisor watched a finished
+   * hold turn green, then go blank when they moved to the next stage.
+   *
+   * So: mirror the queue, and when it shrinks, go and get the copy that now
+   * has the change in it.
+   */
+  useEffect(() => {
+    const unsubscribe = subscribe((queue) => {
+      const mine = forVessel(queue, vesselId);
+      const drained = mine.length < pendingCount.current;
+      pendingCount.current = mine.length;
+      setPending(mine);
+      if (drained) void load();
+    });
+    return unsubscribe;
+  }, [vesselId, load]);
 
   /* What the supervisor is looking at: the server's picture with their own
      un-synced taps laid on top, so nothing they did appears to undo itself. */
