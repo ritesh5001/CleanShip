@@ -1,44 +1,27 @@
 import { Router } from "express";
-import { z } from "zod";
 import { getVesselByShareToken, getVesselVersion } from "../domain/vessels.js";
-import { imoMatches, shareCookieValue } from "../domain/share.js";
 import { db } from "../db/index.js";
 import { vessels } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 import { ApiError } from "../http/errors.js";
-import { parseBody } from "../http/validate.js";
 
 export const shareRoutes = Router();
 
 /**
- * The customer's window. No account, no session — a link plus the vessel's IMO.
+ * The customer's window. No account, no session, no challenge.
  *
- * Two steps on purpose. The first tells a visitor which vessel they are
- * looking at so they know they have the right link; only the second, behind
- * the IMO, returns progress. A forwarded link on its own therefore leaks the
- * vessel name and nothing about the work.
+ * This used to ask for the vessel's IMO on top of the link. That gate is gone
+ * by client direction: the customer opens the link and the vessel is there.
+ *
+ * Which means the link IS the credential, and the whole weight of access now
+ * rests on it. Two things follow, and both are load-bearing rather than
+ * decorative: the token must stay unguessable, and the office must be able to
+ * see a link's life and end it — `shareRevoked` is checked on every read below,
+ * so revoking takes effect on the customer's next poll rather than at some
+ * cache expiry.
  */
 
-/* Empty is allowed because a vessel with no IMO on record has nothing to gate
-   on — see the check below. A vessel that DOES have one still has to match. */
-const gate = z.object({ imo: z.string().max(32).default("") });
-
-/** Proof that the gate was passed. The caller stores it and sends it back. */
-function proofHeader(req: { header(name: string): string | undefined }) {
-  return req.header("x-share-proof") ?? null;
-}
-
-function requireProof(token: string, supplied: string | null) {
-  if (!supplied || supplied !== shareCookieValue(token)) {
-    throw new ApiError(
-      401,
-      "share_gate",
-      "Confirm the vessel's IMO number to view this.",
-    );
-  }
-}
-
-/** What a link shows before the gate: enough to recognise, nothing more. */
+/** What a link shows before the vessel loads: enough to recognise it. */
 shareRoutes.get("/:token", async (req, res) => {
   const token = String(req.params.token);
   const [row] = await db
@@ -46,7 +29,6 @@ shareRoutes.get("/:token", async (req, res) => {
       name: vessels.name,
       reference: vessels.reference,
       revoked: vessels.shareRevoked,
-      hasImo: vessels.imo,
     })
     .from(vessels)
     .where(eq(vessels.shareToken, token))
@@ -55,37 +37,11 @@ shareRoutes.get("/:token", async (req, res) => {
   if (!row || row.revoked) {
     throw ApiError.notFound("This link is no longer active. Ask for a new one.");
   }
-  res.json({
-    vessel: { name: row.name, reference: row.reference },
-    requiresImo: Boolean(row.hasImo),
-  });
-});
-
-shareRoutes.post("/:token/verify", async (req, res) => {
-  const token = String(req.params.token);
-  const body = parseBody(gate, req.body);
-
-  const detail = await getVesselByShareToken(token);
-  if (!detail) {
-    throw ApiError.notFound("This link is no longer active. Ask for a new one.");
-  }
-  /* A barge or workboat with no IMO cannot answer a challenge, and inventing
-     one would lock a customer out of their own job. Those open on the link
-     alone; revoking the link is still the way to close them. */
-  if (detail.imo && !imoMatches(detail.imo, body.imo)) {
-    throw new ApiError(
-      403,
-      "imo_mismatch",
-      "That IMO number does not match this vessel.",
-    );
-  }
-
-  res.json({ proof: shareCookieValue(token), vessel: publicView(detail) });
+  res.json({ vessel: { name: row.name, reference: row.reference } });
 });
 
 shareRoutes.get("/:token/vessel", async (req, res) => {
   const token = String(req.params.token);
-  requireProof(token, proofHeader(req));
   const detail = await getVesselByShareToken(token);
   if (!detail) throw ApiError.notFound("This link is no longer active.");
   res.json({ vessel: publicView(detail) });
@@ -93,7 +49,6 @@ shareRoutes.get("/:token/vessel", async (req, res) => {
 
 shareRoutes.get("/:token/version", async (req, res) => {
   const token = String(req.params.token);
-  requireProof(token, proofHeader(req));
   const [row] = await db
     .select({ id: vessels.id, revoked: vessels.shareRevoked })
     .from(vessels)

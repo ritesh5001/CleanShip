@@ -414,23 +414,22 @@ export function submitEnquiry(input: {
 /* The customer share link                                              */
 /* -------------------------------------------------------------------- */
 
-export function peekShare(token: string) {
-  return request<{
-    vessel: { name: string; reference: string };
-    requiresImo: boolean;
-  }>(`/api/v1/share/${token}`, { auth: false });
-}
+/**
+ * There is no gate here any more. The link opens straight onto the vessel —
+ * no IMO challenge, no proof header, no cookie. The token is the credential,
+ * so the only way to close a link is for the office to revoke it, which the
+ * API enforces on every one of these reads.
+ */
 
-export function verifyShare(token: string, imo: string) {
-  return request<{ proof: string; vessel: PublicVessel }>(
-    `/api/v1/share/${token}/verify`,
-    { method: "POST", auth: false, body: { imo } },
+export function peekShare(token: string) {
+  return request<{ vessel: { name: string; reference: string } }>(
+    `/api/v1/share/${token}`,
+    { auth: false },
   );
 }
 
-export function getSharedVessel(token: string, proof: string) {
+export function getSharedVessel(token: string) {
   return request<{ vessel: PublicVessel }>(`/api/v1/share/${token}/vessel`, {
     auth: false,
-    headers: { "X-Share-Proof": proof },
   });
 }
