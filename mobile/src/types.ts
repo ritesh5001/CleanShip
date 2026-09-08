@@ -175,23 +175,25 @@ export const STATE_STYLE: Record<
   CompartmentState,
   { label: string; bg: string; border: string; text: string }
 > = {
+  /* Same four colours the cells use, rolled up. A compartment does not get a
+     palette of its own — that is how the phone and the office drifted apart. */
   "not-started": {
     label: "Not started",
-    bg: "#f1f5f9",
-    border: "#cbd5e1",
-    text: "#475569",
+    bg: "#ffffff",
+    border: "#c8d2dc",
+    text: "#5b6b7a",
   },
   "in-progress": {
-    label: "In progress",
-    bg: "#fef3c7",
-    border: "#f59e0b",
-    text: "#92400e",
+    label: "Working",
+    bg: "#fdf3c4",
+    border: "#d6a90a",
+    text: "#7d5c00",
   },
   complete: {
     label: "Complete",
-    bg: "#d1fae5",
-    border: "#10b981",
-    text: "#065f46",
+    bg: "#8fce6a",
+    border: "#4f9c2b",
+    text: "#14400a",
   },
 };
 
@@ -199,12 +201,11 @@ export const VESSEL_STATUS_STYLE: Record<
   string,
   { bg: string; border: string; text: string }
 > = {
-  /* Marine tokens, not the four cell colours above. A vessel being in progress
-     is the normal state of every job on the board, so it takes the working
-     blue; the amber it used to wear read as a warning about nothing. */
-  scheduled: { bg: "#f1f7fc", border: "#b9c5cf", text: "#4c5c6b" },
-  "in-progress": { bg: "#dceaf6", border: "#4a9bd8", text: "#1461a0" },
-  complete: { bg: "#e2f4ea", border: "#1e9e63", text: "#14663f" },
+  /* The cell language one level up: a working vessel wears the same yellow a
+     working cell does, a finished one the same green. One system, not two. */
+  scheduled: { bg: "#ffffff", border: "#c8d2dc", text: "#5b6b7a" },
+  "in-progress": { bg: "#fdf3c4", border: "#d6a90a", text: "#7d5c00" },
+  complete: { bg: "#8fce6a", border: "#4f9c2b", text: "#14400a" },
   cancelled: { bg: "#fae5e0", border: "#c6472f", text: "#c6472f" },
 };
 

@@ -97,13 +97,13 @@ export function StatusChip({ state }: { state: CompartmentState }) {
   );
 }
 
-/* Marine tokens, not the four cell colours. A vessel being in progress is the
-   normal state of every job on the board, so it takes the working blue; the
-   amber it used to wear read as a warning about nothing. */
+/* The cell language, applied one level up: a vessel that is working wears the
+   same yellow a working cell does, and a finished one the same green. It reads
+   as one system rather than two, which is why the design does it this way. */
 const VESSEL_STATUS_STYLE: Record<string, string> = {
-  scheduled: "bg-[#f1f7fc] text-[#4c5c6b] border-[#b9c5cf]",
-  "in-progress": "bg-[#dceaf6] text-[#1461a0] border-[#4a9bd8]",
-  complete: "bg-[#e2f4ea] text-[#14663f] border-[#1e9e63]",
+  scheduled: "bg-white text-[#5b6b7a] border-[#c8d2dc]",
+  "in-progress": "bg-[#fdf3c4] text-[#7d5c00] border-[#d6a90a]",
+  complete: "bg-[#8fce6a] text-[#14400a] border-[#4f9c2b]",
   cancelled: "bg-[#fae5e0] text-[#c6472f] border-[#c6472f]",
 };
 
