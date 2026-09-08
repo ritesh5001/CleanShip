@@ -199,10 +199,13 @@ export const VESSEL_STATUS_STYLE: Record<
   string,
   { bg: string; border: string; text: string }
 > = {
-  scheduled: { bg: "#f1f5f9", border: "#cbd5e1", text: "#475569" },
-  "in-progress": { bg: "#fef3c7", border: "#f59e0b", text: "#92400e" },
-  complete: { bg: "#d1fae5", border: "#10b981", text: "#065f46" },
-  cancelled: { bg: "#fee2e2", border: "#f87171", text: "#991b1b" },
+  /* Marine tokens, not the four cell colours above. A vessel being in progress
+     is the normal state of every job on the board, so it takes the working
+     blue; the amber it used to wear read as a warning about nothing. */
+  scheduled: { bg: "#f1f7fc", border: "#b9c5cf", text: "#4c5c6b" },
+  "in-progress": { bg: "#dceaf6", border: "#4a9bd8", text: "#1461a0" },
+  complete: { bg: "#e2f4ea", border: "#1e9e63", text: "#14663f" },
+  cancelled: { bg: "#fae5e0", border: "#c6472f", text: "#c6472f" },
 };
 
 /** "Hold" or "Tank". */

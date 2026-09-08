@@ -798,7 +798,7 @@ const styles = StyleSheet.create({
     marginTop: space.lg,
     padding: space.md,
     borderRadius: radius.sm,
-    backgroundColor: "#f8fafc",
+    backgroundColor: colors.bg,
     borderWidth: 1,
     borderColor: colors.border,
   },
@@ -885,9 +885,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: space.md,
     borderRadius: radius.sm,
-    backgroundColor: "#eff6ff",
+    backgroundColor: colors.blueWash,
   },
-  durationText: { fontSize: 13, fontWeight: "700", color: "#1e40af" },
+  durationText: { fontSize: 13, fontWeight: "700", color: colors.blue },
   noteInput: {
     minHeight: 44,
     borderWidth: 1,
@@ -896,6 +896,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.md,
     fontSize: 15,
     color: colors.text,
-    backgroundColor: "#f8fafc",
+    backgroundColor: colors.bg,
   },
 });

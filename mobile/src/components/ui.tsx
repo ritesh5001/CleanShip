@@ -90,12 +90,15 @@ export function ProgressBar({ ratio }: { ratio: number }) {
       accessibilityRole="progressbar"
       accessibilityValue={{ min: 0, max: 100, now: Math.round(pct * 100) }}
     >
+      {/* Aqua while there is work left, green once there is none. Amber used
+          to mean "in progress" here, which read as a warning on a screen where
+          nothing was wrong — and it was not a marine token either. */}
       <View
         style={[
           styles.fill,
           {
             width: `${pct * 100}%`,
-            backgroundColor: pct === 1 ? "#10b981" : "#f59e0b",
+            backgroundColor: pct === 1 ? colors.ok : colors.aqua,
           },
         ]}
       />
@@ -115,7 +118,7 @@ export function Banner({
       ? { bg: colors.dangerBg, border: colors.dangerBorder, text: colors.danger }
       : tone === "warn"
         ? { bg: colors.warnBg, border: colors.warnBorder, text: colors.warn }
-        : { bg: "#eff6ff", border: "#93c5fd", text: "#1e40af" };
+        : { bg: colors.blueWash, border: colors.blueTint, text: colors.blue };
 
   return (
     <View
@@ -171,7 +174,7 @@ const styles = StyleSheet.create({
   track: {
     height: 8,
     borderRadius: 999,
-    backgroundColor: "#e2e8f0",
+    backgroundColor: colors.border,
     overflow: "hidden",
   },
   fill: { height: "100%", borderRadius: 999 },

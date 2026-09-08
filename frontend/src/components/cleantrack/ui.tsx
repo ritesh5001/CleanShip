@@ -10,7 +10,7 @@ export function Card({
   className?: string;
 }) {
   return (
-    <div className={`rounded-lg border border-slate-200 bg-white ${className}`}>
+    <div className={`rounded-[6px] border border-[#dce4eb] bg-white ${className}`}>
       {children}
     </div>
   );
@@ -97,11 +97,14 @@ export function StatusChip({ state }: { state: CompartmentState }) {
   );
 }
 
+/* Marine tokens, not the four cell colours. A vessel being in progress is the
+   normal state of every job on the board, so it takes the working blue; the
+   amber it used to wear read as a warning about nothing. */
 const VESSEL_STATUS_STYLE: Record<string, string> = {
-  scheduled: "bg-slate-100 text-slate-700 border-slate-300",
-  "in-progress": "bg-amber-100 text-amber-800 border-amber-400",
-  complete: "bg-emerald-100 text-emerald-800 border-emerald-400",
-  cancelled: "bg-red-100 text-red-800 border-red-300",
+  scheduled: "bg-[#f1f7fc] text-[#4c5c6b] border-[#b9c5cf]",
+  "in-progress": "bg-[#dceaf6] text-[#1461a0] border-[#4a9bd8]",
+  complete: "bg-[#e2f4ea] text-[#14663f] border-[#1e9e63]",
+  cancelled: "bg-[#fae5e0] text-[#c6472f] border-[#c6472f]",
 };
 
 export function VesselStatusChip({ status }: { status: string }) {
@@ -127,7 +130,7 @@ export function ProgressBar({
   return (
     <div className={className}>
       <div
-        className="h-2 w-full overflow-hidden rounded-full bg-slate-200"
+        className="h-2 w-full overflow-hidden rounded-full bg-[#dce4eb]"
         role="progressbar"
         aria-valuenow={pct}
         aria-valuemin={0}
@@ -135,7 +138,7 @@ export function ProgressBar({
       >
         <div
           className={`h-full rounded-full transition-[width] duration-500 ${
-            pct === 100 ? "bg-emerald-600" : "bg-amber-500"
+            pct === 100 ? "bg-[#1e9e63]" : "bg-[#00b0b9]"
           }`}
           style={{ width: `${pct}%` }}
         />

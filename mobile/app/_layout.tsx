@@ -272,31 +272,31 @@ function RejectedBar({
 
 const styles = StyleSheet.create({
   rejected: {
-    backgroundColor: "#fee2e2",
+    backgroundColor: colors.dangerBg,
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderTopWidth: 1,
-    borderTopColor: "#fca5a5",
+    borderTopColor: colors.dangerBorder,
   },
   rejectedText: {
-    color: "#991b1b",
+    color: colors.danger,
     fontSize: 13,
     fontWeight: "700",
     textAlign: "center",
   },
   rejectedHint: {
     marginTop: 2,
-    color: "#b91c1c",
+    color: colors.danger,
     fontSize: 11,
     textAlign: "center",
   },
   pending: {
-    backgroundColor: "#fde68a",
+    backgroundColor: colors.warnBg,
     paddingVertical: 8,
     paddingHorizontal: 12,
   },
   pendingText: {
-    color: "#78350f",
+    color: colors.warn,
     fontSize: 13,
     fontWeight: "600",
     textAlign: "center",

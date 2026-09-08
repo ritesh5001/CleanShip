@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
     borderColor: colors.borderStrong,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#f8fafc",
+    backgroundColor: colors.bg,
   },
   stepOff: { opacity: 0.35 },
   stepText: { fontSize: 26, fontWeight: "800", color: colors.navy, lineHeight: 30 },
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
     borderWidth: 1,
     borderColor: colors.borderStrong,
-    backgroundColor: "#f8fafc",
+    backgroundColor: colors.bg,
   },
   quickText: { fontSize: 14, fontWeight: "700", color: colors.text },
   label: {
