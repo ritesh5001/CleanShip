@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { VesselPlanView } from "./vessel-plan-view";
 import { ProgressBar, StatusChip } from "./ui";
 import {
   CELL_STATUSES,
@@ -12,6 +11,7 @@ import {
   compartmentState,
   nextStatusOnTap,
   progressOf,
+  STATE_STYLE,
   type CellStatus,
   type Stage,
   type VesselType,
@@ -304,38 +304,58 @@ export function StatusGrid({
     <div className="space-y-5">
       {!readOnly && <SyncBanner online={online} pending={queue.length} />}
 
-      <div className="rounded-none border border-slate-200 bg-white p-4 sm:p-5">
-        <div className="mb-3 flex items-baseline justify-between">
-          <h2 className="text-base font-bold text-slate-900">
-            {compartmentNoun(vesselType, true)}
-          </h2>
-          <span className="font-mono text-[13px] text-slate-500">
-            {Math.round(overall.ratio * 100)}%
-          </span>
+      {/* One card: the title line with its counts, the grid, and the legend
+          that explains the two arithmetic rules. */}
+      <div className="border border-[#dce4eb] bg-white">
+        <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4">
+          <div className="flex items-baseline gap-3">
+            <h2 className="font-[family-name:var(--font-display)] text-[17px] font-bold uppercase tracking-[0.03em] text-[#0f1c27]">
+              Cleaning grid
+            </h2>
+            <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#8a9aa8]">
+              {comps.length} compartments &times; {stages.length} stages &middot;{" "}
+              {comps.length * stages.length} cells
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-[#8a9aa8]">
+              Vessel
+            </span>
+            <span className="font-[family-name:var(--font-display)] text-[22px] font-bold tabular-nums text-[#1461a0]">
+              {Math.round(overall.ratio * 100)}%
+            </span>
+            <ProgressBar ratio={overall.ratio} className="w-40" />
+          </div>
         </div>
-        <ProgressBar ratio={overall.ratio} />
-        <VesselPlanView
-          className="mt-4"
-          tone="light"
-          compartments={comps}
-          stages={stages}
-          selectedId={selectedId}
-          onSelect={setSelectedId}
-        />
-      </div>
 
-      <Grid
-        comps={comps}
-        stages={stages}
-        vesselType={vesselType}
-        selectedId={selectedId}
-        readOnly={readOnly}
-        onSelect={setSelectedId}
-        onTapCell={(compartmentId, stageKey, current) =>
-          setCell(compartmentId, stageKey, nextStatusOnTap(current))
-        }
-        onTapColumn={setColumn}
-      />
+        <Grid
+          comps={comps}
+          stages={stages}
+          vesselType={vesselType}
+          selectedId={selectedId}
+          readOnly={readOnly}
+          onSelect={setSelectedId}
+          onTapCell={(compartmentId, stageKey, current) =>
+            setCell(compartmentId, stageKey, nextStatusOnTap(current))
+          }
+          onSetNa={(compartmentId, stageKey) => setCell(compartmentId, stageKey, "na")}
+          onTapColumn={setColumn}
+        />
+
+        <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-3">
+          <div className="flex flex-wrap items-center gap-4">
+            <Key status="pending" text="Not started" />
+            <Key status="in_progress" text="Working · counts as half" />
+            <Key status="done" text="Done" />
+            <Key status="na" text="N/A · leaves the denominator" />
+          </div>
+          {!readOnly && (
+            <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#8a9aa8]">
+              Click to cycle &middot; right-click for N/A
+            </span>
+          )}
+        </div>
+      </div>
 
       {selected && (
         <CompartmentPanel
@@ -395,6 +415,7 @@ function Grid({
   readOnly,
   onSelect,
   onTapCell,
+  onSetNa,
   onTapColumn,
 }: {
   comps: GridCompartment[];
@@ -404,94 +425,179 @@ function Grid({
   readOnly: boolean;
   onSelect: (id: number) => void;
   onTapCell: (compartmentId: number, stageKey: string, current: CellStatus) => void;
+  onSetNa: (compartmentId: number, stageKey: string) => void;
   onTapColumn: (stageKey: string, status: CellStatus) => void;
 }) {
   return (
-    <div className="overflow-x-auto rounded-none border border-slate-200 bg-white">
-      <table className="w-full min-w-[560px] border-collapse text-[13px]">
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[760px] border-collapse text-[13px]">
         <caption className="sr-only">
           Cleaning status by {compartmentNoun(vesselType).toLowerCase()} and stage
         </caption>
         <thead>
-          <tr className="border-b border-slate-200 bg-slate-50">
-            <th scope="col" className="px-3 py-2.5 text-left font-semibold text-slate-700">
-              {compartmentNoun(vesselType)}
+          <tr className="bg-[#0a2e52]">
+            <th scope="col" className="px-4 py-3 text-left align-bottom">
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#9de3e7]">
+                {compartmentNoun(vesselType)}
+              </span>
             </th>
             {stages.map((s) => (
-              <th
-                key={s.key}
-                scope="col"
-                className="px-1 py-2.5 text-center font-semibold text-slate-700"
-              >
+              <th key={s.key} scope="col" className="px-2 py-3 text-center align-bottom">
                 {readOnly ? (
-                  <span title={s.label}>{s.short}</span>
+                  <StageHead label={s.label} short={s.short} />
                 ) : (
                   <button
                     type="button"
                     onClick={() => onTapColumn(s.key, "done")}
                     title={`Mark ${s.label} done on every ${compartmentNoun(vesselType).toLowerCase()}`}
-                    className="w-full rounded px-1 py-1 hover:bg-slate-200"
+                    className="w-full cursor-pointer"
                   >
-                    {s.short}
+                    <StageHead label={s.label} short={s.short} />
                   </button>
                 )}
               </th>
             ))}
+            {/* The roll-up column, a shade lighter so it reads as a summary
+                rather than as another stage. */}
+            <th scope="col" className="bg-[#124e88] px-3 py-3 text-center align-bottom">
+              <span className="font-[family-name:var(--font-display)] text-[13px] font-bold uppercase tracking-[0.08em] text-white">
+                Done
+              </span>
+            </th>
           </tr>
         </thead>
         <tbody>
-          {comps.map((c) => (
-            <tr
-              key={c.id}
-              className={`border-b border-slate-100 last:border-0 ${
-                selectedId === c.id ? "bg-blue-50" : ""
-              }`}
-            >
-              <th scope="row" className="px-1 py-1 text-left">
-                <button
-                  type="button"
-                  onClick={() => onSelect(c.id)}
-                  className="w-full rounded px-2 py-2 text-left font-semibold text-slate-900 hover:bg-slate-100"
-                >
-                  {c.label}
-                </button>
-              </th>
-              {stages.map((s) => {
-                const cell = c.cells[s.key] ?? { status: "pending" as CellStatus, note: null };
-                const style = CELL_STYLE[cell.status];
-                const label = `${c.label}, ${s.label}: ${style.label}${
-                  cell.note ? ` — ${cell.note}` : ""
-                }`;
-                return (
-                  <td key={s.key} className="p-0.5">
-                    <button
-                      type="button"
-                      disabled={readOnly}
-                      onClick={() => onTapCell(c.id, s.key, cell.status)}
-                      aria-label={label}
-                      title={label}
-                      className={`flex min-h-11 w-full items-center justify-center rounded border px-1 text-[11px] font-semibold leading-tight ${style.cell} ${
-                        readOnly ? "cursor-default" : "hover:brightness-95 active:brightness-90"
-                      }`}
-                    >
-                      {cell.note ? (
-                        <span className="line-clamp-2">{cell.note}</span>
-                      ) : cell.status === "pending" ? (
-                        ""
-                      ) : (
-                        style.short
-                      )}
-                    </button>
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
+          {comps.map((c) => {
+            const statuses = stages.map((s) => c.cells[s.key]?.status ?? "pending");
+            const p = progressOf(statuses);
+            const state = compartmentState(statuses);
+            return (
+              <tr key={c.id}>
+                <th scope="row" className="border border-[#dce4eb] p-0 text-left">
+                  <button
+                    type="button"
+                    onClick={() => onSelect(c.id)}
+                    className={`flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-[#f1f7fc] ${
+                      selectedId === c.id ? "bg-[#f1f7fc]" : "bg-white"
+                    }`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="h-8 w-[3px] shrink-0"
+                      style={{ background: STATE_STYLE[state].stroke }}
+                    />
+                    <span className="min-w-0">
+                      <span className="block font-[family-name:var(--font-display)] text-[16px] font-bold uppercase tracking-[0.03em] text-[#0f1c27]">
+                        {c.label}
+                      </span>
+                      <span className="block font-mono text-[9px] uppercase tracking-[0.12em] text-[#8a9aa8]">
+                        {STATE_STYLE[state].label}
+                      </span>
+                    </span>
+                  </button>
+                </th>
+
+                {stages.map((s) => {
+                  const cell = c.cells[s.key] ?? { status: "pending" as CellStatus, note: null };
+                  const style = CELL_STYLE[cell.status];
+                  const when = cell.completedAt ?? cell.startedAt ?? null;
+                  const label = `${c.label}, ${s.label}: ${style.label}${
+                    cell.note ? ` — ${cell.note}` : ""
+                  }`;
+                  return (
+                    <td key={s.key} className="border border-[#dce4eb] p-0">
+                      <button
+                        type="button"
+                        disabled={readOnly}
+                        onClick={() => onTapCell(c.id, s.key, cell.status)}
+                        onContextMenu={(e) => {
+                          if (readOnly) return;
+                          /* Right-click is the deliberate path to N/A: it
+                             changes the denominator, so it should not be
+                             reachable by the same click that cycles. */
+                          e.preventDefault();
+                          onSetNa(c.id, s.key);
+                        }}
+                        aria-label={label}
+                        title={label}
+                        className={`flex h-[60px] w-full flex-col items-center justify-center gap-1 px-1 ${
+                          readOnly ? "cursor-default" : "cursor-pointer hover:brightness-95"
+                        }`}
+                        style={{
+                          background: style.fill,
+                          border: `1px solid ${style.stroke}`,
+                          color: CELL_INK[cell.status],
+                        }}
+                      >
+                        <span className="font-[family-name:var(--font-display)] text-[15px] font-bold uppercase leading-none tracking-[0.04em]">
+                          {cell.status === "pending" ? "Not started" : style.short}
+                        </span>
+                        {when && (
+                          <span className="font-mono text-[10px] leading-none opacity-80">
+                            {new Date(when).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        )}
+                      </button>
+                    </td>
+                  );
+                })}
+
+                <td className="border border-[#dce4eb] bg-[#f1f7fc] px-3 text-center">
+                  <span className="block font-mono text-[13px] font-medium tabular-nums text-[#0f1c27]">
+                    {p.done}/{p.total}
+                  </span>
+                  <span className="block font-mono text-[10px] tabular-nums text-[#8a9aa8]">
+                    {Math.round(p.ratio * 100)}%
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
   );
 }
+
+/** Stage column head: full name over its short code, as the design has it. */
+function StageHead({ label, short }: { label: string; short: string }) {
+  return (
+    <span className="block">
+      <span className="block font-[family-name:var(--font-display)] text-[13px] font-bold leading-tight text-white">
+        {label}
+      </span>
+      <span className="block font-mono text-[9px] uppercase tracking-[0.12em] text-[#9de3e7]">
+        {short}
+      </span>
+    </span>
+  );
+}
+
+/** Legend swatch plus its rule, spelled out. */
+function Key({ status, text }: { status: CellStatus; text: string }) {
+  const style = CELL_STYLE[status];
+  return (
+    <span className="flex items-center gap-2">
+      <span
+        aria-hidden="true"
+        className="h-[13px] w-[13px] shrink-0"
+        style={{ background: style.fill, border: `1px solid ${style.stroke}` }}
+      />
+      <span className="text-[12px] text-[#4c5c6b]">{text}</span>
+    </span>
+  );
+}
+
+/** Readable ink on each of the four fills. */
+const CELL_INK: Record<CellStatus, string> = {
+  pending: "#6b7c8b",
+  in_progress: "#7d5c00",
+  done: "#14400a",
+  na: "#ffffff",
+};
 
 /* -------------------------------------------------------------------- */
 

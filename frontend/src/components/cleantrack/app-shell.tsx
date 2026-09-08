@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import type { Session } from "@/lib/session";
+import { NavTabs } from "./nav-tabs";
 
 /**
  * Shared chrome for all three signed-in surfaces.
@@ -8,13 +9,16 @@ import type { Session } from "@/lib/session";
  * One component rather than three because the header is the place a role
  * mistake shows up — someone seeing an "All jobs" tab they cannot open. Nav
  * items are derived from the session role here, in one place.
+ *
+ * The bar is navy: this is the office end of the same product the crew carries,
+ * and a white chrome made the two read as different applications.
  */
 
 const NAV: Record<Session["role"], { href: string; label: string }[]> = {
   admin: [
     { href: "/cleantrack/admin", label: "Vessels" },
     { href: "/cleantrack/admin/clients", label: "Clients" },
-    { href: "/cleantrack/admin/users", label: "People" },
+    { href: "/cleantrack/admin/users", label: "Users" },
     { href: "/admin", label: "Enquiries" },
   ],
   /* An editor works the enquiry inbox and has no CleanTrack surface; they can
@@ -36,48 +40,47 @@ export function AppShell({
   const nav = NAV[session.role];
 
   return (
-    <div className="min-h-screen">
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white">
+    <div className="min-h-screen bg-[#f6f8fa]">
+      <header className="sticky top-0 z-40 bg-[#0a2e52]">
         <div
-          className={`mx-auto flex h-14 items-center gap-4 px-4 ${
+          className={`mx-auto flex h-14 items-stretch gap-6 px-5 ${
             wide ? "max-w-7xl" : "max-w-5xl"
           }`}
         >
-          <Link href="/cleantrack" className="flex shrink-0 items-baseline gap-2">
-            <span className="text-[15px] font-bold tracking-tight text-slate-900">
-              CleanTrack
+          <Link
+            href="/cleantrack"
+            className="flex shrink-0 items-center gap-3 self-center"
+          >
+            <span className="font-[family-name:var(--font-display)] text-[17px] font-bold uppercase tracking-[0.06em] text-white">
+              CleanShip
             </span>
-            <span className="hidden text-[11px] font-semibold uppercase tracking-wider text-blue-700 sm:inline">
-              {session.role}
+            <span className="hidden font-mono text-[10px] uppercase tracking-[0.16em] text-[#9de3e7] sm:inline">
+              CleanTrack
             </span>
           </Link>
 
-          <nav className="flex flex-1 items-center gap-1 overflow-x-auto">
-            {nav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="whitespace-nowrap rounded-none px-3 py-2 text-[14px] font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <NavTabs items={nav} />
 
-          <form action="/cleantrack/logout" method="post" className="shrink-0">
-            <button
-              type="submit"
-              className="rounded-none px-3 py-2 text-[14px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
-            >
-              Sign out
-            </button>
-          </form>
+          <div className="flex shrink-0 items-center gap-3 self-center">
+            <span className="hidden font-mono text-[10px] uppercase tracking-[0.14em] text-white/45 md:inline">
+              {session.role}
+            </span>
+            <span className="hidden font-mono text-[11px] text-white/75 lg:inline">
+              {session.email}
+            </span>
+            <form action="/cleantrack/logout" method="post">
+              <button
+                type="submit"
+                className="px-2 py-1 text-[13px] font-medium text-white/60 transition-colors hover:text-white"
+              >
+                Sign out
+              </button>
+            </form>
+          </div>
         </div>
       </header>
 
-      <main
-        className={`mx-auto px-4 py-6 ${wide ? "max-w-7xl" : "max-w-5xl"}`}
-      >
+      <main className={`mx-auto px-5 py-7 ${wide ? "max-w-7xl" : "max-w-5xl"}`}>
         {children}
       </main>
     </div>
