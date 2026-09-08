@@ -304,7 +304,7 @@ export function StatusGrid({
     <div className="space-y-5">
       {!readOnly && <SyncBanner online={online} pending={queue.length} />}
 
-      <div className="rounded-lg border border-slate-200 bg-white p-4 sm:p-5">
+      <div className="rounded-none border border-slate-200 bg-white p-4 sm:p-5">
         <div className="mb-3 flex items-baseline justify-between">
           <h2 className="text-base font-bold text-slate-900">
             {compartmentNoun(vesselType, true)}
@@ -359,7 +359,7 @@ function SyncBanner({ online, pending }: { online: boolean; pending: number }) {
   return (
     <div
       role="status"
-      className={`rounded-lg border px-4 py-3 text-[14px] ${
+      className={`rounded-none border px-4 py-3 text-[14px] ${
         offline
           ? "border-amber-400 bg-amber-50 text-amber-900"
           : "border-blue-300 bg-blue-50 text-blue-900"
@@ -407,7 +407,7 @@ function Grid({
   onTapColumn: (stageKey: string, status: CellStatus) => void;
 }) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+    <div className="overflow-x-auto rounded-none border border-slate-200 bg-white">
       <table className="w-full min-w-[560px] border-collapse text-[13px]">
         <caption className="sr-only">
           Cleaning status by {compartmentNoun(vesselType).toLowerCase()} and stage
@@ -526,7 +526,7 @@ function CompartmentPanel({
   const { done, total } = progressOf(statuses);
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white">
+    <div className="rounded-none border border-slate-200 bg-white">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4 sm:p-5">
         <div>
           <h2 className="text-lg font-bold text-slate-900">{compartment.label}</h2>
@@ -559,7 +559,7 @@ function CompartmentPanel({
                         disabled={readOnly}
                         aria-pressed={active}
                         onClick={() => onSet(compartment.id, stage.key, status)}
-                        className={`min-h-9 rounded-md border px-2.5 text-[12px] font-semibold transition-colors ${
+                        className={`min-h-9 rounded-none border px-2.5 text-[12px] font-semibold transition-colors ${
                           active
                             ? CELL_STYLE[status].cell
                             : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50"
@@ -633,7 +633,7 @@ function NoteField({
       }}
       maxLength={160}
       placeholder={placeholder}
-      className="mt-2 w-full rounded-md border border-slate-200 bg-slate-50 px-2.5 py-2 text-[13px] text-slate-800 outline-none focus:border-blue-500 focus:bg-white"
+      className="mt-2 w-full rounded-none border border-slate-200 bg-slate-50 px-2.5 py-2 text-[13px] text-slate-800 outline-none focus:border-blue-500 focus:bg-white"
     />
   );
 }

@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     right: 3,
     width: 7,
     height: 7,
-    borderRadius: 1,
+    borderRadius: 0,
     backgroundColor: colors.navy,
   },
   failedRule: {
@@ -337,8 +337,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.xs,
   },
   legendItem: { flexDirection: "row", alignItems: "center", gap: 6 },
-  legendSwatch: { width: 14, height: 14, borderRadius: 2, borderWidth: 1 },
-  legendSync: { width: 10, height: 10, borderRadius: 1, backgroundColor: colors.navy },
+  legendSwatch: { width: 14, height: 14, borderRadius: 0, borderWidth: 1 },
+  legendSync: { width: 10, height: 10, borderRadius: 0, backgroundColor: colors.navy },
   legendText: { fontSize: 12, color: colors.textBody },
 
   hintBox: {

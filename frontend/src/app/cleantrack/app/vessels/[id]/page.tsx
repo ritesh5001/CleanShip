@@ -84,14 +84,14 @@ export default async function SupervisorVesselPage({
         </dl>
 
         {vessel.notes && (
-          <p className="mt-4 rounded-md border border-slate-200 bg-slate-50 p-3 text-[13px] text-slate-700">
+          <p className="mt-4 rounded-none border border-slate-200 bg-slate-50 p-3 text-[13px] text-slate-700">
             {vessel.notes}
           </p>
         )}
       </Card>
 
       {!editable && (
-        <p className="mt-4 rounded-md border border-slate-200 bg-slate-50 px-4 py-3 text-[13px] text-slate-600">
+        <p className="mt-4 rounded-none border border-slate-200 bg-slate-50 px-4 py-3 text-[13px] text-slate-600">
           You are not the assigned supervisor, so this is read-only.
         </p>
       )}

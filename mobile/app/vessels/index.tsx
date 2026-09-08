@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   where: { marginTop: 2, fontSize: 13, color: colors.muted },
-  statusChip: { borderWidth: 1, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 3 },
+  statusChip: { borderWidth: 1, borderRadius: 0, paddingHorizontal: 10, paddingVertical: 3 },
   statusText: { fontSize: 12, fontWeight: "700", textTransform: "capitalize" },
   progressRow: { flexDirection: "row", justifyContent: "space-between" },
   progressLabel: { fontSize: 13, fontWeight: "600", color: colors.text },

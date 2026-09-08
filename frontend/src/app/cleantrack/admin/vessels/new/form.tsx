@@ -115,7 +115,7 @@ export function NewVesselForm({
           {state.error && (
             <p
               role="alert"
-              className="mb-4 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-[13px] text-red-800"
+              className="mb-4 rounded-none border border-red-300 bg-red-50 px-3 py-2 text-[13px] text-red-800"
             >
               {state.error}
             </p>
@@ -232,7 +232,7 @@ export function NewVesselForm({
                   })
                 }
                 aria-label={`${compartmentNoun(type)} ${i + 1} name`}
-                className="min-h-10 rounded-md border border-slate-300 px-2 text-[13px] text-slate-900 outline-none focus:border-blue-600"
+                className="min-h-10 rounded-none border border-slate-300 px-2 text-[13px] text-slate-900 outline-none focus:border-blue-600"
               />
             ))}
           </div>
@@ -250,7 +250,7 @@ export function NewVesselForm({
                 <select
                   value={templateId}
                   onChange={(e) => applyTemplate(e.target.value)}
-                  className="ml-1 rounded-md border border-slate-300 px-2 py-1.5 text-[13px]"
+                  className="ml-1 rounded-none border border-slate-300 px-2 py-1.5 text-[13px]"
                 >
                   {options.map((t) => (
                     <option key={t.id} value={t.id}>
@@ -278,7 +278,7 @@ export function NewVesselForm({
                   onChange={(e) => editStage(i, { label: e.target.value })}
                   aria-label={`Stage ${i + 1} name`}
                   placeholder="Stage name"
-                  className="min-h-10 flex-1 rounded-md border border-slate-300 px-2.5 text-[14px] outline-none focus:border-blue-600"
+                  className="min-h-10 flex-1 rounded-none border border-slate-300 px-2.5 text-[14px] outline-none focus:border-blue-600"
                 />
                 <input
                   value={stage.short}
@@ -287,7 +287,7 @@ export function NewVesselForm({
                   placeholder="Short"
                   maxLength={12}
                   title="Column heading on a phone, where the full name will not fit"
-                  className="min-h-10 w-24 rounded-md border border-slate-300 px-2.5 text-[13px] outline-none focus:border-blue-600"
+                  className="min-h-10 w-24 rounded-none border border-slate-300 px-2.5 text-[13px] outline-none focus:border-blue-600"
                 />
                 <span className="flex gap-1">
                   <IconButton label="Move up" onClick={() => moveStage(i, -1)} disabled={i === 0}>
@@ -315,7 +315,7 @@ export function NewVesselForm({
           <button
             type="button"
             onClick={() => setStages((p) => [...p, { label: "", short: "" }])}
-            className="mt-3 rounded-md border border-dashed border-slate-300 px-3 py-2 text-[13px] font-semibold text-slate-600 hover:border-blue-500 hover:text-blue-700"
+            className="mt-3 rounded-none border border-dashed border-slate-300 px-3 py-2 text-[13px] font-semibold text-slate-600 hover:border-blue-500 hover:text-blue-700"
           >
             + Add a stage
           </button>
@@ -399,7 +399,7 @@ function IconButton({
       disabled={disabled}
       aria-label={label}
       title={label}
-      className="size-10 rounded-md border border-slate-300 text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-30"
+      className="size-10 rounded-none border border-slate-300 text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-30"
     >
       {children}
     </button>

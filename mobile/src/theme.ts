@@ -63,8 +63,16 @@ export const space = {
   xl: 24,
 };
 
-/** Nearly square, per the system: the brand caps radii at 6px. */
-export const radius = { sm: 3, md: 4, lg: 6 };
+/**
+ * Square. Not "nearly square" — the CleanTrack UI measures 0px on every
+ * surface, control and chip; the only curves in the whole design are the 8px
+ * status dots. The token file's 2-6px scale is the marketing site's; this
+ * product is the drawing-office end of the brand and reads as one.
+ */
+export const radius = { sm: 0, md: 0, lg: 0 };
+
+/** Status dots stay circular — the one exception. */
+export const DOT_RADIUS = 999;
 
 /** Android's minimum is 48dp; on a wet deck in gloves it wants more. */
 export const TAP = 52;

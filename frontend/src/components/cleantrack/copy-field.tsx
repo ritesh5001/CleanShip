@@ -19,7 +19,7 @@ export function CopyField({
         readOnly
         value={value}
         onFocus={(e) => e.currentTarget.select()}
-        className="min-w-0 flex-1 rounded-md border border-slate-300 bg-slate-50 px-3 py-2 font-mono text-[12px] text-slate-700"
+        className="min-w-0 flex-1 rounded-none border border-slate-300 bg-slate-50 px-3 py-2 font-mono text-[12px] text-slate-700"
       />
       <button
         type="button"
@@ -32,7 +32,7 @@ export function CopyField({
             /* No clipboard permission — the field is selectable. */
           }
         }}
-        className="shrink-0 rounded-md border border-slate-300 px-3 text-[13px] font-semibold text-slate-800 hover:bg-slate-50"
+        className="shrink-0 rounded-none border border-slate-300 px-3 text-[13px] font-semibold text-slate-800 hover:bg-slate-50"
       >
         {copied ? "Copied" : "Copy"}
       </button>

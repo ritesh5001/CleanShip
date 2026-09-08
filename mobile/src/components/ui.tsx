@@ -156,7 +156,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: space.lg,
   },
-  buttonPrimary: { backgroundColor: colors.blueDark },
+  /* Both variants carry a 1px edge, as the design does: on a pale industrial
+     ground a borderless fill reads as a coloured patch rather than a control. */
+  buttonPrimary: {
+    backgroundColor: colors.blue,
+    borderWidth: 1,
+    borderColor: colors.blueDark,
+  },
   buttonSecondary: {
     backgroundColor: colors.card,
     borderWidth: 1,
@@ -165,7 +171,7 @@ const styles = StyleSheet.create({
   buttonText: { fontSize: 16, fontWeight: "700" },
   chip: {
     borderWidth: 1,
-    borderRadius: 999,
+    borderRadius: 0,
     paddingHorizontal: 10,
     paddingVertical: 3,
     alignSelf: "flex-start",
@@ -173,11 +179,11 @@ const styles = StyleSheet.create({
   chipText: { fontSize: 12, fontWeight: "700" },
   track: {
     height: 8,
-    borderRadius: 999,
+    borderRadius: 0,
     backgroundColor: colors.border,
     overflow: "hidden",
   },
-  fill: { height: "100%", borderRadius: 999 },
+  fill: { height: "100%" },
   banner: {
     borderWidth: 1,
     borderRadius: radius.md,

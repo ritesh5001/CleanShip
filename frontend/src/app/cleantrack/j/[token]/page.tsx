@@ -104,7 +104,7 @@ export default async function SharedVesselPage({
             </span>
           </div>
           <div
-            className="mt-3 h-[6px] w-full overflow-hidden rounded-[3px] bg-white/[0.10]"
+            className="mt-3 h-[6px] w-full overflow-hidden rounded-none bg-white/[0.10]"
             role="progressbar"
             aria-valuenow={pct}
             aria-valuemin={0}

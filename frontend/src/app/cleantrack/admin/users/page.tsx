@@ -41,11 +41,11 @@ export default async function UsersPage() {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-semibold text-slate-900">{u.name}</p>
-                    <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold capitalize ${ROLE_STYLE[u.role] ?? ROLE_STYLE.editor}`}>
+                    <span className={`rounded-none border px-2 py-0.5 text-[11px] font-semibold capitalize ${ROLE_STYLE[u.role] ?? ROLE_STYLE.editor}`}>
                       {u.role}
                     </span>
                     {u.active === 0 && (
-                      <span className="rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-700">
+                      <span className="rounded-none border border-red-300 bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-700">
                         Disabled
                       </span>
                     )}
@@ -60,7 +60,7 @@ export default async function UsersPage() {
                     <input type="hidden" name="active" value={u.active === 1 ? "0" : "1"} />
                     <button
                       type="submit"
-                      className="min-h-11 rounded-md border border-slate-300 px-3 text-[13px] font-semibold text-slate-800 hover:bg-slate-50"
+                      className="min-h-11 rounded-none border border-slate-300 px-3 text-[13px] font-semibold text-slate-800 hover:bg-slate-50"
                     >
                       {u.active === 1 ? "Disable" : "Enable"}
                     </button>

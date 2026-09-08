@@ -10,7 +10,7 @@ export function Card({
   className?: string;
 }) {
   return (
-    <div className={`rounded-[6px] border border-[#dce4eb] bg-white ${className}`}>
+    <div className={`rounded-none border border-[#dce4eb] bg-white ${className}`}>
       {children}
     </div>
   );
@@ -41,7 +41,7 @@ export function PageTitle({
 }
 
 const buttonBase =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-none px-4 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50";
 
 const variants = {
   primary: "bg-blue-700 text-white hover:bg-blue-800",
@@ -90,7 +90,7 @@ export function StatusChip({ state }: { state: CompartmentState }) {
   const s = STATE_STYLE[state];
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[12px] font-semibold ${s.chip}`}
+      className={`inline-flex items-center rounded-none border px-2.5 py-0.5 text-[12px] font-semibold ${s.chip}`}
     >
       {s.label}
     </span>
@@ -110,7 +110,7 @@ const VESSEL_STATUS_STYLE: Record<string, string> = {
 export function VesselStatusChip({ status }: { status: string }) {
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[12px] font-semibold capitalize ${
+      className={`inline-flex items-center rounded-none border px-2.5 py-0.5 text-[12px] font-semibold capitalize ${
         VESSEL_STATUS_STYLE[status] ?? VESSEL_STATUS_STYLE.scheduled
       }`}
     >
@@ -130,14 +130,14 @@ export function ProgressBar({
   return (
     <div className={className}>
       <div
-        className="h-2 w-full overflow-hidden rounded-full bg-[#dce4eb]"
+        className="h-2 w-full overflow-hidden rounded-none bg-[#dce4eb]"
         role="progressbar"
         aria-valuenow={pct}
         aria-valuemin={0}
         aria-valuemax={100}
       >
         <div
-          className={`h-full rounded-full transition-[width] duration-500 ${
+          className={`h-full rounded-none transition-[width] duration-500 ${
             pct === 100 ? "bg-[#1e9e63]" : "bg-[#00b0b9]"
           }`}
           style={{ width: `${pct}%` }}
@@ -177,7 +177,7 @@ export function Field({
 }
 
 export const inputClass =
-  "w-full min-h-11 rounded-md border border-slate-300 bg-white px-3 text-[15px] text-slate-900 outline-none transition-colors focus:border-blue-600 focus:ring-2 focus:ring-blue-100";
+  "w-full min-h-11 rounded-none border border-slate-300 bg-white px-3 text-[15px] text-slate-900 outline-none transition-colors focus:border-blue-600 focus:ring-2 focus:ring-blue-100";
 
 export function EmptyState({
   title,

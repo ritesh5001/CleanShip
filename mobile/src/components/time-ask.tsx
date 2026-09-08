@@ -1,26 +1,28 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Modal,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import { colors, radius, space, TAP } from "../theme";
+import { WheelFrame, WheelPicker } from "./wheel-picker";
 
 /**
  * Asks when something happened.
  *
- * Built from plain React Native primitives rather than the platform picker,
- * for two reasons. The native one does not exist on web, so it silently does
- * nothing there — which makes the whole flow untestable in a browser. And a
- * spinner is a poor control in gloves on a wet deck.
+ * Two controls, in the order a supervisor thinks: which day, then what time.
  *
- * What a supervisor actually needs is rarely an arbitrary datetime. It is
- * "now" (they are recording as they work) or "a bit ago" (they got to the
- * phone late). So the quick offsets are the primary control and typing is the
- * fallback, not the other way round.
+ * The day is a row of the last seven, because that is the honest range of a
+ * correction. Work recorded later than a week is not a correction, it is a
+ * reconstruction, and a control that offers two months of history invites a
+ * mistyped date nobody notices until an invoice is disputed.
+ *
+ * The time is a wheel, the way every phone sets an alarm. It needs no reading,
+ * which matters more than it sounds: this is used in gloves, on a wet deck, at
+ * four in the morning.
  */
 export function TimeAsk({
   visible,
@@ -37,12 +39,10 @@ export function TimeAsk({
   subtitle: string;
   initial: Date;
   /**
-   * The window work on this vessel could plausibly have happened in: from the
-   * day it came onto the books to two months later, never past now.
-   *
-   * Bounded on purpose. An open-ended date control on a deck is an invitation
-   * to record 2019 by fat-fingering a year, and a wrong date on a cleaning
-   * record is only ever discovered when someone is arguing about an invoice.
+   * The window work on this vessel could plausibly have happened in. The day
+   * row narrows it further to the last seven days; this still bounds it, so a
+   * vessel that came onto the books three days ago offers three days, not
+   * seven.
    */
   minDate: Date;
   maxDate: Date;
@@ -50,8 +50,6 @@ export function TimeAsk({
   onCancel: () => void;
 }) {
   const [value, setValue] = useState(initial);
-  const [text, setText] = useState(toHHMM(initial));
-  const [error, setError] = useState<string | null>(null);
 
   const clamp = (date: Date) => {
     if (date.getTime() < minDate.getTime()) return new Date(minDate);
@@ -63,86 +61,47 @@ export function TimeAsk({
      stage's time would be sitting there waiting to be confirmed by mistake. */
   useEffect(() => {
     if (!visible) return;
-    const start = clamp(initial);
-    setValue(start);
-    setText(toHHMM(start));
-    setError(null);
+    setValue(clamp(initial));
     /* clamp is derived from the bounds, which are stable for a vessel. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, initial, minDate, maxDate]);
 
-  function shift(minutes: number) {
-    const capped = clamp(new Date(value.getTime() + minutes * 60_000));
-    setValue(capped);
-    setText(toHHMM(capped));
-    setError(null);
+  /** The last seven days, newest first, trimmed to the vessel's own window. */
+  const days = useMemo(() => {
+    const out: Date[] = [];
+    const today = startOfDay(new Date());
+    for (let i = 0; i < 7; i += 1) {
+      const day = new Date(today);
+      day.setDate(day.getDate() - i);
+      if (dayWithin(day, minDate, maxDate)) out.push(day);
+    }
+    return out;
+  }, [minDate, maxDate]);
+
+  const hour12 = ((value.getHours() + 11) % 12) + 1;
+  const minute = value.getMinutes();
+  const meridiem: Meridiem = value.getHours() < 12 ? "am" : "pm";
+
+  /** Rebuilds the instant from the wheels, then holds it inside the window. */
+  function setParts(next: { h?: number; m?: number; ap?: Meridiem }) {
+    const h12 = next.h ?? hour12;
+    const mm = next.m ?? minute;
+    const ap = next.ap ?? meridiem;
+    const h24 = (ap === "am" ? h12 % 12 : (h12 % 12) + 12);
+
+    const candidate = new Date(value);
+    candidate.setHours(h24, mm, 0, 0);
+    setValue(clamp(candidate));
   }
 
-  /**
-   * Steps whole days, stopping at the ends of the vessel's window.
-   *
-   * Compared at DAY granularity, not by instant. The bounds are dates — "the
-   * day the vessel came on, through two months later" — so a step onto a
-   * valid day must be allowed whatever time of day it lands on. Comparing
-   * timestamps instead makes the first and last day of the window
-   * unreachable for half their length, which reads as a dead button.
-   */
-  function shiftDay(days: number) {
-    const next = new Date(value);
-    next.setDate(next.getDate() + days);
-    if (!dayWithin(next, minDate, maxDate)) return;
-
-    /* The day is fine but the time on it may not be — stepping onto today
-       must not land later than now. */
-    setValue(next.getTime() > maxDate.getTime() ? new Date(maxDate) : next);
-    setError(null);
+  function setDay(day: Date) {
+    const next = new Date(day);
+    next.setHours(value.getHours(), value.getMinutes(), 0, 0);
+    setValue(clamp(next));
   }
 
-  const canGoBack = (() => {
-    const previous = new Date(value);
-    previous.setDate(previous.getDate() - 1);
-    return dayWithin(previous, minDate, maxDate);
-  })();
-
-  const canGoForward = (() => {
-    const next = new Date(value);
-    next.setDate(next.getDate() + 1);
-    return dayWithin(next, minDate, maxDate);
-  })();
-
-  function commitTyped(raw: string) {
-    const match = raw.trim().match(/^(\d{1,2})[:.]?(\d{2})$/);
-    if (!match) {
-      setError("Use 24-hour time, like 02:10.");
-      return;
-    }
-    const hours = Number(match[1]);
-    const minutes = Number(match[2]);
-    if (hours > 23 || minutes > 59) {
-      setError("That is not a valid time.");
-      return;
-    }
-
-    const next = new Date(value);
-    next.setHours(hours, minutes, 0, 0);
-    /* Typing a time later than now almost always means yesterday — a night
-       shift entering 23:40 at 00:20. Rolling back a day is what they meant,
-       but only if yesterday is still inside the vessel's window. */
-    if (next.getTime() > maxDate.getTime()) {
-      const previous = new Date(next);
-      previous.setDate(previous.getDate() - 1);
-      if (previous.getTime() >= minDate.getTime()) {
-        next.setTime(previous.getTime());
-      }
-    }
-
-    const capped = clamp(next);
-    if (capped.getTime() !== next.getTime()) {
-      setError("That is outside this vessel's dates.");
-    }
-    setValue(capped);
-    setText(toHHMM(capped));
-  }
+  const sameDay = (a: Date, b: Date) =>
+    startOfDay(a).getTime() === startOfDay(b).getTime();
 
   return (
     <Modal
@@ -157,125 +116,83 @@ export function TimeAsk({
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.subtitle}>{subtitle}</Text>
 
-          {/* Date, stepped a day at a time and stopped at the ends of the
-              vessel's own window. A stepper rather than a calendar because
-              the realistic correction is "yesterday", not "pick any day", and
-              the arrows go dead at the boundary instead of silently accepting
-              a date that cannot be right. */}
-          <View style={styles.dateRow}>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Previous day"
-              accessibilityState={{ disabled: !canGoBack }}
-              disabled={!canGoBack}
-              onPress={() => shiftDay(-1)}
-              style={({ pressed }) => [
-                styles.step,
-                !canGoBack && styles.stepOff,
-                pressed && canGoBack && { opacity: 0.6 },
-              ]}
-            >
-              <Text style={[styles.stepText, !canGoBack && styles.stepTextOff]}>
-                ‹
-              </Text>
-            </Pressable>
+          {/* Day first: a night shift entering 23:40 at 00:20 needs to say
+              "yesterday" before the time means anything. */}
+          <Text style={styles.legend}>DAY</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.dayRow}
+          >
+            {days.map((day) => {
+              const on = sameDay(day, value);
+              return (
+                <Pressable
+                  key={day.toISOString()}
+                  onPress={() => setDay(day)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: on }}
+                  style={[styles.day, on && styles.dayOn]}
+                >
+                  <Text style={[styles.dayName, on && styles.dayTextOn]}>
+                    {describeDay(day)}
+                  </Text>
+                  <Text style={[styles.dayDate, on && styles.dayTextOn]}>
+                    {shortDate(day)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
 
-            <View style={styles.dateBox}>
-              <Text style={styles.dateText}>{describeDay(value)}</Text>
-              <Text style={styles.dateFull}>{fullDate(value)}</Text>
+          <Text style={styles.legend}>TIME</Text>
+          <WheelFrame>
+            <WheelPicker
+              items={HOURS}
+              value={hour12}
+              onChange={(h) => setParts({ h })}
+              accessibilityLabel="Hour"
+              width={84}
+            />
+            <View style={styles.colon}>
+              <Text style={styles.colonText}>:</Text>
             </View>
+            <WheelPicker
+              items={MINUTES}
+              value={minute}
+              onChange={(m) => setParts({ m })}
+              format={(m) => String(m).padStart(2, "0")}
+              accessibilityLabel="Minute"
+              width={84}
+            />
+            <WheelPicker
+              items={MERIDIEMS}
+              value={meridiem}
+              onChange={(ap) => setParts({ ap })}
+              accessibilityLabel="Morning or afternoon"
+              width={72}
+            />
+          </WheelFrame>
 
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Next day"
-              accessibilityState={{ disabled: !canGoForward }}
-              disabled={!canGoForward}
-              onPress={() => shiftDay(1)}
-              style={({ pressed }) => [
-                styles.step,
-                !canGoForward && styles.stepOff,
-                pressed && canGoForward && { opacity: 0.6 },
-              ]}
-            >
-              <Text
-                style={[styles.stepText, !canGoForward && styles.stepTextOff]}
-              >
-                ›
-              </Text>
-            </Pressable>
-          </View>
-
-          <Text style={styles.big}>{toHHMM(value)}</Text>
-
-          <View style={styles.quickRow}>
-            {[
-              { label: "Now", minutes: null },
-              { label: "−15m", minutes: -15 },
-              { label: "−30m", minutes: -30 },
-              { label: "−1h", minutes: -60 },
-              { label: "−2h", minutes: -120 },
-            ].map((option) => (
-              <Pressable
-                key={option.label}
-                accessibilityRole="button"
-                onPress={() => {
-                  if (option.minutes === null) {
-                    const now = new Date();
-                    setValue(now);
-                    setText(toHHMM(now));
-                    setError(null);
-                  } else {
-                    shift(option.minutes);
-                  }
-                }}
-                style={({ pressed }) => [
-                  styles.quick,
-                  pressed && { opacity: 0.6 },
-                ]}
-              >
-                <Text style={styles.quickText}>{option.label}</Text>
-              </Pressable>
-            ))}
-          </View>
-
-          <Text style={styles.label}>Or type it (24-hour)</Text>
-          <TextInput
-            value={text}
-            onChangeText={setText}
-            onBlur={() => commitTyped(text)}
-            onSubmitEditing={() => commitTyped(text)}
-            placeholder="02:10"
-            placeholderTextColor={colors.faint}
-            keyboardType="numbers-and-punctuation"
-            style={styles.input}
-          />
-          {error && <Text style={styles.error}>{error}</Text>}
+          {/* The instant in full, spelled out. The wheels are fast but they are
+              also easy to leave one notch off, and this is the line that
+              catches it before it becomes the record. */}
+          <Text style={styles.readback}>{fullReadback(value)}</Text>
 
           <View style={styles.actions}>
             <Pressable
-              accessibilityRole="button"
               onPress={onCancel}
-              style={({ pressed }) => [
-                styles.button,
-                styles.cancel,
-                pressed && { opacity: 0.7 },
-              ]}
+              accessibilityRole="button"
+              style={[styles.action, styles.cancel]}
             >
               <Text style={styles.cancelText}>Cancel</Text>
             </Pressable>
             <Pressable
+              onPress={() => onConfirm(value)}
               accessibilityRole="button"
-              onPress={() => {
-                commitTyped(text);
-                onConfirm(value);
-              }}
-              style={({ pressed }) => [
-                styles.button,
-                styles.confirm,
-                pressed && { opacity: 0.7 },
-              ]}
+              style={[styles.action, styles.confirm]}
             >
-              <Text style={styles.confirmText}>Save</Text>
+              <Text style={styles.confirmText}>Confirm</Text>
             </Pressable>
           </View>
         </Pressable>
@@ -284,30 +201,37 @@ export function TimeAsk({
   );
 }
 
-function toHHMM(date: Date) {
-  return `${String(date.getHours()).padStart(2, "0")}:${String(
-    date.getMinutes(),
-  ).padStart(2, "0")}`;
-}
+type Meridiem = "am" | "pm";
 
-/** "Today" / "Yesterday" / a date — so a night shift is never ambiguous. */
+const HOURS = Array.from({ length: 12 }, (_, i) => i + 1);
+const MINUTES = Array.from({ length: 60 }, (_, i) => i);
+const MERIDIEMS: Meridiem[] = ["am", "pm"];
+
+/** "Today" / "Yesterday" / a weekday — so a night shift is never ambiguous. */
 function describeDay(date: Date) {
   const today = new Date();
   const sameDay = (a: Date, b: Date) =>
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate();
+    startOfDay(a).getTime() === startOfDay(b).getTime();
 
   if (sameDay(date, today)) return "Today";
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
   if (sameDay(date, yesterday)) return "Yesterday";
 
-  return date.toLocaleDateString(undefined, {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-  });
+  return date.toLocaleDateString(undefined, { weekday: "short" });
+}
+
+/** "4 Sep" — the line under the day name. */
+function shortDate(date: Date) {
+  return date.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+}
+
+/** "Yesterday, 4 Sep · 02:10" — the whole instant, unambiguous. */
+function fullReadback(date: Date) {
+  const hhmm = `${String(date.getHours()).padStart(2, "0")}:${String(
+    date.getMinutes(),
+  ).padStart(2, "0")}`;
+  return `${describeDay(date)}, ${shortDate(date)} · ${hhmm}`;
 }
 
 function startOfDay(date: Date) {
@@ -322,110 +246,69 @@ function dayWithin(date: Date, min: Date, max: Date) {
   return day >= startOfDay(min).getTime() && day <= startOfDay(max).getTime();
 }
 
-/** "4 Sep 2026" — the unambiguous form, for the line under the day name. */
-function fullDate(date: Date) {
-  return date.toLocaleDateString(undefined, {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
-
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: "rgba(15,23,42,0.55)",
-    justifyContent: "center",
-    padding: space.lg,
+    backgroundColor: "rgba(6,32,58,0.62)",
+    justifyContent: "flex-end",
   },
   sheet: {
-    backgroundColor: "#fff",
-    borderRadius: radius.lg,
+    backgroundColor: colors.card,
     padding: space.lg,
+    borderTopWidth: 3,
+    borderTopColor: colors.blue,
   },
-  title: { fontSize: 17, fontWeight: "800", color: colors.text },
-  subtitle: { marginTop: 2, fontSize: 13, color: colors.muted },
-  dateRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: space.sm,
+  title: { fontSize: 20, fontWeight: "700", color: colors.text },
+  subtitle: { fontSize: 14, color: colors.muted, marginTop: 4 },
+
+  legend: {
     marginTop: space.lg,
-  },
-  step: {
-    width: 52,
-    height: 52,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.borderStrong,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.bg,
-  },
-  stepOff: { opacity: 0.35 },
-  stepText: { fontSize: 26, fontWeight: "800", color: colors.navy, lineHeight: 30 },
-  stepTextOff: { color: colors.faint },
-  dateBox: { flex: 1, alignItems: "center" },
-  dateText: { fontSize: 16, fontWeight: "800", color: colors.text },
-  dateFull: { marginTop: 1, fontSize: 12, color: colors.muted },
-  big: {
-    marginTop: space.lg,
-    fontSize: 46,
-    fontWeight: "800",
-    color: colors.navy,
-    textAlign: "center",
-    fontVariant: ["tabular-nums"],
-  },
-  day: {
-    fontSize: 13,
-    color: colors.muted,
-    textAlign: "center",
-    marginTop: 2,
-  },
-  quickRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: space.sm,
-    marginTop: space.lg,
-    justifyContent: "center",
-  },
-  quick: {
-    minHeight: 44,
-    paddingHorizontal: space.md,
-    justifyContent: "center",
-    borderRadius: radius.sm,
-    borderWidth: 1,
-    borderColor: colors.borderStrong,
-    backgroundColor: colors.bg,
-  },
-  quickText: { fontSize: 14, fontWeight: "700", color: colors.text },
-  label: {
-    marginTop: space.lg,
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: "700",
-    color: colors.muted,
+    letterSpacing: 1.2,
+    color: colors.faint,
   },
-  input: {
-    marginTop: 6,
+
+  dayRow: { gap: space.sm, paddingVertical: space.sm },
+  day: {
+    minWidth: 74,
     minHeight: TAP,
-    borderWidth: 1,
-    borderColor: colors.borderStrong,
-    borderRadius: radius.md,
     paddingHorizontal: space.md,
-    fontSize: 18,
-    color: colors.text,
-    fontVariant: ["tabular-nums"],
+    paddingVertical: space.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    backgroundColor: colors.card,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  error: { marginTop: 6, fontSize: 13, color: colors.danger },
-  actions: { flexDirection: "row", gap: space.sm, marginTop: space.lg },
-  button: {
+  dayOn: { backgroundColor: colors.navy, borderColor: colors.navy },
+  dayName: { fontSize: 14, fontWeight: "700", color: colors.text },
+  dayDate: { fontSize: 11, color: colors.muted, marginTop: 2 },
+  dayTextOn: { color: colors.onDark },
+
+  colon: { justifyContent: "center", paddingHorizontal: 2 },
+  colonText: { fontSize: 30, fontWeight: "700", color: colors.text },
+
+  readback: {
+    marginTop: space.md,
+    fontSize: 13,
+    letterSpacing: 0.6,
+    color: colors.textBody,
+    textAlign: "center",
+  },
+
+  actions: { flexDirection: "row", gap: space.md, marginTop: space.lg },
+  action: {
     flex: 1,
     minHeight: TAP,
-    borderRadius: radius.md,
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 1,
+    borderRadius: radius.md,
   },
-  cancel: { borderWidth: 1, borderColor: colors.borderStrong },
+  cancel: { backgroundColor: colors.card, borderColor: colors.borderStrong },
   cancelText: { fontSize: 16, fontWeight: "700", color: colors.text },
-  confirm: { backgroundColor: colors.blueDark },
-  confirmText: { fontSize: 16, fontWeight: "800", color: "#fff" },
+  confirm: { backgroundColor: colors.blue, borderColor: colors.blueDark },
+  confirmText: { fontSize: 16, fontWeight: "700", color: colors.onDark },
 });

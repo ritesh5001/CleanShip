@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { colors, space } from "../theme";
+import { colors, space, DOT_RADIUS } from "../theme";
 
 /**
  * What the device has, and whether the server has it too.
@@ -74,7 +74,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.md,
     paddingVertical: 10,
   },
-  dot: { width: 8, height: 8, borderRadius: 4 },
+  /* The one curve in the product: a status dot reads as a light, and a
+     square light reads as a cell. */
+  dot: { width: 8, height: 8, borderRadius: DOT_RADIUS },
   text: { flex: 1, fontSize: 11, letterSpacing: 0.9, fontWeight: "600" },
   retryText: { color: colors.danger, fontSize: 14, fontWeight: "700" },
 });

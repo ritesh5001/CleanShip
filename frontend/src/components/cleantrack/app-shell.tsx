@@ -57,7 +57,7 @@ export function AppShell({
               <Link
                 key={item.href}
                 href={item.href}
-                className="whitespace-nowrap rounded-md px-3 py-2 text-[14px] font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                className="whitespace-nowrap rounded-none px-3 py-2 text-[14px] font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
               >
                 {item.label}
               </Link>
@@ -67,7 +67,7 @@ export function AppShell({
           <form action="/cleantrack/logout" method="post" className="shrink-0">
             <button
               type="submit"
-              className="rounded-md px-3 py-2 text-[14px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+              className="rounded-none px-3 py-2 text-[14px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
             >
               Sign out
             </button>

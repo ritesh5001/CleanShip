@@ -15,12 +15,12 @@ export function NewClientForm() {
       <h2 className="text-base font-bold text-slate-900">Add a client</h2>
       <form action={action} className="mt-4 space-y-4">
         {state.error && (
-          <p role="alert" className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-[13px] text-red-800">
+          <p role="alert" className="rounded-none border border-red-300 bg-red-50 px-3 py-2 text-[13px] text-red-800">
             {state.error}
           </p>
         )}
         {state.ok && (
-          <p role="status" className="rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2 text-[13px] text-emerald-800">
+          <p role="status" className="rounded-none border border-emerald-300 bg-emerald-50 px-3 py-2 text-[13px] text-emerald-800">
             {state.ok}
           </p>
         )}

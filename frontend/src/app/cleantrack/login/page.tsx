@@ -28,12 +28,12 @@ export default function LoginPage() {
 
         <form
           action={action}
-          className="space-y-4 rounded-lg border border-slate-200 bg-white p-6"
+          className="space-y-4 rounded-none border border-slate-200 bg-white p-6"
         >
           {state.error && (
             <p
               role="alert"
-              className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-[13px] text-red-800"
+              className="rounded-none border border-red-300 bg-red-50 px-3 py-2 text-[13px] text-red-800"
             >
               {state.error}
             </p>

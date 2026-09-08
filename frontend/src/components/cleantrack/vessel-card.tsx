@@ -18,7 +18,7 @@ export function VesselCard({
   return (
     <Link
       href={href}
-      className="block rounded-lg border border-slate-200 bg-white p-5 transition-colors hover:border-blue-400"
+      className="block rounded-none border border-slate-200 bg-white p-5 transition-colors hover:border-blue-400"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">

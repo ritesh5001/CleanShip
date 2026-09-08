@@ -69,7 +69,7 @@ export function StageEditor({ vesselId, stages, preset }: Props) {
         {rows.map((row, i) => (
           <li
             key={row.key ?? `new-${i}`}
-            className="flex items-center gap-2 rounded-[4px] border border-slate-200 bg-white px-2 py-2"
+            className="flex items-center gap-2 rounded-none border border-slate-200 bg-white px-2 py-2"
           >
             <span aria-hidden="true" className="select-none text-slate-300">
               ⠿
@@ -82,13 +82,13 @@ export function StageEditor({ vesselId, stages, preset }: Props) {
               value={row.label}
               onChange={(e) => update(i, { label: e.target.value })}
               aria-label={`Stage ${i + 1} name`}
-              className="min-w-0 flex-1 rounded-[3px] border border-transparent px-1 py-1 text-[14px] text-slate-900 hover:border-slate-200 focus:border-[#1461a0] focus:outline-none"
+              className="min-w-0 flex-1 rounded-none border border-transparent px-1 py-1 text-[14px] text-slate-900 hover:border-slate-200 focus:border-[#1461a0] focus:outline-none"
             />
             <input
               value={row.short}
               onChange={(e) => update(i, { short: e.target.value })}
               aria-label={`Stage ${i + 1} short label`}
-              className="w-20 shrink-0 rounded-[3px] border border-transparent px-1 py-1 text-right font-mono text-[12px] text-slate-500 hover:border-slate-200 focus:border-[#1461a0] focus:outline-none"
+              className="w-20 shrink-0 rounded-none border border-transparent px-1 py-1 text-right font-mono text-[12px] text-slate-500 hover:border-slate-200 focus:border-[#1461a0] focus:outline-none"
             />
 
             <div className="flex shrink-0 items-center">
@@ -124,14 +124,15 @@ export function StageEditor({ vesselId, stages, preset }: Props) {
         ))}
       </ul>
 
+      <button
+        type="button"
+        onClick={() => setRows([...rows, { label: "New stage", short: "New" }])}
+        className="h-11 w-full rounded-none border border-dashed border-[#b9c5cf] text-[13px] font-semibold text-[#1461a0] hover:border-[#1461a0]"
+      >
+        + Add stage
+      </button>
+
       <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={() => setRows([...rows, { label: "New stage", short: "New" }])}
-          className="text-[13px] font-semibold text-[#1461a0] hover:underline"
-        >
-          + Add stage
-        </button>
         {preset && preset.length > 0 && (
           <button
             type="button"
@@ -150,7 +151,7 @@ export function StageEditor({ vesselId, stages, preset }: Props) {
       <button
         type="submit"
         disabled={!dirty || saving}
-        className="h-9 rounded-[4px] bg-[#1461a0] px-4 text-[13px] font-semibold text-white disabled:opacity-40"
+        className="h-11 rounded-none border border-[#0e3d6b] bg-[#1461a0] px-4 text-[13px] font-semibold text-white disabled:opacity-40"
       >
         {saving ? "Saving…" : "Save stages"}
       </button>

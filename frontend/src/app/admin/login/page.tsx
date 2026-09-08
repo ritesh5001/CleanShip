@@ -35,12 +35,12 @@ export default function AdminLoginPage() {
 
         <form
           action={action}
-          className="space-y-4 rounded-lg border border-slate-200 bg-white p-6"
+          className="space-y-4 rounded-none border border-slate-200 bg-white p-6"
         >
           {state.error && (
             <p
               role="alert"
-              className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-[13px] text-red-800"
+              className="rounded-none border border-red-300 bg-red-50 px-3 py-2 text-[13px] text-red-800"
             >
               {state.error}
             </p>
@@ -56,7 +56,7 @@ export default function AdminLoginPage() {
               required
               autoComplete="username"
               autoCapitalize="none"
-              className="w-full min-h-11 rounded-md border border-slate-300 bg-white px-3 text-[16px] text-slate-900 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+              className="w-full min-h-11 rounded-none border border-slate-300 bg-white px-3 text-[16px] text-slate-900 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
             />
           </label>
 
@@ -69,7 +69,7 @@ export default function AdminLoginPage() {
               type="password"
               required
               autoComplete="current-password"
-              className="w-full min-h-11 rounded-md border border-slate-300 bg-white px-3 text-[16px] text-slate-900 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+              className="w-full min-h-11 rounded-none border border-slate-300 bg-white px-3 text-[16px] text-slate-900 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
             />
           </label>
 
@@ -94,7 +94,7 @@ function Submit() {
     <button
       type="submit"
       disabled={pending}
-      className="min-h-11 w-full rounded-md bg-blue-700 px-4 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-50"
+      className="min-h-11 w-full rounded-none bg-blue-700 px-4 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-50"
     >
       {pending ? "Signing in…" : "Sign in"}
     </button>

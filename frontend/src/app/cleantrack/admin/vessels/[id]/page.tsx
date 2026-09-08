@@ -175,7 +175,7 @@ export default async function AdminVesselPage({
               <select
                 name="supervisorId"
                 defaultValue={vessel.supervisorId ?? ""}
-                className="min-h-11 w-full rounded-md border border-slate-300 px-3 text-[15px]"
+                className="min-h-11 w-full rounded-none border border-slate-300 px-3 text-[15px]"
               >
                 <option value="">Unassigned</option>
                 {supervisors.map((s) => (
@@ -186,7 +186,7 @@ export default async function AdminVesselPage({
               </select>
               <button
                 type="submit"
-                className="min-h-11 w-full rounded-md bg-blue-700 px-4 text-sm font-semibold text-white hover:bg-blue-800"
+                className="min-h-11 w-full rounded-none bg-blue-700 px-4 text-sm font-semibold text-white hover:bg-blue-800"
               >
                 Save
               </button>
@@ -206,7 +206,7 @@ export default async function AdminVesselPage({
             {shareUrl ? (
               <CopyField value={shareUrl} className="mt-3" />
             ) : (
-              <p className="mt-3 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-[13px] text-amber-900">
+              <p className="mt-3 rounded-none border border-amber-300 bg-amber-50 px-3 py-2 text-[13px] text-amber-900">
                 Sharing is off. Existing links do not work.
               </p>
             )}
@@ -220,7 +220,7 @@ export default async function AdminVesselPage({
                 />
                 <button
                   type="submit"
-                  className="min-h-11 rounded-md border border-slate-300 px-3 text-[13px] font-semibold text-slate-800 hover:bg-slate-50"
+                  className="min-h-11 rounded-none border border-slate-300 px-3 text-[13px] font-semibold text-slate-800 hover:bg-slate-50"
                 >
                   {shareUrl ? "Turn sharing off" : "Turn sharing on"}
                 </button>
@@ -229,7 +229,7 @@ export default async function AdminVesselPage({
                 <input type="hidden" name="vesselId" value={vessel.id} />
                 <button
                   type="submit"
-                  className="min-h-11 rounded-md border border-slate-300 px-3 text-[13px] font-semibold text-slate-800 hover:bg-slate-50"
+                  className="min-h-11 rounded-none border border-slate-300 px-3 text-[13px] font-semibold text-slate-800 hover:bg-slate-50"
                 >
                   New link
                 </button>
@@ -246,7 +246,7 @@ export default async function AdminVesselPage({
               <select
                 name="status"
                 defaultValue={vessel.status}
-                className="min-h-11 w-full rounded-md border border-slate-300 px-3 text-[15px]"
+                className="min-h-11 w-full rounded-none border border-slate-300 px-3 text-[15px]"
               >
                 {["scheduled", "in-progress", "complete", "cancelled"].map((s) => (
                   <option key={s} value={s}>
@@ -256,7 +256,7 @@ export default async function AdminVesselPage({
               </select>
               <button
                 type="submit"
-                className="min-h-11 w-full rounded-md border border-slate-300 px-4 text-sm font-semibold text-slate-800 hover:bg-slate-50"
+                className="min-h-11 w-full rounded-none border border-slate-300 px-4 text-sm font-semibold text-slate-800 hover:bg-slate-50"
               >
                 Override status
               </button>

@@ -53,7 +53,7 @@ export function InstallPrompt() {
   if (hidden || !event) return null;
 
   return (
-    <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blue-300 bg-blue-50 px-4 py-3">
+    <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-none border border-blue-300 bg-blue-50 px-4 py-3">
       <p className="text-[14px] text-blue-900">
         <strong className="font-semibold">Add to home screen</strong> — opens
         full screen and keeps working without signal.
@@ -65,7 +65,7 @@ export function InstallPrompt() {
             localStorage.setItem(DISMISSED, "1");
             setHidden(true);
           }}
-          className="rounded-md px-3 py-2 text-[13px] font-medium text-blue-800 hover:bg-blue-100"
+          className="rounded-none px-3 py-2 text-[13px] font-medium text-blue-800 hover:bg-blue-100"
         >
           Not now
         </button>
@@ -75,7 +75,7 @@ export function InstallPrompt() {
             await event.prompt();
             setHidden(true);
           }}
-          className="rounded-md bg-blue-700 px-3 py-2 text-[13px] font-semibold text-white hover:bg-blue-800"
+          className="rounded-none bg-blue-700 px-3 py-2 text-[13px] font-semibold text-white hover:bg-blue-800"
         >
           Install
         </button>

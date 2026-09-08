@@ -219,7 +219,7 @@ function Legend() {
       {(["not-started", "in-progress", "complete"] as const).map((s) => (
         <li key={s} className="flex items-center gap-2">
           <span
-            className="inline-block size-3.5 rounded-[2px] border"
+            className="inline-block size-3.5 rounded-none border"
             style={{
               background: STATE_STYLE[s].fill,
               borderColor: STATE_STYLE[s].stroke,
