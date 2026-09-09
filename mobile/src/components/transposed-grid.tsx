@@ -1,6 +1,5 @@
-import { useMemo, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import { colors, radius, space, CELL_MIN_W, CELL_MIN_H } from "../theme";
+import { ScrollView, Pressable, StyleSheet, Text, View } from "react-native";
+import { colors, radius, space } from "../theme";
 import {
   CELL_STYLE,
   progressOf,
@@ -14,21 +13,30 @@ import {
  * The status sheet turned 90°.
  *
  * The paper sheet runs compartments down and stages across, which on a phone
- * means the axis that grows — up to nine holds — is the one with no room, so
- * the grid scrolls sideways and the supervisor loses the vessel.
+ * means the axis that grows — up to nine holds or a tanker's many tanks — is
+ * the one with no room. Turned, the axis that grows runs across the short side
+ * and the one that is effectively fixed (there are always about six stages)
+ * runs down.
  *
- * Turned, the axis that grows runs across the short side and the one that is
- * effectively fixed (there are always about six stages) runs down. The whole
- * vessel then fits one screen with no horizontal scroll at all, which is the
- * entire point: a supervisor can see which hold is behind without moving
- * anything.
+ * Past five or six compartments even the short side runs out, so the cells
+ * scroll sideways while the stage column stays pinned. That is the important
+ * part: a supervisor scrolling to hold 8 must still be able to see which row
+ * is Bilges. A grid that scrolls its labels away is worse than one that does
+ * not scroll at all.
  *
- * Past seven compartments even this runs out of width, so it pages in groups
- * rather than scrolling — a page boundary is honest about hiding something in
- * a way a half-visible column is not.
+ * Row heights are fixed rather than intrinsic, because the pinned column and
+ * the scrolling one are separate view trees — if either sized itself to its
+ * own content the two would drift out of alignment and the ticks would stop
+ * lining up with their stages.
  */
 
-const PER_PAGE = 7;
+/* The design's floor is 44 × 58 — the smallest a gloved thumb hits reliably.
+   These sit above it, since horizontal scrolling means width is no longer
+   something the layout has to economise on. */
+const LABEL_W = 104;
+const CELL_W = 58;
+const HEAD_H = 58;
+const ROW_H = 62;
 
 type Props = {
   compartments: CompartmentDetail[];
@@ -51,107 +59,100 @@ export function TransposedGrid({
   onHoldCell,
   onOpenCompartment,
 }: Props) {
-  const [page, setPage] = useState(0);
-  const pages = Math.ceil(compartments.length / PER_PAGE) || 1;
-  const shown = useMemo(
-    () => compartments.slice(page * PER_PAGE, page * PER_PAGE + PER_PAGE),
-    [compartments, page],
-  );
-
   return (
     <View>
-      {pages > 1 && (
-        <View style={styles.pager}>
-          {Array.from({ length: pages }, (_, i) => (
-            <Pressable
-              key={i}
-              onPress={() => setPage(i)}
-              style={[styles.pageTab, i === page && styles.pageTabOn]}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: i === page }}
-            >
-              <Text style={[styles.pageTabText, i === page && styles.pageTabTextOn]}>
-                {shortLabel(compartments[i * PER_PAGE]?.label ?? "")}
-                {"–"}
-                {shortLabel(
-                  compartments[Math.min((i + 1) * PER_PAGE, compartments.length) - 1]
-                    ?.label ?? "",
-                )}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-      )}
-
       <View style={styles.frame}>
-        {/* Column heads sit on navy so the axis reads as a header rather than
-            as another row of cells. Tapping one drills into that hold. */}
-        <View style={styles.row}>
-          <View style={styles.stageHeadCell}>
-            <Text style={styles.axisLabel}>STAGE</Text>
-          </View>
-          {shown.map((c) => {
-            const pct = Math.round(progressOf(statusesOf(c.cells, stages)).ratio * 100);
-            return (
-              <Pressable
-                key={c.id}
-                onPress={() => onOpenCompartment(c.id)}
-                style={styles.colHead}
-                accessibilityRole="button"
-                accessibilityLabel={`Open ${c.label}, ${pct} percent complete`}
-              >
-                <Text style={styles.colHeadLabel} numberOfLines={1}>
-                  {shortLabel(c.label)}
-                </Text>
-                <Text style={styles.colHeadPct}>{pct}%</Text>
-              </Pressable>
-            );
-          })}
-        </View>
-
-        {stages.map((stage) => (
-          <View key={stage.key} style={styles.row}>
-            <View style={styles.stageCell}>
-              <Text style={styles.stageLabel} numberOfLines={2}>
-                {stage.label}
-              </Text>
-              <Text style={styles.stageShort}>{stage.short.toUpperCase()}</Text>
+        <View style={styles.split}>
+          {/* Pinned: the stage names, which must never scroll away. */}
+          <View style={styles.labelCol}>
+            <View style={[styles.stageHeadCell, { height: HEAD_H }]}>
+              <Text style={styles.axisLabel}>STAGE</Text>
             </View>
-
-            {shown.map((c) => {
-              const status = c.cells[stage.key]?.status ?? "pending";
-              const skin = CELL_STYLE[status];
-              const id = `${c.id}:${stage.key}`;
-              const queued = queuedIds.has(id);
-              const failed = failedIds?.has(id) ?? false;
-              return (
-                <Pressable
-                  key={c.id}
-                  onPress={() => onTapCell(c.id, stage, status)}
-                  onLongPress={() => onHoldCell(c.id, stage)}
-                  delayLongPress={420}
-                  style={[
-                    styles.cell,
-                    { backgroundColor: skin.bg, borderColor: colors.border },
-                  ]}
-                  accessibilityRole="button"
-                  accessibilityLabel={`${c.label}, ${stage.label}, ${skin.label}`}
-                >
-                  <CellMark status={status} />
-                  {/* Queued: a 7px square in the corner, not a banner. The tap
-                      is already safe on the device; this only says it has not
-                      reached the server yet. */}
-                  {queued && !failed && <View style={styles.queuedPip} />}
-                  {/* Failed is the only state that changes colour, and it does
-                      it with a rule under the cell rather than by repainting
-                      the cell — the status the supervisor recorded is still
-                      the truth, it just has not landed. */}
-                  {failed && <View style={styles.failedRule} />}
-                </Pressable>
-              );
-            })}
+            {stages.map((stage) => (
+              <View key={stage.key} style={[styles.stageCell, { height: ROW_H }]}>
+                <Text style={styles.stageLabel} numberOfLines={2}>
+                  {stage.label}
+                </Text>
+                <Text style={styles.stageShort} numberOfLines={1}>
+                  {stage.short.toUpperCase()}
+                </Text>
+              </View>
+            ))}
           </View>
-        ))}
+
+          {/* Scrolling: one column per compartment, however many there are. */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator
+            /* Bounces so the edge of the last column is reachable even when
+               the content ends flush with the screen. */
+            contentContainerStyle={{ flexGrow: 1 }}
+          >
+            <View>
+              <View style={styles.row}>
+                {compartments.map((c) => {
+                  const pct = Math.round(
+                    progressOf(statusesOf(c.cells, stages)).ratio * 100,
+                  );
+                  return (
+                    <Pressable
+                      key={c.id}
+                      onPress={() => onOpenCompartment(c.id)}
+                      style={[styles.colHead, { width: CELL_W, height: HEAD_H }]}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Open ${c.label}, ${pct} percent complete`}
+                    >
+                      <Text style={styles.colHeadLabel} numberOfLines={1}>
+                        {shortLabel(c.label)}
+                      </Text>
+                      <Text style={styles.colHeadPct} numberOfLines={1}>
+                        {pct}%
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+
+              {stages.map((stage) => (
+                <View key={stage.key} style={styles.row}>
+                  {compartments.map((c) => {
+                    const status = c.cells[stage.key]?.status ?? "pending";
+                    const skin = CELL_STYLE[status];
+                    const id = `${c.id}:${stage.key}`;
+                    const queued = queuedIds.has(id);
+                    const failed = failedIds?.has(id) ?? false;
+                    return (
+                      <Pressable
+                        key={c.id}
+                        onPress={() => onTapCell(c.id, stage, status)}
+                        onLongPress={() => onHoldCell(c.id, stage)}
+                        delayLongPress={420}
+                        style={[
+                          styles.cell,
+                          { width: CELL_W, height: ROW_H },
+                          { backgroundColor: skin.bg, borderColor: colors.border },
+                        ]}
+                        accessibilityRole="button"
+                        accessibilityLabel={`${c.label}, ${stage.label}, ${skin.label}`}
+                      >
+                        <CellMark status={status} />
+                        {/* Queued: a 7px square in the corner, not a banner. The
+                            tap is already safe on the device; this only says it
+                            has not reached the server yet. */}
+                        {queued && !failed && <View style={styles.queuedPip} />}
+                        {/* Failed is the only state that changes colour, and it
+                            does it with a rule under the cell rather than by
+                            repainting it — the status the supervisor recorded is
+                            still the truth, it just has not landed. */}
+                        {failed && <View style={styles.failedRule} />}
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
       </View>
 
       <View style={styles.legend}>
@@ -213,11 +214,17 @@ function LegendChip({ status }: { status: CellStatus }) {
   );
 }
 
-/** "Hold 3" → "H3": a column head has room for two characters, not seven. */
+/**
+ * "Hold 3" → "H3", "Tank 12" → "T12".
+ *
+ * A column head has room for two or three characters, not seven — and this
+ * has to work for a tanker's labels as well as a bulker's.
+ */
 function shortLabel(label: string) {
-  const n = label.match(/(\d+)\s*$/);
-  if (n) return `${label.trim()[0].toUpperCase()}${n[1]}`;
-  return label.slice(0, 3).toUpperCase();
+  const trimmed = label.trim();
+  const n = trimmed.match(/(\d+)\s*$/);
+  if (n && trimmed[0]) return `${trimmed[0].toUpperCase()}${n[1]}`;
+  return trimmed.slice(0, 3).toUpperCase();
 }
 
 const styles = StyleSheet.create({
@@ -228,10 +235,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     overflow: "hidden",
   },
+  split: { flexDirection: "row" },
+  labelCol: { width: LABEL_W },
   row: { flexDirection: "row" },
 
   stageHeadCell: {
-    width: 104,
+    width: LABEL_W,
     paddingHorizontal: space.sm,
     paddingVertical: space.sm,
     justifyContent: "flex-end",
@@ -244,11 +253,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   colHead: {
-    flex: 1,
-    minWidth: CELL_MIN_W,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: space.sm,
     backgroundColor: colors.navy,
     borderLeftWidth: 1,
     borderLeftColor: colors.navyLine,
@@ -267,14 +273,12 @@ const styles = StyleSheet.create({
   },
 
   stageCell: {
-    width: 104,
+    width: LABEL_W,
     paddingHorizontal: space.sm,
-    paddingVertical: space.sm,
     justifyContent: "center",
     borderRightWidth: 1,
     borderBottomWidth: 1,
     borderColor: colors.border,
-    minHeight: CELL_MIN_H,
     backgroundColor: colors.card,
   },
   stageLabel: { fontSize: 13, fontWeight: "700", color: colors.text, lineHeight: 16 },
@@ -287,9 +291,6 @@ const styles = StyleSheet.create({
   },
 
   cell: {
-    flex: 1,
-    minWidth: CELL_MIN_W,
-    minHeight: CELL_MIN_H,
     alignItems: "center",
     justifyContent: "center",
     borderRightWidth: 1,
@@ -364,17 +365,4 @@ const styles = StyleSheet.create({
     color: colors.faint,
     lineHeight: 15,
   },
-
-  pager: { flexDirection: "row", gap: space.sm, marginBottom: space.sm },
-  pageTab: {
-    paddingHorizontal: space.md,
-    paddingVertical: space.sm,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.card,
-  },
-  pageTabOn: { backgroundColor: colors.navy, borderColor: colors.navy },
-  pageTabText: { fontSize: 12, fontWeight: "700", color: colors.muted },
-  pageTabTextOn: { color: colors.onDark },
 });

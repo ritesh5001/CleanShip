@@ -111,8 +111,16 @@ export function TimeAsk({
       onRequestClose={onCancel}
     >
       <Pressable style={styles.backdrop} onPress={onCancel}>
-        {/* Stops a tap inside the sheet from closing it. */}
-        <Pressable style={styles.sheet} onPress={() => {}}>
+        {/* A plain View, not a Pressable. On Android a Pressable here claims
+           the touch on press-in and the wheels below never became the scroll
+           responder — the picker rendered but would not turn. Claiming the
+           responder only as a fallback keeps the backdrop from closing on a
+           tap inside the sheet while leaving children free to scroll. */}
+        <View
+          style={styles.sheet}
+          onStartShouldSetResponder={() => true}
+          onResponderRelease={() => {}}
+        >
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.subtitle}>{subtitle}</Text>
 
@@ -195,7 +203,7 @@ export function TimeAsk({
               <Text style={styles.confirmText}>Confirm</Text>
             </Pressable>
           </View>
-        </Pressable>
+        </View>
       </Pressable>
     </Modal>
   );

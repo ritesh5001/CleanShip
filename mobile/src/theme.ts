@@ -76,10 +76,3 @@ export const DOT_RADIUS = 999;
 
 /** Android's minimum is 48dp; on a wet deck in gloves it wants more. */
 export const TAP = 52;
-
-/**
- * The transposed grid's cell floor, from the design: 44 wide × 58 tall is the
- * smallest that stays reliably hittable with a gloved thumb.
- */
-export const CELL_MIN_W = 44;
-export const CELL_MIN_H = 58;

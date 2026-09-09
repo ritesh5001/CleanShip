@@ -51,12 +51,22 @@ export function WheelPicker<T>({
   /* Tracks what the wheel is showing so a value change we caused ourselves
      does not bounce the scroll position back under the user's thumb. */
   const settled = useRef(index);
+  const ready = useRef(false);
 
   useEffect(() => {
     if (index === settled.current) return;
     settled.current = index;
     ref.current?.scrollTo({ y: index * ITEM_HEIGHT, animated: true });
   }, [index]);
+
+  /* Android ignores `contentOffset` — it is an iOS-only prop — so the wheel
+     opened parked at the top no matter what the value was. Scroll it into
+     place once the list has been measured instead. */
+  function onContentSizeChange() {
+    if (ready.current) return;
+    ready.current = true;
+    ref.current?.scrollTo({ y: index * ITEM_HEIGHT, animated: false });
+  }
 
   function onSettle(e: NativeSyntheticEvent<NativeScrollEvent>) {
     const next = Math.round(e.nativeEvent.contentOffset.y / ITEM_HEIGHT);
@@ -72,11 +82,16 @@ export function WheelPicker<T>({
         ref={ref}
         showsVerticalScrollIndicator={false}
         snapToInterval={ITEM_HEIGHT}
+        snapToAlignment="start"
         decelerationRate="fast"
-        contentOffset={{ x: 0, y: index * ITEM_HEIGHT }}
+        onContentSizeChange={onContentSizeChange}
+        /* Needed on Android whenever this sits inside another scrollable. */
+        nestedScrollEnabled
         onMomentumScrollEnd={onSettle}
-        /* Web fires no momentum event, so settle on the plain scroll end. */
-        onScrollEndDrag={Platform.OS === "web" ? onSettle : undefined}
+        /* Web fires no momentum event, and on Android a slow drag can end
+           without one either, so settle on drag end as well. Both paths are
+           idempotent — onSettle returns early when the index is unchanged. */
+        onScrollEndDrag={onSettle}
         contentContainerStyle={{ paddingVertical: ITEM_HEIGHT }}
         accessibilityLabel={accessibilityLabel}
       >
