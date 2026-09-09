@@ -571,11 +571,7 @@ export default function Vessel() {
       <TimeAsk
         visible={askTime !== null}
         title={askTime?.stageLabel ?? ""}
-        subtitle={
-          askTime?.status === "in_progress"
-            ? "When did this start?"
-            : "When was this finished?"
-        }
+        kind={askTime?.status === "in_progress" ? "started" : "finished"}
         initial={askTime?.initial ?? new Date()}
         minDate={askTime?.min ?? timeWindow.min}
         maxDate={askTime?.max ?? timeWindow.max}
@@ -987,7 +983,7 @@ function StageRow({
       <TimeAsk
         visible={picking !== null}
         title={stage.label}
-        subtitle={picking === "startedAt" ? "Start time" : "Finish time"}
+        kind={picking === "startedAt" ? "started" : "finished"}
         initial={
           (picking === "startedAt" ? cell?.startedAt : cell?.completedAt)
             ? new Date(

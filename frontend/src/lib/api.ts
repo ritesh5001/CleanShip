@@ -428,6 +428,26 @@ export function peekShare(token: string) {
   );
 }
 
+/** The customer's copy of the audit trail: no crew names, no sync times. */
+export type PublicEvent = {
+  id: number;
+  compartmentLabel: string;
+  stageKey: string;
+  stageLabel: string;
+  fromStatus: CellStatus;
+  toStatus: CellStatus;
+  note: string | null;
+  occurredAt: string;
+};
+
+export async function getSharedEvents(token: string) {
+  const { events } = await request<{ events: PublicEvent[] }>(
+    `/api/v1/share/${token}/events`,
+    { auth: false },
+  );
+  return events;
+}
+
 export function getSharedVessel(token: string) {
   return request<{ vessel: PublicVessel }>(`/api/v1/share/${token}/vessel`, {
     auth: false,

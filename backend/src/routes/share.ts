@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { getVesselByShareToken, getVesselVersion } from "../domain/vessels.js";
+import {
+  getVesselByShareToken,
+  getVesselVersion,
+  listEvents,
+} from "../domain/vessels.js";
 import { db } from "../db/index.js";
 import { vessels } from "../db/schema.js";
 import { eq } from "drizzle-orm";
@@ -57,6 +61,35 @@ shareRoutes.get("/:token/version", async (req, res) => {
   if (!row || row.revoked) throw ApiError.notFound("This link is no longer active.");
   const version = await getVesselVersion(row.id);
   res.json({ version: version?.version ?? 0, status: version?.status ?? "scheduled" });
+});
+
+/**
+ * The full history, for a customer who wants more than the current state.
+ *
+ * Every recorded change, newest first — but with the crew stripped out. Who
+ * did the work is not part of what was sold, and a customer who can name the
+ * supervisor on a disputed hold is a problem the crew did not sign up for.
+ * `occurredAt` is kept and `recordedAt` dropped for the same reason: when the
+ * work happened is the customer's business, when a phone got signal is not.
+ */
+shareRoutes.get("/:token/events", async (req, res) => {
+  const token = String(req.params.token);
+  const detail = await getVesselByShareToken(token);
+  if (!detail) throw ApiError.notFound("This link is no longer active.");
+
+  const events = await listEvents(detail.id, 400);
+  res.json({
+    events: events.map((e) => ({
+      id: e.id,
+      compartmentLabel: e.compartmentLabel,
+      stageKey: e.stageKey,
+      stageLabel: e.stageLabel,
+      fromStatus: e.fromStatus,
+      toStatus: e.toStatus,
+      note: e.note,
+      occurredAt: e.occurredAt,
+    })),
+  });
 });
 
 /**

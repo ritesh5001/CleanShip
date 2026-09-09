@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { colors, radius, space, TAP } from "../theme";
+import { CELL_STYLE } from "../types";
 import { WheelFrame, WheelPicker } from "./wheel-picker";
 
 /**
@@ -27,7 +28,7 @@ import { WheelFrame, WheelPicker } from "./wheel-picker";
 export function TimeAsk({
   visible,
   title,
-  subtitle,
+  kind,
   initial,
   minDate,
   maxDate,
@@ -36,7 +37,8 @@ export function TimeAsk({
 }: {
   visible: boolean;
   title: string;
-  subtitle: string;
+  /** Which time is being recorded — drives the banner and its colour. */
+  kind: "started" | "finished";
   initial: Date;
   /**
    * The window work on this vessel could plausibly have happened in. The day
@@ -50,6 +52,9 @@ export function TimeAsk({
   onCancel: () => void;
 }) {
   const [value, setValue] = useState(initial);
+  /* The colour of the status being recorded, so the banner belongs to the
+     same language as the cell that produced it. */
+  const skin = CELL_STYLE[kind === "started" ? "in_progress" : "done"];
 
   const clamp = (date: Date) => {
     if (date.getTime() < minDate.getTime()) return new Date(minDate);
@@ -118,7 +123,25 @@ export function TimeAsk({
         />
         <View style={styles.sheet}>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.subtitle}>{subtitle}</Text>
+
+          {/* Big, short and in the status's own colour. The old line read
+              "When was this finished?" in small grey — a sentence to parse at
+              04:00 in gloves, and easy to answer for the wrong field. This is
+              one word, in the yellow of a stage under way or the green of a
+              finished one, so the answer is obvious before it is read. */}
+          <View
+            style={[
+              styles.kind,
+              {
+                backgroundColor: skin.bg,
+                borderColor: skin.border,
+              },
+            ]}
+          >
+            <Text style={[styles.kindText, { color: skin.text }]}>
+              {kind === "started" ? "STARTED" : "FINISHED"}
+            </Text>
+          </View>
 
           {/* Day first: a night shift entering 23:40 at 00:20 needs to say
               "yesterday" before the time means anything. */}
@@ -257,7 +280,14 @@ const styles = StyleSheet.create({
     borderTopColor: colors.blue,
   },
   title: { fontSize: 20, fontWeight: "700", color: colors.text },
-  subtitle: { fontSize: 14, color: colors.muted, marginTop: 4 },
+  kind: {
+    alignSelf: "flex-start",
+    marginTop: space.sm,
+    borderWidth: 2,
+    paddingHorizontal: space.md,
+    paddingVertical: 6,
+  },
+  kindText: { fontSize: 24, fontWeight: "700", letterSpacing: 1.4 },
 
   legend: {
     marginTop: space.lg,
@@ -288,12 +318,20 @@ const styles = StyleSheet.create({
   colon: { justifyContent: "center", paddingHorizontal: 2 },
   colonText: { fontSize: 30, fontWeight: "700", color: colors.text },
 
+  /* What is about to be written, spelled out and given real weight. The
+     wheels are quick but easy to leave a notch off, and this is the line that
+     catches it before it becomes the record. */
   readback: {
     marginTop: space.md,
-    fontSize: 13,
-    letterSpacing: 0.6,
-    color: colors.textBody,
+    paddingVertical: space.md,
+    fontSize: 19,
+    fontWeight: "700",
+    letterSpacing: 0.4,
+    color: colors.text,
     textAlign: "center",
+    backgroundColor: colors.bg,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
 
   actions: { flexDirection: "row", gap: space.md, marginTop: space.lg },

@@ -1,10 +1,11 @@
 import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ApiError, getSharedVessel } from "@/lib/api";
+import { ApiError, getSharedEvents, getSharedVessel } from "@/lib/api";
 import { LiveRefresh } from "@/components/cleantrack/live-refresh";
 import { VesselPlanView } from "@/components/cleantrack/vessel-plan-view";
 import { ClientProgressTable } from "@/components/cleantrack/client-progress-table";
+import { ActivityTimeline } from "@/components/cleantrack/activity-timeline";
 import { stageShade } from "@/lib/cleantrack/stage-colors";
 import {
   compartmentNoun,
@@ -46,6 +47,15 @@ export default async function SharedVesselPage({
   }
   if (!vessel) notFound();
 
+  /* The history is additive: if it fails, the page still answers "where is my
+     ship", which is what the link is for. */
+  let events: Awaited<ReturnType<typeof getSharedEvents>> = [];
+  try {
+    events = await getSharedEvents(token);
+  } catch {
+    events = [];
+  }
+
   const pct = Math.round(vessel.progress.ratio * 100);
   const total = vessel.compartments.length;
   const complete = vessel.compartments.filter(
@@ -53,16 +63,6 @@ export default async function SharedVesselPage({
   ).length;
   const remaining = total - complete;
 
-  /* Latest movements, newest first. The customer gets what changed and when —
-     never who, because the crew's names were not part of what was sold. */
-  const movements = vessel.compartments
-    .flatMap((c) =>
-      vessel.stages
-        .map((s) => ({ compartment: c.label, stage: s, cell: c.cells[s.key] }))
-        .filter((m) => m.cell && m.cell.status !== "pending"),
-    )
-    .sort((a, b) => (a.cell!.updatedAt < b.cell!.updatedAt ? 1 : -1))
-    .slice(0, 4);
 
   return (
     <div className="min-h-dvh bg-[#06203a] text-[#dce4eb]">
@@ -188,39 +188,15 @@ export default async function SharedVesselPage({
           </p>
         </section>
 
-        {movements.length > 0 && (
-          <section className="mt-12">
-            <h2 className="m-0 mb-4 font-[family-name:var(--font-body)] text-[13px] font-semibold uppercase tracking-[0.14em] text-white/75">
-              Last movements
-            </h2>
-            <ul className="m-0 list-none space-y-0 p-0">
-              {movements.map((m, i) => (
-                <li
-                  key={`${m.compartment}-${m.stage.key}-${i}`}
-                  className="flex gap-4 border-t border-white/[0.09] py-3 text-[15px]"
-                >
-                  <span className="shrink-0 pt-[2px] font-[family-name:var(--font-mono)] text-[12px] tabular-nums text-white/70">
-                    {new Date(m.cell!.updatedAt).toLocaleTimeString("en-GB", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: false,
-                    })}
-                  </span>
-                  <span className="text-[16px] text-white/90">
-                    {m.compartment} &middot; {m.stage.label}{" "}
-                    <span className="text-white/65">
-                      {m.cell!.status === "done"
-                        ? "finished"
-                        : m.cell!.status === "na"
-                          ? "not applicable"
-                          : "started"}
-                    </span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+        {/* The full history, not a sample of it. This is the section a
+            charterer opens when the job is over and the laytime is being
+            argued: every stage, every hold, in the order it happened. */}
+        <section className="mt-12">
+          <h2 className="m-0 mb-5 font-[family-name:var(--font-body)] text-[13px] font-semibold uppercase tracking-[0.14em] text-white/75">
+            Full activity
+          </h2>
+          <ActivityTimeline events={events} stages={vessel.stages} />
+        </section>
 
         <footer className="mt-14 border-t border-white/[0.12] pt-6">
           {vessel.clientName && (
