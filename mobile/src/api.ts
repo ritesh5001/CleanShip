@@ -1,5 +1,11 @@
 import Constants from "expo-constants";
-import type { CellStatus, SessionUser, VesselDetail, VesselSummary } from "./types";
+import type {
+  CellEvent,
+  CellStatus,
+  SessionUser,
+  VesselDetail,
+  VesselSummary,
+} from "./types";
 
 /**
  * The CleanTrack API client.
@@ -165,6 +171,24 @@ export async function getVessel(token: string, id: number, signal?: AbortSignal)
     signal,
   });
   return vessel;
+}
+
+/**
+ * The vessel's audit trail, newest first.
+ *
+ * A supervisor can already read their own vessels, so this needs no new
+ * permission — the API answers it with the same rule as the grid itself.
+ */
+export async function getVesselEvents(
+  token: string,
+  id: number,
+  signal?: AbortSignal,
+) {
+  const { events } = await request<{ events: CellEvent[] }>(
+    `/api/v1/vessels/${id}/events?limit=200`,
+    { token, signal },
+  );
+  return events;
 }
 
 export function getVesselVersion(token: string, id: number, signal?: AbortSignal) {

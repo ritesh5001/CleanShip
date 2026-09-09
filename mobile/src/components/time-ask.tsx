@@ -78,19 +78,13 @@ export function TimeAsk({
     return out;
   }, [minDate, maxDate]);
 
-  const hour12 = ((value.getHours() + 11) % 12) + 1;
+  const hour = value.getHours();
   const minute = value.getMinutes();
-  const meridiem: Meridiem = value.getHours() < 12 ? "am" : "pm";
 
   /** Rebuilds the instant from the wheels, then holds it inside the window. */
-  function setParts(next: { h?: number; m?: number; ap?: Meridiem }) {
-    const h12 = next.h ?? hour12;
-    const mm = next.m ?? minute;
-    const ap = next.ap ?? meridiem;
-    const h24 = (ap === "am" ? h12 % 12 : (h12 % 12) + 12);
-
+  function setParts(next: { h?: number; m?: number }) {
     const candidate = new Date(value);
-    candidate.setHours(h24, mm, 0, 0);
+    candidate.setHours(next.h ?? hour, next.m ?? minute, 0, 0);
     setValue(clamp(candidate));
   }
 
@@ -159,10 +153,11 @@ export function TimeAsk({
           <WheelFrame>
             <WheelPicker
               items={HOURS}
-              value={hour12}
+              value={hour}
               onChange={(h) => setParts({ h })}
+              format={(h) => String(h).padStart(2, "0")}
               accessibilityLabel="Hour"
-              width={84}
+              width={96}
             />
             <View style={styles.colon}>
               <Text style={styles.colonText}>:</Text>
@@ -173,14 +168,7 @@ export function TimeAsk({
               onChange={(m) => setParts({ m })}
               format={(m) => String(m).padStart(2, "0")}
               accessibilityLabel="Minute"
-              width={84}
-            />
-            <WheelPicker
-              items={MERIDIEMS}
-              value={meridiem}
-              onChange={(ap) => setParts({ ap })}
-              accessibilityLabel="Morning or afternoon"
-              width={72}
+              width={96}
             />
           </WheelFrame>
 
@@ -211,11 +199,11 @@ export function TimeAsk({
   );
 }
 
-type Meridiem = "am" | "pm";
-
-const HOURS = Array.from({ length: 12 }, (_, i) => i + 1);
+/* 24-hour throughout. A cleaning record that says "7:40" is ambiguous on a
+   job that runs through the night, and that ambiguity is what an invoice
+   dispute turns on — so there is no am/pm anywhere in this product. */
+const HOURS = Array.from({ length: 24 }, (_, i) => i);
 const MINUTES = Array.from({ length: 60 }, (_, i) => i);
-const MERIDIEMS: Meridiem[] = ["am", "pm"];
 
 /** "Today" / "Yesterday" / a weekday — so a night shift is never ambiguous. */
 function describeDay(date: Date) {

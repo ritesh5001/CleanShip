@@ -11,6 +11,7 @@ import {
   compartmentState,
   nextStatusOnTap,
   progressOf,
+  isFinalStage,
   STATE_STYLE,
   type CellStatus,
   type Stage,
@@ -336,7 +337,14 @@ export function StatusGrid({
           readOnly={readOnly}
           onSelect={setSelectedId}
           onTapCell={(compartmentId, stageKey, current) =>
-            setCell(compartmentId, stageKey, nextStatusOnTap(current))
+            setCell(
+              compartmentId,
+              stageKey,
+              nextStatusOnTap(
+                current,
+                isFinalStage({ key: stageKey, label: "", short: "" }, stages),
+              ),
+            )
           }
           onSetNa={(compartmentId, stageKey) => setCell(compartmentId, stageKey, "na")}
           onTapColumn={setColumn}

@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -26,6 +27,7 @@ export default function Login() {
   const { signIn } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [reveal, setReveal] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -102,17 +104,32 @@ export default function Login() {
 
             <View>
               <Text style={styles.label}>Password</Text>
-              <TextInput
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                autoCapitalize="none"
-                textContentType="password"
-                style={styles.input}
-                editable={!busy}
-                onSubmitEditing={submit}
-                returnKeyType="go"
-              />
+              {/* Reveal, because this is typed one-handed on a deck in gloves
+                  and a mistyped password that cannot be seen is a support call
+                  from a ship. Hidden by default; the toggle is deliberate. */}
+              <View style={styles.passwordRow}>
+                <TextInput
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!reveal}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  textContentType="password"
+                  style={[styles.input, styles.passwordInput]}
+                  editable={!busy}
+                  onSubmitEditing={submit}
+                  returnKeyType="go"
+                />
+                <Pressable
+                  onPress={() => setReveal((v) => !v)}
+                  disabled={busy}
+                  style={styles.reveal}
+                  accessibilityRole="button"
+                  accessibilityLabel={reveal ? "Hide password" : "Show password"}
+                >
+                  <Text style={styles.revealText}>{reveal ? "Hide" : "Show"}</Text>
+                </Pressable>
+              </View>
             </View>
 
             <Button
@@ -160,6 +177,19 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: colors.text,
   },
+  passwordRow: { flexDirection: "row", alignItems: "stretch", gap: space.sm },
+  passwordInput: { flex: 1 },
+  reveal: {
+    minHeight: TAP,
+    minWidth: 68,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.md,
+    backgroundColor: colors.card,
+  },
+  revealText: { fontSize: 14, fontWeight: "700", color: colors.blue },
   input: {
     minHeight: TAP,
     borderWidth: 1,

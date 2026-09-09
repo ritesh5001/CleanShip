@@ -75,6 +75,13 @@ export function HoldDetail({
         <Text style={styles.headPct}>{pct}%</Text>
       </View>
 
+      {compartment.notes ? (
+        <View style={styles.holdNote}>
+          <Text style={styles.holdNoteLabel}>FROM THE OFFICE</Text>
+          <Text style={styles.holdNoteText}>{compartment.notes}</Text>
+        </View>
+      ) : null}
+
       <View style={styles.rows}>
         {stages.map((stage) => {
           const cell = compartment.cells[stage.key];
@@ -101,6 +108,14 @@ export function HoldDetail({
                 <Text style={[styles.stageMeta, { color: skin.text }]} numberOfLines={1}>
                   {subtitleFor(stage, status, cell)}
                 </Text>
+                {cell?.note ? (
+                  <Text
+                    style={[styles.stageNote, { color: skin.text }]}
+                    numberOfLines={2}
+                  >
+                    “{cell.note}”
+                  </Text>
+                ) : null}
               </View>
 
               <Text style={[styles.rowStatus, { color: skin.text }]}>
@@ -172,6 +187,26 @@ const styles = StyleSheet.create({
   stageName: { fontSize: 18, fontWeight: "700" },
   stageMeta: { fontSize: 11, marginTop: 5, letterSpacing: 1, opacity: 0.85 },
   rowStatus: { fontSize: 14, fontWeight: "700", letterSpacing: 0.6 },
+  stageNote: { fontSize: 12, marginTop: 5, fontStyle: "italic", opacity: 0.9 },
+
+  /* The office's instruction for this hold. Aqua-ruled rather than coloured
+     like a status, because it is information, not a state. */
+  holdNote: {
+    backgroundColor: colors.blueWash,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.aqua,
+    paddingHorizontal: space.lg,
+    paddingVertical: space.md,
+    marginTop: 2,
+  },
+  holdNoteLabel: {
+    fontSize: 10,
+    fontWeight: "700",
+    letterSpacing: 1.2,
+    color: colors.aquaDark,
+    marginBottom: 4,
+  },
+  holdNoteText: { fontSize: 14, color: colors.text, lineHeight: 19 },
 
   hintBox: {
     marginTop: space.lg,

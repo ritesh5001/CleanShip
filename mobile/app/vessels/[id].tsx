@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  AppState,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -11,7 +12,12 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { TimeAsk } from "../../src/components/time-ask";
-import { ApiError, getVessel } from "../../src/api";
+import {
+  ApiError,
+  getVessel,
+  getVesselEvents,
+  getVesselVersion,
+} from "../../src/api";
 import { readVessel, writeVessel } from "../../src/cache";
 import {
   enqueue,
@@ -27,6 +33,7 @@ import { TransposedGrid } from "../../src/components/transposed-grid";
 import { SyncStrip, type SyncState } from "../../src/components/sync-strip";
 import { VesselHeader } from "../../src/components/vessel-header";
 import { HoldDetail } from "../../src/components/hold-detail";
+import { ActivityLog } from "../../src/components/activity-log";
 import { colors, radius, space, TAP } from "../../src/theme";
 import {
   CELL_STATUSES,
@@ -34,10 +41,12 @@ import {
   compartmentState,
   formatDuration,
   formatWorkTime,
+  isFinalStage,
   nextStatusOnTap,
   progressOf,
   statusesOf,
   type CellStatus,
+  type CellEvent,
   type CompartmentDetail,
   type Stage,
   type VesselDetail,
@@ -61,7 +70,7 @@ import {
 export default function Vessel() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const vesselId = Number(id);
-  const { token, signOut } = useSession();
+  const { token, user, signOut } = useSession();
   const navigation = useNavigation();
 
   const [vessel, setVessel] = useState<VesselDetail | null>(null);
@@ -76,6 +85,22 @@ export default function Vessel() {
   /* The note and time editor is the exception path, so it stays folded away
      until asked for rather than competing with the stage list. */
   const [editing, setEditing] = useState(false);
+
+  /* The log is fetched only when opened. It is up to 200 rows and a supervisor
+     on a metered connection should not pay for it on every screen load. */
+  const [showLog, setShowLog] = useState(false);
+  const [events, setEvents] = useState<CellEvent[]>([]);
+  const [logLoading, setLogLoading] = useState(false);
+  const [logError, setLogError] = useState<string | null>(null);
+  /* Read inside the queue subscription, which must not resubscribe every time
+     the panel is toggled. */
+  const showLogRef = useRef(false);
+
+  /* The newest event this phone has already accounted for. Notices are raised
+     only for what came after it, and only for what someone else did — a
+     supervisor does not need telling about their own taps. */
+  const seenEventId = useRef<number | null>(null);
+  const [notice, setNotice] = useState<CellEvent | null>(null);
 
   const refreshPending = useCallback(async () => {
     const queue = await readQueue();
@@ -134,6 +159,28 @@ export default function Vessel() {
     if (vessel) navigation.setOptions({ title: vessel.name });
   }, [vessel, navigation]);
 
+  const loadEvents = useCallback(async () => {
+    if (!token || !Number.isInteger(vesselId)) return;
+    setLogLoading(true);
+    setLogError(null);
+    try {
+      setEvents(await getVesselEvents(token, vesselId));
+    } catch (err) {
+      setLogError(
+        err instanceof ApiError && err.isTransient
+          ? "No connection. The log lives on the server, so it needs signal."
+          : "Could not load the activity log.",
+      );
+    } finally {
+      setLogLoading(false);
+    }
+  }, [token, vesselId]);
+
+  useEffect(() => {
+    showLogRef.current = showLog;
+    if (showLog) void loadEvents();
+  }, [showLog, loadEvents]);
+
   /**
    * Follows the queue, and refetches the moment it drains.
    *
@@ -152,10 +199,76 @@ export default function Vessel() {
       const drained = mine.length < pendingCount.current;
       pendingCount.current = mine.length;
       setPending(mine);
-      if (drained) void load();
+      if (drained) {
+        void load();
+        /* The grid is about to show the server's copy; the log beside it
+           would otherwise still be showing the state before the sync. */
+        if (showLogRef.current) void loadEvents();
+      }
     });
     return unsubscribe;
-  }, [vesselId, load]);
+  }, [vesselId, load, loadEvents]);
+
+
+  /**
+   * Watches for changes made somewhere other than this phone.
+   *
+   * The office can mark a stage N/A, correct a time, or leave an instruction
+   * on a hold, and until now the supervisor would only find out by pulling to
+   * refresh. Version is polled because it is a cheap read; the log is only
+   * fetched when that version actually moves.
+   *
+   * Paused while the app is backgrounded — a phone in a pocket for a night
+   * shift should not poll several hundred times.
+   */
+  useEffect(() => {
+    if (!token || !Number.isInteger(vesselId)) return;
+    let cancelled = false;
+    let lastVersion: number | null = null;
+
+    const check = async () => {
+      if (AppState.currentState !== "active") return;
+      try {
+        const { version } = await getVesselVersion(token, vesselId);
+        if (cancelled) return;
+        if (lastVersion !== null && version <= lastVersion) return;
+        const first = lastVersion === null;
+        lastVersion = version;
+
+        const fresh = await getVesselEvents(token, vesselId);
+        if (cancelled) return;
+        setEvents(fresh);
+
+        const newest = fresh[0]?.id ?? 0;
+        /* On the first pass we are only establishing where "now" is; raising
+           a notice for history the supervisor has already seen would be noise
+           every time they open a vessel. */
+        if (first) {
+          seenEventId.current = newest;
+          return;
+        }
+        const since = seenEventId.current ?? 0;
+        const theirs = fresh.filter(
+          (e) => e.id > since && e.userName !== (user?.name ?? ""),
+        );
+        seenEventId.current = newest;
+        if (theirs.length > 0) {
+          setNotice(theirs[0]);
+          void load();
+        }
+      } catch {
+        /* Offline. The sync strip already says so; a second complaint here
+           would be the app crying wolf about something it cannot fix. */
+      }
+    };
+
+    void check();
+    const timer = setInterval(check, 30_000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [token, vesselId, user?.name, load]);
 
   /* What the supervisor is looking at: the server's picture with their own
      un-synced taps laid on top, so nothing they did appears to undo itself. */
@@ -284,6 +397,13 @@ export default function Vessel() {
    * `pending` and `na` clear the times outright, so there is nothing to ask
    * about and prompting would be pure friction. The other two carry a time.
    */
+  /** The cell behind a tap, for the times that bound the one being asked for. */
+  const cellFor = useCallback(
+    (compartmentId: number, stageKey: string) =>
+      compartments.find((c) => c.id === compartmentId)?.cells[stageKey],
+    [compartments],
+  );
+
   const requestStatus = useCallback(
     (
       compartmentId: number,
@@ -306,7 +426,11 @@ export default function Vessel() {
          API refuses these, and a refusal that arrives after the fact reads
          as the app losing their work. */
       let min = timeWindow.min;
-      let max = timeWindow.max;
+      /* Read the clock NOW, not from the memo. `timeWindow` is computed once
+         when the vessel loads, so its "now" ages: open the app at 07:42, tap
+         at 07:52, and the picker clamped 07:52 down to the stale 07:42. The
+         upper bound is always the present moment. */
+      let max = new Date();
       if (status === "done" && counterpart) {
         const startedAt = new Date(counterpart);
         if (startedAt.getTime() > min.getTime()) min = startedAt;
@@ -335,7 +459,7 @@ export default function Vessel() {
         max,
       });
     },
-    [setCell, timeWindow],
+    [setCell, timeWindow.min],
   );
 
   const onRefresh = useCallback(async () => {
@@ -377,6 +501,32 @@ export default function Vessel() {
 
       {/* Navy bar then the sync strip, joined as one block: which vessel,
           and whether the phone is holding anything the server has not got. */}
+      {/* Raised only for a change made somewhere other than this phone. It
+          names the hold and the stage, because "the vessel was updated" is not
+          something a supervisor can act on. */}
+      {notice && (
+        <Pressable
+          onPress={() => {
+            setNotice(null);
+            setShowLog(true);
+          }}
+          style={styles.notice}
+          accessibilityRole="button"
+          accessibilityLabel="New update from the office. Open the activity log."
+        >
+          <Text style={styles.noticeLabel}>NEW UPDATE FROM THE OFFICE</Text>
+          <Text style={styles.noticeText}>
+            {notice.compartmentLabel} · {notice.stageLabel} →{" "}
+            {CELL_STYLE[notice.toStatus].label}
+            {notice.note ? ` — “${notice.note}”` : ""}
+          </Text>
+          <Text style={styles.noticeWho}>
+            {notice.userName} · {formatWorkTime(notice.occurredAt)} · tap to see
+            the log
+          </Text>
+        </Pressable>
+      )}
+
       <View style={styles.headBlock}>
         <VesselHeader
           name={vessel.name}
@@ -437,23 +587,64 @@ export default function Vessel() {
           notes, times and corrections live — the exceptions are worth the
           second tap, the fast path is not. */}
       {expanded === null ? (
-        <TransposedGrid
-          compartments={compartments}
-          stages={vessel.stages}
-          queuedIds={queuedIds}
-          failedIds={failedIds}
-          onTapCell={(compartmentId, stage, current) => {
-            const next = nextStatusOnTap(current);
-            /* Moving to working or done carries a time, so it goes through the
-               ask; moving back to blank is a correction and carries none. */
-            if (next === "pending") void setCell(compartmentId, stage.key, next);
-            else requestStatus(compartmentId, stage.key, stage.label, next);
-          }}
-          onHoldCell={(compartmentId, stage) =>
-            void setCell(compartmentId, stage.key, "na")
-          }
-          onOpenCompartment={(compartmentId) => setExpanded(compartmentId)}
-        />
+        <>
+            <TransposedGrid
+            compartments={compartments}
+            stages={vessel.stages}
+            queuedIds={queuedIds}
+            failedIds={failedIds}
+            onTapCell={(compartmentId, stage, current) => {
+              const next = nextStatusOnTap(
+                current,
+                isFinalStage(stage, vessel.stages),
+              );
+              /* Moving to working or done carries a time, so it goes through the
+                 ask; moving back to blank is a correction and carries none. */
+              if (next === "pending") {
+                void setCell(compartmentId, stage.key, next);
+                return;
+              }
+              const cell = cellFor(compartmentId, stage.key);
+              requestStatus(
+                compartmentId,
+                stage.key,
+                stage.label,
+                next,
+                next === "in_progress" ? cell?.startedAt : cell?.completedAt,
+                /* A finish cannot precede its start: passing the start here is
+                   what stops a supervisor picking a time before the work
+                   began, and narrows the day row to match. */
+                next === "done" ? cell?.startedAt : cell?.completedAt,
+              );
+            }}
+            onHoldCell={(compartmentId, stage) =>
+              void setCell(compartmentId, stage.key, "na")
+            }
+            onOpenCompartment={(compartmentId) => setExpanded(compartmentId)}
+            />
+
+          {/* The audit trail. Folded away by default: it answers "what did the
+              last shift do" and "what time is this actually on record as",
+              which are questions asked occasionally rather than continuously. */}
+          <View style={{ marginTop: space.lg, gap: space.sm }}>
+            <Pressable
+              onPress={() => setShowLog((v) => !v)}
+              style={styles.backRow}
+              accessibilityRole="button"
+            >
+              <Text style={styles.backText}>
+                {showLog ? "Hide activity" : "Activity on this vessel"}
+              </Text>
+            </Pressable>
+            {showLog && (
+              <ActivityLog
+                events={events}
+                loading={logLoading}
+                error={logError}
+              />
+            )}
+          </View>
+        </>
       ) : (
         <View style={{ gap: space.md }}>
           {compartments
@@ -468,11 +659,23 @@ export default function Vessel() {
                     setEditing(false);
                   }}
                   onTapStage={(stage, current) => {
-                    const next = nextStatusOnTap(current);
-                    if (next === "pending")
+                    const next = nextStatusOnTap(
+                      current,
+                      isFinalStage(stage, vessel.stages),
+                    );
+                    if (next === "pending") {
                       void setCell(compartment.id, stage.key, next);
-                    else
-                      requestStatus(compartment.id, stage.key, stage.label, next);
+                      return;
+                    }
+                    const cell = compartment.cells[stage.key];
+                    requestStatus(
+                      compartment.id,
+                      stage.key,
+                      stage.label,
+                      next,
+                      next === "in_progress" ? cell?.startedAt : cell?.completedAt,
+                      next === "done" ? cell?.startedAt : cell?.completedAt,
+                    );
                   }}
                   onHoldStage={(stage) =>
                     void setCell(compartment.id, stage.key, "na")
@@ -865,6 +1068,24 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     marginBottom: space.lg,
   },
+  notice: {
+    backgroundColor: colors.blueWash,
+    borderWidth: 1,
+    borderColor: colors.aqua,
+    borderLeftWidth: 3,
+    paddingHorizontal: space.md,
+    paddingVertical: space.md,
+    marginBottom: space.md,
+    gap: 4,
+  },
+  noticeLabel: {
+    fontSize: 10,
+    fontWeight: "700",
+    letterSpacing: 1.2,
+    color: colors.aquaDark,
+  },
+  noticeText: { fontSize: 15, color: colors.text, lineHeight: 20 },
+  noticeWho: { fontSize: 12, color: colors.muted },
   backRow: { minHeight: TAP, justifyContent: "center", paddingHorizontal: space.xs },
   backText: { fontSize: 15, fontWeight: "600", color: colors.blue },
   compartmentHead: {

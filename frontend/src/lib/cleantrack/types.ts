@@ -151,11 +151,30 @@ export const CELL_STYLE: Record<
   },
 };
 
-/** What a tap moves to. `na` is only ever set deliberately, never by cycling. */
-export function nextStatusOnTap(current: CellStatus): CellStatus {
+/**
+ * What a tap moves to. `na` is only ever set deliberately, never by cycling.
+ *
+ * The vessel's last stage is a readiness check rather than work — a hold has
+ * either passed inspection or it has not, and "Holds Ready, in progress" is
+ * not a state anyone can act on. So the final stage toggles straight to done
+ * and back, and never sits at half a stage in the arithmetic.
+ */
+export function nextStatusOnTap(current: CellStatus, isFinal = false): CellStatus {
+  if (isFinal) return current === "done" ? "pending" : "done";
   if (current === "pending") return "in_progress";
   if (current === "in_progress") return "done";
   return "pending";
+}
+
+/**
+ * The readiness stage: the last one in this vessel's own order.
+ *
+ * Read positionally rather than by key, because stages are per-vessel and an
+ * admin can rename or reorder them — "ready" is not a key that can be relied
+ * on, but "the one at the end" always is.
+ */
+export function isFinalStage(stage: Stage, stages: Stage[]) {
+  return stages.length > 0 && stages[stages.length - 1].key === stage.key;
 }
 
 /* -------------------------------------------------------------------- */

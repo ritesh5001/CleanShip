@@ -85,7 +85,16 @@ function publicView(detail: Awaited<ReturnType<typeof getVesselByShareToken>>) {
       cells: Object.fromEntries(
         Object.entries(c.cells).map(([key, cell]) => [
           key,
-          { status: cell.status, note: cell.note, updatedAt: cell.updatedAt },
+          {
+            status: cell.status,
+            note: cell.note,
+            /* The work times, not just when the row was touched. "Hold 3
+               finished at 04:26" is the answer the customer came for;
+               `updatedAt` would report a later correction as the finish. */
+            startedAt: cell.startedAt,
+            completedAt: cell.completedAt,
+            updatedAt: cell.updatedAt,
+          },
         ]),
       ),
     })),

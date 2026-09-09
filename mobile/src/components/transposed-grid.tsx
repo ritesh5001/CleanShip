@@ -108,6 +108,8 @@ export function TransposedGrid({
                       <Text style={styles.colHeadPct} numberOfLines={1}>
                         {pct}%
                       </Text>
+                      {/* This hold carries an instruction from the office. */}
+                      {c.notes ? <View style={styles.headNoteDot} /> : null}
                     </Pressable>
                   );
                 })}
@@ -116,7 +118,8 @@ export function TransposedGrid({
               {stages.map((stage) => (
                 <View key={stage.key} style={styles.row}>
                   {compartments.map((c) => {
-                    const status = c.cells[stage.key]?.status ?? "pending";
+                    const cell = c.cells[stage.key];
+                    const status = cell?.status ?? "pending";
                     const skin = CELL_STYLE[status];
                     const id = `${c.id}:${stage.key}`;
                     const queued = queuedIds.has(id);
@@ -145,6 +148,15 @@ export function TransposedGrid({
                             repainting it — the status the supervisor recorded is
                             still the truth, it just has not landed. */}
                         {failed && <View style={styles.failedRule} />}
+                        {/* A note is on this cell. Bottom-left so it never
+                            collides with the sync pip, and a corner wedge
+                            rather than an icon because at 58px an icon is a
+                            smudge. Open the hold to read it. */}
+                        {cell?.note ? (
+                          <View
+                            style={[styles.noteFlag, { borderBottomColor: skin.text }]}
+                          />
+                        ) : null}
                       </Pressable>
                     );
                   })}
@@ -320,6 +332,24 @@ const styles = StyleSheet.create({
     height: 7,
     borderRadius: 0,
     backgroundColor: colors.navy,
+  },
+  noteFlag: {
+    position: "absolute",
+    left: 2,
+    bottom: 2,
+    width: 0,
+    height: 0,
+    borderBottomWidth: 8,
+    borderRightWidth: 8,
+    borderRightColor: "transparent",
+  },
+  headNoteDot: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    width: 6,
+    height: 6,
+    backgroundColor: colors.aqua,
   },
   failedRule: {
     position: "absolute",

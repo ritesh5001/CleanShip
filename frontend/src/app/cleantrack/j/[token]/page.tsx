@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { ApiError, getSharedVessel } from "@/lib/api";
 import { LiveRefresh } from "@/components/cleantrack/live-refresh";
 import { VesselPlanView } from "@/components/cleantrack/vessel-plan-view";
+import { ClientProgressTable } from "@/components/cleantrack/client-progress-table";
+import { stageShade } from "@/lib/cleantrack/stage-colors";
 import { compartmentState, statusesOf } from "@/lib/cleantrack/types";
 
 export const dynamic = "force-dynamic";
@@ -69,6 +71,13 @@ export default async function SharedVesselPage({
       </header>
 
       <main className="mx-auto max-w-4xl px-5 py-10">
+        {vessel.clientName && (
+          <p className="m-0 mb-3 text-[15px] text-[#00b0b9]">
+            Prepared for{" "}
+            <strong className="font-semibold text-white">{vessel.clientName}</strong>
+          </p>
+        )}
+
         <p className="m-0 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.14em] text-white/50">
           {[vessel.imo ? `IMO ${vessel.imo}` : null, vessel.port, vessel.berth]
             .filter(Boolean)
@@ -120,6 +129,41 @@ export default async function SharedVesselPage({
             Hold by hold &middot; plan view
           </h2>
           <VesselPlanView compartments={vessel.compartments} stages={vessel.stages} />
+
+          {/* What each colour means. Without this the blocks are decoration. */}
+          <ul className="mt-5 flex list-none flex-wrap gap-x-5 gap-y-2 p-0">
+            {vessel.stages.map((s, i) => (
+              <li key={s.key} className="flex items-center gap-2">
+                <span
+                  aria-hidden="true"
+                  className="h-3 w-3 shrink-0"
+                  style={{ background: stageShade(i).dark }}
+                />
+                <span className="text-[12px] text-white/70">{s.label}</span>
+              </li>
+            ))}
+            <li className="flex items-center gap-2">
+              <span
+                aria-hidden="true"
+                className="h-3 w-3 shrink-0 rounded-full"
+                style={{ background: "#d6a90a" }}
+              />
+              <span className="text-[12px] text-white/70">Work under way</span>
+            </li>
+          </ul>
+        </section>
+
+        <section className="mt-12">
+          <h2 className="m-0 mb-4 font-[family-name:var(--font-body)] text-[11px] font-semibold uppercase tracking-[0.14em] text-white/50">
+            Stage by stage
+          </h2>
+          <ClientProgressTable
+            compartments={vessel.compartments}
+            stages={vessel.stages}
+          />
+          <p className="mt-3 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.1em] text-white/35">
+            Light = under way &middot; solid = finished &middot; times are local, 24-hour
+          </p>
         </section>
 
         {movements.length > 0 && (
@@ -134,9 +178,10 @@ export default async function SharedVesselPage({
                   className="flex gap-4 border-t border-white/[0.09] py-3 text-[15px]"
                 >
                   <span className="shrink-0 pt-[2px] font-[family-name:var(--font-mono)] text-[12px] tabular-nums text-white/45">
-                    {new Date(m.cell!.updatedAt).toLocaleTimeString([], {
+                    {new Date(m.cell!.updatedAt).toLocaleTimeString("en-GB", {
                       hour: "2-digit",
                       minute: "2-digit",
+                      hour12: false,
                     })}
                   </span>
                   <span className="text-white/80">
@@ -161,9 +206,6 @@ export default async function SharedVesselPage({
               Questions on this vessel &mdash; {vessel.clientName} desk.
             </p>
           )}
-          <p className="mt-3 m-0 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.12em] text-white/35">
-            Read-only &middot; private link &middot; no account issued
-          </p>
         </footer>
       </main>
     </div>
