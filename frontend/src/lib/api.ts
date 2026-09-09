@@ -110,7 +110,7 @@ export type ApiSessionUser = {
   sub: number;
   email: string;
   name: string;
-  role: "admin" | "editor" | "supervisor";
+  role: "superadmin" | "admin" | "supervisor";
 };
 
 export function login(email: string, password: string, allow?: string[]) {
@@ -288,7 +288,7 @@ export type ApiUser = {
   id: number;
   email: string;
   name: string;
-  role: "admin" | "editor" | "supervisor";
+  role: "superadmin" | "admin" | "supervisor";
   phone: string | null;
   active: number;
   lastLoginAt: string | null;

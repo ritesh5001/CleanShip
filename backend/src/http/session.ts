@@ -5,6 +5,7 @@ import { users } from "../db/schema.js";
 import { verifySession } from "../auth/tokens.js";
 import { SESSION_COOKIE } from "../auth/tokens.js";
 import type { Role, SessionUser } from "../auth/roles.js";
+import { atLeast } from "../auth/roles.js";
 import { ApiError } from "./errors.js";
 
 declare global {
@@ -82,7 +83,10 @@ export function requireRole(...roles: Role[]) {
     session.role = row.role;
     session.name = row.name;
 
-    if (roles.length && !roles.includes(session.role)) {
+    /* Hierarchical, not an exact-match allowlist: `requireRole("admin")`
+       admits a superadmin too. An exact match would have left the highest
+       role unable to open a vessel. */
+    if (roles.length && !roles.some((r) => atLeast(session.role, r))) {
       return next(ApiError.forbidden());
     }
     next();

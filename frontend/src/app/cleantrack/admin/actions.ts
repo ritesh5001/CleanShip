@@ -227,10 +227,10 @@ export async function createClientAction(
 const userSchema = z.object({
   name: z.string().min(2, "Enter a name.").max(120),
   email: z.string().email("Enter a valid email."),
-  password: z.string().min(10, "Password must be at least 10 characters."),
+  password: z.string().min(6, "Password must be at least 6 characters."),
   /* No "client": customers have no account. They watch a vessel through the
      share link and its IMO number. */
-  role: z.enum(["admin", "editor", "supervisor"]),
+  role: z.enum(["superadmin", "admin", "supervisor"]),
   phone: z.string().max(40).optional(),
 });
 

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ApiError, getSharedVessel } from "@/lib/api";
@@ -5,7 +6,11 @@ import { LiveRefresh } from "@/components/cleantrack/live-refresh";
 import { VesselPlanView } from "@/components/cleantrack/vessel-plan-view";
 import { ClientProgressTable } from "@/components/cleantrack/client-progress-table";
 import { stageShade } from "@/lib/cleantrack/stage-colors";
-import { compartmentState, statusesOf } from "@/lib/cleantrack/types";
+import {
+  compartmentNoun,
+  compartmentState,
+  statusesOf,
+} from "@/lib/cleantrack/types";
 
 export const dynamic = "force-dynamic";
 
@@ -63,8 +68,19 @@ export default async function SharedVesselPage({
     <div className="min-h-dvh bg-[#06203a] text-[#dce4eb]">
       <header className="border-b border-white/[0.12]">
         <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-5">
-          <span className="font-[family-name:var(--font-display)] text-[15px] font-bold uppercase tracking-[0.08em] text-white">
-            CleanShip
+          <span className="flex items-center gap-2.5">
+            {/* White version: the brand blue is far too dark to read on navy. */}
+            <Image
+              src="/brand/cleanship-mark-white.png"
+              alt=""
+              width={26}
+              height={26}
+              className="block"
+              priority
+            />
+            <span className="font-[family-name:var(--font-display)] text-[15px] font-bold uppercase tracking-[0.08em] text-white">
+              CleanShip
+            </span>
           </span>
           <LiveRefresh dark />
         </div>
@@ -97,8 +113,8 @@ export default async function SharedVesselPage({
 
         <p className="mt-4 max-w-[60ch] text-[17px] leading-[1.55] text-white/75">
           {remaining > 0
-            ? `${remaining} of ${total} compartments still in cleaning.`
-            : `All ${total} compartments have passed inspection.`}
+            ? `${remaining} of ${total} ${compartmentNoun(vessel.type, true).toLowerCase()} still in cleaning.`
+            : `All ${total} ${compartmentNoun(vessel.type, true).toLowerCase()} have passed inspection.`}
         </p>
 
         {/* Progress. One number, stated plainly — and no projected ready date,
@@ -109,7 +125,8 @@ export default async function SharedVesselPage({
               {pct}%
             </span>
             <span className="pb-1 font-[family-name:var(--font-mono)] text-[12px] uppercase tracking-[0.1em] text-white/45">
-              {complete} of {total} holds passed inspection
+              {complete} of {total}{" "}
+              {compartmentNoun(vessel.type, true).toLowerCase()} passed inspection
             </span>
           </div>
           <div
@@ -126,9 +143,14 @@ export default async function SharedVesselPage({
         {/* The plan view: a schematic hull, not a rendered one. */}
         <section className="mt-12">
           <h2 className="m-0 mb-5 font-[family-name:var(--font-body)] text-[11px] font-semibold uppercase tracking-[0.14em] text-white/50">
-            Hold by hold &middot; plan view
+            {compartmentNoun(vessel.type)} by {compartmentNoun(vessel.type).toLowerCase()}{" "}
+            &middot; plan view
           </h2>
-          <VesselPlanView compartments={vessel.compartments} stages={vessel.stages} />
+          <VesselPlanView
+            compartments={vessel.compartments}
+            stages={vessel.stages}
+            vesselType={vessel.type}
+          />
 
           {/* What each colour means. Without this the blocks are decoration. */}
           <ul className="mt-5 flex list-none flex-wrap gap-x-5 gap-y-2 p-0">
@@ -160,6 +182,7 @@ export default async function SharedVesselPage({
           <ClientProgressTable
             compartments={vessel.compartments}
             stages={vessel.stages}
+            vesselType={vessel.type}
           />
           <p className="mt-3 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.1em] text-white/35">
             Light = under way &middot; solid = finished &middot; times are local, 24-hour

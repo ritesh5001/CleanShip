@@ -40,7 +40,7 @@ export function NewUserForm() {
             className={inputClass}
           >
             <option value="supervisor">Supervisor — updates jobs on site</option>
-            <option value="editor">Editor — enquiry inbox only</option>
+            <option value="superadmin">Superadmin — also manages people</option>
             <option value="admin">Admin — everything</option>
           </select>
         </Field>
@@ -53,7 +53,7 @@ export function NewUserForm() {
           label="Temporary password"
           hint="At least 10 characters. Send it to them privately — there is no reset email yet."
         >
-          <input name="password" type="text" required minLength={10} className={inputClass} />
+          <input name="password" type="text" required minLength={6} className={inputClass} />
         </Field>
 
         <Submit />

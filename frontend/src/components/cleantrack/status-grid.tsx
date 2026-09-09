@@ -314,8 +314,8 @@ export function StatusGrid({
               Cleaning grid
             </h2>
             <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#8a9aa8]">
-              {comps.length} compartments &times; {stages.length} stages &middot;{" "}
-              {comps.length * stages.length} cells
+              {comps.length} {compartmentNoun(vesselType, true).toLowerCase()} &times;{" "}
+              {stages.length} stages &middot; {comps.length * stages.length} cells
             </span>
           </div>
           <div className="flex items-center gap-3">

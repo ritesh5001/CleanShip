@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   AppState,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -487,8 +489,20 @@ export default function Vessel() {
 
 
   return (
+    /* The note fields sit well down the page, and without this the keyboard
+       covers the very field being typed into. `padding` on iOS and `height` on
+       Android are the two that actually resize the scroll area rather than
+       sliding the whole screen out of view. `automaticallyAdjustKeyboardInsets`
+       keeps the focused input above the keyboard as it opens. */
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
     <ScrollView
       contentContainerStyle={styles.scroll}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
+      automaticallyAdjustKeyboardInsets
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -708,6 +722,7 @@ export default function Vessel() {
         </View>
       )}
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

@@ -1,4 +1,10 @@
-import { compartmentState, type CellStatus, type Stage } from "@/lib/cleantrack/types";
+import {
+  compartmentNoun,
+  compartmentState,
+  type CellStatus,
+  type Stage,
+  type VesselType,
+} from "@/lib/cleantrack/types";
 import { COMPLETE_GREEN, NA_GREY, stageShade } from "@/lib/cleantrack/stage-colors";
 
 /**
@@ -25,6 +31,7 @@ type Cell = {
 type Props = {
   compartments: { id: number; label: string; cells: Record<string, Cell> }[];
   stages: Stage[];
+  vesselType: VesselType;
 };
 
 const WORD: Record<CellStatus, string> = {
@@ -34,18 +41,21 @@ const WORD: Record<CellStatus, string> = {
   na: "N/A",
 };
 
-export function ClientProgressTable({ compartments, stages }: Props) {
+export function ClientProgressTable({ compartments, stages, vesselType }: Props) {
+  const noun = compartmentNoun(vesselType);
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[640px] border-collapse">
-        <caption className="sr-only">Cleaning progress by compartment and stage</caption>
+        <caption className="sr-only">
+          Cleaning progress by {noun.toLowerCase()} and stage
+        </caption>
         <thead>
           <tr>
             <th
               scope="col"
               className="border-b border-white/15 px-3 py-2 text-left font-mono text-[10px] uppercase tracking-[0.12em] text-white/45"
             >
-              Hold
+              {noun}
             </th>
             {stages.map((s, i) => {
               const shade = stageShade(i);

@@ -19,7 +19,7 @@ import { SESSION_COOKIE } from "./session-cookie";
  * ⚠️ SESSION_SECRET must be byte-identical on Vercel and on Render.
  */
 
-export type Role = "admin" | "editor" | "supervisor";
+export type Role = "superadmin" | "admin" | "supervisor";
 
 export type Session = {
   sub: number;
@@ -28,7 +28,7 @@ export type Session = {
   role: Role;
 };
 
-const ROLES: Role[] = ["admin", "editor", "supervisor"];
+const ROLES: Role[] = ["superadmin", "admin", "supervisor"];
 
 function secret() {
   const value = process.env.SESSION_SECRET;
@@ -43,7 +43,6 @@ function secret() {
 /** Where a role lands after signing in. Mirrors the API's own mapping. */
 export function landingFor(role: Role) {
   if (role === "supervisor") return "/cleantrack/app";
-  if (role === "editor") return "/admin";
   return "/cleantrack/admin";
 }
 

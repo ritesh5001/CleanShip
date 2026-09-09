@@ -41,7 +41,7 @@ const schema = z.object({
 
   /** Seed credentials for the first admin. Only read by `npm run seed`. */
   SEED_ADMIN_EMAIL: z.string().email().optional(),
-  SEED_ADMIN_PASSWORD: z.string().min(8).optional(),
+  SEED_ADMIN_PASSWORD: z.string().min(6).optional(),
   SEED_ADMIN_NAME: z.string().optional(),
 });
 

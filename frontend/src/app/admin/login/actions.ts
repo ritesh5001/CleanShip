@@ -6,12 +6,12 @@ import { attemptLogin, type LoginState } from "@/lib/login";
 
 export type { LoginState };
 
-/** The office door. Admins and editors only. */
+/** The office door. Office staff only — admin and above. */
 export async function adminLogin(
   _prev: LoginState,
   formData: FormData,
 ): Promise<LoginState> {
-  const result = await attemptLogin(formData, ["admin", "editor"]);
+  const result = await attemptLogin(formData, ["admin", "superadmin"]);
   if (!result.ok) return { error: result.error };
   redirect(landingFor(result.role));
 }

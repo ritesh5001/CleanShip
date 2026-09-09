@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import type { Session } from "@/lib/session";
@@ -21,10 +22,14 @@ const NAV: Record<Session["role"], { href: string; label: string }[]> = {
     { href: "/cleantrack/admin/users", label: "Users" },
     { href: "/admin", label: "Enquiries" },
   ],
-  /* An editor works the enquiry inbox and has no CleanTrack surface; they can
-     reach this shell only by URL, so it points them back rather than showing
-     an empty nav. */
-  editor: [{ href: "/admin", label: "Enquiries" }],
+  /* Same nav as an admin, plus nothing: the extra a superadmin has is the
+     right to manage people, and Users is already on the list. */
+  superadmin: [
+    { href: "/cleantrack/admin", label: "Vessels" },
+    { href: "/cleantrack/admin/clients", label: "Clients" },
+    { href: "/cleantrack/admin/users", label: "Users" },
+    { href: "/admin", label: "Enquiries" },
+  ],
   supervisor: [{ href: "/cleantrack/app", label: "My vessels" }],
 };
 
@@ -51,6 +56,14 @@ export function AppShell({
             href="/cleantrack"
             className="flex shrink-0 items-center gap-3 self-center"
           >
+            <Image
+              src="/brand/cleanship-mark-white.png"
+              alt=""
+              width={26}
+              height={26}
+              className="block"
+              priority
+            />
             <span className="font-[family-name:var(--font-display)] text-[17px] font-bold uppercase tracking-[0.06em] text-white">
               CleanShip
             </span>

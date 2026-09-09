@@ -41,8 +41,8 @@ async function main() {
     return;
   }
 
-  if (supplied && supplied.length < 8) {
-    console.error("Use at least 8 characters.");
+  if (supplied && supplied.length < 6) {
+    console.error("Use at least 6 characters.");
     process.exitCode = 1;
     return;
   }

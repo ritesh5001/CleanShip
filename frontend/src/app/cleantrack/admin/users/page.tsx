@@ -12,7 +12,7 @@ export const metadata = { title: "People" };
 const ROLE_STYLE: Record<string, string> = {
   admin: "bg-blue-100 text-blue-800 border-blue-300",
   supervisor: "bg-amber-100 text-amber-800 border-amber-300",
-  editor: "bg-slate-100 text-slate-700 border-slate-300",
+  superadmin: "bg-[#dceaf6] text-[#0e3d6b] border-[#4a9bd8]",
 };
 
 export default async function UsersPage() {
@@ -41,7 +41,7 @@ export default async function UsersPage() {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-semibold text-slate-900">{u.name}</p>
-                    <span className={`rounded-none border px-2 py-0.5 text-[11px] font-semibold capitalize ${ROLE_STYLE[u.role] ?? ROLE_STYLE.editor}`}>
+                    <span className={`rounded-none border px-2 py-0.5 text-[11px] font-semibold capitalize ${ROLE_STYLE[u.role] ?? ROLE_STYLE.supervisor}`}>
                       {u.role}
                     </span>
                     {u.active === 0 && (

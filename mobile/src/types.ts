@@ -9,7 +9,7 @@
  * and is never hardcoded here.
  */
 
-export type Role = "admin" | "editor" | "supervisor";
+export type Role = "superadmin" | "admin" | "supervisor";
 
 export type SessionUser = {
   sub: number;

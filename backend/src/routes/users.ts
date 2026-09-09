@@ -24,7 +24,7 @@ userRoutes.get("/supervisors", requireRole("admin"), async (_req, res) => {
   res.json({ supervisors: await listSupervisors() });
 });
 
-userRoutes.use(requireRole("admin"));
+userRoutes.use(requireRole("superadmin"));
 
 userRoutes.get("/", async (req, res) => {
   const role = typeof req.query.role === "string" ? req.query.role : undefined;
@@ -35,9 +35,9 @@ userRoutes.get("/", async (req, res) => {
 const createSchema = z.object({
   email: z.string().email(),
   name: z.string().min(1, "Enter a name."),
-  role: z.enum(["admin", "editor", "supervisor"]),
+  role: z.enum(["superadmin", "admin", "supervisor"]),
   /** Omitted means "generate one and show it to me once". */
-  password: z.string().min(8, "Use at least 8 characters.").optional(),
+  password: z.string().min(6, "Use at least 6 characters.").optional(),
   phone: z.string().max(40).nullish(),
 });
 
@@ -55,10 +55,10 @@ userRoutes.post("/", async (req, res) => {
 
 const updateSchema = z.object({
   name: z.string().min(1).optional(),
-  role: z.enum(["admin", "editor", "supervisor"]).optional(),
+  role: z.enum(["superadmin", "admin", "supervisor"]).optional(),
   phone: z.string().max(40).nullish(),
   active: z.boolean().optional(),
-  password: z.string().min(8).optional(),
+  password: z.string().min(6).optional(),
 });
 
 userRoutes.patch("/:id", async (req, res) => {

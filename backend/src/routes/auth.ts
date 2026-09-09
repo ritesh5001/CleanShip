@@ -13,7 +13,7 @@ const loginSchema = z.object({
   email: z.string().email("Enter a valid email address."),
   password: z.string().min(1, "Enter your password."),
   /**
-   * Which door they knocked on. The office login sends ["admin","editor"];
+   * Which door they knocked on. The office login sends ["admin","superadmin"];
    * the crew login sends ["supervisor"]. Omitted means any role.
    */
   allow: z.array(z.string()).optional(),

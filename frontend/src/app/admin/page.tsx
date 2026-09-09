@@ -28,7 +28,7 @@ const STATUS_STYLE: Record<string, string> = {
  * the browser.
  */
 export default async function AdminInboxPage() {
-  const session = await requireSession("admin", "editor");
+  const session = await requireSession("admin", "superadmin");
 
   let rows: Awaited<ReturnType<typeof listEnquiries>>["enquiries"];
   let counts: Record<string, number>;

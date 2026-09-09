@@ -84,7 +84,7 @@ enquiryRoutes.post("/", async (req, res) => {
 /* The inbox                                                            */
 /* -------------------------------------------------------------------- */
 
-enquiryRoutes.get("/", requireRole("admin", "editor"), async (req, res) => {
+enquiryRoutes.get("/", requireRole("admin", "superadmin"), async (req, res) => {
   const status = typeof req.query.status === "string" ? req.query.status : undefined;
   const [enquiries, counts] = await Promise.all([
     listEnquiries(isEnquiryStatus(status) ? status : undefined),
@@ -93,7 +93,7 @@ enquiryRoutes.get("/", requireRole("admin", "editor"), async (req, res) => {
   res.json({ enquiries, counts, statuses: ENQUIRY_STATUSES });
 });
 
-enquiryRoutes.patch("/:id", requireRole("admin", "editor"), async (req, res) => {
+enquiryRoutes.patch("/:id", requireRole("admin", "superadmin"), async (req, res) => {
   const id = parseId(req.params.id, "enquiry id");
   const body = parseBody(
     z.object({ status: z.enum(ENQUIRY_STATUSES) }),

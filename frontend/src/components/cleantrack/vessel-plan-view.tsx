@@ -1,8 +1,10 @@
 import {
+  compartmentNoun,
   compartmentState,
   progressOf,
   type CellStatus,
   type Stage,
+  type VesselType,
 } from "@/lib/cleantrack/types";
 import {
   COMPLETE_GREEN,
@@ -40,6 +42,7 @@ type PlanCompartment = {
 type Props = {
   compartments: PlanCompartment[];
   stages: Stage[];
+  vesselType: VesselType;
   tone?: "dark" | "light";
   selectedId?: number | null;
   onSelect?: (id: number) => void;
@@ -72,6 +75,7 @@ const GROUND = {
 export function VesselPlanView({
   compartments,
   stages,
+  vesselType,
   tone = "dark",
   selectedId = null,
   onSelect,
@@ -122,7 +126,7 @@ export function VesselPlanView({
         <svg
           viewBox={`0 0 ${w} ${h}`}
           role="img"
-          aria-label={`Plan view of ${n} compartments, numbered from the bow`}
+          aria-label={`Plan view of ${n} ${compartmentNoun(vesselType, true).toLowerCase()}, numbered from the bow`}
           style={{ minWidth: Math.min(w, 640), width: "100%", height: "auto", display: "block" }}
         >
           <path d={hull} fill={g.hull} stroke={g.edge} strokeWidth="2" />

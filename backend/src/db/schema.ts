@@ -32,14 +32,14 @@ import type { Stage } from "../domain/stages.js";
  * Roles. All three are staff — there is no customer login.
  *
  *   admin       everything: vessels, users, clients, the enquiry inbox
- *   editor      the enquiry inbox only
+ *   superadmin  everything, and the only role that manages people
  *   supervisor  the vessels they are assigned to, and nothing else
  *
  * Customers deliberately have no account. They watch a vessel through a share
  * link plus its IMO number: nothing to issue, nothing to reset, and nobody
  * chasing the office for a password at 02:00 because a vessel sailed.
  */
-export const userRole = pgEnum("user_role", ["admin", "editor", "supervisor"]);
+export const userRole = pgEnum("user_role", ["superadmin", "admin", "supervisor"]);
 
 export const users = pgTable(
   "users",
