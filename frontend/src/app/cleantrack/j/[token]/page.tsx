@@ -88,13 +88,12 @@ export default async function SharedVesselPage({
 
       <main className="mx-auto max-w-4xl px-5 py-10">
         {vessel.clientName && (
-          <p className="m-0 mb-3 text-[15px] text-[#00b0b9]">
-            Prepared for{" "}
-            <strong className="font-semibold text-white">{vessel.clientName}</strong>
+          <p className="m-0 mb-4 font-[family-name:var(--font-display)] text-[clamp(22px,3.4vw,30px)] font-bold uppercase leading-none tracking-[0.03em] text-[#00b0b9]">
+            {vessel.clientName}
           </p>
         )}
 
-        <p className="m-0 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.14em] text-white/50">
+        <p className="m-0 font-[family-name:var(--font-mono)] text-[13px] uppercase tracking-[0.14em] text-white/70">
           {[vessel.imo ? `IMO ${vessel.imo}` : null, vessel.port, vessel.berth]
             .filter(Boolean)
             .join(" · ")}
@@ -111,10 +110,10 @@ export default async function SharedVesselPage({
           &middot; Updated live
         </p>
 
-        <p className="mt-4 max-w-[60ch] text-[17px] leading-[1.55] text-white/75">
+        <p className="mt-4 max-w-[60ch] text-[18px] leading-[1.55] text-white/90">
           {remaining > 0
             ? `${remaining} of ${total} ${compartmentNoun(vessel.type, true).toLowerCase()} still in cleaning.`
-            : `All ${total} ${compartmentNoun(vessel.type, true).toLowerCase()} have passed inspection.`}
+            : `All ${total} ${compartmentNoun(vessel.type, true).toLowerCase()} are done.`}
         </p>
 
         {/* Progress. One number, stated plainly — and no projected ready date,
@@ -124,9 +123,9 @@ export default async function SharedVesselPage({
             <span className="font-[family-name:var(--font-display)] text-[44px] font-bold leading-none tabular-nums text-[#00b0b9]">
               {pct}%
             </span>
-            <span className="pb-1 font-[family-name:var(--font-mono)] text-[12px] uppercase tracking-[0.1em] text-white/45">
+            <span className="pb-1 font-[family-name:var(--font-mono)] text-[13px] uppercase tracking-[0.1em] text-white/70">
               {complete} of {total}{" "}
-              {compartmentNoun(vessel.type, true).toLowerCase()} passed inspection
+              {compartmentNoun(vessel.type, true).toLowerCase()} are done
             </span>
           </div>
           <div
@@ -142,7 +141,7 @@ export default async function SharedVesselPage({
 
         {/* The plan view: a schematic hull, not a rendered one. */}
         <section className="mt-12">
-          <h2 className="m-0 mb-5 font-[family-name:var(--font-body)] text-[11px] font-semibold uppercase tracking-[0.14em] text-white/50">
+          <h2 className="m-0 mb-5 font-[family-name:var(--font-body)] text-[13px] font-semibold uppercase tracking-[0.14em] text-white/75">
             {compartmentNoun(vessel.type)} by {compartmentNoun(vessel.type).toLowerCase()}{" "}
             &middot; plan view
           </h2>
@@ -161,7 +160,7 @@ export default async function SharedVesselPage({
                   className="h-3 w-3 shrink-0"
                   style={{ background: stageShade(i).dark }}
                 />
-                <span className="text-[12px] text-white/70">{s.label}</span>
+                <span className="text-[14px] text-white/85">{s.label}</span>
               </li>
             ))}
             <li className="flex items-center gap-2">
@@ -170,13 +169,13 @@ export default async function SharedVesselPage({
                 className="h-3 w-3 shrink-0 rounded-full"
                 style={{ background: "#d6a90a" }}
               />
-              <span className="text-[12px] text-white/70">Work under way</span>
+              <span className="text-[14px] text-white/85">In progress</span>
             </li>
           </ul>
         </section>
 
         <section className="mt-12">
-          <h2 className="m-0 mb-4 font-[family-name:var(--font-body)] text-[11px] font-semibold uppercase tracking-[0.14em] text-white/50">
+          <h2 className="m-0 mb-4 font-[family-name:var(--font-body)] text-[13px] font-semibold uppercase tracking-[0.14em] text-white/75">
             Stage by stage
           </h2>
           <ClientProgressTable
@@ -184,14 +183,14 @@ export default async function SharedVesselPage({
             stages={vessel.stages}
             vesselType={vessel.type}
           />
-          <p className="mt-3 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.1em] text-white/35">
+          <p className="mt-3 font-[family-name:var(--font-mono)] text-[12px] uppercase tracking-[0.1em] text-white/60">
             Light = under way &middot; solid = finished &middot; times are local, 24-hour
           </p>
         </section>
 
         {movements.length > 0 && (
           <section className="mt-12">
-            <h2 className="m-0 mb-4 font-[family-name:var(--font-body)] text-[11px] font-semibold uppercase tracking-[0.14em] text-white/50">
+            <h2 className="m-0 mb-4 font-[family-name:var(--font-body)] text-[13px] font-semibold uppercase tracking-[0.14em] text-white/75">
               Last movements
             </h2>
             <ul className="m-0 list-none space-y-0 p-0">
@@ -200,16 +199,16 @@ export default async function SharedVesselPage({
                   key={`${m.compartment}-${m.stage.key}-${i}`}
                   className="flex gap-4 border-t border-white/[0.09] py-3 text-[15px]"
                 >
-                  <span className="shrink-0 pt-[2px] font-[family-name:var(--font-mono)] text-[12px] tabular-nums text-white/45">
+                  <span className="shrink-0 pt-[2px] font-[family-name:var(--font-mono)] text-[12px] tabular-nums text-white/70">
                     {new Date(m.cell!.updatedAt).toLocaleTimeString("en-GB", {
                       hour: "2-digit",
                       minute: "2-digit",
                       hour12: false,
                     })}
                   </span>
-                  <span className="text-white/80">
+                  <span className="text-[16px] text-white/90">
                     {m.compartment} &middot; {m.stage.label}{" "}
-                    <span className="text-white/50">
+                    <span className="text-white/65">
                       {m.cell!.status === "done"
                         ? "finished"
                         : m.cell!.status === "na"
@@ -225,7 +224,7 @@ export default async function SharedVesselPage({
 
         <footer className="mt-14 border-t border-white/[0.12] pt-6">
           {vessel.clientName && (
-            <p className="m-0 text-[14px] text-white/60">
+            <p className="m-0 text-[15px] text-white/80">
               Questions on this vessel &mdash; {vessel.clientName} desk.
             </p>
           )}

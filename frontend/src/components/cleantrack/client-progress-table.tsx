@@ -36,7 +36,7 @@ type Props = {
 
 const WORD: Record<CellStatus, string> = {
   pending: "—",
-  in_progress: "Working",
+  in_progress: "In progress",
   done: "Done",
   na: "N/A",
 };
@@ -53,21 +53,21 @@ export function ClientProgressTable({ compartments, stages, vesselType }: Props)
           <tr>
             <th
               scope="col"
-              className="border-b border-white/15 px-3 py-2 text-left font-mono text-[10px] uppercase tracking-[0.12em] text-white/45"
+              className="border-b border-white/25 px-3 py-2.5 text-left font-mono text-[12px] uppercase tracking-[0.12em] text-white/70"
             >
               {noun}
             </th>
             {stages.map((s, i) => {
               const shade = stageShade(i);
               return (
-                <th key={s.key} scope="col" className="border-b border-white/15 px-2 py-2">
+                <th key={s.key} scope="col" className="border-b border-white/25 px-2 py-2.5">
                   <span className="flex flex-col items-center gap-1">
                     <span
                       aria-hidden="true"
                       className="h-[3px] w-full"
                       style={{ background: shade.dark }}
                     />
-                    <span className="text-[11px] font-semibold leading-tight text-white/85">
+                    <span className="text-[13px] font-semibold leading-tight text-white">
                       {s.short}
                     </span>
                   </span>
@@ -89,11 +89,11 @@ export function ClientProgressTable({ compartments, stages, vesselType }: Props)
             <tr key={c.id}>
               <th
                 scope="row"
-                className="whitespace-nowrap border-b border-white/[0.08] px-3 py-2 text-left text-[12px] font-semibold text-white/85"
+                className="whitespace-nowrap border-b border-white/[0.14] px-3 py-2.5 text-left text-[15px] font-semibold text-white"
               >
                 {/* Numbered from the bow, matching the drawing above. */}
                 {ci + 1}
-                <span className="ml-1 font-normal text-white/40">{c.label}</span>
+                <span className="ml-1.5 text-[12px] font-normal text-white/60">{c.label}</span>
               </th>
 
               {stages.map((s, si) => {
@@ -117,27 +117,27 @@ export function ClientProgressTable({ compartments, stages, vesselType }: Props)
                       ? shade.ink
                       : status === "na"
                         ? "#ffffff"
-                        : "rgba(255,255,255,0.35)";
+                        : "rgba(255,255,255,0.62)";
 
                 return (
                   <td
                     key={s.key}
-                    className="border-b border-white/[0.08] px-1 py-1 text-center align-middle"
+                    className="border-b border-white/[0.14] px-1 py-1 text-center align-middle"
                   >
                     <span
-                      className="flex min-h-[42px] flex-col items-center justify-center gap-[2px] px-1"
+                      className="flex min-h-[50px] flex-col items-center justify-center gap-[3px] px-1.5"
                       style={{
                         background: bg,
                         color: fg,
                         border:
-                          status === "pending" ? "1px solid rgba(255,255,255,0.12)" : "none",
+                          status === "pending" ? "1px solid rgba(255,255,255,0.22)" : "none",
                       }}
                     >
-                      <span className="text-[11px] font-semibold leading-none">
+                      <span className="text-[12px] font-semibold leading-none">
                         {WORD[status]}
                       </span>
                       {when && (
-                        <span className="font-mono text-[9px] leading-none tabular-nums opacity-85">
+                        <span className="font-mono text-[11px] leading-none tabular-nums opacity-90">
                           {stamp(when)}
                         </span>
                       )}

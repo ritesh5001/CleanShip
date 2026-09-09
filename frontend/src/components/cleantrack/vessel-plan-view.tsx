@@ -129,6 +129,25 @@ export function VesselPlanView({
           aria-label={`Plan view of ${n} ${compartmentNoun(vesselType, true).toLowerCase()}, numbered from the bow`}
           style={{ minWidth: Math.min(w, 640), width: "100%", height: "auto", display: "block" }}
         >
+          <style>{`
+            @keyframes ct-pulse {
+              0%   { transform: scale(1);   opacity: 0.75; }
+              70%  { transform: scale(2.6); opacity: 0; }
+              100% { transform: scale(2.6); opacity: 0; }
+            }
+            .ct-pulse {
+              transform-box: fill-box;
+              transform-origin: center;
+              animation: ct-pulse 1.8s ease-out infinite;
+            }
+            /* A blinking marker is exactly what someone with vestibular or
+               attention sensitivities asks the OS to stop; the dot stays, the
+               movement goes. */
+            @media (prefers-reduced-motion: reduce) {
+              .ct-pulse { animation: none; opacity: 0.35; }
+            }
+          `}</style>
+
           <path d={hull} fill={g.hull} stroke={g.edge} strokeWidth="2" />
 
           {/* Centreline — a real drawing convention, and it reads as one. */}
@@ -175,8 +194,16 @@ export function VesselPlanView({
                   width={holdW}
                   height={holdH}
                   fill={done ? COMPLETE_GREEN.light : g.empty}
-                  stroke={selected ? g.ring : done ? COMPLETE_GREEN.dark : g.emptyEdge}
-                  strokeWidth={selected ? 3 : 1.5}
+                  stroke={
+                    selected
+                      ? g.ring
+                      : done
+                        ? COMPLETE_GREEN.dark
+                        : working
+                          ? "#d6a90a"
+                          : g.emptyEdge
+                  }
+                  strokeWidth={selected || working ? 3 : 1.5}
                 />
 
                 {/* One block per stage. Light = under way, dark = finished. */}
@@ -236,9 +263,28 @@ export function VesselPlanView({
                     hold does not — it needs no attention, and a dot on every
                     hold would say nothing. */}
                 {working && (
-                  <circle cx={x + holdW / 2} cy={top - 12} r="5" fill="#d6a90a">
-                    <title>Work under way</title>
-                  </circle>
+                  <g>
+                    {/* A halo that pulses outward, then the dot itself. The
+                        movement is what carries across a room; the dot alone
+                        was easy to miss against six other holds. */}
+                    <circle
+                      className="ct-pulse"
+                      cx={x + holdW / 2}
+                      cy={top - 13}
+                      r="6"
+                      fill="#d6a90a"
+                    />
+                    <circle
+                      cx={x + holdW / 2}
+                      cy={top - 13}
+                      r="6"
+                      fill="#d6a90a"
+                      stroke="#fdf3c4"
+                      strokeWidth="2"
+                    >
+                      <title>Work under way</title>
+                    </circle>
+                  </g>
                 )}
               </g>
             );
