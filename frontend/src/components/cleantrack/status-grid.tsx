@@ -17,6 +17,11 @@ import {
   type Stage,
   type VesselType,
 } from "@/lib/cleantrack/types";
+import {
+  COMPLETE_GREEN,
+  NA_GREY,
+  stageShade,
+} from "@/lib/cleantrack/stage-colors";
 
 /**
  * The status sheet, on a phone.
@@ -449,10 +454,10 @@ function Grid({
                 {compartmentNoun(vesselType)}
               </span>
             </th>
-            {stages.map((s) => (
+            {stages.map((s, si) => (
               <th key={s.key} scope="col" className="px-2 py-3 text-center align-bottom">
                 {readOnly ? (
-                  <StageHead label={s.label} short={s.short} />
+                  <StageHead label={s.label} short={s.short} colour={stageShade(si).dark} />
                 ) : (
                   <button
                     type="button"
@@ -460,7 +465,7 @@ function Grid({
                     title={`Mark ${s.label} done on every ${compartmentNoun(vesselType).toLowerCase()}`}
                     className="w-full cursor-pointer"
                   >
-                    <StageHead label={s.label} short={s.short} />
+                    <StageHead label={s.label} short={s.short} colour={stageShade(si).dark} />
                   </button>
                 )}
               </th>
@@ -479,6 +484,7 @@ function Grid({
             const statuses = stages.map((s) => c.cells[s.key]?.status ?? "pending");
             const p = progressOf(statuses);
             const state = compartmentState(statuses);
+            const allDone = state === "complete";
             return (
               <tr key={c.id}>
                 <th scope="row" className="border border-[#dce4eb] p-0 text-left">
@@ -505,10 +511,14 @@ function Grid({
                   </button>
                 </th>
 
-                {stages.map((s) => {
+                {stages.map((s, si) => {
                   const cell = c.cells[s.key] ?? { status: "pending" as CellStatus, note: null };
                   const style = CELL_STYLE[cell.status];
                   const when = cell.completedAt ?? cell.startedAt ?? null;
+                  /* Same language as the customer's table: the stage's own
+                     colour, light while under way and solid once finished,
+                     dropping to one green when the whole hold is ready. */
+                  const shade = allDone ? COMPLETE_GREEN : stageShade(si);
                   const label = `${c.label}, ${s.label}: ${style.label}${
                     cell.note ? ` — ${cell.note}` : ""
                   }`;
@@ -532,20 +542,37 @@ function Grid({
                           readOnly ? "cursor-default" : "cursor-pointer hover:brightness-95"
                         }`}
                         style={{
-                          background: style.fill,
-                          border: `1px solid ${style.stroke}`,
-                          color: CELL_INK[cell.status],
+                          background:
+                            cell.status === "done"
+                              ? shade.dark
+                              : cell.status === "in_progress"
+                                ? shade.light
+                                : cell.status === "na"
+                                  ? NA_GREY.dark
+                                  : "#ffffff",
+                          border: `1px solid ${
+                            cell.status === "pending" ? "#c8d2dc" : shade.dark
+                          }`,
+                          color:
+                            cell.status === "done"
+                              ? "#ffffff"
+                              : cell.status === "in_progress"
+                                ? shade.ink
+                                : cell.status === "na"
+                                  ? "#ffffff"
+                                  : "#6b7c8b",
                         }}
                       >
                         <span className="font-[family-name:var(--font-display)] text-[15px] font-bold uppercase leading-none tracking-[0.04em]">
-                          {cell.status === "pending" ? "Not started" : style.short}
+                          {cell.status === "pending"
+                            ? "Not started"
+                            : cell.status === "in_progress"
+                              ? "In progress"
+                              : style.short}
                         </span>
                         {when && (
-                          <span className="font-mono text-[10px] leading-none opacity-80">
-                            {new Date(when).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
+                          <span className="font-mono text-[10px] leading-none tabular-nums opacity-85">
+                            {stamp(when)}
                           </span>
                         )}
                       </button>
@@ -571,9 +598,22 @@ function Grid({
 }
 
 /** Stage column head: full name over its short code, as the design has it. */
-function StageHead({ label, short }: { label: string; short: string }) {
+function StageHead({
+  label,
+  short,
+  colour,
+}: {
+  label: string;
+  short: string;
+  colour: string;
+}) {
   return (
     <span className="block">
+      <span
+        aria-hidden="true"
+        className="mb-1.5 block h-[3px] w-full"
+        style={{ background: colour }}
+      />
       <span className="block font-[family-name:var(--font-display)] text-[13px] font-bold leading-tight text-white">
         {label}
       </span>
@@ -599,13 +639,18 @@ function Key({ status, text }: { status: CellStatus; text: string }) {
   );
 }
 
-/** Readable ink on each of the four fills. */
-const CELL_INK: Record<CellStatus, string> = {
-  pending: "#6b7c8b",
-  in_progress: "#7d5c00",
-  done: "#14400a",
-  na: "#ffffff",
-};
+/** "07 Sep 04:26" — date and 24-hour time, matching the customer's table. */
+function stamp(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const date = d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
+  const time = d.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  return `${date} ${time}`;
+}
 
 /* -------------------------------------------------------------------- */
 

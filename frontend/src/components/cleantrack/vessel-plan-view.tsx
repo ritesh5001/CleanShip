@@ -194,16 +194,8 @@ export function VesselPlanView({
                   width={holdW}
                   height={holdH}
                   fill={done ? COMPLETE_GREEN.light : g.empty}
-                  stroke={
-                    selected
-                      ? g.ring
-                      : done
-                        ? COMPLETE_GREEN.dark
-                        : working
-                          ? "#d6a90a"
-                          : g.emptyEdge
-                  }
-                  strokeWidth={selected || working ? 3 : 1.5}
+                  stroke={selected ? g.ring : done ? COMPLETE_GREEN.dark : g.emptyEdge}
+                  strokeWidth={selected ? 3 : 1.5}
                 />
 
                 {/* One block per stage. Light = under way, dark = finished. */}
