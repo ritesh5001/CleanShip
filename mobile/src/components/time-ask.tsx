@@ -110,17 +110,19 @@ export function TimeAsk({
       animationType="fade"
       onRequestClose={onCancel}
     >
-      <Pressable style={styles.backdrop} onPress={onCancel}>
-        {/* A plain View, not a Pressable. On Android a Pressable here claims
-           the touch on press-in and the wheels below never became the scroll
-           responder — the picker rendered but would not turn. Claiming the
-           responder only as a fallback keeps the backdrop from closing on a
-           tap inside the sheet while leaving children free to scroll. */}
-        <View
-          style={styles.sheet}
-          onStartShouldSetResponder={() => true}
-          onResponderRelease={() => {}}
-        >
+      <View style={styles.root}>
+        {/* The dismiss layer is a SIBLING behind the sheet, not its parent.
+           Wrapping the sheet in a Pressable — or having it claim the responder
+           itself — meant something upstream of the wheels took the touch on
+           press-down, and the wheels never got to scroll. Nothing above them
+           handles touches now, so the gesture reaches them untouched. */}
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={onCancel}
+          accessibilityRole="button"
+          accessibilityLabel="Close without saving"
+        />
+        <View style={styles.sheet}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.subtitle}>{subtitle}</Text>
 
@@ -204,7 +206,7 @@ export function TimeAsk({
             </Pressable>
           </View>
         </View>
-      </Pressable>
+      </View>
     </Modal>
   );
 }
@@ -255,7 +257,7 @@ function dayWithin(date: Date, min: Date, max: Date) {
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
+  root: {
     flex: 1,
     backgroundColor: "rgba(6,32,58,0.62)",
     justifyContent: "flex-end",

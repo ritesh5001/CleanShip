@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
-  Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -80,6 +80,7 @@ export function WheelPicker<T>({
     <View style={[styles.column, { width }]}>
       <ScrollView
         ref={ref}
+        style={{ height: ITEM_HEIGHT * VISIBLE }}
         showsVerticalScrollIndicator={false}
         snapToInterval={ITEM_HEIGHT}
         snapToAlignment="start"
@@ -96,11 +97,21 @@ export function WheelPicker<T>({
         accessibilityLabel={accessibilityLabel}
       >
         {items.map((item, i) => (
-          <View key={i} style={styles.item}>
+          <Pressable
+            key={i}
+            style={styles.item}
+            onPress={() => {
+              settled.current = i;
+              ref.current?.scrollTo({ y: i * ITEM_HEIGHT, animated: true });
+              onChange(item);
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={format(item)}
+          >
             <Text style={[styles.text, i === index ? styles.on : styles.off]}>
               {format(item)}
             </Text>
-          </View>
+          </Pressable>
         ))}
       </ScrollView>
     </View>
