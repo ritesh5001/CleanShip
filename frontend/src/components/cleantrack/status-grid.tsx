@@ -501,7 +501,7 @@ function Grid({
                       style={{ background: STATE_STYLE[state].stroke }}
                     />
                     <span className="min-w-0">
-                      <span className="block font-[family-name:var(--font-display)] text-[16px] font-bold uppercase tracking-[0.03em] text-[#0f1c27]">
+                      <span className="block text-[14px] font-semibold text-[#0f1c27]">
                         {c.label}
                       </span>
                       <span className="block font-mono text-[9px] uppercase tracking-[0.12em] text-[#8a9aa8]">
@@ -563,7 +563,7 @@ function Grid({
                                   : "#6b7c8b",
                         }}
                       >
-                        <span className="font-[family-name:var(--font-display)] text-[15px] font-bold uppercase leading-none tracking-[0.04em]">
+                        <span className="text-[12px] font-semibold leading-none">
                           {cell.status === "pending"
                             ? "Not started"
                             : cell.status === "in_progress"

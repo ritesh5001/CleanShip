@@ -67,7 +67,7 @@ export function ClientProgressTable({ compartments, stages, vesselType }: Props)
                       className="h-[3px] w-full"
                       style={{ background: shade.dark }}
                     />
-                    <span className="text-[13px] font-semibold leading-tight text-white">
+                    <span className="text-[12px] font-semibold leading-tight text-white">
                       {s.short}
                     </span>
                   </span>
@@ -89,7 +89,7 @@ export function ClientProgressTable({ compartments, stages, vesselType }: Props)
             <tr key={c.id}>
               <th
                 scope="row"
-                className="whitespace-nowrap border-b border-white/[0.14] px-3 py-2.5 text-left text-[15px] font-semibold text-white"
+                className="whitespace-nowrap border-b border-white/[0.14] px-3 py-2.5 text-left text-[13px] font-semibold text-white"
               >
                 {/* Numbered from the bow, matching the drawing above. */}
                 {ci + 1}
@@ -125,7 +125,7 @@ export function ClientProgressTable({ compartments, stages, vesselType }: Props)
                     className="border-b border-white/[0.14] px-1 py-1 text-center align-middle"
                   >
                     <span
-                      className="flex min-h-[50px] flex-col items-center justify-center gap-[3px] px-1.5"
+                      className="flex min-h-[46px] flex-col items-center justify-center gap-[3px] px-1.5"
                       style={{
                         background: bg,
                         color: fg,
@@ -133,11 +133,11 @@ export function ClientProgressTable({ compartments, stages, vesselType }: Props)
                           status === "pending" ? "1px solid rgba(255,255,255,0.22)" : "none",
                       }}
                     >
-                      <span className="text-[12px] font-semibold leading-none">
+                      <span className="text-[11px] font-semibold leading-none">
                         {WORD[status]}
                       </span>
                       {when && (
-                        <span className="font-mono text-[11px] leading-none tabular-nums opacity-90">
+                        <span className="font-mono text-[10px] leading-none tabular-nums opacity-90">
                           {stamp(when)}
                         </span>
                       )}
