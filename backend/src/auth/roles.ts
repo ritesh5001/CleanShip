@@ -53,7 +53,12 @@ export function atLeast(role: Role, minimum: Role) {
 /** Where a role lands after signing in. */
 export function landingFor(role: Role) {
   if (role === "supervisor") return "/cleantrack/app";
-  return "/cleantrack/admin";
+  if (role === "admin" || role === "superadmin") return "/cleantrack/admin";
+  /* A role this build does not know — a token minted while `editor` still
+     existed. Send them to sign in again, NOT to the office landing page:
+     that page would reject them and redirect straight back here, which is a
+     loop that renders as a blank screen with no error to explain it. */
+  return "/admin/login";
 }
 
 /**

@@ -42,7 +42,10 @@ export function AppShell({
   children: ReactNode;
   wide?: boolean;
 }) {
-  const nav = NAV[session.role];
+  /* Never index straight into NAV: a role the map does not know — a stale
+     token still saying `editor` — would hand back undefined and take the whole
+     shell down on `.map`. An unknown role gets no tabs, not a blank page. */
+  const nav = NAV[session.role] ?? [];
 
   return (
     <div className="min-h-screen bg-[#f6f8fa]">

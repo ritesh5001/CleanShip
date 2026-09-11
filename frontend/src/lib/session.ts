@@ -30,6 +30,28 @@ export type Session = {
 
 const ROLES: Role[] = ["superadmin", "admin", "supervisor"];
 
+/**
+ * The hierarchy, as a number — the same ranking the API uses.
+ *
+ * Guards are written against the LOWEST role that may pass, and anyone above
+ * it passes too. An exact-match check here was a self-redirect loop waiting
+ * to happen: a superadmin failed `requireSession("admin")`, got redirected to
+ * their landing page, which IS that page, and the browser rendered nothing
+ * while bouncing between the two.
+ */
+const RANK: Record<Role, number> = {
+  supervisor: 1,
+  admin: 2,
+  superadmin: 3,
+};
+
+export function atLeast(role: Role, minimum: Role) {
+  /* An unknown role — a token minted before `editor` was retired, say —
+     ranks lowest rather than throwing. It then fails every guard and gets
+     sent to sign in again, which is the right answer for a stale token. */
+  return (RANK[role] ?? 0) >= (RANK[minimum] ?? 0);
+}
+
 function secret() {
   const value = process.env.SESSION_SECRET;
   if (!value) {
@@ -43,7 +65,12 @@ function secret() {
 /** Where a role lands after signing in. Mirrors the API's own mapping. */
 export function landingFor(role: Role) {
   if (role === "supervisor") return "/cleantrack/app";
-  return "/cleantrack/admin";
+  if (role === "admin" || role === "superadmin") return "/cleantrack/admin";
+  /* A role this build does not know — a token minted while `editor` still
+     existed. Send them to sign in again, NOT to the office landing page:
+     that page would reject them and redirect straight back here, which is a
+     loop that renders as a blank screen with no error to explain it. */
+  return "/admin/login";
 }
 
 export async function createSession(token: string, maxAge: number) {
@@ -109,7 +136,7 @@ export async function requireSession(...roles: Role[]): Promise<Session> {
   if (!session) {
     redirect(roles.includes("supervisor") ? "/cleantrack/login" : "/admin/login");
   }
-  if (roles.length && !roles.includes(session.role)) {
+  if (roles.length && !roles.some((r) => atLeast(session.role, r))) {
     redirect(landingFor(session.role));
   }
   return session;
