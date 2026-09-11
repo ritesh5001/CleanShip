@@ -172,6 +172,14 @@ export const compartments = pgTable(
     /** "Hold No. 1", "3p", "Sl S" — whatever the vessel's own plan calls it. */
     label: varchar("label", { length: 40 }).notNull(),
     notes: text("notes"),
+    /**
+     * A gang physically working this hold right now — distinct from a stage's
+     * own status. A hold can sit at "in progress" for hours with nobody in it
+     * between shifts; this is the literal, momentary fact a supervisor sets
+     * by hand, not something derived from the grid.
+     */
+    active: integer("active").notNull().default(0),
+    activeSince: timestamp("active_since", { withTimezone: true }),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

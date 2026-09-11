@@ -108,6 +108,11 @@ export function TransposedGrid({
                       <Text style={styles.colHeadPct} numberOfLines={1}>
                         {pct}%
                       </Text>
+                      {/* Crew is physically in this hold right now — top-left,
+                          so it never collides with the note flag on the
+                          right. A filled circle, not a square, so the two
+                          markers stay visually distinct at 6px. */}
+                      {c.active ? <View style={styles.crewDot} /> : null}
                       {/* This hold carries an instruction from the office. */}
                       {c.notes ? <View style={styles.headNoteDot} /> : null}
                     </Pressable>
@@ -350,6 +355,17 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     backgroundColor: colors.aqua,
+  },
+  crewDot: {
+    position: "absolute",
+    top: 5,
+    left: 5,
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: colors.aqua,
+    borderWidth: 1,
+    borderColor: colors.aquaDark,
   },
   failedRule: {
     position: "absolute",

@@ -19,6 +19,7 @@ import {
   getVessel,
   getVesselEvents,
   getVesselVersion,
+  setCompartmentActive,
 } from "../../src/api";
 import { readVessel, writeVessel } from "../../src/cache";
 import {
@@ -103,6 +104,54 @@ export default function Vessel() {
      supervisor does not need telling about their own taps. */
   const seenEventId = useRef<number | null>(null);
   const [notice, setNotice] = useState<CellEvent | null>(null);
+
+  /* Crew presence: only one hold is ever open at a time (`expanded`), so one
+     busy/error pair — not one per compartment — is enough. */
+  const [crewBusy, setCrewBusy] = useState(false);
+  const [crewError, setCrewError] = useState<string | null>(null);
+
+  const toggleCrew = useCallback(
+    async (compartmentId: number, active: boolean) => {
+      if (!token || !Number.isInteger(vesselId)) return;
+      setCrewError(null);
+      setCrewBusy(true);
+      /* Optimistic, same as every other tap on this screen — the difference
+         is what happens on failure: there is no queue behind this one, so a
+         failure has to say so rather than sit quietly and look saved. */
+      setVessel((v) =>
+        v
+          ? {
+              ...v,
+              compartments: v.compartments.map((c) =>
+                c.id === compartmentId ? { ...c, active: active ? 1 : 0 } : c,
+              ),
+            }
+          : v,
+      );
+      try {
+        await setCompartmentActive(token, vesselId, compartmentId, active);
+      } catch (err) {
+        setVessel((v) =>
+          v
+            ? {
+                ...v,
+                compartments: v.compartments.map((c) =>
+                  c.id === compartmentId ? { ...c, active: active ? 0 : 1 } : c,
+                ),
+              }
+            : v,
+        );
+        setCrewError(
+          err instanceof ApiError && err.isTransient
+            ? "No connection — this needs signal. Try again once you have it."
+            : "Could not save. Try again.",
+        );
+      } finally {
+        setCrewBusy(false);
+      }
+    },
+    [token, vesselId],
+  );
 
   const refreshPending = useCallback(async () => {
     const queue = await readQueue();
@@ -667,6 +716,7 @@ export default function Vessel() {
                   onBack={() => {
                     setExpanded(null);
                     setEditing(false);
+                    setCrewError(null);
                   }}
                   onTapStage={(stage, current) => {
                     const next = nextStatusOnTap(
@@ -690,6 +740,9 @@ export default function Vessel() {
                   onHoldStage={(stage) =>
                     void setCell(compartment.id, stage.key, "na")
                   }
+                  crewBusy={crewBusy}
+                  crewError={crewError}
+                  onToggleCrew={() => void toggleCrew(compartment.id, !compartment.active)}
                 />
 
                 <Pressable

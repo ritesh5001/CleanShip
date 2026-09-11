@@ -62,6 +62,7 @@ export default async function SharedVesselPage({
     (c) => compartmentState(statusesOf(c, vessel.stages)) === "complete",
   ).length;
   const remaining = total - complete;
+  const crewCompartments = vessel.compartments.filter((c) => c.active);
 
 
   return (
@@ -141,10 +142,16 @@ export default async function SharedVesselPage({
 
         {/* The plan view: a schematic hull, not a rendered one. */}
         <section className="mt-12">
-          <h2 className="m-0 mb-5 font-[family-name:var(--font-body)] text-[13px] font-semibold uppercase tracking-[0.14em] text-white/75">
+          <h2 className="m-0 mb-2 font-[family-name:var(--font-body)] text-[13px] font-semibold uppercase tracking-[0.14em] text-white/75">
             {compartmentNoun(vessel.type)} by {compartmentNoun(vessel.type).toLowerCase()}{" "}
             &middot; plan view
           </h2>
+          {crewCompartments.length > 0 && (
+            <p className="m-0 mb-5 text-[14px] text-[#00b0b9]">
+              Crew currently aboard &mdash;{" "}
+              {crewCompartments.map((c) => c.label).join(", ")}
+            </p>
+          )}
           <VesselPlanView
             compartments={vessel.compartments}
             stages={vessel.stages}
@@ -170,6 +177,14 @@ export default async function SharedVesselPage({
                 style={{ background: "#d6a90a" }}
               />
               <span className="text-[14px] text-white/85">In progress</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <span
+                aria-hidden="true"
+                className="h-3 w-3 shrink-0 rounded-full"
+                style={{ background: "#00b0b9" }}
+              />
+              <span className="text-[14px] text-white/85">Crew aboard</span>
             </li>
           </ul>
         </section>

@@ -27,9 +27,17 @@ import {
  * colours for a single green — at that point "ready" is the only fact left
  * worth reading.
  *
- * Numbering runs from the bow, which is how holds are numbered at sea: Hold 1
- * is the forward-most. The bow is drawn on the left so that hold 1 is also the
- * first thing read.
+ * The bow is drawn on the RIGHT — the ship faces right, stern to the left —
+ * and holds are numbered from the bow, which is how they are numbered at sea:
+ * Hold 1 is the forward-most, so it is the rightmost hold in this drawing.
+ *
+ * The geometry is built bow-left first, in the shape that is easiest to
+ * reason about (a point at x=0, a transom further along x), and then
+ * reflected as a whole — `flip(x) = w - x` applied to every coordinate. That
+ * is a genuine mirror: every control point moves, so the curves stay exactly
+ * as drawn, just facing the other way. Deriving the mirrored Bezier points by
+ * hand would be the same shape by construction, but far easier to get subtly
+ * wrong.
  */
 
 type PlanCompartment = {
@@ -37,6 +45,8 @@ type PlanCompartment = {
   position: number;
   label: string;
   cells: Record<string, { status: CellStatus }>;
+  /** A gang is physically in this compartment right now, 0 or 1. */
+  active?: number;
 };
 
 type Props = {
@@ -72,6 +82,9 @@ const GROUND = {
   },
 } as const;
 
+/** Crew presence, drawn distinctly from the amber "stage under way" pulse. */
+const CREW_AQUA = "#00b0b9";
+
 export function VesselPlanView({
   compartments,
   stages,
@@ -95,11 +108,12 @@ export function VesselPlanView({
   const top = 30;
   const midY = top + holdH / 2;
 
-  /* Bow left, stern right.
-     A hull, not a lozenge: it comes to a point at the stem, runs parallel
-     through the cargo block where the holds are, and rounds off at the
-     transom. Those three sections are what make a plan view read as a ship,
-     and they are drawn as three explicit parts rather than one smooth blob. */
+  /** Mirrors an x-coordinate across the canvas: bow-left becomes bow-right. */
+  const flip = (x: number) => w - x;
+
+  /* Built bow-left, in the easy-to-read shape: a point at the stem, parallel
+     sides through the cargo block, a rounded transom. Every coordinate is
+     then reflected with `flip`, which is what puts the bow on the right. */
   const bodyX0 = bowLen;
   const bodyX1 = bowLen + body;
   const sternX = bodyX1 + sternLen;
@@ -107,16 +121,16 @@ export function VesselPlanView({
   const deckTop = top - 14;
   const deckBot = top + holdH + 14;
   const hull = [
-    `M ${stem} ${midY}`,
+    `M ${flip(stem)} ${midY}`,
     /* Forward shoulder: flares from the stem out to full beam. */
-    `C ${bowLen * 0.34} ${deckTop} ${bowLen * 0.62} ${deckTop} ${bodyX0} ${deckTop}`,
+    `C ${flip(bowLen * 0.34)} ${deckTop} ${flip(bowLen * 0.62)} ${deckTop} ${flip(bodyX0)} ${deckTop}`,
     /* Parallel middle body — the part that actually holds cargo. */
-    `L ${bodyX1} ${deckTop}`,
+    `L ${flip(bodyX1)} ${deckTop}`,
     /* Quarter and transom. */
-    `Q ${sternX} ${deckTop} ${sternX} ${midY}`,
-    `Q ${sternX} ${deckBot} ${bodyX1} ${deckBot}`,
-    `L ${bodyX0} ${deckBot}`,
-    `C ${bowLen * 0.62} ${deckBot} ${bowLen * 0.34} ${deckBot} ${stem} ${midY}`,
+    `Q ${flip(sternX)} ${deckTop} ${flip(sternX)} ${midY}`,
+    `Q ${flip(sternX)} ${deckBot} ${flip(bodyX1)} ${deckBot}`,
+    `L ${flip(bodyX0)} ${deckBot}`,
+    `C ${flip(bowLen * 0.62)} ${deckBot} ${flip(bowLen * 0.34)} ${deckBot} ${flip(stem)} ${midY}`,
     "Z",
   ].join(" ");
 
@@ -126,7 +140,7 @@ export function VesselPlanView({
         <svg
           viewBox={`0 0 ${w} ${h}`}
           role="img"
-          aria-label={`Plan view of ${n} ${compartmentNoun(vesselType, true).toLowerCase()}, numbered from the bow`}
+          aria-label={`Plan view of ${n} ${compartmentNoun(vesselType, true).toLowerCase()}, bow to the right, numbered from the bow`}
           style={{ minWidth: Math.min(w, 640), width: "100%", height: "auto", display: "block" }}
         >
           <style>{`
@@ -152,9 +166,9 @@ export function VesselPlanView({
 
           {/* Centreline — a real drawing convention, and it reads as one. */}
           <line
-            x1={14}
+            x1={flip(14)}
             y1={midY}
-            x2={sternX - 6}
+            x2={flip(sternX - 6)}
             y2={midY}
             stroke={g.line}
             strokeWidth="1"
@@ -169,15 +183,15 @@ export function VesselPlanView({
             const pct = Math.round(progressOf(statuses).ratio * 100);
             const done = state === "complete";
             const working = state === "in-progress";
-            const x = bowLen + i * (holdW + gap);
+            const crewAboard = Boolean(c.active);
             const selected = selectedId === c.id;
 
-            /* No reversal needed: the API already stores compartments in
-               order from forward — position 0 is "Hold No. 1", the bow-most —
-               and the bow is drawn on the left, so array order and the numbers
-               on the drawing run the same way. The count is 1-based here only
-               because `position` is stored 0-based, which is what put a "0" on
-               the customer's drawing. */
+            /* Hold 0 is "Hold No. 1", the bow-most compartment — the API
+               stores compartments in that order. Its bow-left x is the
+               smallest (closest to the stem); flipping the hold's own left
+               edge is what moves it to the ship's new bow, on the right. */
+            const bowLeftX = bowLen + i * (holdW + gap);
+            const x = flip(bowLeftX) - holdW;
             const number = i + 1;
 
             const blockW = (holdW - 16 - (stages.length - 1) * 3) / stages.length;
@@ -251,14 +265,24 @@ export function VesselPlanView({
                   {pct}%
                 </text>
 
-                {/* A hold with work under way gets a dot above it. A finished
-                    hold does not — it needs no attention, and a dot on every
-                    hold would say nothing. */}
+                {/* Crew physically in this hold right now — a fact a
+                    supervisor sets by hand, and deliberately not the same
+                    marker as "stage under way" below: that pulses amber above
+                    the hold, this sits steady, aqua, inside its top corner. A
+                    hold can be mid-stage with nobody in it between shifts, and
+                    the two questions ("what stage" vs "is anyone there")
+                    should never share one dot. */}
+                {crewAboard && (
+                  <circle cx={x + 12} cy={top + 12} r="5" fill={CREW_AQUA}>
+                    <title>Crew aboard</title>
+                  </circle>
+                )}
+
+                {/* A hold with a stage under way gets a pulsing dot above it.
+                    A finished hold does not — it needs no attention, and a
+                    dot on every hold would say nothing. */}
                 {working && (
                   <g>
-                    {/* A halo that pulses outward, then the dot itself. The
-                        movement is what carries across a room; the dot alone
-                        was easy to miss against six other holds. */}
                     <circle
                       className="ct-pulse"
                       cx={x + holdW / 2}
@@ -287,9 +311,9 @@ export function VesselPlanView({
       <figcaption
         className={`mt-3 flex items-center justify-between text-[11px] uppercase tracking-[0.14em] ${g.caption}`}
       >
-        <span>Bow</span>
-        <span aria-hidden="true">&larr; holds numbered from forward &rarr;</span>
         <span>Stern</span>
+        <span aria-hidden="true">&larr; holds numbered from the bow &rarr;</span>
+        <span>Bow</span>
       </figcaption>
     </figure>
   );

@@ -31,6 +31,10 @@ type Props = {
   onBack: () => void;
   onTapStage: (stage: Stage, current: CellStatus) => void;
   onHoldStage: (stage: Stage) => void;
+  /** Whether the toggle below is mid-request, and what to do when pressed. */
+  crewBusy: boolean;
+  crewError: string | null;
+  onToggleCrew: () => void;
 };
 
 const STATE_WORD: Record<string, string> = {
@@ -45,6 +49,9 @@ export function HoldDetail({
   onBack,
   onTapStage,
   onHoldStage,
+  crewBusy,
+  crewError,
+  onToggleCrew,
 }: Props) {
   const statuses = statusesOf(compartment.cells, stages);
   const progress = progressOf(statuses);
@@ -81,6 +88,44 @@ export function HoldDetail({
           <Text style={styles.holdNoteText}>{compartment.notes}</Text>
         </View>
       ) : null}
+
+      {/* A momentary fact, not an audit record: "is a gang physically in
+          this hold right now". Unlike a stage tap it needs signal to save —
+          there is nothing to gain by queuing "someone was here" for replay
+          hours later — so a failure says so plainly rather than pretending
+          the tap landed. */}
+      <Pressable
+        onPress={onToggleCrew}
+        disabled={crewBusy}
+        accessibilityRole="button"
+        accessibilityLabel={
+          compartment.active ? "Crew aboard — tap to clear" : "Mark crew as aboard"
+        }
+        style={[
+          styles.crewRow,
+          compartment.active ? styles.crewRowOn : styles.crewRowOff,
+        ]}
+      >
+        <View
+          style={[
+            styles.crewDot,
+            { backgroundColor: compartment.active ? colors.aqua : colors.borderStrong },
+          ]}
+        />
+        <Text
+          style={[
+            styles.crewText,
+            { color: compartment.active ? colors.aquaDark : colors.muted },
+          ]}
+        >
+          {crewBusy
+            ? "Saving…"
+            : compartment.active
+              ? "Crew aboard — tap to clear"
+              : "No one aboard — tap if crew is here"}
+        </Text>
+      </Pressable>
+      {crewError ? <Text style={styles.crewError}>{crewError}</Text> : null}
 
       <View style={styles.rows}>
         {stages.map((stage) => {
@@ -188,6 +233,26 @@ const styles = StyleSheet.create({
   stageMeta: { fontSize: 11, marginTop: 5, letterSpacing: 1, opacity: 0.85 },
   rowStatus: { fontSize: 14, fontWeight: "700", letterSpacing: 0.6 },
   stageNote: { fontSize: 12, marginTop: 5, fontStyle: "italic", opacity: 0.9 },
+
+  crewRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.sm,
+    minHeight: 52,
+    paddingHorizontal: space.lg,
+    borderWidth: 1,
+  },
+  crewRowOff: { backgroundColor: colors.card, borderColor: colors.border },
+  crewRowOn: { backgroundColor: "#e6f7f8", borderColor: colors.aqua },
+  crewDot: { width: 10, height: 10, borderRadius: 5 },
+  crewText: { fontSize: 15, fontWeight: "700" },
+  crewError: {
+    marginTop: 6,
+    marginBottom: 2,
+    fontSize: 12,
+    color: colors.danger,
+    paddingHorizontal: space.xs,
+  },
 
   /* The office's instruction for this hold. Aqua-ruled rather than coloured
      like a status, because it is information, not a state. */

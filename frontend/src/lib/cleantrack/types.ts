@@ -44,6 +44,9 @@ export type CompartmentDetail = {
   /** Earliest start and latest finish across the stages that apply. */
   startedAt: string | null;
   completedAt: string | null;
+  /** A gang is physically in this compartment right now, 0 or 1. */
+  active: number;
+  activeSince: string | null;
 };
 
 export type VesselSummary = {

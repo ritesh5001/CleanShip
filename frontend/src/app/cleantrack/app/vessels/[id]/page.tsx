@@ -106,6 +106,7 @@ export default async function SupervisorVesselPage({
             label: c.label,
             position: c.position,
             notes: c.notes,
+            active: c.active,
             cells: Object.fromEntries(
               Object.entries(c.cells).map(([k, cell]) => [
                 k,

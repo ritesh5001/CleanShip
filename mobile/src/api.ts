@@ -179,6 +179,18 @@ export async function getVessel(token: string, id: number, signal?: AbortSignal)
  * A supervisor can already read their own vessels, so this needs no new
  * permission — the API answers it with the same rule as the grid itself.
  */
+export function setCompartmentActive(
+  token: string,
+  vesselId: number,
+  compartmentId: number,
+  active: boolean,
+) {
+  return request<{ compartment: { id: number; active: number } }>(
+    `/api/v1/vessels/${vesselId}/compartments/${compartmentId}/active`,
+    { method: "PATCH", token, body: { active } },
+  );
+}
+
 export async function getVesselEvents(
   token: string,
   id: number,

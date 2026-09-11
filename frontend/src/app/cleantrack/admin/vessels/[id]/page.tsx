@@ -131,6 +131,7 @@ export default async function AdminVesselPage({
               label: c.label,
               position: c.position,
               notes: c.notes,
+              active: c.active,
               cells: Object.fromEntries(
                 Object.entries(c.cells).map(([k, cell]) => [
                   k,

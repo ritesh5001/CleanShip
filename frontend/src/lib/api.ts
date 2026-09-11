@@ -280,6 +280,17 @@ export function setCompartmentNote(
   );
 }
 
+export function setCompartmentActive(
+  vesselId: number,
+  compartmentId: number,
+  active: boolean,
+) {
+  return request<{ compartment: { id: number; active: number } }>(
+    `/api/v1/vessels/${vesselId}/compartments/${compartmentId}/active`,
+    { method: "PATCH", body: { active } },
+  );
+}
+
 /* -------------------------------------------------------------------- */
 /* People and clients                                                   */
 /* -------------------------------------------------------------------- */

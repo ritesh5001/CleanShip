@@ -19,6 +19,7 @@ import {
   applyCellChanges,
   applyToColumn,
   applyToRow,
+  setCompartmentActive,
   setCompartmentNote,
 } from "../domain/cells.js";
 import {
@@ -290,4 +291,17 @@ vesselRoutes.patch("/:id/compartments/:compartmentId", async (req, res) => {
     req.body,
   );
   res.json({ compartment: await setCompartmentNote(id, compartmentId, body.note) });
+});
+
+/**
+ * Crew presence — "someone is in this hold right now". Same write gate as a
+ * cell change: the assigned supervisor, or the office.
+ */
+vesselRoutes.patch("/:id/compartments/:compartmentId/active", async (req, res) => {
+  const { id } = await loadForWrite(req);
+  const compartmentId = parseId(req.params.compartmentId, "compartment id");
+  const body = parseBody(z.object({ active: z.boolean() }), req.body);
+  res.json({
+    compartment: await setCompartmentActive(id, compartmentId, body.active),
+  });
 });

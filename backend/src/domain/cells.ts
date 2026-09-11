@@ -383,6 +383,37 @@ export async function applyToRow(
   );
 }
 
+/**
+ * Whether a gang is physically in this compartment right now.
+ *
+ * A supervisor sets this by hand; nothing infers it from stage status. Turning
+ * it on stamps `activeSince`; turning it off clears it, so the field only ever
+ * holds a value while the flag is on.
+ */
+export async function setCompartmentActive(
+  vesselId: number,
+  compartmentId: number,
+  active: boolean,
+) {
+  const [row] = await db
+    .update(compartments)
+    .set({
+      active: active ? 1 : 0,
+      activeSince: active ? new Date() : null,
+      updatedAt: new Date(),
+    })
+    .where(
+      and(eq(compartments.id, compartmentId), eq(compartments.vesselId, vesselId)),
+    )
+    .returning();
+  if (!row) throw ApiError.notFound("No such compartment.");
+  await db
+    .update(vessels)
+    .set({ version: sql`${vessels.version} + 1`, updatedAt: new Date() })
+    .where(eq(vessels.id, vesselId));
+  return row;
+}
+
 /** A compartment-level note, separate from any one stage. */
 export async function setCompartmentNote(
   vesselId: number,

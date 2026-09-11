@@ -37,6 +37,8 @@ export type GridCompartment = {
   label: string;
   position: number;
   notes: string | null;
+  /** A gang is physically in this hold right now, 0 or 1. */
+  active: number;
   cells: Record<
     string,
     {
@@ -286,6 +288,36 @@ export function StatusGrid({
     [flush, readOnly],
   );
 
+  /**
+   * Crew presence — set directly, not through the offline queue.
+   *
+   * Everything else on this board is written offline-first because a stage
+   * change is the record a dispute turns on. This is not that: it is a
+   * momentary fact ("someone is in there right now") that is only true while
+   * a connection exists to say so, so there is nothing to gain by queuing it
+   * — and reverting on failure is simpler than replaying a stale presence
+   * flag hours later.
+   */
+  const toggleActive = useCallback(
+    (compartmentId: number, active: boolean) => {
+      if (readOnly) return;
+      setComps((prev) =>
+        prev.map((c) =>
+          c.id === compartmentId ? { ...c, active: active ? 1 : 0 } : c,
+        ),
+      );
+      fetch("/api/cleantrack/compartments/active", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ vesselId, compartmentId, active }),
+      }).catch(() => {
+        /* Left optimistic; the next state poll corrects it if it did not
+           actually take. */
+      });
+    },
+    [vesselId, readOnly],
+  );
+
   /** One tap on a column heading: the whole stage, every compartment. */
   const setColumn = useCallback(
     (stageKey: string, status: CellStatus) => {
@@ -353,6 +385,7 @@ export function StatusGrid({
           }
           onSetNa={(compartmentId, stageKey) => setCell(compartmentId, stageKey, "na")}
           onTapColumn={setColumn}
+          onToggleActive={toggleActive}
         />
 
         <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-3">
@@ -377,6 +410,7 @@ export function StatusGrid({
           stages={stages}
           readOnly={readOnly}
           onSet={setCell}
+          onToggleActive={toggleActive}
         />
       )}
     </div>
@@ -430,6 +464,7 @@ function Grid({
   onTapCell,
   onSetNa,
   onTapColumn,
+  onToggleActive,
 }: {
   comps: GridCompartment[];
   stages: Stage[];
@@ -440,6 +475,7 @@ function Grid({
   onTapCell: (compartmentId: number, stageKey: string, current: CellStatus) => void;
   onSetNa: (compartmentId: number, stageKey: string) => void;
   onTapColumn: (stageKey: string, status: CellStatus) => void;
+  onToggleActive: (compartmentId: number, active: boolean) => void;
 }) {
   return (
     <div className="overflow-x-auto">
@@ -487,13 +523,21 @@ function Grid({
             const allDone = state === "complete";
             return (
               <tr key={c.id}>
-                <th scope="row" className="border border-[#dce4eb] p-0 text-left">
+                <th
+                  scope="row"
+                  className={`border border-[#dce4eb] p-0 text-left ${
+                    selectedId === c.id ? "bg-[#f1f7fc]" : "bg-white"
+                  }`}
+                >
+                  {/* The flex row lives on this wrapper, not on the <th>
+                      itself — setting display:flex on a table cell takes it
+                      out of the table layout algorithm and desyncs the
+                      column width from every <td> below it. */}
+                  <div className="flex items-center gap-2 pr-2">
                   <button
                     type="button"
                     onClick={() => onSelect(c.id)}
-                    className={`flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-[#f1f7fc] ${
-                      selectedId === c.id ? "bg-[#f1f7fc]" : "bg-white"
-                    }`}
+                    className="flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-left hover:bg-[#f1f7fc]"
                   >
                     <span
                       aria-hidden="true"
@@ -509,6 +553,33 @@ function Grid({
                       </span>
                     </span>
                   </button>
+
+                  {/* Crew presence: a fact set by hand, separate from the grid
+                      it sits beside. Aqua when on, so it never reads as one of
+                      the four status colours. */}
+                  {!readOnly && (
+                    <button
+                      type="button"
+                      onClick={() => onToggleActive(c.id, !c.active)}
+                      title={c.active ? "Crew is here — tap to clear" : "Mark crew as here"}
+                      aria-pressed={Boolean(c.active)}
+                      className={`shrink-0 whitespace-nowrap border px-2 py-1 font-mono text-[9px] font-semibold uppercase tracking-[0.08em] ${
+                        c.active
+                          ? "border-[#00929b] bg-[#00b0b9] text-white"
+                          : "border-[#c8d2dc] bg-white text-[#8a9aa8] hover:border-[#00b0b9] hover:text-[#00929b]"
+                      }`}
+                    >
+                      {c.active ? "Crew here" : "+ Crew"}
+                    </button>
+                  )}
+                  {readOnly && Boolean(c.active) && (
+                    <span
+                      className="shrink-0 whitespace-nowrap border border-[#00929b] bg-[#00b0b9] px-2 py-1 font-mono text-[9px] font-semibold uppercase tracking-[0.08em] text-white"
+                    >
+                      Crew here
+                    </span>
+                  )}
+                  </div>
                 </th>
 
                 {stages.map((s, si) => {
@@ -664,6 +735,7 @@ function CompartmentPanel({
   stages,
   readOnly,
   onSet,
+  onToggleActive,
 }: {
   compartment: GridCompartment;
   stages: Stage[];
@@ -674,6 +746,7 @@ function CompartmentPanel({
     status: CellStatus,
     note?: string | null,
   ) => void;
+  onToggleActive: (compartmentId: number, active: boolean) => void;
 }) {
   /* `cells` here carries only status and note — the API's fuller cell shape is
      not needed to read a status, and asking for it would make this component
@@ -693,7 +766,25 @@ function CompartmentPanel({
             {done} of {total} stages done
           </p>
         </div>
-        <StatusChip state={state} />
+        <div className="flex items-center gap-2">
+          {!readOnly && (
+            <button
+              type="button"
+              onClick={() =>
+                onToggleActive(compartment.id, !compartment.active)
+              }
+              aria-pressed={Boolean(compartment.active)}
+              className={`border px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] ${
+                compartment.active
+                  ? "border-[#00929b] bg-[#00b0b9] text-white"
+                  : "border-slate-300 bg-white text-slate-500 hover:border-[#00b0b9] hover:text-[#00929b]"
+              }`}
+            >
+              {compartment.active ? "Crew here" : "Mark crew here"}
+            </button>
+          )}
+          <StatusChip state={state} />
+        </div>
       </div>
 
       <ul className="divide-y divide-slate-100">
