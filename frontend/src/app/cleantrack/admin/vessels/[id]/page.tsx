@@ -7,7 +7,8 @@ import { Card, VesselStatusChip } from "@/components/cleantrack/ui";
 import { CopyField } from "@/components/cleantrack/copy-field";
 import { StageEditor } from "@/components/cleantrack/stage-editor";
 import { ApiUnavailable } from "@/components/cleantrack/api-unavailable";
-import { ApiError, getVessel, getVesselEvents, listSupervisors } from "@/lib/api";
+import { ApiError, getVessel, listSupervisors } from "@/lib/api";
+import { ActivityTimeline } from "@/components/cleantrack/activity-timeline";
 import { compartmentNoun } from "@/lib/cleantrack/types";
 import { formatDate, formatDateTime } from "@/lib/format";
 import {
@@ -19,14 +20,6 @@ import {
 
 export const dynamic = "force-dynamic";
 
-/** The same words on every activity view: commenced and completed. */
-const ACTIVITY_VERB = {
-  pending: "reset to not started",
-  in_progress: "commenced",
-  done: "completed",
-  na: "marked not applicable",
-} as const;
-
 export default async function AdminVesselPage({
   params,
 }: {
@@ -35,12 +28,11 @@ export default async function AdminVesselPage({
   const session = await requireSession("admin");
   const { id } = await params;
 
-  let data, supervisors, events;
+  let data, supervisors;
   try {
-    [data, supervisors, events] = await Promise.all([
+    [data, supervisors] = await Promise.all([
       getVessel(Number(id)),
       listSupervisors(),
-      getVesselEvents(Number(id)),
     ]);
   } catch (err) {
     if (err instanceof ApiError && err.status === 404) notFound();
@@ -155,39 +147,19 @@ export default async function AdminVesselPage({
             initialVersion={vessel.version}
           />
 
+          {/* The same Time Log the customer sees: every stage of every hold
+              with its commenced and completed times. */}
           <Card className="mt-6">
             <h2 className="border-b border-slate-200 px-5 py-4 text-base font-bold text-slate-900">
-              Activity
+              Time Log
             </h2>
-            {events.length === 0 ? (
-              <p className="px-5 py-6 text-[14px] text-slate-500">
-                Nothing recorded yet.
-              </p>
-            ) : (
-              <ul className="divide-y divide-slate-100">
-                {events.map((event) => (
-                  <li
-                    key={event.id}
-                    className="flex flex-wrap items-baseline gap-x-2 px-5 py-3 text-[13px]"
-                  >
-                    <span className="font-semibold text-slate-900">
-                      {event.compartmentLabel}
-                    </span>
-                    <span className="text-slate-600">{event.stageLabel}</span>
-                    <span className="font-semibold text-slate-800">
-                      {ACTIVITY_VERB[event.toStatus]}
-                    </span>
-                    {event.note && (
-                      <span className="text-slate-500">“{event.note}”</span>
-                    )}
-                    <span className="text-slate-500">by {event.userName}</span>
-                    <span className="ml-auto font-mono text-[12px] text-slate-400">
-                      {formatDateTime(event.occurredAt)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <div className="px-5 pb-2 pt-1">
+              <ActivityTimeline
+                compartments={vessel.compartments}
+                stages={vessel.stages}
+                tone="light"
+              />
+            </div>
           </Card>
         </div>
 

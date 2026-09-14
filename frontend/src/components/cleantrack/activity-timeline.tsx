@@ -21,9 +21,31 @@ type Cell = {
 type Props = {
   compartments: { id: number; label: string; cells: Record<string, Cell> }[];
   stages: Stage[];
+  /** "dark" on the customer's navy page, "light" inside an office card. */
+  tone?: "dark" | "light";
 };
 
-export function ActivityTimeline({ compartments, stages }: Props) {
+const TONE = {
+  dark: {
+    empty: "m-0 text-[15px] text-white/60",
+    head: "font-mono text-[11px] uppercase tracking-[0.12em] text-white/60",
+    headRule: "border-white/20",
+    rowRule: "border-white/[0.1]",
+    hold: "text-white",
+    body: "text-white/85",
+  },
+  light: {
+    empty: "m-0 text-[14px] text-slate-500",
+    head: "font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500",
+    headRule: "border-slate-200",
+    rowRule: "border-slate-100",
+    hold: "text-slate-900",
+    body: "text-slate-700",
+  },
+} as const;
+
+export function ActivityTimeline({ compartments, stages, tone = "dark" }: Props) {
+  const t = TONE[tone];
   const rows = compartments.flatMap((c) =>
     stages.flatMap((s, si) => {
       const cell = c.cells[s.key];
@@ -45,7 +67,7 @@ export function ActivityTimeline({ compartments, stages }: Props) {
 
   if (rows.length === 0) {
     return (
-      <p className="m-0 text-[15px] text-white/60">
+      <p className={t.empty}>
         Nothing has been recorded on this vessel yet.
       </p>
     );
@@ -57,11 +79,11 @@ export function ActivityTimeline({ compartments, stages }: Props) {
     <div className="overflow-x-auto">
       <table className="w-full min-w-[560px] border-collapse text-left">
         <thead>
-          <tr className="font-mono text-[11px] uppercase tracking-[0.12em] text-white/60">
-            <th scope="col" className="border-b border-white/20 py-2 pr-4 font-normal">Hold</th>
-            <th scope="col" className="border-b border-white/20 py-2 pr-4 font-normal">Stage</th>
-            <th scope="col" className="border-b border-white/20 py-2 pr-4 font-normal">Commenced</th>
-            <th scope="col" className="border-b border-white/20 py-2 font-normal">Completed</th>
+          <tr className={t.head}>
+            <th scope="col" className={`border-b ${t.headRule} py-2 pr-4 font-normal`}>Hold</th>
+            <th scope="col" className={`border-b ${t.headRule} py-2 pr-4 font-normal`}>Stage</th>
+            <th scope="col" className={`border-b ${t.headRule} py-2 pr-4 font-normal`}>Commenced</th>
+            <th scope="col" className={`border-b ${t.headRule} py-2 font-normal`}>Completed</th>
           </tr>
         </thead>
         <tbody>
@@ -69,10 +91,10 @@ export function ActivityTimeline({ compartments, stages }: Props) {
             const shade = r.status === "na" ? NA_GREY : stageShade(r.stageIndex);
             return (
               <tr key={r.key} className="text-[14px]">
-                <td className="whitespace-nowrap border-b border-white/[0.1] py-2.5 pr-4 font-semibold text-white">
+                <td className={`whitespace-nowrap border-b ${t.rowRule} py-2.5 pr-4 font-semibold ${t.hold}`}>
                   {r.hold}
                 </td>
-                <td className="border-b border-white/[0.1] py-2.5 pr-4 text-white/85">
+                <td className={`border-b ${t.rowRule} py-2.5 pr-4 ${t.body}`}>
                   <span className="flex items-center gap-2">
                     <span
                       aria-hidden="true"
@@ -82,10 +104,10 @@ export function ActivityTimeline({ compartments, stages }: Props) {
                     {r.stage}
                   </span>
                 </td>
-                <td className="whitespace-nowrap border-b border-white/[0.1] py-2.5 pr-4 font-mono tabular-nums text-white/85">
+                <td className={`whitespace-nowrap border-b ${t.rowRule} py-2.5 pr-4 font-mono tabular-nums ${t.body}`}>
                   {r.startedAt ? stampOf(r.startedAt) : "—"}
                 </td>
-                <td className="whitespace-nowrap border-b border-white/[0.1] py-2.5 font-mono tabular-nums text-white/85">
+                <td className={`whitespace-nowrap border-b ${t.rowRule} py-2.5 font-mono tabular-nums ${t.body}`}>
                   {r.completedAt ? stampOf(r.completedAt) : "In progress"}
                 </td>
               </tr>
