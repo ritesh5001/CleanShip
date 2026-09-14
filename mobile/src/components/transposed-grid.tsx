@@ -47,7 +47,8 @@ type Props = {
   failedIds?: Set<string>;
   onTapCell: (compartmentId: number, stage: Stage, current: CellStatus) => void;
   onHoldCell: (compartmentId: number, stage: Stage) => void;
-  onOpenCompartment: (compartmentId: number) => void;
+  /** Tapping a hold's header marks crew as working there, or clears it. */
+  onToggleCrew: (compartmentId: number, active: boolean) => void;
 };
 
 export function TransposedGrid({
@@ -57,7 +58,7 @@ export function TransposedGrid({
   failedIds,
   onTapCell,
   onHoldCell,
-  onOpenCompartment,
+  onToggleCrew,
 }: Props) {
   return (
     <View>
@@ -97,10 +98,17 @@ export function TransposedGrid({
                   return (
                     <Pressable
                       key={c.id}
-                      onPress={() => onOpenCompartment(c.id)}
-                      style={[styles.colHead, { width: CELL_W, height: HEAD_H }]}
+                      onPress={() => onToggleCrew(c.id, !c.active)}
+                      style={[
+                        styles.colHead,
+                        { width: CELL_W, height: HEAD_H },
+                        c.active ? styles.colHeadCrew : null,
+                      ]}
                       accessibilityRole="button"
-                      accessibilityLabel={`Open ${c.label}, ${pct} percent complete`}
+                      accessibilityState={{ selected: Boolean(c.active) }}
+                      accessibilityLabel={`${c.label}, ${pct} percent complete. ${
+                        c.active ? "Crew working here — tap to clear" : "Tap to mark crew working here"
+                      }`}
                     >
                       <Text style={styles.colHeadLabel} numberOfLines={1}>
                         {shortLabel(c.label)}
@@ -108,10 +116,9 @@ export function TransposedGrid({
                       <Text style={styles.colHeadPct} numberOfLines={1}>
                         {pct}%
                       </Text>
-                      {/* Crew is physically in this hold right now — top-left,
-                          so it never collides with the note flag on the
-                          right. A filled circle, not a square, so the two
-                          markers stay visually distinct at 6px. */}
+                      {/* Crew working in this hold: the whole header turns
+                          yellow with a dot, the same yellow the customer sees
+                          on the ship drawing. */}
                       {c.active ? <View style={styles.crewDot} /> : null}
                       {/* This hold carries an instruction from the office. */}
                       {c.notes ? <View style={styles.headNoteDot} /> : null}
@@ -356,16 +363,15 @@ const styles = StyleSheet.create({
     height: 6,
     backgroundColor: colors.aqua,
   },
+  colHeadCrew: { backgroundColor: "#d6a90a" },
   crewDot: {
     position: "absolute",
     top: 5,
     left: 5,
-    width: 7,
-    height: 7,
+    width: 8,
+    height: 8,
     borderRadius: 4,
-    backgroundColor: colors.aqua,
-    borderWidth: 1,
-    borderColor: colors.aquaDark,
+    backgroundColor: "#fdf3c4",
   },
   failedRule: {
     position: "absolute",

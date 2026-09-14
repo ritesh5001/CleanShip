@@ -9,7 +9,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -31,18 +30,14 @@ import {
 } from "../../src/queue";
 import { overlayPending } from "../../src/sync";
 import { useSession } from "../../src/session";
-import { Banner, Card } from "../../src/components/ui";
+import { Banner } from "../../src/components/ui";
 import { TransposedGrid } from "../../src/components/transposed-grid";
 import { SyncStrip, type SyncState } from "../../src/components/sync-strip";
 import { VesselHeader } from "../../src/components/vessel-header";
-import { HoldDetail } from "../../src/components/hold-detail";
 import { ActivityLog } from "../../src/components/activity-log";
 import { colors, radius, space, TAP } from "../../src/theme";
 import {
-  CELL_STATUSES,
   CELL_STYLE,
-  compartmentState,
-  formatDuration,
   formatWorkTime,
   isFinalStage,
   nextStatusOnTap,
@@ -50,23 +45,15 @@ import {
   statusesOf,
   type CellStatus,
   type CellEvent,
-  type CompartmentDetail,
-  type Stage,
   type VesselDetail,
 } from "../../src/types";
 
 /**
  * The status sheet, on a phone.
  *
- * This is the screen the whole app exists for. Two ways to record the same
- * thing, because the two situations are different:
- *
- *   · Tapping a stage chip cycles it — blank, working, done. That is the fast
- *     path, one thumb, no reading, which is what happens while the work is
- *     going on.
- *   · Expanding a hold gives every state spelled out, including "N/A", plus
- *     the note field. That is for the exceptions — a tank out of scope, water
- *     found in a hold — which are rare and worth slowing down for.
+ * This is the screen the whole app exists for. Everything happens on the one
+ * grid: tap a cell to move a stage on, hold a cell for N/A, and tap a hold's
+ * header to mark crew as working in it.
  *
  * Every tap is written to the device queue before anything else. See src/queue.
  */
@@ -78,16 +65,12 @@ export default function Vessel() {
 
   const [vessel, setVessel] = useState<VesselDetail | null>(null);
   const [pending, setPending] = useState<QueuedChange[]>([]);
-  const [expanded, setExpanded] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [stale, setStale] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   /* How many of this vessel's taps were on the device last time we looked —
      a drop means the sync landed and the server now has them. */
   const pendingCount = useRef(0);
-  /* The note and time editor is the exception path, so it stays folded away
-     until asked for rather than competing with the stage list. */
-  const [editing, setEditing] = useState(false);
 
   /* The log is fetched only when opened. It is up to 200 rows and a supervisor
      on a metered connection should not pay for it on every screen load. */
@@ -105,8 +88,8 @@ export default function Vessel() {
   const seenEventId = useRef<number | null>(null);
   const [notice, setNotice] = useState<CellEvent | null>(null);
 
-  /* Crew presence: only one hold is ever open at a time (`expanded`), so one
-     busy/error pair — not one per compartment — is enough. */
+  /* Crew presence is toggled from a hold's header on the grid. One busy flag
+     is enough: a second tap while a save is in flight is ignored. */
   const [crewBusy, setCrewBusy] = useState(false);
   const [crewError, setCrewError] = useState<string | null>(null);
 
@@ -641,467 +624,72 @@ export default function Vessel() {
         }}
       />
 
-      {/* The whole vessel, no horizontal scroll: stages down, compartments
-          across. Tapping a column head drills into that hold, which is where
-          notes, times and corrections live — the exceptions are worth the
-          second tap, the fast path is not. */}
-      {expanded === null ? (
-        <>
-            <TransposedGrid
-            compartments={compartments}
-            stages={vessel.stages}
-            queuedIds={queuedIds}
-            failedIds={failedIds}
-            onTapCell={(compartmentId, stage, current) => {
-              const next = nextStatusOnTap(
-                current,
-                isFinalStage(stage, vessel.stages),
-              );
-              /* Moving to working or done carries a time, so it goes through the
-                 ask; moving back to blank is a correction and carries none. */
-              if (next === "pending") {
-                void setCell(compartmentId, stage.key, next);
-                return;
-              }
-              const cell = cellFor(compartmentId, stage.key);
-              requestStatus(
-                compartmentId,
-                stage.key,
-                stage.label,
-                next,
-                next === "in_progress" ? cell?.startedAt : cell?.completedAt,
-                /* A finish cannot precede its start: passing the start here is
-                   what stops a supervisor picking a time before the work
-                   began, and narrows the day row to match. */
-                next === "done" ? cell?.startedAt : cell?.completedAt,
-              );
-            }}
-            onHoldCell={(compartmentId, stage) =>
-              void setCell(compartmentId, stage.key, "na")
-            }
-            onOpenCompartment={(compartmentId) => setExpanded(compartmentId)}
-            />
-
-          {/* The audit trail. Folded away by default: it answers "what did the
-              last shift do" and "what time is this actually on record as",
-              which are questions asked occasionally rather than continuously. */}
-          <View style={{ marginTop: space.lg, gap: space.sm }}>
-            <Pressable
-              onPress={() => setShowLog((v) => !v)}
-              style={styles.backRow}
-              accessibilityRole="button"
-            >
-              <Text style={styles.backText}>
-                {showLog ? "Hide activity" : "Activity on this vessel"}
-              </Text>
-            </Pressable>
-            {showLog && (
-              <ActivityLog
-                events={events}
-                loading={logLoading}
-                error={logError}
-              />
-            )}
-          </View>
-        </>
-      ) : (
-        <View style={{ gap: space.md }}>
-          {compartments
-            .filter((c) => c.id === expanded)
-            .map((compartment) => (
-              <View key={compartment.id} style={{ gap: space.md }}>
-                <HoldDetail
-                  compartment={compartment}
-                  stages={vessel.stages}
-                  onBack={() => {
-                    setExpanded(null);
-                    setEditing(false);
-                    setCrewError(null);
-                  }}
-                  onTapStage={(stage, current) => {
-                    const next = nextStatusOnTap(
-                      current,
-                      isFinalStage(stage, vessel.stages),
-                    );
-                    if (next === "pending") {
-                      void setCell(compartment.id, stage.key, next);
-                      return;
-                    }
-                    const cell = compartment.cells[stage.key];
-                    requestStatus(
-                      compartment.id,
-                      stage.key,
-                      stage.label,
-                      next,
-                      next === "in_progress" ? cell?.startedAt : cell?.completedAt,
-                      next === "done" ? cell?.startedAt : cell?.completedAt,
-                    );
-                  }}
-                  onHoldStage={(stage) =>
-                    void setCell(compartment.id, stage.key, "na")
-                  }
-                  crewBusy={crewBusy}
-                  crewError={crewError}
-                  onToggleCrew={() => void toggleCrew(compartment.id, !compartment.active)}
-                />
-
-                <Pressable
-                  onPress={() => setEditing((v) => !v)}
-                  style={styles.backRow}
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.backText}>
-                    {editing ? "Hide notes and times" : "Notes and times"}
-                  </Text>
-                </Pressable>
-
-                {editing && (
-                  <CompartmentCard
-                    compartment={compartment}
-                    stages={vessel.stages}
-                    expanded
-                    onToggleExpand={() => setEditing(false)}
-                    onSet={setCell}
-                    onRequestStatus={requestStatus}
-                    timeWindow={timeWindow}
-                  />
-                )}
-              </View>
-            ))}
+      {/* The whole vessel on one grid. Tapping a hold's header marks crew as
+          working in that hold (and tapping again clears it); stage cells are
+          tapped directly. There is no per-hold screen any more. */}
+      {crewError ? (
+        <View style={{ marginBottom: space.md }}>
+          <Banner tone="error">{crewError}</Banner>
         </View>
-      )}
-    </ScrollView>
-    </KeyboardAvoidingView>
-  );
-}
+      ) : null}
 
-/* -------------------------------------------------------------------- */
+      <TransposedGrid
+        compartments={compartments}
+        stages={vessel.stages}
+        queuedIds={queuedIds}
+        failedIds={failedIds}
+        onTapCell={(compartmentId, stage, current) => {
+          const next = nextStatusOnTap(
+            current,
+            isFinalStage(stage, vessel.stages),
+          );
+          /* Moving to working or done carries a time, so it goes through the
+             ask; moving back to blank is a correction and carries none. */
+          if (next === "pending") {
+            void setCell(compartmentId, stage.key, next);
+            return;
+          }
+          const cell = cellFor(compartmentId, stage.key);
+          requestStatus(
+            compartmentId,
+            stage.key,
+            stage.label,
+            next,
+            next === "in_progress" ? cell?.startedAt : cell?.completedAt,
+            /* A finish cannot precede its start: passing the start here is
+               what stops a supervisor picking a time before the work began,
+               and narrows the day row to match. */
+            next === "done" ? cell?.startedAt : cell?.completedAt,
+          );
+        }}
+        onHoldCell={(compartmentId, stage) =>
+          void setCell(compartmentId, stage.key, "na")
+        }
+        onToggleCrew={(compartmentId, active) => {
+          if (crewBusy) return;
+          void toggleCrew(compartmentId, active);
+        }}
+      />
 
-function CompartmentCard({
-  compartment,
-  stages,
-  expanded,
-  onToggleExpand,
-  onSet,
-  onRequestStatus,
-  timeWindow,
-}: {
-  compartment: CompartmentDetail;
-  stages: Stage[];
-  expanded: boolean;
-  onToggleExpand: () => void;
-  onSet: (
-    compartmentId: number,
-    stageKey: string,
-    status: CellStatus,
-    note?: string | null,
-    times?: { startedAt?: string | null; completedAt?: string | null },
-  ) => void;
-  /** Status taps go through here so the time can be confirmed first. */
-  onRequestStatus: (
-    compartmentId: number,
-    stageKey: string,
-    stageLabel: string,
-    status: CellStatus,
-    existing?: string | null,
-    counterpart?: string | null,
-  ) => void;
-  /** The dates a time may fall in for this vessel. */
-  timeWindow: { min: Date; max: Date };
-}) {
-  const statuses = statusesOf(compartment.cells, stages);
-  const state = compartmentState(statuses);
-  const { done, total } = progressOf(statuses);
-
-  return (
-    <Card>
-      <Pressable
-        onPress={onToggleExpand}
-        accessibilityRole="button"
-        accessibilityState={{ expanded }}
-        accessibilityLabel={`${compartment.label}, ${done} of ${total} stages done`}
-        style={styles.compartmentHead}
-      >
-        <View style={{ flex: 1 }}>
-          <Text style={styles.compartmentLabel}>{compartment.label}</Text>
-          <Text style={styles.compartmentMeta}>
-            {total === 0 ? "Not applicable" : `${done} of ${total} stages done`}
+      {/* The audit trail. Folded away by default: it answers "what did the
+          last shift do" and "what time is this actually on record as", which
+          are questions asked occasionally rather than continuously. */}
+      <View style={{ marginTop: space.lg, gap: space.sm }}>
+        <Pressable
+          onPress={() => setShowLog((v) => !v)}
+          style={styles.backRow}
+          accessibilityRole="button"
+        >
+          <Text style={styles.backText}>
+            {showLog ? "Hide activity" : "Activity on this vessel"}
           </Text>
-          {(compartment.startedAt || compartment.completedAt) && (
-            <Text style={styles.compartmentTimes}>
-              {compartment.startedAt
-                ? `Started ${formatWorkTime(compartment.startedAt)}`
-                : "Not started"}
-              {compartment.completedAt
-                ? ` · Finished ${formatWorkTime(compartment.completedAt)}`
-                : ""}
-              {formatDuration(compartment.startedAt, compartment.completedAt)
-                ? ` · ${formatDuration(compartment.startedAt, compartment.completedAt)}`
-                : ""}
-            </Text>
-          )}
-        </View>
-        <Text style={styles.disclosure}>{expanded ? "Close" : "Open"}</Text>
-      </Pressable>
-
-      {/* The fast path: the whole row of stages, one tap each. */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.strip}
-      >
-        {stages.map((stage) => {
-          const cell = compartment.cells[stage.key];
-          const status = cell?.status ?? "pending";
-          const style = CELL_STYLE[status];
-          return (
-            <Pressable
-              key={stage.key}
-              onPress={() => {
-                const next = nextStatusOnTap(status);
-                onRequestStatus(
-                  compartment.id,
-                  stage.key,
-                  stage.label,
-                  next,
-                  next === "in_progress" ? cell?.startedAt : cell?.completedAt,
-                  next === "in_progress" ? cell?.completedAt : cell?.startedAt,
-                );
-              }}
-              accessibilityRole="button"
-              accessibilityLabel={`${compartment.label}, ${stage.label}: ${style.label}. Tap to change.`}
-              style={({ pressed }) => [
-                styles.cell,
-                { backgroundColor: style.bg, borderColor: style.border },
-                pressed ? { opacity: 0.7 } : null,
-              ]}
-            >
-              <Text style={[styles.cellStage, { color: style.text }]} numberOfLines={1}>
-                {stage.short}
-              </Text>
-              <Text style={[styles.cellStatus, { color: style.text }]} numberOfLines={1}>
-                {cell?.note ? cell.note : style.short || "—"}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </ScrollView>
-
-      {expanded && (
-        <View style={styles.expanded}>
-          {stages.map((stage) => (
-            <StageRow
-              key={stage.key}
-              stage={stage}
-              cell={compartment.cells[stage.key]}
-              onSet={(status, note, times) =>
-                onSet(compartment.id, stage.key, status, note, times)
-              }
-              timeWindow={timeWindow}
-              onRequestStatus={(status, existing, counterpart) =>
-                onRequestStatus(
-                  compartment.id,
-                  stage.key,
-                  stage.label,
-                  status,
-                  existing,
-                  counterpart,
-                )
-              }
-            />
-          ))}
-        </View>
-      )}
-    </Card>
-  );
-}
-
-function StageRow({
-  stage,
-  cell,
-  onSet,
-  onRequestStatus,
-  timeWindow,
-}: {
-  stage: Stage;
-  cell:
-    | {
-        status: CellStatus;
-        note: string | null;
-        startedAt?: string | null;
-        completedAt?: string | null;
-      }
-    | undefined;
-  onSet: (
-    status: CellStatus,
-    note?: string | null,
-    times?: { startedAt?: string | null; completedAt?: string | null },
-  ) => void;
-  /** Status taps, which ask for the time before applying anything. */
-  onRequestStatus: (
-    status: CellStatus,
-    existing?: string | null,
-    counterpart?: string | null,
-  ) => void;
-  timeWindow: { min: Date; max: Date };
-}) {
-  const status = cell?.status ?? "pending";
-  const [draft, setDraft] = useState(cell?.note ?? "");
-  /* Which field the picker is editing, if any. */
-  const [picking, setPicking] = useState<"startedAt" | "completedAt" | null>(null);
-
-  /* The note field is a controlled input that must follow the server when a
-     refresh brings a newer value, but must not fight the person typing. */
-  useEffect(() => {
-    setDraft(cell?.note ?? "");
-  }, [cell?.note]);
-
-  return (
-    <View style={styles.stageRow}>
-      <Text style={styles.stageLabel}>{stage.label}</Text>
-
-      <View style={styles.statusRow}>
-        {CELL_STATUSES.map((option) => {
-          const active = status === option;
-          const style = CELL_STYLE[option];
-          return (
-            <Pressable
-              key={option}
-              onPress={() =>
-                onRequestStatus(
-                  option,
-                  option === "in_progress"
-                    ? cell?.startedAt
-                    : option === "done"
-                      ? cell?.completedAt
-                      : null,
-                  option === "in_progress"
-                    ? cell?.completedAt
-                    : option === "done"
-                      ? cell?.startedAt
-                      : null,
-                )
-              }
-              accessibilityRole="button"
-              accessibilityState={{ selected: active }}
-              accessibilityLabel={`${stage.label}: ${style.label}`}
-              style={({ pressed }) => [
-                styles.statusButton,
-                active
-                  ? { backgroundColor: style.bg, borderColor: style.border }
-                  : { backgroundColor: "#fff", borderColor: colors.border },
-                pressed ? { opacity: 0.7 } : null,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.statusButtonText,
-                  { color: active ? style.text : colors.muted },
-                ]}
-                numberOfLines={1}
-              >
-                {style.label}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
-
-      {/* Work times.
-          Filled in automatically by the status buttons above — the common
-          case is tapping when the work happens, where asking for a time would
-          be friction for no gain. Tapping a time opens a picker, which is the
-          correction path: work finished at 02:10 and entered at 06:00 should
-          read 02:10, not 06:00. */}
-      <View style={styles.timeRow}>
-        <TimeField
-          label="Started"
-          value={cell?.startedAt ?? null}
-          onPress={() => setPicking("startedAt")}
-        />
-        <TimeField
-          label="Finished"
-          value={cell?.completedAt ?? null}
-          onPress={() => setPicking("completedAt")}
-        />
-        {formatDuration(cell?.startedAt, cell?.completedAt) && (
-          <View style={styles.durationChip}>
-            <Text style={styles.durationText}>
-              {formatDuration(cell?.startedAt, cell?.completedAt)}
-            </Text>
-          </View>
+        </Pressable>
+        {showLog && (
+          <ActivityLog events={events} loading={logLoading} error={logError} />
         )}
       </View>
-
-      <TimeAsk
-        visible={picking !== null}
-        title={stage.label}
-        kind={picking === "startedAt" ? "started" : "finished"}
-        initial={
-          (picking === "startedAt" ? cell?.startedAt : cell?.completedAt)
-            ? new Date(
-                (picking === "startedAt"
-                  ? cell?.startedAt
-                  : cell?.completedAt) as string,
-              )
-            : new Date()
-        }
-        minDate={timeWindow.min}
-        maxDate={timeWindow.max}
-        onCancel={() => setPicking(null)}
-        onConfirm={(date) => {
-          const field = picking;
-          setPicking(null);
-          if (!field) return;
-          onSet(status, undefined, { [field]: date.toISOString() });
-        }}
-      />
-
-      <TextInput
-        value={draft}
-        onChangeText={setDraft}
-        /* Saved on blur, not per keystroke — one queued change per note
-           rather than one per letter typed on a flaky connection. */
-        onBlur={() => {
-          const next = draft.trim();
-          if (next !== (cell?.note ?? "").trim()) onSet(status, next || null);
-        }}
-        maxLength={160}
-        placeholder="Add a note — e.g. water in tank"
-        placeholderTextColor={colors.faint}
-        style={styles.noteInput}
-      />
-    </View>
-  );
-}
-
-/**
- * One time, tappable to change it.
- *
- * Shown even when empty so the pair reads as a record with a gap in it, rather
- * than as a feature the supervisor has to go looking for.
- */
-function TimeField({
-  label,
-  value,
-  onPress,
-}: {
-  label: string;
-  value: string | null;
-  onPress: () => void;
-}) {
-  return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={`${label}: ${formatWorkTime(value)}. Tap to change.`}
-      style={({ pressed }) => [styles.timeField, pressed && { opacity: 0.6 }]}
-    >
-      <Text style={styles.timeLabel}>{label}</Text>
-      <Text style={[styles.timeValue, !value && styles.timeValueEmpty]}>
-        {formatWorkTime(value)}
-      </Text>
-    </Pressable>
+    </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -1124,7 +712,6 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   noteText: { fontSize: 13, color: colors.text, lineHeight: 19 },
-  hint: { fontSize: 13, color: colors.muted, paddingHorizontal: space.xs },
   headBlock: {
     borderRadius: radius.lg,
     overflow: "hidden",
@@ -1152,96 +739,4 @@ const styles = StyleSheet.create({
   noticeWho: { fontSize: 12, color: colors.muted },
   backRow: { minHeight: TAP, justifyContent: "center", paddingHorizontal: space.xs },
   backText: { fontSize: 15, fontWeight: "600", color: colors.blue },
-  compartmentHead: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: space.lg,
-    minHeight: TAP,
-  },
-  compartmentLabel: { fontSize: 17, fontWeight: "800", color: colors.text },
-  compartmentMeta: { marginTop: 2, fontSize: 13, color: colors.muted },
-  disclosure: { fontSize: 14, fontWeight: "700", color: colors.blue },
-  strip: {
-    paddingHorizontal: space.md,
-    paddingBottom: space.md,
-    gap: space.sm,
-  },
-  cell: {
-    minWidth: 84,
-    minHeight: TAP,
-    borderWidth: 1,
-    borderRadius: radius.sm,
-    paddingHorizontal: space.sm,
-    paddingVertical: space.sm,
-    justifyContent: "center",
-  },
-  cellStage: { fontSize: 11, fontWeight: "700", opacity: 0.8 },
-  cellStatus: { marginTop: 2, fontSize: 13, fontWeight: "700" },
-  expanded: {
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-  },
-  stageRow: {
-    padding: space.lg,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.border,
-    gap: space.sm,
-  },
-  stageLabel: { fontSize: 15, fontWeight: "700", color: colors.text },
-  statusRow: { flexDirection: "row", flexWrap: "wrap", gap: space.sm },
-  statusButton: {
-    minHeight: 44,
-    borderWidth: 1,
-    borderRadius: radius.sm,
-    paddingHorizontal: space.md,
-    justifyContent: "center",
-  },
-  statusButtonText: { fontSize: 13, fontWeight: "700" },
-  compartmentTimes: {
-    marginTop: 3,
-    fontSize: 12,
-    color: colors.muted,
-  },
-  timeRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: space.sm,
-    flexWrap: "wrap",
-  },
-  timeField: {
-    minHeight: 44,
-    justifyContent: "center",
-    paddingHorizontal: space.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.sm,
-    backgroundColor: "#fff",
-    minWidth: 108,
-  },
-  timeLabel: { fontSize: 11, color: colors.muted, fontWeight: "600" },
-  timeValue: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: colors.text,
-    fontVariant: ["tabular-nums"],
-  },
-  timeValueEmpty: { color: colors.faint, fontWeight: "500" },
-  durationChip: {
-    minHeight: 44,
-    justifyContent: "center",
-    paddingHorizontal: space.md,
-    borderRadius: radius.sm,
-    backgroundColor: colors.blueWash,
-  },
-  durationText: { fontSize: 13, fontWeight: "700", color: colors.blue },
-  noteInput: {
-    minHeight: 44,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.sm,
-    paddingHorizontal: space.md,
-    fontSize: 15,
-    color: colors.text,
-    backgroundColor: colors.bg,
-  },
 });
