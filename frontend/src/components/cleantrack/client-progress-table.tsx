@@ -4,6 +4,7 @@ import {
   type CellStatus,
   type Stage,
   type VesselType,
+  stampOf
 } from "@/lib/cleantrack/types";
 import { COMPLETE_GREEN, NA_GREY, stageShade } from "@/lib/cleantrack/stage-colors";
 
@@ -138,7 +139,7 @@ export function ClientProgressTable({ compartments, stages, vesselType }: Props)
                       </span>
                       {when && (
                         <span className="font-mono text-[10px] leading-none tabular-nums opacity-90">
-                          {stamp(when)}
+                          {stampOf(when)}
                         </span>
                       )}
                     </span>
@@ -154,15 +155,3 @@ export function ClientProgressTable({ compartments, stages, vesselType }: Props)
   );
 }
 
-/** "07 Sep 04:26" — date and 24-hour time, because a long job needs both. */
-function stamp(iso: string) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  const date = d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
-  const time = d.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-  return `${date} ${time}`;
-}

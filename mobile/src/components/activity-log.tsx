@@ -17,9 +17,8 @@ const VERB: Record<CellStatus, string> = {
  *
  * The supervisor already knows what they themselves tapped. What they cannot
  * otherwise see is what the office corrected, what the previous shift left,
- * and — the one that settles arguments — what time a stage is actually on
- * record as having finished, rather than when someone got round to entering
- * it. Both times are shown when they differ for exactly that reason.
+ * and — the one that settles arguments — the clock time a stage is on record
+ * as having finished.
  */
 
 type Props = {
@@ -58,9 +57,6 @@ export function ActivityLog({ events, loading, error }: Props) {
     <View style={styles.list}>
       {events.map((e) => {
         const skin = CELL_STYLE[e.toStatus];
-        /* Only worth showing when they differ — on a job with signal they are
-           the same instant and the second line is noise. */
-        const lateBy = minutesBetween(e.occurredAt, e.recordedAt);
         return (
           <View key={e.id} style={styles.row}>
             <Text style={styles.when}>{formatWorkTime(e.occurredAt)}</Text>
@@ -89,13 +85,6 @@ export function ActivityLog({ events, loading, error }: Props) {
               </View>
 
               {e.note ? <Text style={styles.note}>“{e.note}”</Text> : null}
-
-              {lateBy >= 2 ? (
-                <Text style={styles.synced}>
-                  Recorded {formatWorkTime(e.occurredAt)}, synced{" "}
-                  {formatWorkTime(e.recordedAt)}
-                </Text>
-              ) : null}
             </View>
           </View>
         );
@@ -104,12 +93,6 @@ export function ActivityLog({ events, loading, error }: Props) {
   );
 }
 
-function minutesBetween(a: string, b: string) {
-  const t1 = new Date(a).getTime();
-  const t2 = new Date(b).getTime();
-  if (Number.isNaN(t1) || Number.isNaN(t2)) return 0;
-  return Math.abs(t2 - t1) / 60000;
-}
 
 const styles = StyleSheet.create({
   list: {
@@ -145,7 +128,6 @@ const styles = StyleSheet.create({
   chipText: { fontSize: 11, fontWeight: "700" },
   who: { flex: 1, fontSize: 12, color: colors.faint },
   note: { fontSize: 13, color: colors.textBody, fontStyle: "italic" },
-  synced: { fontSize: 11, color: colors.faint, letterSpacing: 0.3 },
 
   state: {
     borderWidth: 1,

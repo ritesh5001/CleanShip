@@ -1,11 +1,9 @@
 /**
- * Dates are formatted in a fixed locale and time zone.
+ * Dates are read back exactly as recorded, with no time zone.
  *
- * A supervisor in Kandla, an admin in Ajman and a client in Rotterdam must all
- * read the same string for the same event — otherwise "Hold 3 finished at
- * 14:20" means three different moments and the audit trail is worthless. UTC
- * is the neutral choice; change TZ here if the business would rather everyone
- * read Gulf time.
+ * Work times are stored as the supervisor's own clock time in the UTC fields
+ * (see wallNow in cleantrack/types), so reading those same fields shows 05:00
+ * as 05:00 to everyone. No zone is named because none applies.
  */
 const TZ = "UTC";
 
@@ -20,7 +18,7 @@ export function formatDateTime(value: Date | string | null | undefined) {
     minute: "2-digit",
     hour12: false,
     timeZone: TZ,
-  }).format(d) + " UTC";
+  }).format(d);
 }
 
 export function formatDate(value: Date | string | null | undefined) {

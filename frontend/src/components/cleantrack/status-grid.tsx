@@ -16,6 +16,8 @@ import {
   type CellStatus,
   type Stage,
   type VesselType,
+  stampOf,
+  wallNow,
 } from "@/lib/cleantrack/types";
 import {
   COMPLETE_GREEN,
@@ -237,7 +239,7 @@ export function StatusGrid({
       if (readOnly) return;
 
       /* Optimistic: the grid moves the instant a thumb lands on it. */
-      const now = new Date().toISOString();
+      const now = wallNow().toISOString();
       setComps((prev) =>
         prev.map((c) => {
           if (c.id !== compartmentId) return c;
@@ -278,7 +280,7 @@ export function StatusGrid({
         stageKey,
         status,
         note,
-        occurredAt: new Date().toISOString(),
+        occurredAt: wallNow().toISOString(),
       };
       const next = [...readQueue(), change];
       writeQueue(next);
@@ -643,7 +645,7 @@ function Grid({
                         </span>
                         {when && (
                           <span className="font-mono text-[10px] leading-none tabular-nums opacity-85">
-                            {stamp(when)}
+                            {stampOf(when)}
                           </span>
                         )}
                       </button>
@@ -710,18 +712,6 @@ function Key({ status, text }: { status: CellStatus; text: string }) {
   );
 }
 
-/** "07 Sep 04:26" — date and 24-hour time, matching the customer's table. */
-function stamp(iso: string) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  const date = d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
-  const time = d.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-  return `${date} ${time}`;
-}
 
 /* -------------------------------------------------------------------- */
 

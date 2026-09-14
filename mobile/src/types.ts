@@ -263,6 +263,48 @@ export function compartmentNoun(type: VesselType, plural = false) {
 /* -------------------------------------------------------------------- */
 
 /**
+ * Clock time, with no time zones anywhere.
+ *
+ * A supervisor who picks 05:00 means 05:00 — on the phone, on the office
+ * screen and on the customer's page alike. Storing a real UTC instant and
+ * converting back for each viewer made the same record read differently
+ * depending on whose device or server was showing it, and let a finish appear
+ * to come before its start.
+ *
+ * So every time the product records is a wall-clock time written into the
+ * UTC fields of a Date: 05:00 on 14 Sep is stored as 2026-09-14T05:00:00Z,
+ * and every display reads it back with UTC getters. Nothing converts.
+ */
+
+/** Now, as this device's wall clock reads it, in the stored form. */
+export function wallNow(): Date {
+  const d = new Date();
+  return new Date(
+    Date.UTC(
+      d.getFullYear(),
+      d.getMonth(),
+      d.getDate(),
+      d.getHours(),
+      d.getMinutes(),
+      d.getSeconds(),
+    ),
+  );
+}
+
+const pad = (n: number) => String(n).padStart(2, "0");
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** "05:00" — the stored clock time, unconverted. */
+export function clockOf(value: Date): string {
+  return `${pad(value.getUTCHours())}:${pad(value.getUTCMinutes())}`;
+}
+
+/** "14 Sep" — the stored date, unconverted. */
+export function dateOf(value: Date): string {
+  return `${value.getUTCDate()} ${MONTHS[value.getUTCMonth()]}`;
+}
+
+/**
  * A time a supervisor can read at a glance on a deck.
  *
  * Same-day times show as "14:05". Anything older carries the date, because on
@@ -274,24 +316,12 @@ export function formatWorkTime(value: string | null | undefined): string {
   const at = new Date(value);
   if (Number.isNaN(at.getTime())) return "—";
 
-  const time = at.toLocaleTimeString(undefined, {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-
-  const now = new Date();
+  const now = wallNow();
   const sameDay =
-    at.getFullYear() === now.getFullYear() &&
-    at.getMonth() === now.getMonth() &&
-    at.getDate() === now.getDate();
-  if (sameDay) return time;
-
-  const date = at.toLocaleDateString(undefined, {
-    day: "numeric",
-    month: "short",
-  });
-  return `${date} ${time}`;
+    at.getUTCFullYear() === now.getUTCFullYear() &&
+    at.getUTCMonth() === now.getUTCMonth() &&
+    at.getUTCDate() === now.getUTCDate();
+  return sameDay ? clockOf(at) : `${dateOf(at)} ${clockOf(at)}`;
 }
 
 /** "3h 20m" — how long a stage took. Null when it is not finished. */

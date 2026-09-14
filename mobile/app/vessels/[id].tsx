@@ -40,6 +40,7 @@ import {
   CELL_STYLE,
   formatWorkTime,
   isFinalStage,
+  wallNow,
   nextStatusOnTap,
   progressOf,
   statusesOf,
@@ -57,6 +58,8 @@ import {
  *
  * Every tap is written to the device queue before anything else. See src/queue.
  */
+const MINUTE_MS = 60_000;
+
 export default function Vessel() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const vesselId = Number(id);
@@ -327,19 +330,19 @@ export default function Vessel() {
    * produce a window that starts in the future.
    */
   const timeWindow = useMemo(() => {
-    const now = new Date();
+    const now = wallNow();
     const anchor = vessel
       ? new Date(vessel.scheduledFor ?? vessel.createdAt)
       : now;
 
     const twoMonthsOn = new Date(anchor);
-    twoMonthsOn.setMonth(twoMonthsOn.getMonth() + 2);
+    twoMonthsOn.setUTCMonth(twoMonthsOn.getUTCMonth() + 2);
 
     /* Start of the anchor DAY, not the instant the record was created — the
        whole of that day is inside the window, and a vessel added at 15:13
        should not refuse work recorded at 09:00 the same morning. */
     const min = new Date(Math.min(anchor.getTime(), now.getTime()));
-    min.setHours(0, 0, 0, 0);
+    min.setUTCHours(0, 0, 0, 0);
     const max = new Date(Math.min(twoMonthsOn.getTime(), now.getTime()));
     return { min, max: max.getTime() < min.getTime() ? new Date(min) : max };
   }, [vessel]);
@@ -464,18 +467,22 @@ export default function Vessel() {
          when the vessel loads, so its "now" ages: open the app at 07:42, tap
          at 07:52, and the picker clamped 07:52 down to the stale 07:42. The
          upper bound is always the present moment. */
-      let max = new Date();
+      let max = wallNow();
+      /* A finish is always LATER than its start — not equal — so the earliest
+         finish on offer is one minute after the start, on the start's own
+         date. A start, symmetrically, is at least a minute before a recorded
+         finish. The picker then offers nothing outside that range at all. */
       if (status === "done" && counterpart) {
-        const startedAt = new Date(counterpart);
-        if (startedAt.getTime() > min.getTime()) min = startedAt;
+        const afterStart = new Date(new Date(counterpart).getTime() + MINUTE_MS);
+        if (afterStart.getTime() > min.getTime()) min = afterStart;
       }
       if (status === "in_progress" && counterpart) {
-        const completedAt = new Date(counterpart);
-        if (completedAt.getTime() < max.getTime()) max = completedAt;
+        const beforeFinish = new Date(new Date(counterpart).getTime() - MINUTE_MS);
+        if (beforeFinish.getTime() < max.getTime()) max = beforeFinish;
       }
       if (max.getTime() < min.getTime()) max = new Date(min);
 
-      const initial = existing ? new Date(existing) : new Date();
+      const initial = existing ? new Date(existing) : wallNow();
       const clamped =
         initial.getTime() < min.getTime()
           ? new Date(min)
@@ -604,7 +611,7 @@ export default function Vessel() {
         visible={askTime !== null}
         title={askTime?.stageLabel ?? ""}
         kind={askTime?.status === "in_progress" ? "started" : "finished"}
-        initial={askTime?.initial ?? new Date()}
+        initial={askTime?.initial ?? wallNow()}
         minDate={askTime?.min ?? timeWindow.min}
         maxDate={askTime?.max ?? timeWindow.max}
         onCancel={() => setAskTime(null)}

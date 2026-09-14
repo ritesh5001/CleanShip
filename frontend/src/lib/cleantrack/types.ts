@@ -255,6 +255,36 @@ export function compartmentNoun(type: VesselType, plural = false) {
 /* -------------------------------------------------------------------- */
 
 /**
+ * Clock time, with no time zones anywhere.
+ *
+ * A supervisor who picks 05:00 means 05:00 — on the phone, on this screen and
+ * on the customer's page alike. Every time is stored as that clock time
+ * written into the UTC fields (05:00 on 14 Sep is 2026-09-14T05:00:00Z) and
+ * read back with UTC getters, so nothing is ever converted for the viewer.
+ */
+export function wallNow(): Date {
+  const d = new Date();
+  return new Date(
+    Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds()),
+  );
+}
+
+const pad = (n: number) => String(n).padStart(2, "0");
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** "05:00" */
+export function clockOf(d: Date) {
+  return `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
+}
+
+/** "14 Sep 05:00" — date and 24-hour time, unconverted. */
+export function stampOf(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return `${pad(d.getUTCDate())} ${MONTHS[d.getUTCMonth()]} ${clockOf(d)}`;
+}
+
+/**
  * A start or finish time, for a screen someone reads at a desk.
  *
  * Same-day times show as "14:05". Anything older carries the date, because on
@@ -265,21 +295,12 @@ export function formatWorkTime(value: string | null | undefined): string {
   if (!value) return "—";
   const at = new Date(value);
   if (Number.isNaN(at.getTime())) return "—";
-
-  const time = at.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
-  const now = new Date();
+  const now = wallNow();
   const sameDay =
-    at.getFullYear() === now.getFullYear() &&
-    at.getMonth() === now.getMonth() &&
-    at.getDate() === now.getDate();
-  if (sameDay) return time;
-
-  const date = at.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
-  return `${date} ${time}`;
+    at.getUTCFullYear() === now.getUTCFullYear() &&
+    at.getUTCMonth() === now.getUTCMonth() &&
+    at.getUTCDate() === now.getUTCDate();
+  return sameDay ? clockOf(at) : `${at.getUTCDate()} ${MONTHS[at.getUTCMonth()]} ${clockOf(at)}`;
 }
 
 /** "3h 20m" — how long a stage took. Null while it is unfinished. */

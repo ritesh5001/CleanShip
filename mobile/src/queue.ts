@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { CellStatus } from "./types";
+import { wallNow, type CellStatus } from "./types";
 
 /**
  * The offline queue.
@@ -105,7 +105,9 @@ export async function enqueue(
     {
       ...change,
       key: newKey(),
-      occurredAt: change.occurredAt ?? new Date().toISOString(),
+      /* Clock time as the supervisor's phone reads it, no zone — see
+         wallNow() in types. */
+      occurredAt: change.occurredAt ?? wallNow().toISOString(),
       attempts: 0,
     },
   ];

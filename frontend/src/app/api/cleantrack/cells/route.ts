@@ -56,14 +56,17 @@ export async function POST(request: Request) {
   }
 
   const now = Date.now();
+  const HOUR = 3600 * 1000;
   const changes = parsed.data.changes.map((c) => {
     const at = new Date(c.occurredAt);
-    /* Seven days back covers any realistic offline stretch. Anything in the
-       future is a broken device clock and is clamped to now rather than
-       rejected, so a wrong phone setting never costs a supervisor their work. */
-    const skew = Math.abs(now - at.getTime());
-    const safe =
-      at.getTime() > now || skew > 7 * 24 * 3600 * 1000 ? new Date() : at;
+    /* Times arrive as the tapper's own clock time with no zone (see wallNow),
+       so a legitimate one can read up to 14 hours ahead of the server's UTC
+       clock — the widest real-world offset. Only beyond that, or more than
+       seven days back, is it a broken device clock, and then it is replaced
+       with the sender-neutral "now" rather than rejected, so a wrong phone
+       setting never costs anyone their work. */
+    const ahead = at.getTime() - now;
+    const safe = ahead > 14 * HOUR || -ahead > 7 * 24 * HOUR ? new Date(now) : at;
     return { ...c, occurredAt: safe.toISOString() };
   });
 

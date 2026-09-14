@@ -152,13 +152,12 @@ function resolveTimes(
   if (change.startedAt !== undefined) startedAt = change.startedAt;
   if (change.completedAt !== undefined) completedAt = change.completedAt;
 
-  /* A finish before its start is a typo or a wrong device clock, and it
-     produces negative durations in every report downstream. Refusing is
-     louder than silently swapping them, which would hide the mistake. */
-  if (startedAt && completedAt && completedAt.getTime() < startedAt.getTime()) {
-    throw ApiError.badRequest(
-      "The finish time cannot be before the start time.",
-    );
+  /* A finish must come AFTER its start — not before, and not the same
+     moment. Anything else is a typo or a wrong clock, and produces zero or
+     negative durations in every report downstream. Refusing is louder than
+     silently swapping them, which would hide the mistake. */
+  if (startedAt && completedAt && completedAt.getTime() <= startedAt.getTime()) {
+    throw ApiError.badRequest("The finish time must be after the start time.");
   }
 
   return { startedAt, completedAt };

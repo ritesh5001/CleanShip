@@ -1,5 +1,5 @@
 import type { PublicEvent } from "@/lib/api";
-import type { CellStatus, Stage } from "@/lib/cleantrack/types";
+import { stampOf, type CellStatus, type Stage } from "@/lib/cleantrack/types";
 import { NA_GREY, stageShade } from "@/lib/cleantrack/stage-colors";
 
 /**
@@ -48,7 +48,7 @@ export function ActivityTimeline({ events, stages }: Props) {
         return (
           <li key={e.id} className="flex gap-4 border-t border-white/[0.12] py-3">
             <span className="w-[112px] shrink-0 pt-[3px] font-[family-name:var(--font-mono)] text-[13px] tabular-nums text-white/70">
-              {stamp(e.occurredAt)}
+              {stampOf(e.occurredAt)}
             </span>
 
             {/* The stage's own colour, matching the table above. */}
@@ -77,15 +77,3 @@ export function ActivityTimeline({ events, stages }: Props) {
   );
 }
 
-/** "14 Sep 04:26" — date and 24-hour time, since entries can be days apart. */
-function stamp(iso: string) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  const date = d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
-  const time = d.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-  return `${date} ${time}`;
-}

@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { colors, radius, space, TAP } from "../theme";
-import { CELL_STYLE } from "../types";
+import { CELL_STYLE, clockOf, dateOf, wallNow } from "../types";
 import { WheelFrame, WheelPicker } from "./wheel-picker";
 
 /**
@@ -56,6 +56,9 @@ export function TimeAsk({
      same language as the cell that produced it. */
   const skin = CELL_STYLE[kind === "started" ? "in_progress" : "done"];
 
+  /* All arithmetic here is on the UTC fields, which hold the supervisor's own
+     clock time with no zone attached — see wallNow() in types. Local getters
+     would re-apply this phone's offset and shift the time. */
   const clamp = (date: Date) => {
     if (date.getTime() < minDate.getTime()) return new Date(minDate);
     if (date.getTime() > maxDate.getTime()) return new Date(maxDate);
@@ -71,36 +74,48 @@ export function TimeAsk({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, initial, minDate, maxDate]);
 
-  /** The last seven days, newest first, trimmed to the vessel's own window. */
+  /** The last seven days, newest first, trimmed to the allowed window. */
   const days = useMemo(() => {
     const out: Date[] = [];
-    const today = startOfDay(new Date());
+    const today = dayStart(wallNow());
     for (let i = 0; i < 7; i += 1) {
-      const day = new Date(today);
-      day.setDate(day.getDate() - i);
-      if (dayWithin(day, minDate, maxDate)) out.push(day);
+      const day = new Date(today.getTime() - i * DAY_MS);
+      if (day >= dayStart(minDate) && day <= dayStart(maxDate)) out.push(day);
     }
     return out;
   }, [minDate, maxDate]);
 
-  const hour = value.getHours();
-  const minute = value.getMinutes();
+  const hour = value.getUTCHours();
+  const minute = value.getUTCMinutes();
 
-  /** Rebuilds the instant from the wheels, then holds it inside the window. */
+  /* Only the hours and minutes that are actually allowed are offered. A
+     finish on the start's own day cannot go below the start's hour, and in
+     that hour cannot go below the start's minute; today cannot go past now.
+     Snapping an invalid pick back afterwards was not enough — the wheel still
+     showed 03:00 as choosable after a 05:00 start, which read as allowed. */
+  const onMinDay = sameDay(value, minDate);
+  const onMaxDay = sameDay(value, maxDate);
+  const hourLo = onMinDay ? minDate.getUTCHours() : 0;
+  const hourHi = onMaxDay ? maxDate.getUTCHours() : 23;
+  const hourItems = range(hourLo, Math.max(hourLo, hourHi));
+  const minuteLo =
+    onMinDay && hour === minDate.getUTCHours() ? minDate.getUTCMinutes() : 0;
+  const minuteHi =
+    onMaxDay && hour === maxDate.getUTCHours() ? maxDate.getUTCMinutes() : 59;
+  const minuteItems = range(minuteLo, Math.max(minuteLo, minuteHi));
+
+  /** Rebuilds the time from the wheels, then holds it inside the window. */
   function setParts(next: { h?: number; m?: number }) {
     const candidate = new Date(value);
-    candidate.setHours(next.h ?? hour, next.m ?? minute, 0, 0);
+    candidate.setUTCHours(next.h ?? hour, next.m ?? minute, 0, 0);
     setValue(clamp(candidate));
   }
 
   function setDay(day: Date) {
     const next = new Date(day);
-    next.setHours(value.getHours(), value.getMinutes(), 0, 0);
+    next.setUTCHours(hour, minute, 0, 0);
     setValue(clamp(next));
   }
-
-  const sameDay = (a: Date, b: Date) =>
-    startOfDay(a).getTime() === startOfDay(b).getTime();
 
   return (
     <Modal
@@ -165,7 +180,7 @@ export function TimeAsk({
                     {describeDay(day)}
                   </Text>
                   <Text style={[styles.dayDate, on && styles.dayTextOn]}>
-                    {shortDate(day)}
+                    {dateOf(day)}
                   </Text>
                 </Pressable>
               );
@@ -175,7 +190,8 @@ export function TimeAsk({
           <Text style={styles.legend}>TIME</Text>
           <WheelFrame>
             <WheelPicker
-              items={HOURS}
+              key={`h${hourLo}-${hourHi}`}
+              items={hourItems}
               value={hour}
               onChange={(h) => setParts({ h })}
               format={(h) => String(h).padStart(2, "0")}
@@ -186,7 +202,8 @@ export function TimeAsk({
               <Text style={styles.colonText}>:</Text>
             </View>
             <WheelPicker
-              items={MINUTES}
+              key={`m${minuteLo}-${minuteHi}`}
+              items={minuteItems}
               value={minute}
               onChange={(m) => setParts({ m })}
               format={(m) => String(m).padStart(2, "0")}
@@ -222,49 +239,37 @@ export function TimeAsk({
   );
 }
 
-/* 24-hour throughout. A cleaning record that says "7:40" is ambiguous on a
-   job that runs through the night, and that ambiguity is what an invoice
-   dispute turns on — so there is no am/pm anywhere in this product. */
-const HOURS = Array.from({ length: 24 }, (_, i) => i);
-const MINUTES = Array.from({ length: 60 }, (_, i) => i);
+/* 24-hour throughout, and no time zones: the clock time the supervisor picks
+   is the clock time stored and shown. */
+const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** "Today" / "Yesterday" / a weekday — so a night shift is never ambiguous. */
-function describeDay(date: Date) {
-  const today = new Date();
-  const sameDay = (a: Date, b: Date) =>
-    startOfDay(a).getTime() === startOfDay(b).getTime();
-
-  if (sameDay(date, today)) return "Today";
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-  if (sameDay(date, yesterday)) return "Yesterday";
-
-  return date.toLocaleDateString(undefined, { weekday: "short" });
+function range(lo: number, hi: number) {
+  return Array.from({ length: hi - lo + 1 }, (_, i) => lo + i);
 }
 
-/** "4 Sep" — the line under the day name. */
-function shortDate(date: Date) {
-  return date.toLocaleDateString(undefined, { day: "numeric", month: "short" });
-}
-
-/** "Yesterday, 4 Sep · 02:10" — the whole instant, unambiguous. */
-function fullReadback(date: Date) {
-  const hhmm = `${String(date.getHours()).padStart(2, "0")}:${String(
-    date.getMinutes(),
-  ).padStart(2, "0")}`;
-  return `${describeDay(date)}, ${shortDate(date)} · ${hhmm}`;
-}
-
-function startOfDay(date: Date) {
+function dayStart(date: Date) {
   const copy = new Date(date);
-  copy.setHours(0, 0, 0, 0);
+  copy.setUTCHours(0, 0, 0, 0);
   return copy;
 }
 
-/** Whether a date's DAY falls inside the window, ignoring the time on it. */
-function dayWithin(date: Date, min: Date, max: Date) {
-  const day = startOfDay(date).getTime();
-  return day >= startOfDay(min).getTime() && day <= startOfDay(max).getTime();
+function sameDay(a: Date, b: Date) {
+  return dayStart(a).getTime() === dayStart(b).getTime();
+}
+
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+/** "Today" / "Yesterday" / a weekday — so a night shift is never ambiguous. */
+function describeDay(date: Date) {
+  const today = wallNow();
+  if (sameDay(date, today)) return "Today";
+  if (sameDay(date, new Date(today.getTime() - DAY_MS))) return "Yesterday";
+  return WEEKDAYS[date.getUTCDay()];
+}
+
+/** "Yesterday, 14 Sep · 05:00" — the whole time, spelled out. */
+function fullReadback(date: Date) {
+  return `${describeDay(date)}, ${dateOf(date)} · ${clockOf(date)}`;
 }
 
 const styles = StyleSheet.create({
