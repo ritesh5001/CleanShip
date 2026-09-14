@@ -81,6 +81,9 @@ shareRoutes.get("/:token/events", async (req, res) => {
   res.json({
     events: events.map((e) => ({
       id: e.id,
+      /* Lets the page pair an entry with its cell's commence and completed
+         times; an internal row id, nothing a customer can act on. */
+      compartmentId: e.compartmentId,
       compartmentLabel: e.compartmentLabel,
       stageKey: e.stageKey,
       stageLabel: e.stageLabel,

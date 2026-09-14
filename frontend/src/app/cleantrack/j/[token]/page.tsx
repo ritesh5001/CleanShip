@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ApiError, getSharedEvents, getSharedVessel } from "@/lib/api";
+import { ApiError, getSharedVessel } from "@/lib/api";
 import { LiveRefresh } from "@/components/cleantrack/live-refresh";
 import { VesselPlanView } from "@/components/cleantrack/vessel-plan-view";
 import { ClientProgressTable } from "@/components/cleantrack/client-progress-table";
@@ -46,15 +46,6 @@ export default async function SharedVesselPage({
     throw err;
   }
   if (!vessel) notFound();
-
-  /* The history is additive: if it fails, the page still answers "where is my
-     ship", which is what the link is for. */
-  let events: Awaited<ReturnType<typeof getSharedEvents>> = [];
-  try {
-    events = await getSharedEvents(token);
-  } catch {
-    events = [];
-  }
 
   const pct = Math.round(vessel.progress.ratio * 100);
   const total = vessel.compartments.length;
@@ -188,7 +179,7 @@ export default async function SharedVesselPage({
           <h2 className="m-0 mb-5 font-[family-name:var(--font-body)] text-[13px] font-semibold uppercase tracking-[0.14em] text-white/75">
             Time Log
           </h2>
-          <ActivityTimeline events={events} stages={vessel.stages} />
+          <ActivityTimeline compartments={vessel.compartments} stages={vessel.stages} />
         </section>
       </main>
     </div>

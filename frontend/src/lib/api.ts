@@ -442,6 +442,7 @@ export function peekShare(token: string) {
 /** The customer's copy of the audit trail: no crew names, no sync times. */
 export type PublicEvent = {
   id: number;
+  compartmentId: number;
   compartmentLabel: string;
   stageKey: string;
   stageLabel: string;

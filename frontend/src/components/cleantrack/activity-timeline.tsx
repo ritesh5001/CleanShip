@@ -1,33 +1,49 @@
-import type { PublicEvent } from "@/lib/api";
 import { stampOf, type CellStatus, type Stage } from "@/lib/cleantrack/types";
 import { NA_GREY, stageShade } from "@/lib/cleantrack/stage-colors";
 
 /**
- * The latest recorded activity on each hold or tank, newest first.
+ * The Time Log: every stage of every hold that has begun, with the time it
+ * commenced and the time it completed.
  *
- * One line per compartment: the API sends only the most recent change for
- * each, so work on Hold 1 today replaces the entry for Hold 1 from last week.
- * Sorted by time alone, with the date on every row since the entries can be
- * days apart.
- *
- * Times are the times the work happened, not when a phone got signal to
- * report it — the API sends only `occurredAt` for exactly that reason.
+ * Built from the cells themselves rather than from the change history, so
+ * each stage appears once with both of its times side by side — the pair a
+ * customer checks laytime against. Stages not yet commenced are left out;
+ * rows are sorted by their latest time, newest first. Times are the clock
+ * times the supervisor recorded, shown unconverted.
  */
 
+type Cell = {
+  status: CellStatus;
+  startedAt?: string | null;
+  completedAt?: string | null;
+};
+
 type Props = {
-  events: PublicEvent[];
+  compartments: { id: number; label: string; cells: Record<string, Cell> }[];
   stages: Stage[];
 };
 
-const VERB: Record<CellStatus, string> = {
-  pending: "reset to not started",
-  in_progress: "commenced",
-  done: "completed",
-  na: "marked not applicable",
-};
+export function ActivityTimeline({ compartments, stages }: Props) {
+  const rows = compartments.flatMap((c) =>
+    stages.flatMap((s, si) => {
+      const cell = c.cells[s.key];
+      if (!cell || (!cell.startedAt && !cell.completedAt)) return [];
+      return [
+        {
+          key: `${c.id}-${s.key}`,
+          hold: c.label,
+          stage: s.label,
+          stageIndex: si,
+          status: cell.status,
+          startedAt: cell.startedAt ?? null,
+          completedAt: cell.completedAt ?? null,
+          latest: cell.completedAt ?? cell.startedAt ?? "",
+        },
+      ];
+    }),
+  );
 
-export function ActivityTimeline({ events, stages }: Props) {
-  if (events.length === 0) {
+  if (rows.length === 0) {
     return (
       <p className="m-0 text-[15px] text-white/60">
         Nothing has been recorded on this vessel yet.
@@ -35,45 +51,48 @@ export function ActivityTimeline({ events, stages }: Props) {
     );
   }
 
-  const stageIndex = new Map(stages.map((s, i) => [s.key, i]));
-  const sorted = [...events].sort((a, b) =>
-    a.occurredAt < b.occurredAt ? 1 : -1,
-  );
+  rows.sort((a, b) => (a.latest < b.latest ? 1 : a.latest > b.latest ? -1 : 0));
 
   return (
-    <ol className="m-0 list-none p-0">
-      {sorted.map((e) => {
-        const idx = stageIndex.get(e.stageKey) ?? 0;
-        const shade = e.toStatus === "na" ? NA_GREY : stageShade(idx);
-        return (
-          <li key={e.id} className="flex gap-4 border-t border-white/[0.12] py-3">
-            <span className="w-[112px] shrink-0 pt-[3px] font-[family-name:var(--font-mono)] text-[13px] tabular-nums text-white/70">
-              {stampOf(e.occurredAt)}
-            </span>
-
-            {/* The stage's own colour, matching the table above. */}
-            <span
-              aria-hidden="true"
-              className="mt-[6px] h-[14px] w-[4px] shrink-0"
-              style={{ background: e.toStatus === "done" ? shade.dark : shade.light }}
-            />
-
-            <span className="min-w-0 flex-1">
-              <span className="block text-[16px] leading-snug text-white/90">
-                <strong className="font-semibold text-white">{e.compartmentLabel}</strong>{" "}
-                &middot; {e.stageLabel}{" "}
-                <span className="text-white/65">{VERB[e.toStatus]}</span>
-              </span>
-              {e.note && (
-                <span className="mt-1 block text-[14px] italic text-white/60">
-                  &ldquo;{e.note}&rdquo;
-                </span>
-              )}
-            </span>
-          </li>
-        );
-      })}
-    </ol>
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[560px] border-collapse text-left">
+        <thead>
+          <tr className="font-mono text-[11px] uppercase tracking-[0.12em] text-white/60">
+            <th scope="col" className="border-b border-white/20 py-2 pr-4 font-normal">Hold</th>
+            <th scope="col" className="border-b border-white/20 py-2 pr-4 font-normal">Stage</th>
+            <th scope="col" className="border-b border-white/20 py-2 pr-4 font-normal">Commenced</th>
+            <th scope="col" className="border-b border-white/20 py-2 font-normal">Completed</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => {
+            const shade = r.status === "na" ? NA_GREY : stageShade(r.stageIndex);
+            return (
+              <tr key={r.key} className="text-[14px]">
+                <td className="whitespace-nowrap border-b border-white/[0.1] py-2.5 pr-4 font-semibold text-white">
+                  {r.hold}
+                </td>
+                <td className="border-b border-white/[0.1] py-2.5 pr-4 text-white/85">
+                  <span className="flex items-center gap-2">
+                    <span
+                      aria-hidden="true"
+                      className="h-3 w-[4px] shrink-0"
+                      style={{ background: shade.dark }}
+                    />
+                    {r.stage}
+                  </span>
+                </td>
+                <td className="whitespace-nowrap border-b border-white/[0.1] py-2.5 pr-4 font-mono tabular-nums text-white/85">
+                  {r.startedAt ? stampOf(r.startedAt) : "—"}
+                </td>
+                <td className="whitespace-nowrap border-b border-white/[0.1] py-2.5 font-mono tabular-nums text-white/85">
+                  {r.completedAt ? stampOf(r.completedAt) : "In progress"}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }
-
