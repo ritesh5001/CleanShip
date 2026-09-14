@@ -203,7 +203,11 @@ vesselRoutes.post("/:id/share/revoke", requireRole("admin"), async (req, res) =>
   });
 });
 
-vesselRoutes.delete("/:id", requireRole("admin"), async (req, res) => {
+/**
+ * Deleting a vessel takes its holds, cells and the whole time log with it, so
+ * it is kept to the superadmin. Admins can edit a vessel but not erase one.
+ */
+vesselRoutes.delete("/:id", requireRole("superadmin"), async (req, res) => {
   const id = parseId(req.params.id, "vessel id");
   await deleteVessel(id);
   res.status(204).end();

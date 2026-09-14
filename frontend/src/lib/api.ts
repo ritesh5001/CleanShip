@@ -190,6 +190,11 @@ export function updateVessel(id: number, patch: Record<string, unknown>) {
   });
 }
 
+/** Superadmin only: removes the vessel with its holds, cells and time log. */
+export function deleteVessel(id: number) {
+  return request<void>(`/api/v1/vessels/${id}`, { method: "DELETE" });
+}
+
 export function assignSupervisor(id: number, supervisorId: number | null) {
   return request<{ vessel: VesselSummary }>(`/api/v1/vessels/${id}/assign`, {
     method: "POST",

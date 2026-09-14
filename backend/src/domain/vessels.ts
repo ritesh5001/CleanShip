@@ -479,9 +479,11 @@ export type UpdateVesselInput = Partial<{
 }>;
 
 export async function updateVessel(id: number, patch: UpdateVesselInput) {
+  /* Bumps the version so open phones and customer pages pick up a renamed
+     vessel or a moved berth on their next poll. */
   const [row] = await db
     .update(vessels)
-    .set({ ...patch, updatedAt: new Date() })
+    .set({ ...patch, version: sql`${vessels.version} + 1`, updatedAt: new Date() })
     .where(eq(vessels.id, id))
     .returning();
   if (!row) throw ApiError.notFound("No such vessel.");

@@ -130,6 +130,74 @@ export async function createVesselAction(
   redirect(`/cleantrack/admin/vessels/${id}`);
 }
 
+const editVesselSchema = vesselSchema
+  .pick({ name: true, imo: true, port: true, berth: true, clientId: true, notes: true, scheduledFor: true })
+  .extend({ vesselId: z.coerce.number().int().positive() });
+
+/**
+ * Edits a vessel's details and, when they changed, its holds or tanks.
+ *
+ * The compartment list only arrives when the admin actually changed it, so a
+ * plain rename never touches the grid.
+ */
+export async function updateVesselAction(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requireSession("admin");
+
+  const parsed = editVesselSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: firstIssue(parsed.error) };
+  const d = parsed.data;
+
+  let labels: string[] | undefined;
+  const rawLabels = formData.get("compartmentLabels");
+  if (rawLabels) {
+    try {
+      labels = z
+        .array(z.string().trim().min(1, "Every hold or tank needs a name.").max(40))
+        .min(1)
+        .max(60)
+        .parse(JSON.parse(String(rawLabels)));
+    } catch (err) {
+      return {
+        error:
+          err instanceof z.ZodError
+            ? firstIssue(err)
+            : "The hold names could not be read. Reload and try again.",
+      };
+    }
+  }
+
+  try {
+    await api.updateVessel(d.vesselId, {
+      name: d.name.trim(),
+      imo: d.imo?.trim() || null,
+      port: d.port.trim(),
+      berth: d.berth?.trim() || null,
+      clientId: d.clientId ?? null,
+      scheduledFor: d.scheduledFor || null,
+      notes: d.notes?.trim() || null,
+    });
+    if (labels) await api.setVesselCompartments(d.vesselId, labels);
+  } catch (err) {
+    return { error: messageFrom(err, "The vessel could not be saved.") };
+  }
+
+  revalidatePath("/cleantrack/admin");
+  revalidatePath(`/cleantrack/admin/vessels/${d.vesselId}`);
+  redirect(`/cleantrack/admin/vessels/${d.vesselId}`);
+}
+
+/** Superadmin only — checked here and again by the API. */
+export async function deleteVesselAction(formData: FormData) {
+  await requireSession("superadmin");
+  const vesselId = Number(formData.get("vesselId"));
+  await api.deleteVessel(vesselId);
+  revalidatePath("/cleantrack/admin");
+  redirect("/cleantrack/admin");
+}
+
 export async function assignSupervisorAction(formData: FormData) {
   await requireSession("admin");
   const vesselId = Number(formData.get("vesselId"));

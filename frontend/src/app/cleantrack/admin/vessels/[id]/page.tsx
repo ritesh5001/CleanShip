@@ -9,6 +9,7 @@ import { StageEditor } from "@/components/cleantrack/stage-editor";
 import { ApiUnavailable } from "@/components/cleantrack/api-unavailable";
 import { ApiError, getVessel, listSupervisors } from "@/lib/api";
 import { ActivityTimeline } from "@/components/cleantrack/activity-timeline";
+import { DeleteVesselButton } from "./delete-vessel";
 import { compartmentNoun } from "@/lib/cleantrack/types";
 import { formatDate, formatDateTime } from "@/lib/format";
 import {
@@ -95,6 +96,12 @@ export default async function AdminVesselPage({
         </div>
 
         <div className="flex shrink-0 flex-wrap items-center gap-3">
+          <Link
+            href={`/cleantrack/admin/vessels/${vessel.id}/edit`}
+            className="flex h-11 items-center border border-[#b9c5cf] bg-white px-4 text-[14px] font-semibold text-[#0f1c27] hover:bg-[#f1f7fc]"
+          >
+            Edit vessel
+          </Link>
           <a
             href="#supervisor"
             className="flex h-11 items-center border border-[#b9c5cf] bg-white px-4 text-[14px] font-semibold text-[#0f1c27] hover:bg-[#f1f7fc]"
@@ -299,6 +306,19 @@ export default async function AdminVesselPage({
               </p>
             </form>
           </Card>
+
+          {session.role === "superadmin" && (
+            <Card className="border-red-200 p-5">
+              <h2 className="text-[13px] font-semibold uppercase tracking-wider text-red-700">
+                Delete vessel
+              </h2>
+              <p className="mt-2 text-[13px] text-slate-600">
+                Removes this vessel, every hold, and its whole time log. The
+                customer link stops working. This cannot be undone.
+              </p>
+              <DeleteVesselButton vesselId={vessel.id} name={vessel.name} />
+            </Card>
+          )}
         </div>
       </div>
     </AppShell>
