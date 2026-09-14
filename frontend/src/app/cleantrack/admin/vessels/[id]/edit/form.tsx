@@ -15,6 +15,7 @@ type EditableVessel = {
   imo: string | null;
   port: string;
   berth: string | null;
+  destination: string | null;
   type: VesselType;
   clientId: number | null;
   scheduledFor: string | null;
@@ -33,9 +34,12 @@ type EditableVessel = {
 export function EditVesselForm({
   vessel,
   clients,
+  places,
 }: {
   vessel: EditableVessel;
   clients: { id: number; name: string }[];
+  /** Ports and destinations already used, offered as suggestions. */
+  places: string[];
 }) {
   const [state, action] = useActionState(updateVesselAction, initial);
   const [labels, setLabels] = useState<string[]>(vessel.labels);
@@ -136,6 +140,22 @@ export function EditVesselForm({
 
             <Field label="Berth or anchorage" hint="Optional">
               <input name="berth" defaultValue={vessel.berth ?? ""} className={inputClass} />
+            </Field>
+
+            <Field label="Destination" hint="Optional. Where the vessel sails to next.">
+              <input
+                name="destination"
+                list="destination-suggestions"
+                autoComplete="off"
+                className={inputClass}
+                placeholder="Singapore"
+                defaultValue={vessel.destination ?? ""}
+              />
+              <datalist id="destination-suggestions">
+                {places.map((p) => (
+                  <option key={p} value={p} />
+                ))}
+              </datalist>
             </Field>
 
             <Field label="Scheduled for" hint="Optional">

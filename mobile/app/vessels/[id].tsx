@@ -586,6 +586,7 @@ export default function Vessel() {
           imo={vessel.imo}
           port={vessel.port}
           berth={vessel.berth}
+          destination={vessel.destination}
           percent={Math.round(overall.ratio * 100)}
         />
         <SyncStrip

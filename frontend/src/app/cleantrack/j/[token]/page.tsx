@@ -85,7 +85,12 @@ export default async function SharedVesselPage({
         )}
 
         <p className="m-0 font-[family-name:var(--font-mono)] text-[13px] uppercase tracking-[0.14em] text-white/70">
-          {[vessel.imo ? `IMO ${vessel.imo}` : null, vessel.port, vessel.berth]
+          {[
+            vessel.imo ? `IMO ${vessel.imo}` : null,
+            vessel.port,
+            vessel.berth,
+            vessel.destination ? `To ${vessel.destination}` : null,
+          ]
             .filter(Boolean)
             .join(" · ")}
         </p>

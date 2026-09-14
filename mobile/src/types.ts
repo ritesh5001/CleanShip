@@ -65,6 +65,7 @@ export type VesselSummary = {
   imo: string | null;
   port: string;
   berth: string | null;
+  destination: string | null;
   type: VesselType;
   status: VesselStatus;
   clientId: number | null;

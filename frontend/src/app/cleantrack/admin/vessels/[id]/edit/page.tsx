@@ -4,11 +4,17 @@ import { requireSession } from "@/lib/session";
 import { AppShell } from "@/components/cleantrack/app-shell";
 import { PageTitle } from "@/components/cleantrack/ui";
 import { ApiUnavailable } from "@/components/cleantrack/api-unavailable";
-import { ApiError, getVessel, listClients } from "@/lib/api";
+import { ApiError, getVessel, listClients, listVessels } from "@/lib/api";
 import { EditVesselForm } from "./form";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Edit vessel" };
+
+/** Every port and destination already on record, for the destination picker. */
+function placesFrom(vessels: { port: string; destination: string | null }[]) {
+  return [...new Set(vessels.flatMap((v) => [v.port, v.destination]).filter((p): p is string => Boolean(p?.trim())))]
+    .sort((a, b) => a.localeCompare(b));
+}
 
 /** Admins and the superadmin can edit; supervisors never reach this page. */
 export default async function EditVesselPage({
@@ -19,9 +25,13 @@ export default async function EditVesselPage({
   const session = await requireSession("admin");
   const { id } = await params;
 
-  let data, clients;
+  let data, clients, vessels;
   try {
-    [data, clients] = await Promise.all([getVessel(Number(id)), listClients()]);
+    [data, clients, vessels] = await Promise.all([
+      getVessel(Number(id)),
+      listClients(),
+      listVessels(),
+    ]);
   } catch (err) {
     if (err instanceof ApiError && err.status === 404) notFound();
     return (
@@ -56,6 +66,7 @@ export default async function EditVesselPage({
             imo: vessel.imo,
             port: vessel.port,
             berth: vessel.berth,
+            destination: vessel.destination,
             type: vessel.type,
             clientId: vessel.clientId,
             scheduledFor: vessel.scheduledFor,
@@ -65,6 +76,7 @@ export default async function EditVesselPage({
               .map((c) => c.label),
           }}
           clients={clients.map((c) => ({ id: c.id, name: c.name }))}
+          places={placesFrom(vessels)}
         />
       </div>
     </AppShell>

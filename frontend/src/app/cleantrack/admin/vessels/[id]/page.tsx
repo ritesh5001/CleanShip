@@ -77,6 +77,7 @@ export default async function AdminVesselPage({
             <span>
               {vessel.port}
               {vessel.berth ? ` · ${vessel.berth}` : ""}
+              {vessel.destination ? ` → ${vessel.destination}` : ""}
             </span>
             <span>
               {vessel.type === "tank" ? "Tanker · tank cleaning" : "Bulk carrier · hold cleaning"}

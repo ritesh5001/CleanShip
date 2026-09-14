@@ -17,12 +17,15 @@ type Props = {
   name: string;
   imo?: string | null;
   berth?: string | null;
+  destination?: string | null;
   port?: string | null;
   percent: number;
 };
 
-export function VesselHeader({ name, imo, berth, port, percent }: Props) {
-  const line = [imo ? `IMO ${imo}` : null, port, berth].filter(Boolean).join(" · ");
+export function VesselHeader({ name, imo, berth, destination, port, percent }: Props) {
+  const line = [imo ? `IMO ${imo}` : null, port, berth, destination ? `To ${destination}` : null]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <View style={styles.bar}>

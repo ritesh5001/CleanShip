@@ -60,6 +60,7 @@ export default async function SupervisorVesselPage({
             <p className="mt-1 text-[14px] text-slate-600">
               {vessel.port}
               {vessel.berth ? ` · ${vessel.berth}` : ""}
+              {vessel.destination ? ` → ${vessel.destination}` : ""}
               {vessel.clientName ? ` · ${vessel.clientName}` : ""}
             </p>
           </div>

@@ -184,6 +184,7 @@ function VesselCard({ vessel }: { vessel: VesselSummary }) {
                   <Text style={styles.where}>
                     {vessel.port}
                     {vessel.berth ? ` · ${vessel.berth}` : ""}
+                    {vessel.destination ? ` → ${vessel.destination}` : ""}
                   </Text>
                 </View>
                 <View

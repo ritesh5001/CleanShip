@@ -67,6 +67,7 @@ const vesselSchema = z.object({
     .or(z.literal("")),
   port: z.string().min(2, "Enter the port.").max(160),
   berth: z.string().max(120).optional(),
+  destination: z.string().max(160).optional(),
   type: z.enum(["hold", "tank"]),
   clientId: optionalId,
   supervisorId: optionalId,
@@ -112,6 +113,7 @@ export async function createVesselAction(
       imo: d.imo || null,
       port: d.port,
       berth: d.berth || null,
+      destination: d.destination?.trim() || null,
       type: d.type,
       clientId: d.clientId ?? null,
       supervisorId: d.supervisorId ?? null,
@@ -131,7 +133,7 @@ export async function createVesselAction(
 }
 
 const editVesselSchema = vesselSchema
-  .pick({ name: true, imo: true, port: true, berth: true, clientId: true, notes: true, scheduledFor: true })
+  .pick({ name: true, imo: true, port: true, berth: true, destination: true, clientId: true, notes: true, scheduledFor: true })
   .extend({ vesselId: z.coerce.number().int().positive() });
 
 /**
@@ -175,6 +177,7 @@ export async function updateVesselAction(
       imo: d.imo?.trim() || null,
       port: d.port.trim(),
       berth: d.berth?.trim() || null,
+      destination: d.destination?.trim() || null,
       clientId: d.clientId ?? null,
       scheduledFor: d.scheduledFor || null,
       notes: d.notes?.trim() || null,

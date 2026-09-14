@@ -98,6 +98,8 @@ export const vessels = pgTable(
     imo: varchar("imo", { length: 16 }),
     port: varchar("port", { length: 160 }).notNull(),
     berth: varchar("berth", { length: 120 }),
+    /** Where the vessel sails to after cleaning. Optional. */
+    destination: varchar("destination", { length: 160 }),
     type: vesselType("type").notNull().default("hold"),
     status: vesselStatus("status").notNull().default("scheduled"),
     clientId: integer("client_id").references(() => clients.id, {

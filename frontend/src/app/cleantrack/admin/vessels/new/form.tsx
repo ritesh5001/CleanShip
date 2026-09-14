@@ -25,11 +25,14 @@ export function NewVesselForm({
   supervisors,
   templates,
   defaultLabels,
+  places,
 }: {
   clients: { id: number; name: string }[];
   supervisors: { id: number; name: string }[];
   templates: StageTemplate[];
   defaultLabels: { hold: string[]; tank: string[] };
+  /** Ports and destinations already used, offered as suggestions. */
+  places: string[];
 }) {
   const [state, action] = useActionState(createVesselAction, initial);
   const [type, setType] = useState<VesselType>("hold");
@@ -149,6 +152,21 @@ export function NewVesselForm({
 
             <Field label="Berth or anchorage" hint="Optional">
               <input name="berth" className={inputClass} placeholder="Oil jetty 3" />
+            </Field>
+
+            <Field label="Destination" hint="Optional. Where the vessel sails to next.">
+              <input
+                name="destination"
+                list="destination-suggestions"
+                autoComplete="off"
+                className={inputClass}
+                placeholder="Singapore"
+              />
+              <datalist id="destination-suggestions">
+                {places.map((p) => (
+                  <option key={p} value={p} />
+                ))}
+              </datalist>
             </Field>
 
             <Field label="Supervisor" hint="Can be assigned later.">

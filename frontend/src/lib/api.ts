@@ -165,6 +165,7 @@ export type CreateVesselInput = {
   imo?: string | null;
   port: string;
   berth?: string | null;
+  destination?: string | null;
   type: "hold" | "tank";
   clientId?: number | null;
   supervisorId?: number | null;

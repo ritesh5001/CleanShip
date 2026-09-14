@@ -358,6 +358,7 @@ export type CreateVesselInput = {
   imo?: string | null;
   port: string;
   berth?: string | null;
+  destination?: string | null;
   type: "hold" | "tank";
   clientId?: number | null;
   supervisorId?: number | null;
@@ -416,6 +417,7 @@ export async function createVessel(
             imo: input.imo?.trim() || null,
             port: input.port.trim(),
             berth: input.berth?.trim() || null,
+            destination: input.destination?.trim() || null,
             type: input.type,
             clientId: input.clientId ?? null,
             supervisorId: input.supervisorId ?? null,
@@ -471,6 +473,7 @@ export type UpdateVesselInput = Partial<{
   imo: string | null;
   port: string;
   berth: string | null;
+  destination: string | null;
   clientId: number | null;
   supervisorId: number | null;
   status: "scheduled" | "in-progress" | "complete" | "cancelled";

@@ -3,21 +3,28 @@ import { requireSession } from "@/lib/session";
 import { AppShell } from "@/components/cleantrack/app-shell";
 import { PageTitle } from "@/components/cleantrack/ui";
 import { ApiUnavailable } from "@/components/cleantrack/api-unavailable";
-import { getVesselTemplates, listClients, listSupervisors } from "@/lib/api";
+import { getVesselTemplates, listClients, listSupervisors, listVessels } from "@/lib/api";
 import { NewVesselForm } from "./form";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "New vessel" };
 
+/** Every port and destination already on record, for the destination picker. */
+function placesFrom(vessels: { port: string; destination: string | null }[]) {
+  return [...new Set(vessels.flatMap((v) => [v.port, v.destination]).filter((p): p is string => Boolean(p?.trim())))]
+    .sort((a, b) => a.localeCompare(b));
+}
+
 export default async function NewVesselPage() {
   const session = await requireSession("admin");
 
-  let clients, supervisors, templates;
+  let clients, supervisors, templates, vessels;
   try {
-    [clients, supervisors, templates] = await Promise.all([
+    [clients, supervisors, templates, vessels] = await Promise.all([
       listClients(),
       listSupervisors(),
       getVesselTemplates(60),
+      listVessels(),
     ]);
   } catch (err) {
     return (
@@ -48,6 +55,7 @@ export default async function NewVesselPage() {
           supervisors={supervisors}
           templates={templates.templates}
           defaultLabels={templates.defaultLabels}
+          places={placesFrom(vessels)}
         />
       </div>
     </AppShell>
