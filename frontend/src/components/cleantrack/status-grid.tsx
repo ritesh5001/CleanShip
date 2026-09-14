@@ -1,13 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ProgressBar, StatusChip } from "./ui";
+import { ProgressBar } from "./ui";
 import {
-  CELL_STATUSES,
   CELL_STYLE,
   compartmentNoun,
-  formatDuration,
-  formatWorkTime,
   compartmentState,
   nextStatusOnTap,
   progressOf,
@@ -30,8 +27,7 @@ import {
  *
  * This is the screen the whole system exists for: the grid of holds × stages
  * that used to be a printed table on a clipboard. A supervisor taps a cell to
- * move it on — blank, yellow, green — and opens a compartment below to set
- * "not applicable" or leave a note like "Water in tank".
+ * move it on — blank, yellow, green — and right-clicks to set "not applicable".
  */
 
 export type GridCompartment = {
@@ -122,14 +118,9 @@ export function StatusGrid({
   readOnly?: boolean;
 }) {
   const [comps, setComps] = useState(initialCompartments);
-  const [selectedId, setSelectedId] = useState<number | null>(
-    initialCompartments[0]?.id ?? null,
-  );
   const [queue, setQueue] = useState<QueuedChange[]>([]);
   const [online, setOnline] = useState(true);
   const [version, setVersion] = useState(initialVersion);
-
-  const selected = comps.find((c) => c.id === selectedId) ?? null;
 
   /* ---- connectivity ---- */
   useEffect(() => {
@@ -372,9 +363,7 @@ export function StatusGrid({
           comps={comps}
           stages={stages}
           vesselType={vesselType}
-          selectedId={selectedId}
           readOnly={readOnly}
-          onSelect={setSelectedId}
           onTapCell={(compartmentId, stageKey, current) =>
             setCell(
               compartmentId,
@@ -404,17 +393,6 @@ export function StatusGrid({
           )}
         </div>
       </div>
-
-      {selected && (
-        <CompartmentPanel
-          key={selected.id}
-          compartment={selected}
-          stages={stages}
-          readOnly={readOnly}
-          onSet={setCell}
-          onToggleActive={toggleActive}
-        />
-      )}
     </div>
   );
 }
@@ -460,9 +438,7 @@ function Grid({
   comps,
   stages,
   vesselType,
-  selectedId,
   readOnly,
-  onSelect,
   onTapCell,
   onSetNa,
   onTapColumn,
@@ -471,9 +447,7 @@ function Grid({
   comps: GridCompartment[];
   stages: Stage[];
   vesselType: VesselType;
-  selectedId: number | null;
   readOnly: boolean;
-  onSelect: (id: number) => void;
   onTapCell: (compartmentId: number, stageKey: string, current: CellStatus) => void;
   onSetNa: (compartmentId: number, stageKey: string) => void;
   onTapColumn: (stageKey: string, status: CellStatus) => void;
@@ -527,20 +501,14 @@ function Grid({
               <tr key={c.id}>
                 <th
                   scope="row"
-                  className={`border border-[#dce4eb] p-0 text-left ${
-                    selectedId === c.id ? "bg-[#f1f7fc]" : "bg-white"
-                  }`}
+                  className="border border-[#dce4eb] bg-white p-0 text-left"
                 >
                   {/* The flex row lives on this wrapper, not on the <th>
                       itself — setting display:flex on a table cell takes it
                       out of the table layout algorithm and desyncs the
                       column width from every <td> below it. */}
                   <div className="flex items-center gap-2 pr-2">
-                  <button
-                    type="button"
-                    onClick={() => onSelect(c.id)}
-                    className="flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-left hover:bg-[#f1f7fc]"
-                  >
+                  <div className="flex min-w-0 flex-1 items-center gap-3 px-4 py-3">
                     <span
                       aria-hidden="true"
                       className="h-8 w-[3px] shrink-0"
@@ -554,7 +522,7 @@ function Grid({
                         {STATE_STYLE[state].label}
                       </span>
                     </span>
-                  </button>
+                  </div>
 
                   {/* Crew presence: a fact set by hand, separate from the grid
                       it sits beside. Aqua when on, so it never reads as one of
@@ -709,171 +677,5 @@ function Key({ status, text }: { status: CellStatus; text: string }) {
       />
       <span className="text-[12px] text-[#4c5c6b]">{text}</span>
     </span>
-  );
-}
-
-
-/* -------------------------------------------------------------------- */
-
-/**
- * One compartment in full: every stage with all four states spelled out, plus
- * the note field. The grid is for speed; this is for the cases the grid cannot
- * express with a tap.
- */
-function CompartmentPanel({
-  compartment,
-  stages,
-  readOnly,
-  onSet,
-  onToggleActive,
-}: {
-  compartment: GridCompartment;
-  stages: Stage[];
-  readOnly: boolean;
-  onSet: (
-    compartmentId: number,
-    stageKey: string,
-    status: CellStatus,
-    note?: string | null,
-  ) => void;
-  onToggleActive: (compartmentId: number, active: boolean) => void;
-}) {
-  /* `cells` here carries only status and note — the API's fuller cell shape is
-     not needed to read a status, and asking for it would make this component
-     depend on fields it never renders. */
-  const statuses = stages.map(
-    (s) => compartment.cells[s.key]?.status ?? ("pending" as CellStatus),
-  );
-  const state = compartmentState(statuses);
-  const { done, total } = progressOf(statuses);
-
-  return (
-    <div className="rounded-none border border-slate-200 bg-white">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4 sm:p-5">
-        <div>
-          <h2 className="text-lg font-bold text-slate-900">{compartment.label}</h2>
-          <p className="mt-0.5 text-[13px] text-slate-600">
-            {done} of {total} stages done
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {!readOnly && (
-            <button
-              type="button"
-              onClick={() =>
-                onToggleActive(compartment.id, !compartment.active)
-              }
-              aria-pressed={Boolean(compartment.active)}
-              className={`border px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] ${
-                compartment.active
-                  ? "border-[#00929b] bg-[#00b0b9] text-white"
-                  : "border-slate-300 bg-white text-slate-500 hover:border-[#00b0b9] hover:text-[#00929b]"
-              }`}
-            >
-              {compartment.active ? "Crew here" : "Mark crew here"}
-            </button>
-          )}
-          <StatusChip state={state} />
-        </div>
-      </div>
-
-      <ul className="divide-y divide-slate-100">
-        {stages.map((stage) => {
-          const cell = compartment.cells[stage.key] ?? {
-            status: "pending" as CellStatus,
-            note: null,
-          };
-          return (
-            <li key={stage.key} className="px-4 py-3 sm:px-5">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <span className="text-[15px] font-semibold text-slate-900">
-                  {stage.label}
-                </span>
-                <div className="flex flex-wrap gap-1" role="group" aria-label={stage.label}>
-                  {CELL_STATUSES.map((status) => {
-                    const active = cell.status === status;
-                    return (
-                      <button
-                        key={status}
-                        type="button"
-                        disabled={readOnly}
-                        aria-pressed={active}
-                        onClick={() => onSet(compartment.id, stage.key, status)}
-                        className={`min-h-9 rounded-none border px-2.5 text-[12px] font-semibold transition-colors ${
-                          active
-                            ? CELL_STYLE[status].cell
-                            : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50"
-                        } ${readOnly ? "cursor-default" : ""}`}
-                      >
-                        {CELL_STYLE[status].label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* When the work actually happened, as opposed to when it was
-                  recorded. Read-only here: correcting a time is a job for the
-                  supervisor on the vessel, in the app, where they know what
-                  the deck was doing. */}
-              <p className="mt-1.5 text-[12px] text-slate-500">
-                <span className="font-medium text-slate-600">Started</span>{" "}
-                {formatWorkTime(cell.startedAt)}
-                <span className="mx-1.5 text-slate-300">·</span>
-                <span className="font-medium text-slate-600">Finished</span>{" "}
-                {formatWorkTime(cell.completedAt)}
-                {formatDuration(cell.startedAt, cell.completedAt) && (
-                  <span className="ml-1.5 rounded bg-blue-50 px-1.5 py-0.5 font-semibold text-blue-800">
-                    {formatDuration(cell.startedAt, cell.completedAt)}
-                  </span>
-                )}
-              </p>
-
-              {!readOnly && (
-                <NoteField
-                  value={cell.note ?? ""}
-                  placeholder="Add a note — e.g. water in tank"
-                  onCommit={(note) =>
-                    onSet(compartment.id, stage.key, cell.status, note || null)
-                  }
-                />
-              )}
-              {readOnly && cell.note && (
-                <p className="mt-1.5 text-[13px] text-slate-600">{cell.note}</p>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-}
-
-/**
- * A note that saves on blur rather than on every keystroke — one queued change
- * per note, not one per letter typed on a flaky connection.
- */
-function NoteField({
-  value,
-  placeholder,
-  onCommit,
-}: {
-  value: string;
-  placeholder: string;
-  onCommit: (value: string) => void;
-}) {
-  const [draft, setDraft] = useState(value);
-
-  return (
-    <input
-      value={draft}
-      onChange={(e) => setDraft(e.target.value)}
-      onBlur={() => {
-        if (draft.trim() !== value.trim()) onCommit(draft.trim());
-      }}
-      maxLength={160}
-      placeholder={placeholder}
-      className="mt-2 w-full rounded-none border border-slate-200 bg-slate-50 px-2.5 py-2 text-[13px] text-slate-800 outline-none focus:border-blue-500 focus:bg-white"
-    />
   );
 }
