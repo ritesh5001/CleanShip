@@ -61,7 +61,6 @@ export default async function SharedVesselPage({
   const complete = vessel.compartments.filter(
     (c) => compartmentState(statusesOf(c, vessel.stages)) === "complete",
   ).length;
-  const remaining = total - complete;
   const crewCompartments = vessel.compartments.filter((c) => c.active);
 
 
@@ -111,12 +110,6 @@ export default async function SharedVesselPage({
           &middot; Updated live
         </p>
 
-        <p className="mt-4 max-w-[60ch] text-[18px] leading-[1.55] text-white/90">
-          {remaining > 0
-            ? `${remaining} of ${total} ${compartmentNoun(vessel.type, true).toLowerCase()} still in cleaning.`
-            : `All ${total} ${compartmentNoun(vessel.type, true).toLowerCase()} are done.`}
-        </p>
-
         {/* Progress. One number, stated plainly — and no projected ready date,
             because nothing here should be a promise the crew has not made. */}
         <div className="mt-8">
@@ -142,13 +135,9 @@ export default async function SharedVesselPage({
 
         {/* The plan view: a schematic hull, not a rendered one. */}
         <section className="mt-12">
-          <h2 className="m-0 mb-2 font-[family-name:var(--font-body)] text-[13px] font-semibold uppercase tracking-[0.14em] text-white/75">
-            {compartmentNoun(vessel.type)} by {compartmentNoun(vessel.type).toLowerCase()}{" "}
-            &middot; plan view
-          </h2>
           {crewCompartments.length > 0 && (
-            <p className="m-0 mb-5 text-[14px] text-[#00b0b9]">
-              Crew currently aboard &mdash;{" "}
+            <p className="m-0 mb-5 text-[15px] font-semibold text-[#f2c230]">
+              Crew currently working on &mdash;{" "}
               {crewCompartments.map((c) => c.label).join(", ")}
             </p>
           )}
@@ -176,15 +165,7 @@ export default async function SharedVesselPage({
                 className="h-3 w-3 shrink-0 rounded-full"
                 style={{ background: "#d6a90a" }}
               />
-              <span className="text-[14px] text-white/85">In progress</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <span
-                aria-hidden="true"
-                className="h-3 w-3 shrink-0 rounded-full"
-                style={{ background: "#00b0b9" }}
-              />
-              <span className="text-[14px] text-white/85">Crew aboard</span>
+              <span className="text-[14px] text-white/85">Crew working</span>
             </li>
           </ul>
         </section>
@@ -198,9 +179,6 @@ export default async function SharedVesselPage({
             stages={vessel.stages}
             vesselType={vessel.type}
           />
-          <p className="mt-3 font-[family-name:var(--font-mono)] text-[12px] uppercase tracking-[0.1em] text-white/60">
-            Light = under way &middot; solid = finished &middot; times are local, 24-hour
-          </p>
         </section>
 
         {/* The full history, not a sample of it. This is the section a
@@ -208,18 +186,10 @@ export default async function SharedVesselPage({
             argued: every stage, every hold, in the order it happened. */}
         <section className="mt-12">
           <h2 className="m-0 mb-5 font-[family-name:var(--font-body)] text-[13px] font-semibold uppercase tracking-[0.14em] text-white/75">
-            Full activity
+            Time Log
           </h2>
           <ActivityTimeline events={events} stages={vessel.stages} />
         </section>
-
-        <footer className="mt-14 border-t border-white/[0.12] pt-6">
-          {vessel.clientName && (
-            <p className="m-0 text-[15px] text-white/80">
-              Questions on this vessel &mdash; {vessel.clientName} desk.
-            </p>
-          )}
-        </footer>
       </main>
     </div>
   );

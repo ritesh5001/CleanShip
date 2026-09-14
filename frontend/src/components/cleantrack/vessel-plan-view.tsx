@@ -82,9 +82,6 @@ const GROUND = {
   },
 } as const;
 
-/** Crew presence, drawn distinctly from the amber "stage under way" pulse. */
-const CREW_AQUA = "#00b0b9";
-
 export function VesselPlanView({
   compartments,
   stages,
@@ -182,7 +179,6 @@ export function VesselPlanView({
             const state = compartmentState(statuses);
             const pct = Math.round(progressOf(statuses).ratio * 100);
             const done = state === "complete";
-            const working = state === "in-progress";
             const crewAboard = Boolean(c.active);
             const selected = selectedId === c.id;
 
@@ -265,23 +261,11 @@ export function VesselPlanView({
                   {pct}%
                 </text>
 
-                {/* Crew physically in this hold right now — a fact a
-                    supervisor sets by hand, and deliberately not the same
-                    marker as "stage under way" below: that pulses amber above
-                    the hold, this sits steady, aqua, inside its top corner. A
-                    hold can be mid-stage with nobody in it between shifts, and
-                    the two questions ("what stage" vs "is anyone there")
-                    should never share one dot. */}
+                {/* Crew working in this hold right now: a pulsing yellow dot
+                    above the hold. Stage progress already reads from the
+                    coloured blocks inside the hold, so this spot carries the
+                    one thing the blocks cannot say — where the gang is. */}
                 {crewAboard && (
-                  <circle cx={x + 12} cy={top + 12} r="5" fill={CREW_AQUA}>
-                    <title>Crew aboard</title>
-                  </circle>
-                )}
-
-                {/* A hold with a stage under way gets a pulsing dot above it.
-                    A finished hold does not — it needs no attention, and a
-                    dot on every hold would say nothing. */}
-                {working && (
                   <g>
                     <circle
                       className="ct-pulse"
@@ -298,7 +282,7 @@ export function VesselPlanView({
                       stroke="#fdf3c4"
                       strokeWidth="2"
                     >
-                      <title>Work under way</title>
+                      <title>Crew working here</title>
                     </circle>
                   </g>
                 )}
@@ -312,7 +296,6 @@ export function VesselPlanView({
         className={`mt-3 flex items-center justify-between text-[11px] uppercase tracking-[0.14em] ${g.caption}`}
       >
         <span>Stern</span>
-        <span aria-hidden="true">&larr; holds numbered from the bow &rarr;</span>
         <span>Bow</span>
       </figcaption>
     </figure>
