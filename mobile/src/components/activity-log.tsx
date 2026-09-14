@@ -1,9 +1,19 @@
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { colors, radius, space } from "../theme";
-import { CELL_STYLE, formatWorkTime, type CellEvent } from "../types";
+import { CELL_STYLE, formatWorkTime, type CellEvent, type CellStatus } from "../types";
+
+/** The same words on every activity view: commenced and completed. */
+const VERB: Record<CellStatus, string> = {
+  pending: "Reset",
+  in_progress: "Commenced",
+  done: "Completed",
+  na: "Not applicable",
+};
 
 /**
- * What has been recorded on this vessel, newest first.
+ * The latest recorded activity on each hold or tank, newest first — one line
+ * per compartment; the API drops older entries for a hold once a newer one
+ * exists.
  *
  * The supervisor already knows what they themselves tapped. What they cannot
  * otherwise see is what the office corrected, what the previous shift left,
@@ -70,7 +80,7 @@ export function ActivityLog({ events, loading, error }: Props) {
                   ]}
                 >
                   <Text style={[styles.chipText, { color: skin.text }]}>
-                    {skin.label}
+                    {VERB[e.toStatus]}
                   </Text>
                 </View>
                 <Text style={styles.who} numberOfLines={1}>

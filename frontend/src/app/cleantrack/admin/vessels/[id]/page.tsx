@@ -8,7 +8,7 @@ import { CopyField } from "@/components/cleantrack/copy-field";
 import { StageEditor } from "@/components/cleantrack/stage-editor";
 import { ApiUnavailable } from "@/components/cleantrack/api-unavailable";
 import { ApiError, getVessel, getVesselEvents, listSupervisors } from "@/lib/api";
-import { CELL_STYLE, compartmentNoun } from "@/lib/cleantrack/types";
+import { compartmentNoun } from "@/lib/cleantrack/types";
 import { formatDate, formatDateTime } from "@/lib/format";
 import {
   assignSupervisorAction,
@@ -18,6 +18,14 @@ import {
 } from "../../actions";
 
 export const dynamic = "force-dynamic";
+
+/** The same words on every activity view: commenced and completed. */
+const ACTIVITY_VERB = {
+  pending: "reset to not started",
+  in_progress: "commenced",
+  done: "completed",
+  na: "marked not applicable",
+} as const;
 
 export default async function AdminVesselPage({
   params,
@@ -157,7 +165,7 @@ export default async function AdminVesselPage({
               </p>
             ) : (
               <ul className="divide-y divide-slate-100">
-                {events.slice(0, 60).map((event) => (
+                {events.map((event) => (
                   <li
                     key={event.id}
                     className="flex flex-wrap items-baseline gap-x-2 px-5 py-3 text-[13px]"
@@ -167,7 +175,7 @@ export default async function AdminVesselPage({
                     </span>
                     <span className="text-slate-600">{event.stageLabel}</span>
                     <span className="font-semibold text-slate-800">
-                      → {CELL_STYLE[event.toStatus].label}
+                      {ACTIVITY_VERB[event.toStatus]}
                     </span>
                     {event.note && (
                       <span className="text-slate-500">“{event.note}”</span>

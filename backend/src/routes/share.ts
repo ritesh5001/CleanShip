@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   getVesselByShareToken,
   getVesselVersion,
-  listEvents,
+  listLatestEvents,
 } from "../domain/vessels.js";
 import { db } from "../db/index.js";
 import { vessels } from "../db/schema.js";
@@ -77,7 +77,7 @@ shareRoutes.get("/:token/events", async (req, res) => {
   const detail = await getVesselByShareToken(token);
   if (!detail) throw ApiError.notFound("This link is no longer active.");
 
-  const events = await listEvents(detail.id, 400);
+  const events = await listLatestEvents(detail.id);
   res.json({
     events: events.map((e) => ({
       id: e.id,

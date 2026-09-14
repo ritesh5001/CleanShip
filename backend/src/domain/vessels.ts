@@ -289,6 +289,31 @@ export async function getVesselVersion(id: number) {
 }
 
 /** The audit trail, newest first. */
+/**
+ * The single most recent change on each hold or tank, newest first.
+ *
+ * What the activity views show: one line per compartment, not its whole
+ * history — work on Hold 1 today replaces the entry for Hold 1 from last week.
+ * Chosen in SQL with DISTINCT ON rather than by trimming a limited list,
+ * because a limit applied first would let a busy hold push a quiet one's
+ * latest entry off the end entirely. The full trail stays in the table.
+ */
+export async function listLatestEvents(vesselId: number) {
+  const rows = await db
+    .selectDistinctOn([cellEvents.compartmentId])
+    .from(cellEvents)
+    .where(eq(cellEvents.vesselId, vesselId))
+    .orderBy(
+      cellEvents.compartmentId,
+      desc(cellEvents.occurredAt),
+      desc(cellEvents.id),
+    );
+  return rows.sort(
+    (a, b) =>
+      b.occurredAt.getTime() - a.occurredAt.getTime() || b.id - a.id,
+  );
+}
+
 export function listEvents(vesselId: number, limit = 200) {
   return db
     .select()

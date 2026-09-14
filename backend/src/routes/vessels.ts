@@ -7,7 +7,7 @@ import {
   getVessel,
   getVesselDetail,
   getVesselVersion,
-  listEvents,
+  listLatestEvents,
   listVesselsFor,
   rotateShareToken,
   setCompartments,
@@ -107,8 +107,7 @@ vesselRoutes.get("/:id/version", async (req, res) => {
 
 vesselRoutes.get("/:id/events", async (req, res) => {
   const { id } = await loadForRead(req);
-  const limit = Number(req.query.limit) || 200;
-  res.json({ events: await listEvents(id, limit) });
+  res.json({ events: await listLatestEvents(id) });
 });
 
 /* -------------------------------------------------------------------- */
