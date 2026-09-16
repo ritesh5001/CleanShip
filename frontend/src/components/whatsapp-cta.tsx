@@ -60,8 +60,11 @@ export function WhatsAppFloat() {
       rel="noopener noreferrer"
       aria-label="Message Cleanship on WhatsApp"
       /* Marks the element so globals.css can hide it on CleanTrack screens,
-         where it sits on top of the status grid. */
-      data-site-chrome=""
+         where it sits on top of the status grid. The "float" value narrows
+         that to THIS element, so a campaign landing page with its own sticky
+         CTA bar can drop the bubble without also dropping the header and
+         footer, which carry the same attribute. */
+      data-site-chrome="float"
       className="fixed bottom-5 right-5 z-50 flex size-14 items-center justify-center rounded-full bg-[#25D366] text-[#04361a] shadow-[0_6px_20px_rgba(6,32,58,.28)] transition-transform duration-[140ms] hover:scale-105 focus-visible:scale-105 sm:bottom-7 sm:right-7"
       style={{
         marginBottom: "env(safe-area-inset-bottom, 0px)",

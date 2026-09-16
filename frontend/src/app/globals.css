@@ -534,3 +534,22 @@ body:has(.ct-root) > #main {
      their own shell, so this only needs to stop the two fighting. */
   padding: 0;
 }
+
+/* ------------------------------------------------------------------ */
+/* Campaign landing pages                                              */
+/*                                                                     */
+/* An ad landing page carries its own sticky CTA bar along the bottom   */
+/* edge on small screens. The floating WhatsApp bubble sits in exactly  */
+/* that space, so below lg the bar replaces it — the bar carries a      */
+/* WhatsApp button of its own, so no enquiry path is lost.              */
+/*                                                                     */
+/* Same mechanism as the CleanTrack rules above: the page marks itself  */
+/* with .lp-root and the body reacts, because a layout does not receive */
+/* the pathname. Scoped to [data-site-chrome="float"] so the header and */
+/* footer — which carry the bare attribute — are untouched.             */
+/* ------------------------------------------------------------------ */
+@media (max-width: 1023px) {
+  body:has(.lp-root) [data-site-chrome="float"] {
+    display: none;
+  }
+}

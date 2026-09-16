@@ -256,3 +256,176 @@ export function FacebookIcon(props: IconProps) {
     </svg>
   );
 }
+
+/* ------------------------------------------------------------------ */
+/* Operational icons                                                   */
+/*                                                                     */
+/* Same contract as everything above: 24x24 box, stroke 1.75, round     */
+/* caps and joins, never filled, never multicolour. Added for the       */
+/* underwater hull cleaning landing page, but deliberately generic —    */
+/* nothing here is page-specific.                                       */
+/* ------------------------------------------------------------------ */
+
+/** Gauge — speed and performance restored. */
+export function GaugeIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M3.5 17a8.5 8.5 0 1 1 17 0" />
+      <path d="m12 17 4.2-4.6" />
+      <circle cx="12" cy="17" r="1.3" />
+    </svg>
+  );
+}
+
+/** Fuel drop with a downward arrow — consumption coming down. */
+export function FuelDropIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M12 3.5c3.4 3.6 5.5 6.2 5.5 9a5.5 5.5 0 0 1-11 0c0-2.8 2.1-5.4 5.5-9Z" />
+      <path d="M12 9.5v5" />
+      <path d="m9.8 12.3 2.2 2.2 2.2-2.2" />
+    </svg>
+  );
+}
+
+/**
+ * Propeller — one blade drawn once and rotated twice about the hub, so the
+ * three are identical by construction rather than by eye.
+ */
+export function PropellerIcon(props: IconProps) {
+  const blade = "M10.6 10.9C9.8 8 10.2 5.6 12 3.8c1.8 1.8 2.2 4.2 1.4 7.1";
+  return (
+    <svg {...base} {...props}>
+      <path d={blade} />
+      <path d={blade} transform="rotate(120 12 12)" />
+      <path d={blade} transform="rotate(240 12 12)" />
+      <circle cx="12" cy="12" r="2" />
+    </svg>
+  );
+}
+
+/** Scrubbing brush — the brush-cart and hand-cleaning scopes. */
+export function BrushIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3.5" y="9" width="17" height="4.5" rx="1.5" />
+      <path d="M7 13.5V17M12 13.5V18M17 13.5V17" />
+      <path d="M12 9V6.5A2.5 2.5 0 0 1 14.5 4H16" />
+    </svg>
+  );
+}
+
+/** Video camera — the underwater video record issued with every job. */
+export function VideoIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="2.5" y="6" width="13" height="12" rx="2" />
+      <path d="m15.5 10.5 5-2.8v8.6l-5-2.8Z" />
+    </svg>
+  );
+}
+
+/** Certificate — class approval and survey documentation. */
+export function CertificateIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M19 12.5V5a1.5 1.5 0 0 0-1.5-1.5h-11A1.5 1.5 0 0 0 5 5v14a1.5 1.5 0 0 0 1.5 1.5H11" />
+      <path d="M8.5 8h7M8.5 11.5h4.5" />
+      <circle cx="16.5" cy="16" r="3" />
+      <path d="M14.6 18.4 14 21.5l2.5-1.3 2.5 1.3-.6-3.1" />
+    </svg>
+  );
+}
+
+export function CalendarIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
+      <path d="M3.5 9.5h17M8 3.5v3M16 3.5v3" />
+    </svg>
+  );
+}
+
+/** Vessel — a laden hull, distinct from the `hull` category glyph. */
+export function VesselIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M2.5 14.5h19l-2 5a1.5 1.5 0 0 1-1.4.9H5.9a1.5 1.5 0 0 1-1.4-.9Z" />
+      <path d="M5 14.5V10h11l2 4.5" />
+      <path d="M8 10V6.5h5V10" />
+    </svg>
+  );
+}
+
+/** Dive helmet — the commercial dive team. */
+export function DiverIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M6 11.5a6 6 0 0 1 12 0c0 3.2-2.7 5.8-6 5.8s-6-2.6-6-5.8Z" />
+      <circle cx="12" cy="11.5" r="2.4" />
+      <rect x="6.5" y="18.8" width="11" height="2.7" rx="1" />
+    </svg>
+  );
+}
+
+/** Waves — the waterline, used for in-water / afloat working. */
+export function WavesIcon(props: IconProps) {
+  const wave =
+    "M2 7c1.7 0 1.7-1.5 3.3-1.5S7 7 8.7 7s1.7-1.5 3.3-1.5S13.7 7 15.3 7s1.7-1.5 3.3-1.5S20.3 7 22 7";
+  return (
+    <svg {...base} {...props}>
+      <path d={wave} />
+      <path d={wave} transform="translate(0 5.5)" />
+      <path d={wave} transform="translate(0 11)" />
+    </svg>
+  );
+}
+
+/** Falling line — cost and consumption trending down. */
+export function TrendDownIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="m3 7 5.5 5.5L12 9l9 9" />
+      <path d="M21 12v6h-6" />
+    </svg>
+  );
+}
+
+/** Crew. */
+export function UsersIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="9" cy="8" r="3.2" />
+      <path d="M3 19.5a6 6 0 0 1 12 0" />
+      <path d="M16 5.2a3.2 3.2 0 0 1 0 5.6" />
+      <path d="M17.5 14.2a6 6 0 0 1 3.5 5.3" />
+    </svg>
+  );
+}
+
+/** Wrench — equipment and method. */
+export function WrenchIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94Z" />
+    </svg>
+  );
+}
+
+/**
+ * Thruster tunnel — the bore in section with thrust running through it.
+ *
+ * Drawn side-on rather than end-on: the end-on view needs a hub, three blades
+ * and a tunnel wall inside a 24px box, and at the 22px these render at it
+ * collapses into a smudge.
+ */
+export function ThrusterIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="2.5" y="8" width="19" height="8" rx="4" />
+      <path d="M6 12h8" />
+      <path d="m11.5 9.5 3 2.5-3 2.5" />
+      <path d="M18 9.5v5" />
+    </svg>
+  );
+}
