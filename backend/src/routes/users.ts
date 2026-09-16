@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import {
   createUser,
+  listJoiners,
   listSupervisors,
   listUsers,
   updateUser,
@@ -24,6 +25,16 @@ userRoutes.get("/supervisors", requireRole("admin"), async (_req, res) => {
   res.json({ supervisors: await listSupervisors() });
 });
 
+/**
+ * People who can be put on a joining roster — crew and supervisors.
+ *
+ * Above the superadmin gate with `/supervisors`, because an admin building a
+ * vessel's crew list needs it and managing accounts is a separate right.
+ */
+userRoutes.get("/joiners", requireRole("admin"), async (_req, res) => {
+  res.json({ joiners: await listJoiners() });
+});
+
 userRoutes.use(requireRole("superadmin"));
 
 userRoutes.get("/", async (req, res) => {
@@ -35,7 +46,7 @@ userRoutes.get("/", async (req, res) => {
 const createSchema = z.object({
   email: z.string().email(),
   name: z.string().min(1, "Enter a name."),
-  role: z.enum(["superadmin", "admin", "supervisor"]),
+  role: z.enum(["superadmin", "admin", "supervisor", "crew"]),
   /** Omitted means "generate one and show it to me once". */
   password: z.string().min(6, "Use at least 6 characters.").optional(),
   phone: z.string().max(40).nullish(),
@@ -55,7 +66,7 @@ userRoutes.post("/", async (req, res) => {
 
 const updateSchema = z.object({
   name: z.string().min(1).optional(),
-  role: z.enum(["superadmin", "admin", "supervisor"]).optional(),
+  role: z.enum(["superadmin", "admin", "supervisor", "crew"]).optional(),
   phone: z.string().max(40).nullish(),
   active: z.boolean().optional(),
   password: z.string().min(6).optional(),

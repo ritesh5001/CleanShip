@@ -5,6 +5,7 @@ import { attachSession } from "./http/session.js";
 import { errorHandler, notFoundHandler } from "./http/errors.js";
 import { authRoutes } from "./routes/auth.js";
 import { userRoutes } from "./routes/users.js";
+import { meRoutes } from "./routes/me.js";
 import { clientRoutes } from "./routes/clients.js";
 import { vesselRoutes } from "./routes/vessels.js";
 import { shareRoutes } from "./routes/share.js";
@@ -85,6 +86,7 @@ export function createApp() {
 
   app.use("/api/v1/auth", authRoutes);
   app.use("/api/v1/users", userRoutes);
+  app.use("/api/v1/me", meRoutes);
   app.use("/api/v1/clients", clientRoutes);
   app.use("/api/v1/vessels", vesselRoutes);
   app.use("/api/v1/share", shareRoutes);

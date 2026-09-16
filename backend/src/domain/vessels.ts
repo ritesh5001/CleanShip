@@ -22,8 +22,15 @@ import {
   type Progress,
   type Stage,
 } from "./stages.js";
+import {
+  DEFAULT_CREW_CHECKLIST,
+  DEFAULT_CREW_DOCUMENTS,
+  normaliseCrewItems,
+  type CrewChecklistItem,
+  type CrewDocumentItem,
+} from "./crew.js";
 import { ApiError } from "../http/errors.js";
-import type { SessionUser } from "../auth/roles.js";
+import { isOffice, type SessionUser } from "../auth/roles.js";
 
 /* -------------------------------------------------------------------- */
 /* Shapes the API returns                                               */
@@ -167,11 +174,20 @@ export async function listVesselsForSupervisor(
   return attachProgress(rows);
 }
 
-/** The list a session is entitled to, without the caller deciding which. */
+/**
+ * The list a session is entitled to, without the caller deciding which.
+ *
+ * Written to FAIL CLOSED. It used to read "supervisors get their own,
+ * everyone else gets all of them", which was true while every account that
+ * could sign in was staff. The moment `crew` existed that shape handed a
+ * joiner every vessel in the company, because they are not a supervisor and
+ * so fell into the else. Roles that should see nothing now see nothing, and a
+ * role added tomorrow gets the same answer until somebody decides otherwise.
+ */
 export function listVesselsFor(session: SessionUser) {
-  return session.role === "supervisor"
-    ? listVesselsForSupervisor(session.sub)
-    : listVessels();
+  if (isOffice(session.role)) return listVessels();
+  if (session.role === "supervisor") return listVesselsForSupervisor(session.sub);
+  return Promise.resolve([] as VesselSummary[]);
 }
 
 export async function getVessel(id: number): Promise<Vessel | null> {
@@ -367,6 +383,12 @@ export type CreateVesselInput = {
   compartmentLabels?: string[];
   /** The admin's stage list, in order. Keys are derived from labels. */
   stages: StageInput[];
+  /**
+   * What this vessel asks its joiners for. Omitted means the standard sheet —
+   * an admin who does not care gets the printed list they already use.
+   */
+  crewDocuments?: { key?: string; label: string }[];
+  crewChecklist?: { key?: string; label: string }[];
   scheduledFor?: Date | null;
   notes?: string | null;
 };
@@ -422,6 +444,14 @@ export async function createVessel(
             clientId: input.clientId ?? null,
             supervisorId: input.supervisorId ?? null,
             stages,
+            crewDocuments: normaliseCrewItems(
+              input.crewDocuments,
+              DEFAULT_CREW_DOCUMENTS,
+            ),
+            crewChecklist: normaliseCrewItems(
+              input.crewChecklist,
+              DEFAULT_CREW_CHECKLIST,
+            ),
             compartmentCount: input.compartmentCount,
             scheduledFor: input.scheduledFor ?? null,
             notes: input.notes?.trim() || null,
@@ -526,6 +556,57 @@ export async function assignSupervisor(id: number, supervisorId: number | null) 
  * already recorded survives — which is why keys are never derived from the new
  * label here.
  */
+/**
+ * Replaces what a vessel asks its joiners for.
+ *
+ * Unlike `setStages` there is nothing to reconcile: answers live in a map
+ * keyed by item key, so removing a row simply stops it being counted and
+ * re-adding it under the same key brings the old answers back. Keys are only
+ * ever derived for rows that arrive without one, so renaming a label leaves
+ * every recorded answer where it is.
+ *
+ * Refused once the crew are aboard, for the same reason the paperwork itself
+ * is: the list a job was worked to is part of its record.
+ */
+export async function setCrewLists(
+  id: number,
+  input: {
+    documents?: { key?: string; label: string }[];
+    checklist?: { key?: string; label: string }[];
+  },
+): Promise<Vessel> {
+  const [vessel] = await db
+    .select()
+    .from(vessels)
+    .where(eq(vessels.id, id))
+    .limit(1);
+  if (!vessel) throw ApiError.notFound("No such vessel.");
+  if (vessel.holdReportedAt) {
+    throw ApiError.badRequest(
+      "The crew have reported to the hold. The joining list is closed for this vessel.",
+    );
+  }
+
+  const crewDocuments: CrewDocumentItem[] = input.documents
+    ? normaliseCrewItems(input.documents, DEFAULT_CREW_DOCUMENTS)
+    : (vessel.crewDocuments ?? []);
+  const crewChecklist: CrewChecklistItem[] = input.checklist
+    ? normaliseCrewItems(input.checklist, DEFAULT_CREW_CHECKLIST)
+    : (vessel.crewChecklist ?? []);
+
+  const [row] = await db
+    .update(vessels)
+    .set({
+      crewDocuments,
+      crewChecklist,
+      version: sql`${vessels.version} + 1`,
+      updatedAt: new Date(),
+    })
+    .where(eq(vessels.id, id))
+    .returning();
+  return row;
+}
+
 export async function setStages(id: number, input: StageInput[]) {
   const stages = normaliseStages(input);
   if (stages.length === 0) {

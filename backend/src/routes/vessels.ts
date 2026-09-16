@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   assignSupervisor,
   createVessel,
+  setCrewLists,
   deleteVessel,
   getVessel,
   getVesselDetail,
@@ -23,6 +24,18 @@ import {
   setCompartmentNote,
 } from "../domain/cells.js";
 import {
+  DEFAULT_CREW_CHECKLIST,
+  DEFAULT_CREW_DOCUMENTS,
+  DOCUMENT_STATES,
+  TRAVEL_STEPS,
+  assignCrew,
+  clearHoldReported,
+  listCrew,
+  patchAssignment,
+  removeCrew,
+  setHoldReported,
+} from "../domain/crew.js";
+import {
   CELL_STATUSES,
   STAGE_TEMPLATES,
   defaultCompartmentLabels,
@@ -35,7 +48,11 @@ import { parseBody, parseId } from "../http/validate.js";
 
 export const vesselRoutes = Router();
 
-vesselRoutes.use(requireRole());
+/* Supervisor and above. It used to be `requireRole()` — any signed-in account
+   — which was the same thing while every account that could sign in was staff.
+   `crew` changed that: a joiner has a session and no business on any of these
+   routes, and their own paperwork lives under /api/v1/me instead. */
+vesselRoutes.use(requireRole("supervisor"));
 
 /* -------------------------------------------------------------------- */
 /* What the create form needs before it can be filled in                */
@@ -58,6 +75,12 @@ vesselRoutes.get("/templates", (req, res) => {
       hold: defaultCompartmentLabels("hold", count),
       tank: defaultCompartmentLabels("tank", count),
     },
+    /* The joining sheet's starting point, for the same reason the stage
+       templates are served: changing a default is one deploy, not two. */
+    crewDocuments: DEFAULT_CREW_DOCUMENTS,
+    crewChecklist: DEFAULT_CREW_CHECKLIST,
+    travelSteps: TRAVEL_STEPS,
+    documentStates: DOCUMENT_STATES,
   });
 });
 
@@ -310,3 +333,116 @@ vesselRoutes.patch("/:id/compartments/:compartmentId/active", async (req, res) =
     compartment: await setCompartmentActive(id, compartmentId, body.active),
   });
 });
+
+/* -------------------------------------------------------------------- */
+/* Crew mobilisation                                                    */
+/*                                                                      */
+/* The joining board: a column per person, a row per item. Read by the  */
+/* office and by the vessel's own supervisor; a joiner reaches only     */
+/* their own row, through /api/v1/me.                                   */
+/* -------------------------------------------------------------------- */
+
+/** The roster with everybody's paperwork, plus the lists it is measured against. */
+vesselRoutes.get("/:id/crew", async (req, res) => {
+  const { vessel } = await loadForRead(req);
+  res.json({
+    crew: await listCrew(vessel.id),
+    documents: vessel.crewDocuments ?? [],
+    checklist: vessel.crewChecklist ?? [],
+    travelSteps: TRAVEL_STEPS,
+    holdReportedAt: vessel.holdReportedAt,
+    holdReportedByName: vessel.holdReportedByName,
+  });
+});
+
+/**
+ * Put people on the roster.
+ *
+ * Office only. A supervisor runs the mobilisation but does not decide who is
+ * on the job — that is the same line the vessel itself already draws, where an
+ * admin assigns the supervisor and the supervisor works the vessel.
+ */
+vesselRoutes.post("/:id/crew", requireRole("admin"), async (req, res) => {
+  const id = parseId(req.params.id, "vessel id");
+  const body = parseBody(
+    z.object({ userIds: z.array(z.number().int().positive()).min(1) }),
+    req.body,
+  );
+  res.status(201).json({ crew: await assignCrew(id, body.userIds) });
+});
+
+vesselRoutes.delete(
+  "/:id/crew/:userId",
+  requireRole("admin"),
+  async (req, res) => {
+    const id = parseId(req.params.id, "vessel id");
+    const userId = parseId(req.params.userId, "user id");
+    await removeCrew(id, userId);
+    res.status(204).end();
+  },
+);
+
+/**
+ * Fill in somebody else's row.
+ *
+ * The supervisor's half of the printed sheet: they are the one who sees the
+ * rope kit, watches the boiler suit go on and confirms the SID card. Same
+ * write gate as a cell change — the assigned supervisor, or the office.
+ */
+const crewPatchSchema = z.object({
+  documents: z.record(z.string(), z.enum(DOCUMENT_STATES)).optional(),
+  checklist: z.record(z.string(), z.boolean()).optional(),
+  travel: z.record(z.string(), z.string().datetime().nullable()).optional(),
+  notes: z.string().max(2000).nullish(),
+});
+
+vesselRoutes.patch("/:id/crew/:userId", async (req, res) => {
+  const { id, session } = await loadForWrite(req);
+  const userId = parseId(req.params.userId, "user id");
+  const body = parseBody(crewPatchSchema, req.body);
+  res.json({ member: await patchAssignment(id, userId, body, session) });
+});
+
+/** What this vessel asks its joiners for. Office only, and only until they sail. */
+vesselRoutes.put("/:id/crew-lists", requireRole("admin"), async (req, res) => {
+  const id = parseId(req.params.id, "vessel id");
+  const body = parseBody(
+    z.object({
+      documents: z
+        .array(z.object({ key: z.string().optional(), label: z.string() }))
+        .optional(),
+      checklist: z
+        .array(z.object({ key: z.string().optional(), label: z.string() }))
+        .optional(),
+    }),
+    req.body,
+  );
+  res.json({ vessel: await setCrewLists(id, body) });
+});
+
+/**
+ * The switch: the crew are aboard.
+ *
+ * The vessel's own supervisor may call it, because they are the person
+ * standing there. `at` is optional and defaults to now — the app sends the
+ * time the gang actually reported when it was recorded later.
+ */
+vesselRoutes.post("/:id/hold-reported", async (req, res) => {
+  const { id, session } = await loadForWrite(req);
+  const body = parseBody(
+    z.object({ at: z.string().datetime().optional() }),
+    req.body ?? {},
+  );
+  const at = body.at ? new Date(body.at) : new Date();
+  res.json({ vessel: await setHoldReported(id, at, session) });
+});
+
+/** Undo, for the case it was tapped on the wrong vessel. Office only. */
+vesselRoutes.delete(
+  "/:id/hold-reported",
+  requireRole("admin"),
+  async (req, res) => {
+    const id = parseId(req.params.id, "vessel id");
+    res.json({ vessel: await clearHoldReported(id) });
+  },
+);

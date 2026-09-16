@@ -4,6 +4,9 @@ import { SESSION_COOKIE } from "./session-cookie";
 import type {
   CellEvent,
   CellStatus,
+  CrewBoard,
+  CrewMember,
+  DocumentState,
   PublicVessel,
   Stage,
   StageTemplate,
@@ -305,7 +308,7 @@ export type ApiUser = {
   id: number;
   email: string;
   name: string;
-  role: "superadmin" | "admin" | "supervisor";
+  role: "superadmin" | "admin" | "supervisor" | "crew";
   phone: string | null;
   active: number;
   lastLoginAt: string | null;
@@ -322,6 +325,26 @@ export async function listSupervisors() {
     supervisors: { id: number; name: string; email: string }[];
   }>("/api/v1/users/supervisors");
   return supervisors;
+}
+
+/**
+ * Everyone who can be put on a joining roster — crew and supervisors.
+ *
+ * A supervisor joins a ship the same way their gang does, so they are on this
+ * list too. Filtering it to `crew` would leave the one person who is
+ * definitely going unable to be added to the roster.
+ */
+export async function listJoiners() {
+  const { joiners } = await request<{
+    joiners: {
+      id: number;
+      name: string;
+      email: string;
+      role: string;
+      phone: string | null;
+    }[];
+  }>("/api/v1/users/joiners");
+  return joiners;
 }
 
 export function createUser(input: {
@@ -470,4 +493,79 @@ export function getSharedVessel(token: string) {
   return request<{ vessel: PublicVessel }>(`/api/v1/share/${token}/vessel`, {
     auth: false,
   });
+}
+
+
+/* -------------------------------------------------------------------- */
+/* Crew mobilisation                                                    */
+/* -------------------------------------------------------------------- */
+
+/** The joining board for one vessel: everybody, and the lists they are measured against. */
+export function getCrewBoard(vesselId: number) {
+  return request<CrewBoard>(`/api/v1/vessels/${vesselId}/crew`);
+}
+
+export function assignCrew(vesselId: number, userIds: number[]) {
+  return request<{ crew: CrewMember[] }>(`/api/v1/vessels/${vesselId}/crew`, {
+    method: "POST",
+    body: { userIds },
+  });
+}
+
+export function removeCrew(vesselId: number, userId: number) {
+  return request<void>(`/api/v1/vessels/${vesselId}/crew/${userId}`, {
+    method: "DELETE",
+  });
+}
+
+/**
+ * Corrects one person's row from the office.
+ *
+ * Partial: send the square that changed and the API merges it. Sending the
+ * whole map would mean an admin with the page open undoing whatever the joiner
+ * ticked on their phone in the meantime.
+ */
+export function patchCrewMember(
+  vesselId: number,
+  userId: number,
+  patch: {
+    documents?: Record<string, DocumentState>;
+    checklist?: Record<string, boolean>;
+    travel?: Record<string, string | null>;
+    notes?: string | null;
+  },
+) {
+  return request<{ member: CrewMember }>(
+    `/api/v1/vessels/${vesselId}/crew/${userId}`,
+    { method: "PATCH", body: patch },
+  );
+}
+
+/** What this vessel asks its joiners for. Editable until the crew are aboard. */
+export function setCrewLists(
+  vesselId: number,
+  lists: {
+    documents?: { key?: string; label: string }[];
+    checklist?: { key?: string; label: string }[];
+  },
+) {
+  return request<{ vessel: VesselSummary }>(
+    `/api/v1/vessels/${vesselId}/crew-lists`,
+    { method: "PUT", body: lists },
+  );
+}
+
+/** The switch, and its undo. */
+export function reportToHold(vesselId: number) {
+  return request<{ vessel: VesselSummary }>(
+    `/api/v1/vessels/${vesselId}/hold-reported`,
+    { method: "POST", body: {} },
+  );
+}
+
+export function reopenMobilisation(vesselId: number) {
+  return request<{ vessel: VesselSummary }>(
+    `/api/v1/vessels/${vesselId}/hold-reported`,
+    { method: "DELETE" },
+  );
 }

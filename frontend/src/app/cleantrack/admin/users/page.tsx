@@ -13,6 +13,9 @@ const ROLE_STYLE: Record<string, string> = {
   admin: "bg-blue-100 text-blue-800 border-blue-300",
   supervisor: "bg-amber-100 text-amber-800 border-amber-300",
   superadmin: "bg-[#dceaf6] text-[#0e3d6b] border-[#4a9bd8]",
+  /* Crew are the largest group and the least privileged; a quiet grey keeps
+     the list scannable for the few accounts that can actually change things. */
+  crew: "bg-slate-100 text-slate-700 border-slate-300",
 };
 
 export default async function UsersPage() {

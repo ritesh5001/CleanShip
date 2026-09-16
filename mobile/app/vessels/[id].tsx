@@ -11,7 +11,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { Link, useLocalSearchParams, useNavigation } from "expo-router";
 import { TimeAsk } from "../../src/components/time-ask";
 import {
   ApiError,
@@ -545,6 +545,34 @@ export default function Vessel() {
         />
       </View>
 
+      {/* Before the crew report to the hold this vessel is a mobilisation, not
+          a cleaning job: nobody is aboard and every stage below is necessarily
+          blank. The joining board leads, and the cleaning sheet stays reachable
+          underneath rather than being locked away — a gang that started work
+          before somebody remembered to tap the button must still be able to
+          record it, and an app that refuses is an app that gets worked around
+          on paper. */}
+      {vessel.holdReportedAt ? null : (
+        <Link href={`/crew/${vessel.id}`} asChild>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Crew still joining. Open the joining board."
+          >
+            {({ pressed }) => (
+              <View style={[styles.joining, pressed ? { opacity: 0.85 } : null]}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.joiningLabel}>Crew still joining</Text>
+                  <Text style={styles.joiningHint}>
+                    Documents, checklist and travel — then report to the hold
+                  </Text>
+                </View>
+                <Text style={styles.joiningChevron}>›</Text>
+              </View>
+            )}
+          </Pressable>
+        </Link>
+      )}
+
       {vessel.notes ? (
         <View style={styles.noteBox}>
           <Text style={styles.noteText}>{vessel.notes}</Text>
@@ -660,6 +688,22 @@ const styles = StyleSheet.create({
     gap: space.md,
   },
   waiting: { color: colors.muted, fontSize: 14 },
+  joining: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.md,
+    minHeight: TAP,
+    paddingHorizontal: space.md,
+    paddingVertical: space.md,
+    backgroundColor: colors.warnBg,
+    borderWidth: 1,
+    borderColor: colors.warnBorder,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.warn,
+  },
+  joiningLabel: { fontSize: 16, fontWeight: "800", color: colors.warn },
+  joiningHint: { marginTop: 2, fontSize: 12, color: colors.warn },
+  joiningChevron: { fontSize: 26, fontWeight: "700", color: colors.warn },
   noteBox: {
     marginTop: space.lg,
     padding: space.md,

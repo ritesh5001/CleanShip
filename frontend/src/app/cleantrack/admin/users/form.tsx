@@ -39,6 +39,12 @@ export function NewUserForm() {
             onChange={(e) => setRole(e.target.value)}
             className={inputClass}
           >
+            {/* Ordered by how many of each get made, not by rank: a joining
+                gang is several crew and one supervisor, and the office
+                accounts are made once. */}
+            <option value="crew">
+              Crew — their own joining paperwork only
+            </option>
             <option value="supervisor">Supervisor — updates jobs on site</option>
             <option value="superadmin">Superadmin — also manages people</option>
             <option value="admin">Admin — everything</option>

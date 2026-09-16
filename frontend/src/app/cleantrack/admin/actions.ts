@@ -301,7 +301,7 @@ const userSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters."),
   /* No "client": customers have no account. They watch a vessel through the
      share link and its IMO number. */
-  role: z.enum(["superadmin", "admin", "supervisor"]),
+  role: z.enum(["superadmin", "admin", "supervisor", "crew"]),
   phone: z.string().max(40).optional(),
 });
 
@@ -339,4 +339,142 @@ export async function toggleUserActiveAction(formData: FormData) {
     active: String(formData.get("active")) === "1",
   });
   revalidatePath("/cleantrack/admin/users");
+}
+
+/* -------------------------------------------------------------------- */
+/* Crew mobilisation                                                    */
+/*                                                                      */
+/* The joining sheet, from the office. An admin builds the roster and    */
+/* can correct anybody's row — the same paperwork the joiner fills in on */
+/* their phone and the supervisor works through at the hotel.            */
+/* -------------------------------------------------------------------- */
+
+export async function assignCrewAction(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requireSession("admin");
+  const vesselId = Number(formData.get("vesselId"));
+  /* A multi-select posts one entry per choice, so this reads them all rather
+     than `get`, which would silently take only the first. */
+  const userIds = formData
+    .getAll("userId")
+    .map((v) => Number(v))
+    .filter((n) => Number.isInteger(n) && n > 0);
+
+  if (!Number.isInteger(vesselId) || userIds.length === 0) {
+    return { error: "Choose at least one person." };
+  }
+
+  try {
+    await api.assignCrew(vesselId, userIds);
+  } catch (err) {
+    return { error: messageFrom(err, "Could not add them to the crew.") };
+  }
+  revalidatePath(`/cleantrack/admin/vessels/${vesselId}`);
+  return { ok: `Added ${userIds.length} to the crew.` };
+}
+
+export async function removeCrewAction(formData: FormData) {
+  await requireSession("admin");
+  const vesselId = Number(formData.get("vesselId"));
+  const userId = Number(formData.get("userId"));
+  if (!Number.isInteger(vesselId) || !Number.isInteger(userId)) return;
+
+  try {
+    await api.removeCrew(vesselId, userId);
+  } catch (err) {
+    /* A failed removal leaves the person on the board, which is visible on the
+       next render — there is no silent half-state to explain. */
+    console.error("[removeCrew]", err);
+  }
+  revalidatePath(`/cleantrack/admin/vessels/${vesselId}`);
+}
+
+/**
+ * One square on the board.
+ *
+ * Posted as a tiny form per cell rather than one big save, because the office
+ * corrects one thing at a time — "his medical came through" — and a whole-form
+ * save would overwrite whatever the crew ticked on their phones since the page
+ * was opened.
+ */
+export async function setCrewCellAction(formData: FormData) {
+  await requireSession("admin");
+  const vesselId = Number(formData.get("vesselId"));
+  const userId = Number(formData.get("userId"));
+  const kind = String(formData.get("kind"));
+  const key = String(formData.get("key"));
+  const value = String(formData.get("value"));
+  if (!Number.isInteger(vesselId) || !Number.isInteger(userId) || !key) return;
+
+  try {
+    if (kind === "document") {
+      await api.patchCrewMember(vesselId, userId, {
+        documents: { [key]: value as never },
+      });
+    } else if (kind === "checklist") {
+      await api.patchCrewMember(vesselId, userId, {
+        checklist: { [key]: value === "true" },
+      });
+    } else if (kind === "travel") {
+      await api.patchCrewMember(vesselId, userId, {
+        travel: { [key]: value === "" ? null : new Date().toISOString() },
+      });
+    }
+  } catch (err) {
+    console.error("[setCrewCell]", err);
+  }
+  revalidatePath(`/cleantrack/admin/vessels/${vesselId}`);
+}
+
+/** What this vessel asks its joiners for. Editable until the crew are aboard. */
+export async function setCrewListsAction(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requireSession("admin");
+  const vesselId = Number(formData.get("vesselId"));
+  const parse = (raw: FormDataEntryValue | null) =>
+    String(raw ?? "")
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((label) => ({ label }));
+
+  const documents = parse(formData.get("documents"));
+  const checklist = parse(formData.get("checklist"));
+  if (documents.length === 0 && checklist.length === 0) {
+    return { error: "A vessel needs at least one row on its joining sheet." };
+  }
+
+  try {
+    await api.setCrewLists(vesselId, { documents, checklist });
+  } catch (err) {
+    return { error: messageFrom(err, "Could not save the joining lists.") };
+  }
+  revalidatePath(`/cleantrack/admin/vessels/${vesselId}`);
+  return { ok: "Joining sheet saved." };
+}
+
+/**
+ * The switch, and its undo.
+ *
+ * The office can call it as well as the supervisor — a gang that reported over
+ * the phone still has to be recorded — and only the office can take it back,
+ * which is what makes "reported" safe to treat as final everywhere else.
+ */
+export async function holdReportedAction(formData: FormData) {
+  await requireSession("admin");
+  const vesselId = Number(formData.get("vesselId"));
+  const reopen = String(formData.get("reopen")) === "1";
+  if (!Number.isInteger(vesselId)) return;
+
+  try {
+    if (reopen) await api.reopenMobilisation(vesselId);
+    else await api.reportToHold(vesselId);
+  } catch (err) {
+    console.error("[holdReported]", err);
+  }
+  revalidatePath(`/cleantrack/admin/vessels/${vesselId}`);
 }

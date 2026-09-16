@@ -398,3 +398,85 @@ export const CELL_STYLE_DARK: Record<
     stroke: "#64748b",
   },
 };
+
+
+/* -------------------------------------------------------------------- */
+/* Crew mobilisation                                                     */
+/*                                                                       */
+/* The joining sheet: getting people onto the ship before any hold is    */
+/* cleaned. It ends when the crew report to the hold — one fact about    */
+/* the VESSEL, not one per person — after which the paperwork becomes a  */
+/* record and the cleaning grid takes over.                               */
+/* -------------------------------------------------------------------- */
+
+/** A row on the joining sheet. Keys are frozen; labels can be reworded. */
+export type CrewItem = { key: string; label: string };
+
+/**
+ * Three states, matching the printed sheet.
+ *
+ * `expired` is not a worse kind of missing: it is somebody who holds a
+ * document, believes they are covered, and is not. That is the one that stops
+ * a joiner at the gate, so it carries its own colour.
+ */
+export type DocumentState = "pending" | "done" | "expired";
+
+export const DOCUMENT_STATES: DocumentState[] = ["pending", "done", "expired"];
+
+export const DOCUMENT_STATE_STYLE: Record<
+  DocumentState,
+  { label: string; className: string }
+> = {
+  pending: {
+    label: "—",
+    className: "border-slate-300 bg-white text-slate-400",
+  },
+  done: {
+    label: "Done",
+    className: "border-[#4f9c2b] bg-[#8fce6a] text-[#14400a]",
+  },
+  expired: {
+    label: "Expired",
+    className: "border-[#c6472f] bg-[#fae5e0] text-[#c6472f]",
+  },
+};
+
+export type TravelStep = { key: string; label: string; short: string };
+
+export type CrewProgress = {
+  documentsDone: number;
+  documentsTotal: number;
+  documentsExpired: number;
+  checklistDone: number;
+  checklistTotal: number;
+  travelDone: number;
+  travelTotal: number;
+  ready: boolean;
+};
+
+export type CrewMember = {
+  id: number;
+  vesselId: number;
+  userId: number;
+  name: string;
+  email: string;
+  phone: string | null;
+  role: string;
+  isSupervisor: boolean;
+  documents: Record<string, DocumentState>;
+  checklist: Record<string, boolean>;
+  travel: Record<string, string | null>;
+  notes: string | null;
+  updatedByName: string | null;
+  updatedAt: string;
+  progress: CrewProgress;
+};
+
+export type CrewBoard = {
+  crew: CrewMember[];
+  documents: CrewItem[];
+  checklist: CrewItem[];
+  travelSteps: TravelStep[];
+  holdReportedAt: string | null;
+  holdReportedByName: string | null;
+};

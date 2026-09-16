@@ -2,7 +2,14 @@ import Constants from "expo-constants";
 import type {
   CellEvent,
   CellStatus,
+  ChecklistMap,
+  CrewBoard,
+  CrewMember,
+  DocumentMap,
+  MyAssignment,
   SessionUser,
+  TravelMap,
+  TravelStep,
   VesselDetail,
   VesselSummary,
 } from "./types";
@@ -130,11 +137,15 @@ export async function request<T>(path: string, options: Options = {}): Promise<T
 /* -------------------------------------------------------------------- */
 
 /**
- * Signs in, restricted to supervisors.
+ * Signs in, restricted to the two roles that belong on a phone.
  *
  * `allow` is what makes the API answer "that is an office account, use the
  * admin login" instead of "wrong password" — this app is the crew door, and
  * an admin typing their details into it deserves to be told so.
+ *
+ * `crew` was added here the moment joiners got accounts. It is the whole
+ * point of the role: a rope-access technician signs in on the morning of a
+ * flight, fills in their own paperwork, and can reach nothing else.
  */
 export function login(email: string, password: string) {
   return request<{
@@ -144,7 +155,7 @@ export function login(email: string, password: string) {
     landing: string;
   }>("/api/v1/auth/login", {
     method: "POST",
-    body: { email, password, allow: ["supervisor"] },
+    body: { email, password, allow: ["supervisor", "crew"] },
   });
 }
 
@@ -247,4 +258,87 @@ export function applyCellChanges(
     token,
     body: { changes },
   });
+}
+
+
+/* -------------------------------------------------------------------- */
+/* Crew mobilisation                                                    */
+/* -------------------------------------------------------------------- */
+
+/**
+ * The vessels this person is joining, with their own paperwork.
+ *
+ * Scoped to the caller by the API — the user id comes from the token, never
+ * from the URL — so there is nothing here that could be pointed at somebody
+ * else's row by changing a number.
+ */
+export async function getMyAssignments(token: string, signal?: AbortSignal) {
+  return request<{
+    assignments: MyAssignment[];
+    travelSteps: TravelStep[];
+  }>("/api/v1/me/assignments", { token, signal });
+}
+
+export type CrewPatch = {
+  documents?: DocumentMap;
+  checklist?: ChecklistMap;
+  travel?: TravelMap;
+  notes?: string | null;
+};
+
+/**
+ * Updates the signed-in person's own paperwork for one vessel.
+ *
+ * Send only what changed. The API merges keys rather than replacing the map,
+ * which is what stops a joiner filling in their nominee details on a phone
+ * from wiping the rope kit their supervisor ticked a second earlier.
+ */
+export async function patchMyAssignment(
+  token: string,
+  vesselId: number,
+  patch: CrewPatch,
+) {
+  const { member } = await request<{ member: CrewMember }>(
+    `/api/v1/me/assignments/${vesselId}`,
+    { method: "PATCH", token, body: patch },
+  );
+  return member;
+}
+
+/** The whole joining board for one vessel. Supervisor and office only. */
+export function getCrewBoard(token: string, vesselId: number, signal?: AbortSignal) {
+  return request<CrewBoard>(`/api/v1/vessels/${vesselId}/crew`, { token, signal });
+}
+
+/** A supervisor filling in somebody else's row — the rope kit, the boiler suit. */
+export async function patchCrewMember(
+  token: string,
+  vesselId: number,
+  userId: number,
+  patch: CrewPatch,
+) {
+  const { member } = await request<{ member: CrewMember }>(
+    `/api/v1/vessels/${vesselId}/crew/${userId}`,
+    { method: "PATCH", token, body: patch },
+  );
+  return member;
+}
+
+/**
+ * The switch: the crew are aboard, mobilisation ends, cleaning begins.
+ *
+ * `at` carries the time they actually reported when it is recorded later —
+ * the same distinction every other time in this app draws between when
+ * something happened and when somebody got round to entering it.
+ */
+export async function reportToHold(
+  token: string,
+  vesselId: number,
+  at?: string,
+) {
+  const { vessel } = await request<{ vessel: { id: number; holdReportedAt: string | null } }>(
+    `/api/v1/vessels/${vesselId}/hold-reported`,
+    { method: "POST", token, body: at ? { at } : {} },
+  );
+  return vessel;
 }

@@ -16,7 +16,7 @@ import { clearCache } from "../src/cache";
 import { clearQueue, readQueue, subscribe } from "../src/queue";
 import { flushQueue } from "../src/sync";
 import { colors } from "../src/theme";
-import type { SessionUser } from "../src/types";
+import type { Role, SessionUser } from "../src/types";
 
 /**
  * The shell: who is signed in, and getting queued work off the device.
@@ -166,7 +166,7 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <SessionContext.Provider value={value}>
         <StatusBar style="light" />
-        <Gate ready={ready} signedIn={Boolean(token)} />
+        <Gate ready={ready} signedIn={Boolean(token)} role={user?.role ?? null} />
         <Stack
           screenOptions={{
             headerStyle: { backgroundColor: colors.navy },
@@ -188,6 +188,16 @@ export default function RootLayout() {
             options={{ title: "Time sheet" }}
           />
           <Stack.Screen name="timesheet/[id]" options={{ title: "Times" }} />
+          {/* Joining: the paperwork that gets people onto the ship. It is the
+              whole app for a crew member and one screen among several for a
+              supervisor, which is why it sits at the top level rather than
+              under a vessel. */}
+          <Stack.Screen
+            name="joining/index"
+            options={{ title: "My joining" }}
+          />
+          <Stack.Screen name="joining/[id]" options={{ title: "Joining" }} />
+          <Stack.Screen name="crew/[id]" options={{ title: "Joining board" }} />
         </Stack>
         {rejection && (
           <RejectedBar
@@ -209,7 +219,15 @@ export default function RootLayout() {
  * has to happen after the navigator has mounted — doing it during the first
  * render throws.
  */
-function Gate({ ready, signedIn }: { ready: boolean; signedIn: boolean }) {
+function Gate({
+  ready,
+  signedIn,
+  role,
+}: {
+  ready: boolean;
+  signedIn: boolean;
+  role: Role | null;
+}) {
   const segments = useSegments();
   const router = useRouter();
 
@@ -222,9 +240,27 @@ function Gate({ ready, signedIn }: { ready: boolean; signedIn: boolean }) {
     const onLogin = first === "login";
     const onIndex = first === undefined;
 
-    if (!signedIn && !onLogin) router.replace("/login");
-    if (signedIn && (onLogin || onIndex)) router.replace("/vessels");
-  }, [ready, signedIn, segments, router]);
+    if (!signedIn && !onLogin) {
+      router.replace("/login");
+      return;
+    }
+
+    /* Crew have no vessel list — they have joining paperwork and nothing
+       else. Landing them on /vessels would show an empty screen, because the
+       API refuses them that list by design. */
+    if (signedIn && (onLogin || onIndex)) {
+      router.replace(role === "crew" ? "/joining" : "/vessels");
+      return;
+    }
+
+    /* A crew member who reaches a vessel route — a stale deep link, or a
+       back-stack entry from an account that used to be a supervisor — is put
+       back where they belong rather than left on a screen that will only ever
+       render a permission error. */
+    if (signedIn && role === "crew" && (first === "vessels" || first === "timesheet" || first === "crew")) {
+      router.replace("/joining");
+    }
+  }, [ready, signedIn, role, segments, router]);
 
   return null;
 }

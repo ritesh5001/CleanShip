@@ -11,6 +11,13 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import type { Stage } from "../domain/stages.js";
+import type {
+  ChecklistMap,
+  CrewChecklistItem,
+  CrewDocumentItem,
+  DocumentMap,
+  TravelMap,
+} from "../domain/crew.js";
 
 /**
  * The database, in one file.
@@ -29,17 +36,29 @@ import type { Stage } from "../domain/stages.js";
 /* ------------------------------------------------------------------ */
 
 /**
- * Roles. All three are staff — there is no customer login.
+ * Roles. All four are staff — there is no customer login.
  *
  *   admin       everything: vessels, users, clients, the enquiry inbox
  *   superadmin  everything, and the only role that manages people
  *   supervisor  the vessels they are assigned to, and nothing else
+ *   crew        their own joining paperwork, and nothing else at all
+ *
+ * `crew` is the joiner: the rope-access technician or cleaner who signs into
+ * the Android app to fill in their own documents and travel, and who must
+ * never reach a status sheet. A supervisor is a joiner too — they carry the
+ * same paperwork onto the same flight — which is why crew is a role BELOW
+ * supervisor rather than a separate kind of account.
  *
  * Customers deliberately have no account. They watch a vessel through a share
  * link plus its IMO number: nothing to issue, nothing to reset, and nobody
  * chasing the office for a password at 02:00 because a vessel sailed.
  */
-export const userRole = pgEnum("user_role", ["superadmin", "admin", "supervisor"]);
+export const userRole = pgEnum("user_role", [
+  "superadmin",
+  "admin",
+  "supervisor",
+  "crew",
+]);
 
 export const users = pgTable(
   "users",
@@ -119,6 +138,36 @@ export const vessels = pgTable(
      * silently rewrite what a completed job says it did.
      */
     stages: jsonb("stages").$type<Stage[]>().notNull().default([]),
+
+    /**
+     * What this vessel asks its joiners for, and what has to be ticked before
+     * they fly. Same contract as `stages` above: copied from a template at
+     * creation, editable per vessel, and never rewritten by a later change to
+     * the template — a completed job's paperwork is part of its record.
+     */
+    crewDocuments: jsonb("crew_documents")
+      .$type<CrewDocumentItem[]>()
+      .notNull()
+      .default([]),
+    crewChecklist: jsonb("crew_checklist")
+      .$type<CrewChecklistItem[]>()
+      .notNull()
+      .default([]),
+
+    /**
+     * When the crew reported to the hold — the switch from joining to working.
+     *
+     * Null means they are still travelling and the app shows paperwork. Set
+     * means they are aboard, the cleaning has begun and the paperwork retires.
+     * It is one fact about the vessel rather than one per person because the
+     * gang arrives together and the ship starts when they do.
+     */
+    holdReportedAt: timestamp("hold_reported_at", { withTimezone: true }),
+    holdReportedById: integer("hold_reported_by_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    /** Denormalised, so a deleted account cannot erase who called it. */
+    holdReportedByName: varchar("hold_reported_by_name", { length: 120 }),
 
     compartmentCount: integer("compartment_count").notNull().default(0),
     scheduledFor: timestamp("scheduled_for", { withTimezone: true }),
@@ -310,6 +359,63 @@ export const cellEvents = pgTable(
 );
 
 /* ------------------------------------------------------------------ */
+/* Crew mobilisation — one row per person per vessel                   */
+/* ------------------------------------------------------------------ */
+
+/**
+ * A joiner's paperwork for one vessel.
+ *
+ * The three maps are keyed by the item keys on the vessel's own lists, so a
+ * row is read and written whole — which is how both the app and the admin
+ * board use it. Writes merge keys instead of replacing the map: a supervisor
+ * ticking the rope kit while the joiner fills in their nominee details must
+ * not erase the other's work.
+ */
+export const crewAssignments = pgTable(
+  "crew_assignments",
+  {
+    id: serial("id").primaryKey(),
+    vesselId: integer("vessel_id")
+      .notNull()
+      .references(() => vessels.id, { onDelete: "cascade" }),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+
+    /** { passport: "done" | "pending" | "expired", … } */
+    documents: jsonb("documents").$type<DocumentMap>().notNull().default({}),
+    /** { rope_kit: true, … } */
+    checklist: jsonb("checklist").$type<ChecklistMap>().notNull().default({}),
+    /**
+     * { boarded_flight: "2026-09-16T04:20:00.000Z", … }
+     *
+     * When the milestone happened, as wall-clock time with no zone — the same
+     * convention the cleaning times use, and for the same reason: 04:20 means
+     * 04:20 to the joiner, the office and the customer alike.
+     */
+    travel: jsonb("travel").$type<TravelMap>().notNull().default({}),
+
+    notes: text("notes"),
+    updatedById: integer("updated_by_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    updatedByName: varchar("updated_by_name", { length: 120 }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    /* Re-adding somebody already on the roster must reach their existing
+       paperwork, never start a second blank copy of it. */
+    uniqueIndex("crew_assignments_vessel_user_idx").on(t.vesselId, t.userId),
+    index("crew_assignments_user_idx").on(t.userId),
+  ],
+);
+
+/* ------------------------------------------------------------------ */
 /* Enquiries — the marketing site's contact forms                      */
 /* ------------------------------------------------------------------ */
 
@@ -352,4 +458,5 @@ export type Vessel = typeof vessels.$inferSelect;
 export type Compartment = typeof compartments.$inferSelect;
 export type Cell = typeof cells.$inferSelect;
 export type CellEvent = typeof cellEvents.$inferSelect;
+export type CrewAssignment = typeof crewAssignments.$inferSelect;
 export type Enquiry = typeof enquiries.$inferSelect;

@@ -7,9 +7,11 @@ import { Card, VesselStatusChip } from "@/components/cleantrack/ui";
 import { CopyField } from "@/components/cleantrack/copy-field";
 import { StageEditor } from "@/components/cleantrack/stage-editor";
 import { ApiUnavailable } from "@/components/cleantrack/api-unavailable";
-import { ApiError, getVessel, listSupervisors } from "@/lib/api";
+import { ApiError, getCrewBoard, getVessel, listJoiners, listSupervisors } from "@/lib/api";
 import { ActivityTimeline } from "@/components/cleantrack/activity-timeline";
 import { DeleteVesselButton } from "./delete-vessel";
+import { CrewBoard } from "@/components/cleantrack/crew-board";
+import { AddCrewForm, CrewListsForm } from "./crew-form";
 import { compartmentNoun } from "@/lib/cleantrack/types";
 import { formatDate, formatDateTime } from "@/lib/format";
 import {
@@ -29,11 +31,13 @@ export default async function AdminVesselPage({
   const session = await requireSession("admin");
   const { id } = await params;
 
-  let data, supervisors;
+  let data, supervisors, board, joiners;
   try {
-    [data, supervisors] = await Promise.all([
+    [data, supervisors, board, joiners] = await Promise.all([
       getVessel(Number(id)),
       listSupervisors(),
+      getCrewBoard(Number(id)),
+      listJoiners(),
     ]);
   } catch (err) {
     if (err instanceof ApiError && err.status === 404) notFound();
@@ -128,6 +132,19 @@ export default async function AdminVesselPage({
         </div>
       </div>
 
+      {/* The joining board leads while the crew are still travelling: until
+          they report, every stage below is necessarily blank and the only
+          thing actually happening is getting people to the ship. Once they are
+          aboard it drops beneath the cleaning grid, which becomes the job. */}
+      <div className="mt-6">
+        <Card>
+          <h2 className="border-b border-slate-200 px-5 py-3 text-[13px] font-semibold uppercase tracking-wider text-slate-500">
+            Crew joining
+          </h2>
+          <CrewBoard vesselId={vessel.id} board={board} />
+        </Card>
+      </div>
+
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <StatusGrid
@@ -200,6 +217,34 @@ export default async function AdminVesselPage({
               behind a modal that hides it. */}
           <Card className="p-5">
             <StageEditor vesselId={vessel.id} stages={vessel.stages} />
+          </Card>
+
+          {/* Who is joining, and what this vessel asks them for. Both are
+              closed off once the crew are aboard — see the forms. */}
+          <div id="crew" className="scroll-mt-20">
+            <Card>
+              <h2 className="border-b border-slate-200 px-5 py-3 text-[13px] font-semibold uppercase tracking-wider text-slate-500">
+                Crew roster
+              </h2>
+              <AddCrewForm
+                vesselId={vessel.id}
+                joiners={joiners}
+                alreadyOn={board.crew.map((m) => m.userId)}
+                disabled={Boolean(board.holdReportedAt)}
+              />
+            </Card>
+          </div>
+
+          <Card>
+            <h2 className="border-b border-slate-200 px-5 py-3 text-[13px] font-semibold uppercase tracking-wider text-slate-500">
+              Joining sheet
+            </h2>
+            <CrewListsForm
+              vesselId={vessel.id}
+              documents={board.documents}
+              checklist={board.checklist}
+              disabled={Boolean(board.holdReportedAt)}
+            />
           </Card>
 
           <div id="supervisor" className="scroll-mt-20">

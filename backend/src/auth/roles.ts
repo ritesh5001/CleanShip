@@ -7,14 +7,21 @@
  */
 
 /**
- * Three tiers, most privileged first.
+ * Four tiers, most privileged first.
+ *
+ * `crew` is the joiner: they sign into the Android app, fill in their own
+ * documents, checklist and travel for a vessel they have been rostered onto,
+ * and reach nothing else — no status sheet, no other person's row, no vessel
+ * they are not joining. A supervisor carries the same paperwork onto the same
+ * flight, so crew sits BELOW supervisor rather than beside it, and every
+ * supervisor is automatically allowed everything a crew member is.
  *
  * `editor` used to sit between admin and supervisor: office staff who worked
  * the enquiry inbox and could see no vessels at all. It was removed because
  * nobody could say what it was for that admin was not, and a role nobody can
  * describe is a role nobody administers correctly.
  */
-export type Role = "superadmin" | "admin" | "supervisor";
+export type Role = "superadmin" | "admin" | "supervisor" | "crew";
 
 export type SessionUser = {
   /** users.id */
@@ -24,7 +31,7 @@ export type SessionUser = {
   role: Role;
 };
 
-export const ROLES: Role[] = ["superadmin", "admin", "supervisor"];
+export const ROLES: Role[] = ["superadmin", "admin", "supervisor", "crew"];
 
 export function isRole(value: unknown): value is Role {
   return typeof value === "string" && ROLES.includes(value as Role);
@@ -40,9 +47,10 @@ export function isRole(value: unknown): value is Role {
  * likely bug to be noticed in testing and the worst to hit in production.
  */
 const RANK: Record<Role, number> = {
-  supervisor: 1,
-  admin: 2,
-  superadmin: 3,
+  crew: 1,
+  supervisor: 2,
+  admin: 3,
+  superadmin: 4,
 };
 
 /** Whether `role` sits at or above `minimum` in the hierarchy. */
@@ -52,6 +60,10 @@ export function atLeast(role: Role, minimum: Role) {
 
 /** Where a role lands after signing in. */
 export function landingFor(role: Role) {
+  /* Crew have no web surface at all. Everything they do is on the phone, so
+     the browser sends them back to the door they came in at rather than to a
+     page that would immediately bounce them. */
+  if (role === "crew") return "/cleantrack/login";
   if (role === "supervisor") return "/cleantrack/app";
   if (role === "admin" || role === "superadmin") return "/cleantrack/admin";
   /* A role this build does not know — a token minted while `editor` still
@@ -69,7 +81,9 @@ export function landingFor(role: Role) {
  * someone to the wrong one is a support call.
  */
 export function loginPageFor(role: Role) {
-  return role === "supervisor" ? "/cleantrack/login" : "/admin/login";
+  return role === "supervisor" || role === "crew"
+    ? "/cleantrack/login"
+    : "/admin/login";
 }
 
 /* -------------------------------------------------------------------- */
@@ -89,6 +103,9 @@ export function canViewVessel(
 ) {
   if (isOffice(session.role)) return true;
   if (session.role === "supervisor") return vessel.supervisorId === session.sub;
+  /* Crew never see a vessel through this door. Being rostered onto a ship
+     entitles them to their own joining paperwork and to nothing about the
+     cleaning of it — see the crew routes, which check the roster instead. */
   return false;
 }
 

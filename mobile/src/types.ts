@@ -9,7 +9,7 @@
  * and is never hardcoded here.
  */
 
-export type Role = "superadmin" | "admin" | "supervisor";
+export type Role = "superadmin" | "admin" | "supervisor" | "crew";
 
 export type SessionUser = {
   sub: number;
@@ -77,6 +77,16 @@ export type VesselSummary = {
   scheduledFor: string | null;
   startedAt: string | null;
   completedAt: string | null;
+  /**
+   * When the crew reported to the hold — the switch from joining to working.
+   *
+   * Null means the gang is still travelling and the app leads with the joining
+   * board. Set means they are aboard and the cleaning sheet takes over. It is
+   * one fact about the vessel rather than one per person, because the gang
+   * arrives together and the ship starts when they do.
+   */
+  holdReportedAt: string | null;
+  holdReportedByName: string | null;
   notes: string | null;
   version: number;
   createdAt: string;
@@ -472,4 +482,151 @@ export function workDateTime(
   const at = new Date(value);
   if (Number.isNaN(at.getTime())) return null;
   return { date: dateOf(at), clock: clockOf(at) };
+}
+
+
+/* -------------------------------------------------------------------- */
+/* Crew mobilisation                                                     */
+/*                                                                       */
+/* Getting people onto the ship, before any hold is cleaned. The printed  */
+/* joining sheet: a row per document, a row per checklist item, and the   */
+/* travel chain from a hotel to an aircraft door.                         */
+/*                                                                       */
+/* It ends when the crew report to the hold. That is one fact about the   */
+/* VESSEL, not one per person — the gang arrives together and the ship    */
+/* starts when they do — so every screen here keys off the vessel's       */
+/* `holdReportedAt` rather than anything on the individual.               */
+/* -------------------------------------------------------------------- */
+
+/** A row on the joining sheet. Keys are frozen; labels can be reworded. */
+export type CrewItem = { key: string; label: string };
+
+/**
+ * Three states, matching the sheet.
+ *
+ * `expired` is not a worse kind of missing. It is the case where somebody has
+ * a document, believes they are covered, and is not — which is the one that
+ * stops a flight at the gate, so it gets its own colour rather than being
+ * folded into "not done".
+ */
+export type DocumentState = "pending" | "done" | "expired";
+
+export const DOCUMENT_STATE_STYLE: Record<
+  DocumentState,
+  { label: string; short: string; bg: string; border: string; text: string }
+> = {
+  /* The cell language the status sheet already uses, one level across: blank
+     for nothing recorded, green for held, red for the one that stops you. */
+  pending: {
+    label: "Not done",
+    short: "—",
+    bg: "#ffffff",
+    border: "#c8d2dc",
+    text: "#5b6b7a",
+  },
+  done: {
+    label: "Done",
+    short: "Done",
+    bg: "#8fce6a",
+    border: "#4f9c2b",
+    text: "#14400a",
+  },
+  expired: {
+    label: "Expired",
+    short: "Expired",
+    bg: "#fae5e0",
+    border: "#c6472f",
+    text: "#c6472f",
+  },
+};
+
+/** What a tap moves a document to. Three states, round and round. */
+export function nextDocumentState(current: DocumentState): DocumentState {
+  if (current === "pending") return "done";
+  if (current === "done") return "expired";
+  return "pending";
+}
+
+export type TravelStep = { key: string; label: string; short: string };
+
+export type DocumentMap = Record<string, DocumentState>;
+export type ChecklistMap = Record<string, boolean>;
+export type TravelMap = Record<string, string | null>;
+
+export type CrewProgress = {
+  documentsDone: number;
+  documentsTotal: number;
+  documentsExpired: number;
+  checklistDone: number;
+  checklistTotal: number;
+  travelDone: number;
+  travelTotal: number;
+  /** Everything asked for is answered and nothing is expired. */
+  ready: boolean;
+};
+
+export type CrewMember = {
+  id: number;
+  vesselId: number;
+  userId: number;
+  name: string;
+  email: string;
+  phone: string | null;
+  role: Role;
+  /** The vessel's assigned supervisor — who joins like everybody else. */
+  isSupervisor: boolean;
+  documents: DocumentMap;
+  checklist: ChecklistMap;
+  travel: TravelMap;
+  notes: string | null;
+  updatedByName: string | null;
+  updatedAt: string;
+  progress: CrewProgress;
+};
+
+/** The vessel, as far as somebody joining it needs to know. */
+export type JoiningVessel = {
+  id: number;
+  reference: string;
+  name: string;
+  port: string;
+  berth: string | null;
+  destination: string | null;
+  type: VesselType;
+  status: VesselStatus;
+  scheduledFor: string | null;
+  /** Set once the gang is aboard. Null means the paperwork is still open. */
+  holdReportedAt: string | null;
+  crewDocuments: CrewItem[];
+  crewChecklist: CrewItem[];
+};
+
+export type MyAssignment = { vessel: JoiningVessel; member: CrewMember };
+
+/** The whole board for one vessel — what a supervisor works from. */
+export type CrewBoard = {
+  crew: CrewMember[];
+  documents: CrewItem[];
+  checklist: CrewItem[];
+  travelSteps: TravelStep[];
+  holdReportedAt: string | null;
+  holdReportedByName: string | null;
+};
+
+/**
+ * How far down the travel chain somebody has got.
+ *
+ * Read as "the last step with a time on it", not "how many are ticked": a
+ * joiner who recorded boarding but forgot immigration is on the aircraft, and
+ * counting ticks would report them still at the airport.
+ */
+export function travelStage(
+  travel: TravelMap,
+  steps: TravelStep[],
+): { index: number; step: TravelStep | null } {
+  let index = -1;
+  for (let i = 0; i < steps.length; i += 1) {
+    if (travel[steps[i].key]) index = i;
+  }
+  return { index, step: index >= 0 ? steps[index] : null };
 }

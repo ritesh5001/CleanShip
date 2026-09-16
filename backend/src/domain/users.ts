@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm";
+import { asc, eq, inArray } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { users, type User } from "../db/schema.js";
 import { hashPassword, verifyPassword } from "../auth/passwords.js";
@@ -26,6 +26,29 @@ export async function listSupervisors() {
     .select({ id: users.id, name: users.name, email: users.email, active: users.active })
     .from(users)
     .where(eq(users.role, "supervisor"))
+    .orderBy(asc(users.name));
+  return rows.filter((r) => r.active === 1);
+}
+
+/**
+ * Everyone who can be put on a joining roster.
+ *
+ * Crew AND supervisors, because a supervisor joins a ship the same way their
+ * gang does — same passport, same flight, same sheet. Filtering this to `crew`
+ * would have left the one person who is definitely going unable to be added.
+ */
+export async function listJoiners() {
+  const rows = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      role: users.role,
+      phone: users.phone,
+      active: users.active,
+    })
+    .from(users)
+    .where(inArray(users.role, ["crew", "supervisor"]))
     .orderBy(asc(users.name));
   return rows.filter((r) => r.active === 1);
 }

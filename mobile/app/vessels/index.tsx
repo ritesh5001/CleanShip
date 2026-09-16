@@ -164,6 +164,29 @@ export default function Vessels() {
         </Pressable>
       </Link>
 
+      {/* A supervisor is a joiner too: same passport, same flight, same sheet
+          as the gang they are taking. Their own paperwork lives on the same
+          screen the crew use, which is why this is a link out rather than a
+          second copy of it here. */}
+      <Link href="/joining" asChild>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Open my joining paperwork — documents, checklist and travel"
+        >
+          {({ pressed }) => (
+            <View style={[styles.joining, pressed ? { opacity: 0.85 } : null]}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.joiningLabel}>My joining</Text>
+                <Text style={styles.joiningHint}>
+                  My documents, checklist and travel
+                </Text>
+              </View>
+              <Text style={styles.joiningChevron}>›</Text>
+            </View>
+          )}
+        </Pressable>
+      </Link>
+
       {error && (
         <View style={{ marginBottom: space.md }}>
           <Banner tone={stale ? "warn" : "error"}>{error}</Banner>
@@ -273,6 +296,23 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
   },
   signOutText: { color: colors.blue, fontWeight: "700", fontSize: 14 },
+  joining: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.md,
+    minHeight: TAP,
+    paddingHorizontal: space.lg,
+    paddingVertical: space.md,
+    marginBottom: space.md,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.blue,
+  },
+  joiningLabel: { fontSize: 16, fontWeight: "800", color: colors.text },
+  joiningHint: { marginTop: 2, fontSize: 12, color: colors.muted },
+  joiningChevron: { fontSize: 26, fontWeight: "700", color: colors.blue },
   timesheet: {
     flexDirection: "row",
     alignItems: "center",
