@@ -159,6 +159,8 @@ const createSchema = z.object({
     .max(60, "60 is the most this supports — say if you need more."),
   compartmentLabels: z.array(z.string().max(40)).optional(),
   stages: z.array(stageSchema).min(1, "Add at least one stage."),
+  /** Who is joining. The supervisor is added automatically. */
+  crewIds: z.array(z.number().int().positive()).max(100).optional(),
   scheduledFor: z.coerce.date().nullish(),
   notes: z.string().max(4000).nullish(),
 });

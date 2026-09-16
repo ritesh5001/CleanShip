@@ -120,6 +120,12 @@ export async function createVesselAction(
       compartmentCount: d.compartmentCount,
       compartmentLabels,
       stages,
+      /* Checkboxes post one entry each, so `getAll` — `Object.fromEntries`
+         above keeps only the last one ticked. */
+      crewIds: formData
+        .getAll("crewIds")
+        .map(Number)
+        .filter((n) => Number.isInteger(n) && n > 0),
       scheduledFor: d.scheduledFor || null,
       notes: d.notes || null,
     });

@@ -6,6 +6,7 @@ import {
   cells,
   clients,
   compartments,
+  crewAssignments,
   users,
   vessels,
   type Cell,
@@ -389,9 +390,39 @@ export type CreateVesselInput = {
    */
   crewDocuments?: { key?: string; label: string }[];
   crewChecklist?: { key?: string; label: string }[];
+  /**
+   * Who is joining this vessel. The assigned supervisor is added whether or not
+   * they are listed here — they carry the same paperwork onto the same flight.
+   */
+  crewIds?: number[];
   scheduledFor?: Date | null;
   notes?: string | null;
 };
+
+/**
+ * Checks a proposed roster before anything is written.
+ *
+ * Only crew and supervisor accounts, and only active ones. An office account
+ * on a joining roster would get a joining sheet it has no app to fill in, and a
+ * disabled account would sit on the board as a column nobody can ever complete.
+ */
+async function validateRoster(userIds: number[]) {
+  if (userIds.length === 0) return;
+  const found = await db
+    .select({ id: users.id, role: users.role, active: users.active, name: users.name })
+    .from(users)
+    .where(inArray(users.id, userIds));
+
+  const byId = new Map(found.map((u) => [u.id, u]));
+  for (const id of userIds) {
+    const u = byId.get(id);
+    if (!u) throw ApiError.badRequest("One of the chosen crew accounts no longer exists.");
+    if (!u.active) throw ApiError.badRequest(`${u.name}'s account is disabled.`);
+    if (u.role !== "crew" && u.role !== "supervisor") {
+      throw ApiError.badRequest(`${u.name} is an office account and cannot join a vessel.`);
+    }
+  }
+}
 
 /** Turns the admin's typed stage list into stored stages with stable keys. */
 export function normaliseStages(input: StageInput[]): Stage[] {
@@ -422,6 +453,16 @@ export async function createVessel(
   if (stages.length === 0) {
     throw ApiError.badRequest("A vessel needs at least one stage.");
   }
+
+  /* The supervisor joins with their gang, so they are always on the roster.
+     Deduplicated, so ticking them in the crew list as well is harmless. */
+  const roster = [
+    ...new Set([
+      ...(input.crewIds ?? []),
+      ...(input.supervisorId ? [input.supervisorId] : []),
+    ]),
+  ];
+  await validateRoster(roster);
 
   const labels = defaultCompartmentLabels(input.type, input.compartmentCount).map(
     (fallback, i) => (input.compartmentLabels?.[i]?.trim() || fallback).slice(0, 40),
@@ -480,6 +521,16 @@ export async function createVessel(
             })),
           ),
         );
+
+        /* Inside the same transaction as the vessel: a vessel that exists with
+           half its roster missing would show the office a board they believe
+           is complete. */
+        if (roster.length > 0) {
+          await tx
+            .insert(crewAssignments)
+            .values(roster.map((userId) => ({ vesselId: vessel.id, userId })))
+            .onConflictDoNothing();
+        }
 
         return vessel;
       });
@@ -545,7 +596,19 @@ export async function assignSupervisor(id: number, supervisorId: number | null) 
       throw ApiError.badRequest("That supervisor account is deactivated.");
     }
   }
-  return updateVessel(id, { supervisorId });
+  const vessel = await updateVessel(id, { supervisorId });
+
+  /* Same rule as at creation: the supervisor is on the joining roster. The
+     previous supervisor, if any, is left on it — they may well still be
+     going, and removing somebody's paperwork is the office's call to make on
+     the board, not a side effect of a dropdown. */
+  if (supervisorId !== null) {
+    await db
+      .insert(crewAssignments)
+      .values({ vesselId: id, userId: supervisorId })
+      .onConflictDoNothing();
+  }
+  return vessel;
 }
 
 /**

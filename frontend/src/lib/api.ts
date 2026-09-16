@@ -175,6 +175,8 @@ export type CreateVesselInput = {
   compartmentCount: number;
   compartmentLabels?: string[];
   stages: { key?: string; label: string; short?: string }[];
+  /** Who is joining. The API adds the supervisor on its own. */
+  crewIds?: number[];
   scheduledFor?: string | null;
   notes?: string | null;
 };

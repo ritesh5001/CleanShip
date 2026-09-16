@@ -3,7 +3,7 @@ import { requireSession } from "@/lib/session";
 import { AppShell } from "@/components/cleantrack/app-shell";
 import { PageTitle } from "@/components/cleantrack/ui";
 import { ApiUnavailable } from "@/components/cleantrack/api-unavailable";
-import { getVesselTemplates, listClients, listSupervisors, listVessels } from "@/lib/api";
+import { getVesselTemplates, listClients, listJoiners, listSupervisors, listVessels } from "@/lib/api";
 import { NewVesselForm } from "./form";
 
 export const dynamic = "force-dynamic";
@@ -18,13 +18,14 @@ function placesFrom(vessels: { port: string; destination: string | null }[]) {
 export default async function NewVesselPage() {
   const session = await requireSession("admin");
 
-  let clients, supervisors, templates, vessels;
+  let clients, supervisors, templates, vessels, joiners;
   try {
-    [clients, supervisors, templates, vessels] = await Promise.all([
+    [clients, supervisors, templates, vessels, joiners] = await Promise.all([
       listClients(),
       listSupervisors(),
       getVesselTemplates(60),
       listVessels(),
+      listJoiners(),
     ]);
   } catch (err) {
     return (
@@ -53,6 +54,7 @@ export default async function NewVesselPage() {
         <NewVesselForm
           clients={clients.map((c) => ({ id: c.id, name: c.name }))}
           supervisors={supervisors}
+          joiners={joiners}
           templates={templates.templates}
           defaultLabels={templates.defaultLabels}
           places={placesFrom(vessels)}

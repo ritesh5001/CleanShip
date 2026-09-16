@@ -23,12 +23,15 @@ type StageDraft = { key?: string; label: string; short: string };
 export function NewVesselForm({
   clients,
   supervisors,
+  joiners,
   templates,
   defaultLabels,
   places,
 }: {
   clients: { id: number; name: string }[];
   supervisors: { id: number; name: string }[];
+  /** Crew and supervisor accounts that can be put on this vessel. */
+  joiners: { id: number; name: string; email: string; role: string }[];
   templates: StageTemplate[];
   defaultLabels: { hold: string[]; tank: string[] };
   /** Ports and destinations already used, offered as suggestions. */
@@ -44,6 +47,12 @@ export function NewVesselForm({
     templates.find((t) => t.type === "hold")?.stages.map(toDraft) ?? [],
   );
   const [labels, setLabels] = useState<string[]>([]);
+  /* Controlled rather than left to the checkboxes, because the supervisor
+     select above also decides who is on the roster and the count has to
+     include them. */
+  const [supervisorId, setSupervisorId] = useState("");
+  const [crewIds, setCrewIds] = useState<Set<number>>(new Set());
+  const [crewFilter, setCrewFilter] = useState("");
 
   const options = templates.filter((t) => t.type === type);
 
@@ -170,7 +179,12 @@ export function NewVesselForm({
             </Field>
 
             <Field label="Supervisor" hint="Can be assigned later.">
-              <select name="supervisorId" defaultValue="" className={inputClass}>
+              <select
+                name="supervisorId"
+                value={supervisorId}
+                onChange={(e) => setSupervisorId(e.target.value)}
+                className={inputClass}
+              >
                 <option value="">Unassigned</option>
                 {supervisors.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -194,6 +208,23 @@ export function NewVesselForm({
             </div>
           </div>
         </Card>
+
+        {/* ---- crew ---- */}
+        <CrewPicker
+          joiners={joiners}
+          supervisorId={supervisorId ? Number(supervisorId) : null}
+          selected={crewIds}
+          filter={crewFilter}
+          onFilter={setCrewFilter}
+          onToggle={(id) =>
+            setCrewIds((current) => {
+              const next = new Set(current);
+              if (next.has(id)) next.delete(id);
+              else next.add(id);
+              return next;
+            })
+          }
+        />
 
         {/* ---- compartments ---- */}
         <Card className="p-5">
@@ -430,5 +461,127 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
     <Button type="submit" disabled={pending || disabled}>
       {pending ? "Creating…" : "Create vessel"}
     </Button>
+  );
+}
+
+
+/**
+ * Who is joining this vessel.
+ *
+ * Checkboxes rather than a multi-select: a gang is picked by name from a list
+ * the admin can see all of, and a multi-select that loses every choice to one
+ * click without Ctrl held is how a roster of four becomes a roster of one.
+ *
+ * The chosen supervisor is shown ticked and locked — they are always on the
+ * roster, because they carry the same passport onto the same flight — so the
+ * count matches what the joining board will actually show.
+ */
+function CrewPicker({
+  joiners,
+  supervisorId,
+  selected,
+  filter,
+  onFilter,
+  onToggle,
+}: {
+  joiners: { id: number; name: string; email: string; role: string }[];
+  supervisorId: number | null;
+  selected: Set<number>;
+  filter: string;
+  onFilter: (value: string) => void;
+  onToggle: (id: number) => void;
+}) {
+  const needle = filter.trim().toLowerCase();
+  const shown = joiners.filter(
+    (j) =>
+      !needle ||
+      j.name.toLowerCase().includes(needle) ||
+      j.email.toLowerCase().includes(needle),
+  );
+  const total = new Set([...selected, ...(supervisorId ? [supervisorId] : [])]).size;
+
+  return (
+    <Card className="p-5">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="text-[13px] font-semibold uppercase tracking-wider text-slate-500">
+          Crew joining this vessel
+        </h2>
+        <span className="font-mono text-[12px] text-slate-500">
+          {total} selected
+        </span>
+      </div>
+      <p className="mt-1 text-[13px] text-slate-600">
+        The people who will report aboard. Each gets this vessel&apos;s joining
+        sheet on their phone. You can add or remove people later from the vessel
+        page.
+      </p>
+
+      {/* Posted from state, not from the checkboxes: a filtered list does not
+          render the people it hides, and an unrendered checkbox posts nothing —
+          so typing a name to find the fourth person would silently drop the
+          first three. The supervisor is sent separately and the API adds them. */}
+      {[...selected]
+        .filter((id) => id !== supervisorId)
+        .map((id) => (
+          <input key={id} type="hidden" name="crewIds" value={id} />
+        ))}
+
+      {joiners.length === 0 ? (
+        <p className="mt-4 text-[13px] text-slate-600">
+          No crew accounts yet. Create them under{" "}
+          <span className="font-semibold">Users</span> with the Crew role.
+        </p>
+      ) : (
+        <>
+          {joiners.length > 8 && (
+            <input
+              type="search"
+              value={filter}
+              onChange={(e) => onFilter(e.target.value)}
+              placeholder="Filter by name or email"
+              className={`${inputClass} mt-4`}
+            />
+          )}
+
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {shown.map((j) => {
+              const isSupervisor = j.id === supervisorId;
+              const checked = isSupervisor || selected.has(j.id);
+              return (
+                <li key={j.id}>
+                  <label
+                    className={`flex min-h-11 cursor-pointer items-center gap-3 border px-3 py-2 ${
+                      checked
+                        ? "border-[#1461a0] bg-[#f1f7fc]"
+                        : "border-slate-200 bg-white hover:border-slate-300"
+                    } ${isSupervisor ? "cursor-default" : ""}`}
+                  >
+                    <input
+                      type="checkbox"
+                      value={j.id}
+                      checked={checked}
+                      disabled={isSupervisor}
+                      onChange={() => onToggle(j.id)}
+                      className="size-4 accent-[#1461a0]"
+                    />
+                    <span className="min-w-0">
+                      <span className="block truncate text-[14px] font-medium text-slate-900">
+                        {j.name}
+                      </span>
+                      <span className="block text-[11px] capitalize text-slate-500">
+                        {isSupervisor ? "Supervisor — always on the crew" : j.role}
+                      </span>
+                    </span>
+                  </label>
+                </li>
+              );
+            })}
+          </ul>
+          {shown.length === 0 && (
+            <p className="mt-3 text-[13px] text-slate-500">Nobody matches that filter.</p>
+          )}
+        </>
+      )}
+    </Card>
   );
 }
