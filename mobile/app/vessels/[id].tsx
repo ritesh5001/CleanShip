@@ -38,14 +38,18 @@ import { ActivityLog } from "../../src/components/activity-log";
 import { colors, radius, space, TAP } from "../../src/theme";
 import {
   CELL_STYLE,
+  clampTime,
   formatWorkTime,
   isFinalStage,
+  timeBounds,
+  vesselTimeWindow,
   wallNow,
   nextStatusOnTap,
   progressOf,
   statusesOf,
   type CellStatus,
   type CellEvent,
+  type TimeKind,
   type VesselDetail,
 } from "../../src/types";
 
@@ -58,7 +62,6 @@ import {
  *
  * Every tap is written to the device queue before anything else. See src/queue.
  */
-const MINUTE_MS = 60_000;
 
 export default function Vessel() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -314,38 +317,9 @@ export default function Vessel() {
     [vessel, pending],
   );
 
-  /**
-   * The window a time may fall in for this vessel.
-   *
-   * From the day the vessel came onto the books — its scheduled date, or when
-   * the record was created if it was never scheduled — to two months later,
-   * and never past now.
-   *
-   * Bounded because an open-ended date control on a deck is how a cleaning
-   * record ends up dated 2019, and that only ever surfaces when someone is
-   * arguing about an invoice. Two months is comfortably longer than any
-   * turnaround while still ruling out a mistyped year.
-   *
-   * Both ends are capped at now so a vessel scheduled for next week cannot
-   * produce a window that starts in the future.
-   */
-  const timeWindow = useMemo(() => {
-    const now = wallNow();
-    const anchor = vessel
-      ? new Date(vessel.scheduledFor ?? vessel.createdAt)
-      : now;
-
-    const twoMonthsOn = new Date(anchor);
-    twoMonthsOn.setUTCMonth(twoMonthsOn.getUTCMonth() + 2);
-
-    /* Start of the anchor DAY, not the instant the record was created — the
-       whole of that day is inside the window, and a vessel added at 15:13
-       should not refuse work recorded at 09:00 the same morning. */
-    const min = new Date(Math.min(anchor.getTime(), now.getTime()));
-    min.setUTCHours(0, 0, 0, 0);
-    const max = new Date(Math.min(twoMonthsOn.getTime(), now.getTime()));
-    return { min, max: max.getTime() < min.getTime() ? new Date(min) : max };
-  }, [vessel]);
+  /* The window a time on this vessel may fall in. Shared with the time sheet
+     — see vesselTimeWindow in src/types for why it is bounded at all. */
+  const timeWindow = useMemo(() => vesselTimeWindow(vessel), [vessel]);
 
   const overall = useMemo(() => {
     if (!vessel) return { done: 0, total: 0, ratio: 0 };
@@ -456,51 +430,26 @@ export default function Vessel() {
         return;
       }
 
-      /* Narrow the window so an impossible time cannot be picked at all.
-         A finish cannot precede its start, and a start cannot follow its
-         finish. Enforcing it here means the supervisor is stopped by a dead
-         arrow rather than by a rejection they only learn about later — the
-         API refuses these, and a refusal that arrives after the fact reads
-         as the app losing their work. */
-      let min = timeWindow.min;
-      /* Read the clock NOW, not from the memo. `timeWindow` is computed once
-         when the vessel loads, so its "now" ages: open the app at 07:42, tap
-         at 07:52, and the picker clamped 07:52 down to the stale 07:42. The
-         upper bound is always the present moment. */
-      let max = wallNow();
-      /* A finish is always LATER than its start — not equal — so the earliest
-         finish on offer is one minute after the start, on the start's own
-         date. A start, symmetrically, is at least a minute before a recorded
-         finish. The picker then offers nothing outside that range at all. */
-      if (status === "done" && counterpart) {
-        const afterStart = new Date(new Date(counterpart).getTime() + MINUTE_MS);
-        if (afterStart.getTime() > min.getTime()) min = afterStart;
-      }
-      if (status === "in_progress" && counterpart) {
-        const beforeFinish = new Date(new Date(counterpart).getTime() - MINUTE_MS);
-        if (beforeFinish.getTime() < max.getTime()) max = beforeFinish;
-      }
-      if (max.getTime() < min.getTime()) max = new Date(min);
-
-      const initial = existing ? new Date(existing) : wallNow();
-      const clamped =
-        initial.getTime() < min.getTime()
-          ? new Date(min)
-          : initial.getTime() > max.getTime()
-            ? new Date(max)
-            : initial;
+      /* Narrow the window so an impossible time cannot be picked at all — a
+         finish cannot precede its start, and a start cannot follow its
+         finish. The rule lives in timeBounds because the time sheet corrects
+         the same times and must offer the same range; two copies of it would
+         eventually disagree, and the one that is wrong hands the supervisor a
+         time the API then refuses. */
+      const kind: TimeKind = status === "in_progress" ? "started" : "finished";
+      const bounds = timeBounds(kind, timeWindow, counterpart);
 
       setAskTime({
         compartmentId,
         stageKey,
         stageLabel,
         status,
-        initial: clamped,
-        min,
-        max,
+        initial: clampTime(existing ? new Date(existing) : wallNow(), bounds),
+        min: bounds.min,
+        max: bounds.max,
       });
     },
-    [setCell, timeWindow.min],
+    [setCell, timeWindow],
   );
 
   const onRefresh = useCallback(async () => {

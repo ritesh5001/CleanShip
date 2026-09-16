@@ -179,6 +179,15 @@ export default function RootLayout() {
           <Stack.Screen name="login" options={{ headerShown: false }} />
           <Stack.Screen name="vessels/index" options={{ title: "My vessels" }} />
           <Stack.Screen name="vessels/[id]" options={{ title: "Vessel" }} />
+          {/* The time sheet. A route of its own rather than a tab on the
+              vessel screen: it is opened from the home screen to answer a
+              question about times, which is not the question someone has open
+              the status grid to ask. */}
+          <Stack.Screen
+            name="timesheet/index"
+            options={{ title: "Time sheet" }}
+          />
+          <Stack.Screen name="timesheet/[id]" options={{ title: "Times" }} />
         </Stack>
         {rejection && (
           <RejectedBar

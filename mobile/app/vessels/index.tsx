@@ -13,7 +13,7 @@ import { ApiError, listVessels } from "../../src/api";
 import { readVessels, writeVessels } from "../../src/cache";
 import { useSession } from "../../src/session";
 import { Banner, Card, Empty, ProgressBar } from "../../src/components/ui";
-import { colors, radius, space } from "../../src/theme";
+import { colors, radius, space, TAP } from "../../src/theme";
 import {
   compartmentNoun,
   VESSEL_STATUS_STYLE,
@@ -135,6 +135,35 @@ export default function Vessels() {
         </Pressable>
       </View>
 
+      {/* The way through to the time sheet.
+          A button rather than the sheet itself: this screen answers "which of
+          my vessels needs me", and a grid of start and finish times for every
+          hold on every vessel would bury that under figures nobody opens the
+          app to read. The times get a screen of their own, one tap away. */}
+      <Link href="/timesheet" asChild>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Open the time sheet — start and finish times for every hold and stage"
+        >
+          {/* Styled on an inner View, not on the Pressable: `Link asChild`
+              clones its child with the Link's own props, and the style set
+              here would be overwritten by the Link's undefined one. */}
+          {({ pressed }) => (
+            <View
+              style={[styles.timesheet, pressed ? { opacity: 0.85 } : null]}
+            >
+              <View style={{ flex: 1 }}>
+                <Text style={styles.timesheetLabel}>Time sheet</Text>
+                <Text style={styles.timesheetHint}>
+                  Every start and finish time, on one grid
+                </Text>
+              </View>
+              <Text style={styles.timesheetChevron}>›</Text>
+            </View>
+          )}
+        </Pressable>
+      </Link>
+
       {error && (
         <View style={{ marginBottom: space.md }}>
           <Banner tone={stale ? "warn" : "error"}>{error}</Banner>
@@ -244,6 +273,21 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
   },
   signOutText: { color: colors.blue, fontWeight: "700", fontSize: 14 },
+  timesheet: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.md,
+    minHeight: TAP,
+    paddingHorizontal: space.lg,
+    paddingVertical: space.md,
+    marginBottom: space.lg,
+    backgroundColor: colors.navy,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.aqua,
+  },
+  timesheetLabel: { fontSize: 16, fontWeight: "800", color: colors.onDark },
+  timesheetHint: { marginTop: 2, fontSize: 12, color: colors.onDarkMuted },
+  timesheetChevron: { fontSize: 26, fontWeight: "700", color: colors.aquaTint },
   sectionHeading: {
     marginTop: space.lg,
     marginBottom: space.xs,

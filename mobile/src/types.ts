@@ -340,3 +340,136 @@ export function formatDuration(
   const rest = minutes % 60;
   return rest === 0 ? `${hours}h` : `${hours}h ${rest}m`;
 }
+
+/* -------------------------------------------------------------------- */
+/* Time windows                                                          */
+/*                                                                       */
+/* Two screens now ask a supervisor when something happened — the status  */
+/* grid, on a tap that advances a stage, and the time sheet, on a tap     */
+/* that corrects a recorded time. The rules that bound those answers live */
+/* here rather than at either call site, because they mirror the API's    */
+/* own `resolveTimes` and a copy that drifts produces the worst possible  */
+/* failure: a picker that offers a time the server will refuse, which a   */
+/* supervisor experiences as the app losing their work.                   */
+/* -------------------------------------------------------------------- */
+
+const MINUTE_MS = 60_000;
+
+export type TimeWindow = { min: Date; max: Date };
+
+/** Which of a cell's two times is being recorded. */
+export type TimeKind = "started" | "finished";
+
+/**
+ * The window a time may fall in for this vessel.
+ *
+ * From the day the vessel came onto the books — its scheduled date, or when
+ * the record was created if it was never scheduled — to two months later, and
+ * never past now.
+ *
+ * Bounded because an open-ended date control on a deck is how a cleaning
+ * record ends up dated 2019, and that only ever surfaces when someone is
+ * arguing about an invoice. Two months is comfortably longer than any
+ * turnaround while still ruling out a mistyped year.
+ *
+ * Both ends are capped at now so a vessel scheduled for next week cannot
+ * produce a window that starts in the future.
+ */
+export function vesselTimeWindow(
+  vessel: { scheduledFor: string | null; createdAt: string } | null,
+): TimeWindow {
+  const now = wallNow();
+  const anchor = vessel ? new Date(vessel.scheduledFor ?? vessel.createdAt) : now;
+
+  const twoMonthsOn = new Date(anchor);
+  twoMonthsOn.setUTCMonth(twoMonthsOn.getUTCMonth() + 2);
+
+  /* Start of the anchor DAY, not the instant the record was created — the
+     whole of that day is inside the window, and a vessel added at 15:13
+     should not refuse work recorded at 09:00 the same morning. */
+  const min = new Date(Math.min(anchor.getTime(), now.getTime()));
+  min.setUTCHours(0, 0, 0, 0);
+  const max = new Date(Math.min(twoMonthsOn.getTime(), now.getTime()));
+  return { min, max: max.getTime() < min.getTime() ? new Date(min) : max };
+}
+
+/**
+ * Narrows the vessel's window down to one particular time being picked.
+ *
+ * A finish is always LATER than its start — not equal — so the earliest finish
+ * on offer is one minute after the start. A start is symmetrically at least a
+ * minute before a recorded finish. The picker then offers nothing outside that
+ * range at all, so the supervisor is stopped by a dead arrow rather than by a
+ * rejection they only learn about after the fact.
+ *
+ * The upper bound is read from the clock HERE rather than taken from
+ * `window.max`: the window is computed once when a vessel loads and its "now"
+ * ages. Open the app at 07:42, tap at 07:52, and a stale bound clamps the pick
+ * back ten minutes.
+ */
+export function timeBounds(
+  kind: TimeKind,
+  window: TimeWindow,
+  /** The cell's OTHER time, which bounds this one. */
+  counterpart: string | null | undefined,
+): TimeWindow {
+  let min = window.min;
+  let max = wallNow();
+
+  if (counterpart) {
+    const other = new Date(counterpart).getTime();
+    if (Number.isFinite(other)) {
+      if (kind === "finished") {
+        const afterStart = new Date(other + MINUTE_MS);
+        if (afterStart.getTime() > min.getTime()) min = afterStart;
+      } else {
+        const beforeFinish = new Date(other - MINUTE_MS);
+        if (beforeFinish.getTime() < max.getTime()) max = beforeFinish;
+      }
+    }
+  }
+
+  if (max.getTime() < min.getTime()) max = new Date(min);
+  return { min, max };
+}
+
+/** Holds a pre-filled time inside its bounds. */
+export function clampTime(value: Date, bounds: TimeWindow): Date {
+  if (value.getTime() < bounds.min.getTime()) return new Date(bounds.min);
+  if (value.getTime() > bounds.max.getTime()) return new Date(bounds.max);
+  return value;
+}
+
+/**
+ * The status a cell must carry for a recorded time to mean anything.
+ *
+ * The API clears both times whenever a cell is `pending` or `na` — a stage
+ * nobody claims to have worked has no timing. So setting a time from the time
+ * sheet has to carry the cell to the weakest status that keeps it: a start
+ * makes a blank stage `in_progress`, a finish makes any stage `done`. A stage
+ * that is already further along keeps the status it has; correcting a start
+ * time on a finished stage must not un-finish it.
+ *
+ * `na` never reaches here — the time sheet does not let those cells be tapped,
+ * because silently reviving a stage the office ruled out is not a correction.
+ */
+export function statusForTimeEdit(kind: TimeKind, current: CellStatus): CellStatus {
+  if (kind === "finished") return "done";
+  return current === "pending" ? "in_progress" : current;
+}
+
+/**
+ * A recorded time split for the time sheet, which always shows both halves.
+ *
+ * `formatWorkTime` drops the date on same-day times, which is right for a
+ * glance at one cell and wrong for a sheet of them: a grid where some cells
+ * carry a date and some do not cannot be read down a column.
+ */
+export function workDateTime(
+  value: string | null | undefined,
+): { date: string; clock: string } | null {
+  if (!value) return null;
+  const at = new Date(value);
+  if (Number.isNaN(at.getTime())) return null;
+  return { date: dateOf(at), clock: clockOf(at) };
+}
