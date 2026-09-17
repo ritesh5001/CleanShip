@@ -179,6 +179,8 @@ export default async function AdminVesselPage({
             vesselId={vessel.id}
             vesselType={vessel.type}
             stages={vessel.stages}
+            vesselScheduledFor={vessel.scheduledFor}
+            vesselCreatedAt={vessel.createdAt}
             initialCompartments={vessel.compartments.map((c) => ({
               id: c.id,
               label: c.label,

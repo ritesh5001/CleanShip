@@ -15,7 +15,13 @@ import {
   type VesselType,
   stampOf,
   wallNow,
+  clampTime,
+  timeBounds,
+  vesselTimeWindow,
+  type TimeKind,
+  type TimeWindow,
 } from "@/lib/cleantrack/types";
+import { TimeAsk } from "./time-ask";
 import {
   COMPLETE_GREEN,
   NA_GREY,
@@ -54,6 +60,12 @@ type QueuedChange = {
   stageKey: string;
   status: CellStatus;
   note?: string | null;
+  /**
+   * When the work actually happened, as picked in the dialog. Undefined means
+   * "derive it from the status change", which is what a bulk column tap does.
+   */
+  startedAt?: string | null;
+  completedAt?: string | null;
   occurredAt: string;
 };
 
@@ -107,6 +119,8 @@ export function StatusGrid({
   initialCompartments,
   initialVersion,
   readOnly = false,
+  vesselScheduledFor = null,
+  vesselCreatedAt,
 }: {
   vesselId: number;
   vesselType: VesselType;
@@ -116,6 +130,13 @@ export function StatusGrid({
   initialVersion: number;
   /** Admins viewing someone else's vessel, and customers, get it read-only. */
   readOnly?: boolean;
+  /**
+   * Bounds the date control. Omitting `vesselCreatedAt` leaves the window
+   * anchored at today, which is the safe answer for a board rendered without
+   * the vessel's own dates to hand.
+   */
+  vesselScheduledFor?: string | null;
+  vesselCreatedAt?: string;
 }) {
   const [comps, setComps] = useState(initialCompartments);
   const [queue, setQueue] = useState<QueuedChange[]>([]);
@@ -154,6 +175,8 @@ export function StatusGrid({
             stageKey: c.stageKey,
             status: c.status,
             note: c.note,
+            startedAt: c.startedAt,
+            completedAt: c.completedAt,
             occurredAt: c.occurredAt,
             idempotencyKey: c.key,
           })),
@@ -226,6 +249,8 @@ export function StatusGrid({
       stageKey: string,
       status: CellStatus,
       note?: string | null,
+      /** The time picked in the dialog. Omitted means "derive it". */
+      times?: { startedAt?: string | null; completedAt?: string | null },
     ) => {
       if (readOnly) return;
 
@@ -250,6 +275,11 @@ export function StatusGrid({
             completedAt = completedAt ?? now;
           }
 
+          /* An explicit pick always wins over the inference above — it is the
+             person saying when the work happened, and they were there. */
+          if (times?.startedAt !== undefined) startedAt = times.startedAt;
+          if (times?.completedAt !== undefined) completedAt = times.completedAt;
+
           return {
             ...c,
             cells: {
@@ -271,6 +301,7 @@ export function StatusGrid({
         stageKey,
         status,
         note,
+        ...(times ?? {}),
         occurredAt: wallNow().toISOString(),
       };
       const next = [...readQueue(), change];
@@ -323,6 +354,69 @@ export function StatusGrid({
     [comps, readOnly, setCell],
   );
 
+  /* The window every time on this vessel has to fall inside. Computed once
+     per render of the board; `timeBounds` re-reads the clock for the upper
+     end so a page left open does not clamp picks back to when it loaded. */
+  const timeWindow = useMemo(
+    () =>
+      vesselTimeWindow(
+        vesselCreatedAt
+          ? { scheduledFor: vesselScheduledFor, createdAt: vesselCreatedAt }
+          : null,
+      ),
+    [vesselScheduledFor, vesselCreatedAt],
+  );
+
+  /**
+   * A status change waiting on someone to say when it happened.
+   *
+   * Moving a cell to working or done carries a time, so it goes through the
+   * dialog; moving it back to blank, or out to N/A, clears both times and has
+   * nothing to ask about — prompting there would be friction for nothing.
+   */
+  const [ask, setAsk] = useState<{
+    compartmentId: number;
+    stageKey: string;
+    title: string;
+    kind: TimeKind;
+    status: CellStatus;
+    initial: Date;
+    bounds: TimeWindow;
+  } | null>(null);
+
+  const requestCell = useCallback(
+    (compartmentId: number, stageKey: string, next: CellStatus) => {
+      if (readOnly) return;
+      if (next !== "in_progress" && next !== "done") {
+        setCell(compartmentId, stageKey, next);
+        return;
+      }
+
+      const comp = comps.find((c) => c.id === compartmentId);
+      const cell = comp?.cells[stageKey];
+      const stage = stages.find((s) => s.key === stageKey);
+      const kind: TimeKind = next === "in_progress" ? "started" : "finished";
+
+      const existing = kind === "started" ? cell?.startedAt : cell?.completedAt;
+      /* The cell's OTHER time is what bounds this one: a finish cannot precede
+         its start, and the API refuses it — better a control that never offers
+         it than a rejection after the fact. */
+      const counterpart = kind === "started" ? cell?.completedAt : cell?.startedAt;
+      const bounds = timeBounds(kind, timeWindow, counterpart);
+
+      setAsk({
+        compartmentId,
+        stageKey,
+        title: `${comp?.label ?? ""} · ${stage?.label ?? stageKey}`,
+        kind,
+        status: next,
+        initial: clampTime(existing ? new Date(existing) : wallNow(), bounds),
+        bounds,
+      });
+    },
+    [comps, stages, timeWindow, readOnly, setCell],
+  );
+
   const overall = useMemo(
     () =>
       progressOf(
@@ -334,6 +428,32 @@ export function StatusGrid({
   return (
     <div className="space-y-5">
       {!readOnly && <SyncBanner online={online} pending={queue.length} />}
+
+      {/* Asked for on every tap that carries a time. Dismissing changes
+          nothing: a cancelled time means the tap was a mistake, and applying
+          the status anyway would leave a status nobody agreed to. */}
+      <TimeAsk
+        open={ask !== null}
+        title={ask?.title ?? ""}
+        kind={ask?.kind ?? "started"}
+        initial={ask?.initial ?? wallNow()}
+        bounds={ask?.bounds ?? timeWindow}
+        onCancel={() => setAsk(null)}
+        onConfirm={(picked) => {
+          const request = ask;
+          setAsk(null);
+          if (!request) return;
+          setCell(
+            request.compartmentId,
+            request.stageKey,
+            request.status,
+            undefined,
+            request.kind === "started"
+              ? { startedAt: picked.toISOString() }
+              : { completedAt: picked.toISOString() },
+          );
+        }}
+      />
 
       {/* One card: the title line with its counts, the grid, and the legend
           that explains the two arithmetic rules. */}
@@ -365,7 +485,7 @@ export function StatusGrid({
           vesselType={vesselType}
           readOnly={readOnly}
           onTapCell={(compartmentId, stageKey, current) =>
-            setCell(
+            requestCell(
               compartmentId,
               stageKey,
               nextStatusOnTap(

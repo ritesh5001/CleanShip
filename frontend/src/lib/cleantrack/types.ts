@@ -488,3 +488,119 @@ export type CrewBoard = {
   holdReportedAt: string | null;
   holdReportedByName: string | null;
 };
+
+/* -------------------------------------------------------------------- */
+/* Time windows                                                          */
+/*                                                                       */
+/* The office grid asks when a stage started or finished, exactly as the  */
+/* supervisor's app does. These are the same rules the app enforces — see */
+/* mobile/src/types.ts — because a time the office can pick and the API   */
+/* then refuses is worse than one it never offered.                       */
+/* -------------------------------------------------------------------- */
+
+const MINUTE_MS = 60_000;
+
+export type TimeWindow = { min: Date; max: Date };
+
+/** Which of a cell's two times is being recorded. */
+export type TimeKind = "started" | "finished";
+
+/**
+ * The window a time may fall in for this vessel.
+ *
+ * From the day the vessel came onto the books — its scheduled date, or when
+ * the record was created if it was never scheduled — to two months later, and
+ * never past now.
+ *
+ * Bounded because an open-ended date control is how a cleaning record ends up
+ * dated 2019, and that only ever surfaces when someone is arguing about an
+ * invoice. Two months is comfortably longer than any turnaround while still
+ * ruling out a mistyped year.
+ */
+export function vesselTimeWindow(
+  vessel: { scheduledFor: string | null; createdAt: string } | null,
+): TimeWindow {
+  const now = wallNow();
+  const anchor = vessel ? new Date(vessel.scheduledFor ?? vessel.createdAt) : now;
+
+  const twoMonthsOn = new Date(anchor);
+  twoMonthsOn.setUTCMonth(twoMonthsOn.getUTCMonth() + 2);
+
+  /* Start of the anchor DAY, not the instant the record was created — a vessel
+     added at 15:13 should not refuse work recorded at 09:00 the same morning. */
+  const min = new Date(Math.min(anchor.getTime(), now.getTime()));
+  min.setUTCHours(0, 0, 0, 0);
+  const max = new Date(Math.min(twoMonthsOn.getTime(), now.getTime()));
+  return { min, max: max.getTime() < min.getTime() ? new Date(min) : max };
+}
+
+/**
+ * Narrows the vessel's window to one particular time being picked.
+ *
+ * A finish is always LATER than its start — not equal — so the earliest finish
+ * on offer is one minute after the start, and a start is at least a minute
+ * before a recorded finish. The control then offers nothing the API would
+ * refuse on arrival.
+ *
+ * The upper bound is read from the clock HERE rather than taken from
+ * `window.max`: the window is computed when the page renders and its "now"
+ * ages, so a stale bound would clamp a pick back to page-load time.
+ */
+export function timeBounds(
+  kind: TimeKind,
+  window: TimeWindow,
+  /** The cell's OTHER time, which bounds this one. */
+  counterpart: string | null | undefined,
+): TimeWindow {
+  let min = window.min;
+  let max = wallNow();
+
+  if (counterpart) {
+    const other = new Date(counterpart).getTime();
+    if (Number.isFinite(other)) {
+      if (kind === "finished") {
+        const afterStart = new Date(other + MINUTE_MS);
+        if (afterStart.getTime() > min.getTime()) min = afterStart;
+      } else {
+        const beforeFinish = new Date(other - MINUTE_MS);
+        if (beforeFinish.getTime() < max.getTime()) max = beforeFinish;
+      }
+    }
+  }
+
+  if (max.getTime() < min.getTime()) max = new Date(min);
+  return { min, max };
+}
+
+/** Holds a pre-filled time inside its bounds. */
+export function clampTime(value: Date, bounds: TimeWindow): Date {
+  if (value.getTime() < bounds.min.getTime()) return new Date(bounds.min);
+  if (value.getTime() > bounds.max.getTime()) return new Date(bounds.max);
+  return value;
+}
+
+/** "2026-09-14" and "14:05" — the two halves a date and time input want. */
+export function dateInputValue(d: Date) {
+  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+}
+
+export function timeInputValue(d: Date) {
+  return clockOf(d);
+}
+
+/**
+ * Rebuilds a wall-clock instant from what the two inputs hold.
+ *
+ * Written into the UTC fields, never parsed as local: 05:00 typed here is
+ * 05:00 stored and 05:00 shown to everyone, which is the whole convention this
+ * product records times under.
+ */
+export function fromDateAndTime(date: string, time: string): Date | null {
+  const d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+  const t = /^(\d{2}):(\d{2})$/.exec(time);
+  if (!d || !t) return null;
+  const at = new Date(
+    Date.UTC(Number(d[1]), Number(d[2]) - 1, Number(d[3]), Number(t[1]), Number(t[2]), 0),
+  );
+  return Number.isNaN(at.getTime()) ? null : at;
+}
