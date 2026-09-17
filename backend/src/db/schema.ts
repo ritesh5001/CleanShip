@@ -359,6 +359,21 @@ export const cellEvents = pgTable(
 );
 
 /* ------------------------------------------------------------------ */
+/* Reference counters — one row per month                              */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The last CT-YYMM-NN number issued for each month.
+ *
+ * Only ever incremented. Counting existing vessels instead handed out numbers
+ * that still existed once vessels could be deleted — see migration 0008.
+ */
+export const referenceCounters = pgTable("reference_counters", {
+  stem: varchar("stem", { length: 16 }).primaryKey(),
+  last: integer("last").notNull(),
+});
+
+/* ------------------------------------------------------------------ */
 /* Crew mobilisation — one row per person per vessel                   */
 /* ------------------------------------------------------------------ */
 

@@ -179,15 +179,16 @@ export default function RootLayout() {
           <Stack.Screen name="login" options={{ headerShown: false }} />
           <Stack.Screen name="vessels/index" options={{ title: "My vessels" }} />
           <Stack.Screen name="vessels/[id]" options={{ title: "Vessel" }} />
-          {/* The time sheet. A route of its own rather than a tab on the
-              vessel screen: it is opened from the home screen to answer a
-              question about times, which is not the question someone has open
-              the status grid to ask. */}
+          {/* The time log. A route of its own rather than a tab on the
+              vessel screen: it is opened from the home screen (across every
+              vessel) and from a vessel's own dashboard (straight to that
+              vessel) to answer a question about times, which is not the
+              question someone has open the status grid to ask. */}
           <Stack.Screen
-            name="timesheet/index"
-            options={{ title: "Time sheet" }}
+            name="timelog/index"
+            options={{ title: "Time log" }}
           />
-          <Stack.Screen name="timesheet/[id]" options={{ title: "Times" }} />
+          <Stack.Screen name="timelog/[id]" options={{ title: "Time log" }} />
           {/* Joining: the paperwork that gets people onto the ship. It is the
               whole app for a crew member and one screen among several for a
               supervisor, which is why it sits at the top level rather than
@@ -257,7 +258,7 @@ function Gate({
        back-stack entry from an account that used to be a supervisor — is put
        back where they belong rather than left on a screen that will only ever
        render a permission error. */
-    if (signedIn && role === "crew" && (first === "vessels" || first === "timesheet" || first === "crew")) {
+    if (signedIn && role === "crew" && (first === "vessels" || first === "timelog" || first === "crew")) {
       router.replace("/joining");
     }
   }, [ready, signedIn, role, segments, router]);

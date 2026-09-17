@@ -11,7 +11,7 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { Banner } from "../../src/components/ui";
 import { SyncStrip } from "../../src/components/sync-strip";
 import { TimeAsk } from "../../src/components/time-ask";
-import { TimeSheet } from "../../src/components/time-sheet";
+import { TimeLog } from "../../src/components/time-log";
 import { useVessel } from "../../src/use-vessel";
 import { colors, space } from "../../src/theme";
 import {
@@ -27,7 +27,7 @@ import {
 } from "../../src/types";
 
 /**
- * The time sheet: every start and finish on one vessel, in one place.
+ * The time log: every start and finish on one vessel, in one place.
  *
  * The status grid answers "where are we"; this answers "when". They are
  * different questions asked by different people at different moments — a
@@ -38,7 +38,7 @@ import {
  * Edits go through the same device queue as every other tap, so a correction
  * made at anchor with no signal is as safe as one made alongside.
  */
-export default function VesselTimeSheet() {
+export default function VesselTimeLog() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const vesselId = Number(id);
   const navigation = useNavigation();
@@ -57,7 +57,7 @@ export default function VesselTimeSheet() {
   } = useVessel(vesselId);
 
   useEffect(() => {
-    if (vessel) navigation.setOptions({ title: `${vessel.name} — times` });
+    if (vessel) navigation.setOptions({ title: `${vessel.name} — time log` });
   }, [vessel, navigation]);
 
   /**
@@ -169,7 +169,7 @@ export default function VesselTimeSheet() {
         ) : (
           <>
             <ActivityIndicator size="large" color={colors.navy} />
-            <Text style={styles.waiting}>Loading the time sheet…</Text>
+            <Text style={styles.waiting}>Loading the time log…</Text>
           </>
         )}
       </View>
@@ -235,7 +235,7 @@ export default function VesselTimeSheet() {
         }}
       />
 
-      <TimeSheet
+      <TimeLog
         compartments={compartments}
         stages={vessel.stages}
         queuedTimes={queuedTimes}

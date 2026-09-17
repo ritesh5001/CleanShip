@@ -317,7 +317,7 @@ export default function Vessel() {
     [vessel, pending],
   );
 
-  /* The window a time on this vessel may fall in. Shared with the time sheet
+  /* The window a time on this vessel may fall in. Shared with the time log
      — see vesselTimeWindow in src/types for why it is bounded at all. */
   const timeWindow = useMemo(() => vesselTimeWindow(vessel), [vessel]);
 
@@ -432,7 +432,7 @@ export default function Vessel() {
 
       /* Narrow the window so an impossible time cannot be picked at all — a
          finish cannot precede its start, and a start cannot follow its
-         finish. The rule lives in timeBounds because the time sheet corrects
+         finish. The rule lives in timeBounds because the time log corrects
          the same times and must offer the same range; two copies of it would
          eventually disagree, and the one that is wrong hands the supervisor a
          time the API then refuses. */
@@ -543,6 +543,25 @@ export default function Vessel() {
           queued={pending.length}
           onRetry={() => void onRefresh()}
         />
+        {/* Straight into this vessel's own log — no picker, because the
+            vessel is already the one on screen. The home screen's Time log
+            button still exists for looking across every vessel; this is the
+            faster path once you have already opened one. */}
+        <Link href={`/timelog/${vessel.id}`} asChild>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Open the time log for this vessel — start and finish times for every hold and stage"
+          >
+            {({ pressed }) => (
+              <View
+                style={[styles.timelog, pressed ? { opacity: 0.85 } : null]}
+              >
+                <Text style={styles.timelogLabel}>Time log</Text>
+                <Text style={styles.timelogChevron}>›</Text>
+              </View>
+            )}
+          </Pressable>
+        </Link>
       </View>
 
       {/* Before the crew report to the hold this vessel is a mobilisation, not
@@ -720,6 +739,19 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     marginBottom: space.lg,
   },
+  timelog: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    minHeight: TAP,
+    paddingHorizontal: space.md,
+    paddingVertical: space.sm,
+    backgroundColor: colors.card,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  timelogLabel: { fontSize: 15, fontWeight: "700", color: colors.blue },
+  timelogChevron: { fontSize: 22, fontWeight: "700", color: colors.blue },
   notice: {
     backgroundColor: colors.blueWash,
     borderWidth: 1,

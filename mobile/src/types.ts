@@ -355,7 +355,7 @@ export function formatDuration(
 /* Time windows                                                          */
 /*                                                                       */
 /* Two screens now ask a supervisor when something happened — the status  */
-/* grid, on a tap that advances a stage, and the time sheet, on a tap     */
+/* grid, on a tap that advances a stage, and the time log, on a tap     */
 /* that corrects a recorded time. The rules that bound those answers live */
 /* here rather than at either call site, because they mirror the API's    */
 /* own `resolveTimes` and a copy that drifts produces the worst possible  */
@@ -460,7 +460,7 @@ export function clampTime(value: Date, bounds: TimeWindow): Date {
  * that is already further along keeps the status it has; correcting a start
  * time on a finished stage must not un-finish it.
  *
- * `na` never reaches here — the time sheet does not let those cells be tapped,
+ * `na` never reaches here — the time log does not let those cells be tapped,
  * because silently reviving a stage the office ruled out is not a correction.
  */
 export function statusForTimeEdit(kind: TimeKind, current: CellStatus): CellStatus {
@@ -469,7 +469,7 @@ export function statusForTimeEdit(kind: TimeKind, current: CellStatus): CellStat
 }
 
 /**
- * A recorded time split for the time sheet, which always shows both halves.
+ * A recorded time split for the time log, which always shows both halves.
  *
  * `formatWorkTime` drops the date on same-day times, which is right for a
  * glance at one cell and wrong for a sheet of them: a grid where some cells

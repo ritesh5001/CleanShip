@@ -7,6 +7,7 @@ import {
   clients,
   compartments,
   crewAssignments,
+  referenceCounters,
   users,
   vessels,
   type Cell,
@@ -349,12 +350,17 @@ export function newShareToken() {
 }
 
 /**
- * CT-YYMM-NN.
+ * CT-YYMM-NN, from a per-month counter that only moves forward.
  *
- * Derived from a count, so it is readable and roughly chronological. Two
- * vessels created in the same second could collide on the count; the unique
- * index catches that and `createVessel` retries, which is cheaper than a
- * sequence per month.
+ * It used to be "vessels this month, plus one". Once vessels could be deleted
+ * that count fell below the highest number already issued, and every create
+ * after a delete was handed a reference that still existed — a failure no
+ * retry could fix, because each retry recounted to the same number.
+ *
+ * The upsert is atomic, so two admins creating vessels in the same instant get
+ * different numbers without either one retrying. A number consumed by a create
+ * that then fails is simply skipped; a gap in the sequence is harmless, a
+ * reference shared by two ships is not.
  */
 async function nextReference(): Promise<string> {
   const now = new Date();
@@ -362,10 +368,29 @@ async function nextReference(): Promise<string> {
     now.getUTCMonth() + 1,
   ).padStart(2, "0")}`;
   const [row] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(vessels)
-    .where(sql`${vessels.reference} like ${stem + "%"}`);
-  return `${stem}-${String((row?.count ?? 0) + 1).padStart(2, "0")}`;
+    .insert(referenceCounters)
+    .values({ stem, last: 1 })
+    .onConflictDoUpdate({
+      target: referenceCounters.stem,
+      set: { last: sql`${referenceCounters.last} + 1` },
+    })
+    .returning({ last: referenceCounters.last });
+  return `${stem}-${String(row.last).padStart(2, "0")}`;
+}
+
+/**
+ * Whether an error is a Postgres unique violation.
+ *
+ * Drizzle wraps driver errors in its own `DrizzleQueryError` and puts the
+ * Postgres error on `cause`, so reading `err.code` directly finds nothing —
+ * which is how the retry below silently never ran and a collision surfaced as
+ * a bare 500.
+ */
+function isUniqueViolation(err: unknown): boolean {
+  for (let e: unknown = err; e; e = (e as { cause?: unknown }).cause) {
+    if ((e as { code?: string }).code === "23505") return true;
+  }
+  return false;
 }
 
 export type StageInput = { key?: string; label: string; short?: string };
@@ -535,11 +560,16 @@ export async function createVessel(
         return vessel;
       });
     } catch (err) {
-      /* 23505 is a unique violation. The only one reachable here is the
-         reference colliding with a vessel created in the same instant, and the
-         fix for that is a fresh count, not a failed request. */
-      const code = (err as { code?: string }).code;
-      if (code === "23505" && attempt < 3) continue;
+      /* The counter makes a collision unlikely, not impossible: a reference
+         typed in by hand, or a counter row lost in a restore, would still
+         clash. Asking the counter again moves past it, so a few attempts
+         self-heal rather than failing the admin's form. */
+      if (isUniqueViolation(err)) {
+        if (attempt < 5) continue;
+        throw ApiError.conflict(
+          "Could not issue a free vessel reference. Try again in a moment.",
+        );
+      }
       throw err;
     }
   }

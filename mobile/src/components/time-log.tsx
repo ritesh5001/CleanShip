@@ -13,7 +13,7 @@ import {
 /**
  * Every recorded time on one vessel, on one sheet.
  *
- * The layout is the paper time sheet the office already keeps: holds down the
+ * The layout is the paper time log the office already keeps: holds down the
  * left, each split into a Start row and a Comp row, and one column per stage.
  * It is deliberately NOT the status grid turned into times — a supervisor
  * checking a shift's figures, or an office correcting them before invoicing,
@@ -58,7 +58,7 @@ type Props = {
   onTapCell: (compartment: CompartmentDetail, stage: Stage, kind: TimeKind) => void;
 };
 
-export function TimeSheet({
+export function TimeLog({
   compartments,
   stages,
   queuedTimes,

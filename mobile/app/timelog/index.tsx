@@ -23,7 +23,7 @@ import {
 /**
  * Which vessel's times to open.
  *
- * A time sheet is a vessel's sheet, so this stands between the home button and
+ * A time log is a vessel's own log, so this stands between the home button and
  * the grid. It is deliberately thinner than the home list — no progress bars,
  * no percentages — because the question here is only "which ship", and a
  * second copy of the home screen would invite a supervisor to treat it as one.
@@ -32,7 +32,7 @@ import {
  * that request takes half a minute, and there is no reason to stare at a
  * spinner when the list is already on the phone.
  */
-export default function TimeSheetPicker() {
+export default function TimeLogPicker() {
   const { token, signOut } = useSession();
 
   const [vessels, setVessels] = useState<VesselSummary[] | null>(null);
@@ -129,7 +129,7 @@ export default function TimeSheetPicker() {
       {vessels.length === 0 ? (
         <Empty
           title="Nothing assigned yet"
-          body="When the office assigns you a vessel its time sheet appears here."
+          body="When the office assigns you a vessel its time log appears here."
         />
       ) : (
         <View>
@@ -157,13 +157,13 @@ function VesselRow({ vessel }: { vessel: VesselSummary }) {
   const noun = compartmentNoun(vessel.type, true).toLowerCase();
 
   return (
-    <Link href={`/timesheet/${vessel.id}`} asChild>
+    <Link href={`/timelog/${vessel.id}`} asChild>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`Time sheet for ${vessel.name} at ${vessel.port}`}
+        accessibilityLabel={`Time log for ${vessel.name} at ${vessel.port}`}
       >
         {/* Inner View carries the styling — see the note on the home screen's
-            time sheet button for why it cannot sit on the Pressable. */}
+            time log button for why it cannot sit on the Pressable. */}
         {({ pressed }) => (
           <View style={[styles.row, pressed ? { opacity: 0.85 } : null]}>
             <View style={{ flex: 1 }}>

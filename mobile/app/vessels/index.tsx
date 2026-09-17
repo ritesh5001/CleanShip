@@ -135,30 +135,32 @@ export default function Vessels() {
         </Pressable>
       </View>
 
-      {/* The way through to the time sheet.
-          A button rather than the sheet itself: this screen answers "which of
+      {/* The way through to the time log, across every vessel.
+          A button rather than the log itself: this screen answers "which of
           my vessels needs me", and a grid of start and finish times for every
           hold on every vessel would bury that under figures nobody opens the
-          app to read. The times get a screen of their own, one tap away. */}
-      <Link href="/timesheet" asChild>
+          app to read. Opening a single vessel's own log is faster — see the
+          button on that vessel's dashboard — this one is for looking across
+          all of them, or for someone who has not opened a vessel yet. */}
+      <Link href="/timelog" asChild>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Open the time sheet — start and finish times for every hold and stage"
+          accessibilityLabel="Open the time log — start and finish times for every hold and stage"
         >
           {/* Styled on an inner View, not on the Pressable: `Link asChild`
               clones its child with the Link's own props, and the style set
               here would be overwritten by the Link's undefined one. */}
           {({ pressed }) => (
             <View
-              style={[styles.timesheet, pressed ? { opacity: 0.85 } : null]}
+              style={[styles.timelog, pressed ? { opacity: 0.85 } : null]}
             >
               <View style={{ flex: 1 }}>
-                <Text style={styles.timesheetLabel}>Time sheet</Text>
-                <Text style={styles.timesheetHint}>
+                <Text style={styles.timelogLabel}>Time log</Text>
+                <Text style={styles.timelogHint}>
                   Every start and finish time, on one grid
                 </Text>
               </View>
-              <Text style={styles.timesheetChevron}>›</Text>
+              <Text style={styles.timelogChevron}>›</Text>
             </View>
           )}
         </Pressable>
@@ -313,7 +315,7 @@ const styles = StyleSheet.create({
   joiningLabel: { fontSize: 16, fontWeight: "800", color: colors.text },
   joiningHint: { marginTop: 2, fontSize: 12, color: colors.muted },
   joiningChevron: { fontSize: 26, fontWeight: "700", color: colors.blue },
-  timesheet: {
+  timelog: {
     flexDirection: "row",
     alignItems: "center",
     gap: space.md,
@@ -325,9 +327,9 @@ const styles = StyleSheet.create({
     borderLeftWidth: 3,
     borderLeftColor: colors.aqua,
   },
-  timesheetLabel: { fontSize: 16, fontWeight: "800", color: colors.onDark },
-  timesheetHint: { marginTop: 2, fontSize: 12, color: colors.onDarkMuted },
-  timesheetChevron: { fontSize: 26, fontWeight: "700", color: colors.aquaTint },
+  timelogLabel: { fontSize: 16, fontWeight: "800", color: colors.onDark },
+  timelogHint: { marginTop: 2, fontSize: 12, color: colors.onDarkMuted },
+  timelogChevron: { fontSize: 26, fontWeight: "700", color: colors.aquaTint },
   sectionHeading: {
     marginTop: space.lg,
     marginBottom: space.xs,

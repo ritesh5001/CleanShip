@@ -25,7 +25,7 @@ import {
  * Everything a screen needs to show a vessel truthfully: the server's copy,
  * the cache to fall back on, the device queue, and the overlay that keeps a
  * tap visible between being made and being sent. Two screens draw the same
- * vessel now — the status grid and the time sheet — and the overlay is the
+ * vessel now — the status grid and the time log — and the overlay is the
  * part that absolutely must not differ between them. A supervisor who marks a
  * hold done on one screen and sees it blank on the other stops trusting both.
  *
