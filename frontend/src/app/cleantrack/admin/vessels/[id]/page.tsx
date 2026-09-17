@@ -134,15 +134,43 @@ export default async function AdminVesselPage({
 
       {/* The joining board leads while the crew are still travelling: until
           they report, every stage below is necessarily blank and the only
-          thing actually happening is getting people to the ship. Once they are
-          aboard it drops beneath the cleaning grid, which becomes the job. */}
+          thing actually happening is getting people to the ship. The moment
+          the office marks them aboard, the job the page is FOR becomes the
+          cleaning grid below — the roster is done and does not need thirty
+          rows of documents in the way of it. It stays reachable, one click,
+          because "did his medical actually come through" is still a question
+          someone asks after the fact — it just is not the first thing this
+          screen should show any more.
+
+          A native <details> rather than client state: the office is a page
+          load per visit anyway, and this needs no interactivity beyond what
+          the browser already does for free. */}
       <div className="mt-6">
-        <Card>
-          <h2 className="border-b border-slate-200 px-5 py-3 text-[13px] font-semibold uppercase tracking-wider text-slate-500">
-            Crew joining
-          </h2>
-          <CrewBoard vesselId={vessel.id} board={board} />
-        </Card>
+        {board.holdReportedAt ? (
+          <details className="group rounded-none border border-[#dce4eb] bg-white">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-3 marker:content-none">
+              <span className="text-[13px] font-semibold uppercase tracking-wider text-slate-500">
+                Crew joining
+              </span>
+              <span className="flex items-center gap-2 text-[12px] text-slate-500">
+                Reported {formatDateTime(board.holdReportedAt)} — click to view
+                <span className="inline-block transition-transform group-open:rotate-180">
+                  ▾
+                </span>
+              </span>
+            </summary>
+            <div className="border-t border-slate-200">
+              <CrewBoard vesselId={vessel.id} board={board} />
+            </div>
+          </details>
+        ) : (
+          <Card>
+            <h2 className="border-b border-slate-200 px-5 py-3 text-[13px] font-semibold uppercase tracking-wider text-slate-500">
+              Crew joining
+            </h2>
+            <CrewBoard vesselId={vessel.id} board={board} />
+          </Card>
+        )}
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
