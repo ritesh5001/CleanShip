@@ -443,6 +443,12 @@ export const DOCUMENT_STATE_STYLE: Record<
 
 export type TravelStep = { key: string; label: string; short: string };
 
+/**
+ * Who set a joining item. `self` means the joiner marked their own row — the
+ * crew member telling the office "done from my side".
+ */
+export type CrewMark = { byId: number; byName: string; self: boolean; at: string };
+
 export type CrewProgress = {
   documentsDone: number;
   documentsTotal: number;
@@ -466,6 +472,8 @@ export type CrewMember = {
   documents: Record<string, DocumentState>;
   checklist: Record<string, boolean>;
   travel: Record<string, string | null>;
+  /** Who marked each set item, keyed "documents:passport". */
+  marks: Record<string, CrewMark>;
   notes: string | null;
   updatedByName: string | null;
   updatedAt: string;

@@ -553,6 +553,14 @@ export type DocumentMap = Record<string, DocumentState>;
 export type ChecklistMap = Record<string, boolean>;
 export type TravelMap = Record<string, string | null>;
 
+/**
+ * Who set a joining item. `self` is true when the joiner marked their own row —
+ * the crew member saying "done from my side" — as opposed to a supervisor or
+ * the office putting the tick there.
+ */
+export type CrewMark = { byId: number; byName: string; self: boolean; at: string };
+export type CrewMarks = Record<string, CrewMark>;
+
 export type CrewProgress = {
   documentsDone: number;
   documentsTotal: number;
@@ -578,6 +586,8 @@ export type CrewMember = {
   documents: DocumentMap;
   checklist: ChecklistMap;
   travel: TravelMap;
+  /** Who marked each set item, keyed "documents:passport". */
+  marks: CrewMarks;
   notes: string | null;
   updatedByName: string | null;
   updatedAt: string;

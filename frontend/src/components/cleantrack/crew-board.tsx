@@ -1,6 +1,7 @@
 import {
   DOCUMENT_STATE_STYLE,
   type CrewBoard as CrewBoardData,
+  type CrewMark,
   type CrewMember,
   type DocumentState,
 } from "@/lib/cleantrack/types";
@@ -129,6 +130,7 @@ export function CrewBoard({
                       userId={m.userId}
                       itemKey={item.key}
                       state={m.documents[item.key] ?? "pending"}
+                      mark={m.marks?.[`documents:${item.key}`]}
                       disabled={aboard}
                     />
                   </td>
@@ -150,6 +152,7 @@ export function CrewBoard({
                       userId={m.userId}
                       itemKey={item.key}
                       done={m.checklist[item.key] === true}
+                      mark={m.marks?.[`checklist:${item.key}`]}
                       disabled={aboard}
                     />
                   </td>
@@ -171,6 +174,7 @@ export function CrewBoard({
                       userId={m.userId}
                       itemKey={step.key}
                       at={m.travel[step.key] ?? null}
+                      mark={m.marks?.[`travel:${step.key}`]}
                       disabled={aboard}
                     />
                   </td>
@@ -243,12 +247,14 @@ function DocumentCell({
   userId,
   itemKey,
   state,
+  mark,
   disabled,
 }: {
   vesselId: number;
   userId: number;
   itemKey: string;
   state: DocumentState;
+  mark?: CrewMark;
   disabled: boolean;
 }) {
   const next: DocumentState =
@@ -265,13 +271,14 @@ function DocumentCell({
       <button
         type="submit"
         disabled={disabled}
-        title={disabled ? "Closed — the crew are aboard" : `Set to ${next}`}
+        title={markTitle(mark, disabled ? "Closed — the crew are aboard" : `Set to ${next}`)}
         className={`min-h-8 w-full rounded-none border px-2 text-[11px] font-bold ${skin.className} ${
           disabled ? "cursor-not-allowed opacity-70" : "hover:opacity-80"
         }`}
       >
         {skin.label}
       </button>
+      <CrewTag mark={mark} />
     </form>
   );
 }
@@ -281,12 +288,14 @@ function ChecklistCell({
   userId,
   itemKey,
   done,
+  mark,
   disabled,
 }: {
   vesselId: number;
   userId: number;
   itemKey: string;
   done: boolean;
+  mark?: CrewMark;
   disabled: boolean;
 }) {
   return (
@@ -300,7 +309,7 @@ function ChecklistCell({
         type="submit"
         disabled={disabled}
         aria-pressed={done}
-        title={disabled ? "Closed — the crew are aboard" : done ? "Clear" : "Mark done"}
+        title={markTitle(mark, disabled ? "Closed — the crew are aboard" : done ? "Clear" : "Mark done")}
         className={`min-h-8 w-full rounded-none border px-2 text-[12px] font-bold ${
           done
             ? "border-[#4f9c2b] bg-[#8fce6a] text-[#14400a]"
@@ -309,6 +318,7 @@ function ChecklistCell({
       >
         {done ? "✓" : "—"}
       </button>
+      <CrewTag mark={mark} />
     </form>
   );
 }
@@ -324,12 +334,14 @@ function TravelCell({
   userId,
   itemKey,
   at,
+  mark,
   disabled,
 }: {
   vesselId: number;
   userId: number;
   itemKey: string;
   at: string | null;
+  mark?: CrewMark;
   disabled: boolean;
 }) {
   return (
@@ -343,13 +355,14 @@ function TravelCell({
       <button
         type="submit"
         disabled={disabled}
-        title={
+        title={markTitle(
+          mark,
           disabled
             ? "Closed — the crew are aboard"
             : at
               ? "Clear this time"
-              : "Stamp the time now"
-        }
+              : "Stamp the time now",
+        )}
         className={`min-h-8 w-full rounded-none border px-2 font-mono text-[11px] ${
           at
             ? "border-[#00929b] bg-[#e6f7f8] text-[#0a2e52]"
@@ -358,6 +371,7 @@ function TravelCell({
       >
         {at ? compactTime(at) : "—"}
       </button>
+      <CrewTag mark={mark} />
     </form>
   );
 }
@@ -373,4 +387,26 @@ function compactTime(value: string) {
     minute: "2-digit",
     hour12: false,
   }).format(d);
+}
+
+/**
+ * Marks a square the joiner filled in themselves.
+ *
+ * This is the crew member telling the office "done from my side" from their
+ * phone. It is shown apart from a tick the supervisor or office put there, so
+ * nobody mistakes a joiner's own word for a check somebody else made.
+ */
+function CrewTag({ mark }: { mark?: CrewMark }) {
+  if (!mark?.self) return null;
+  return (
+    <span className="mt-0.5 block font-mono text-[9px] uppercase tracking-[0.1em] text-[#00929b]">
+      by crew
+    </span>
+  );
+}
+
+/** Hover text: what clicking does, then who set it and when. */
+function markTitle(mark: CrewMark | undefined, action: string) {
+  if (!mark) return action;
+  return `${action}\n${mark.self ? "Done from crew side" : "Marked"} by ${mark.byName} · ${compactTime(mark.at)}`;
 }

@@ -6,6 +6,7 @@ import {
   nextDocumentState,
   type ChecklistMap,
   type CrewItem,
+  type CrewMarks,
   type CrewProgress,
   type DocumentMap,
   type DocumentState,
@@ -37,6 +38,14 @@ type Props = {
   checklistState: ChecklistMap;
   travelState: TravelMap;
   progress: CrewProgress;
+  /** Who marked each item. Omitted means no attribution line is shown. */
+  marks?: CrewMarks;
+  /**
+   * Whose sheet this is, from the reader's side: "mine" when the joiner is
+   * looking at their own row, so their own marks read "you" and a supervisor's
+   * read as the supervisor.
+   */
+  viewer?: "mine" | "theirs";
   /** Set once the crew are aboard: the record is history and stops taking edits. */
   readOnly?: boolean;
   /** Saves in flight, so a double tap cannot race itself. */
@@ -55,6 +64,8 @@ export function JoiningSheet({
   checklistState,
   travelState,
   progress,
+  marks,
+  viewer = "mine",
   readOnly = false,
   busyKey,
   onDocument,
@@ -95,9 +106,12 @@ export function JoiningSheet({
                   pressed && !readOnly ? { opacity: 0.85 } : null,
                 ]}
               >
-                <Text style={styles.rowLabel} numberOfLines={2}>
-                  {item.label}
-                </Text>
+                <View style={styles.rowBody}>
+                  <Text style={styles.rowLabelText} numberOfLines={2}>
+                    {item.label}
+                  </Text>
+                  <MarkLine mark={marks?.[`documents:${item.key}`]} viewer={viewer} />
+                </View>
                 <View
                   style={[
                     styles.state,
@@ -138,9 +152,12 @@ export function JoiningSheet({
                   pressed && !readOnly ? { opacity: 0.85 } : null,
                 ]}
               >
-                <Text style={styles.rowLabel} numberOfLines={3}>
-                  {item.label}
-                </Text>
+                <View style={styles.rowBody}>
+                  <Text style={styles.rowLabelText} numberOfLines={3}>
+                    {item.label}
+                  </Text>
+                  <MarkLine mark={marks?.[`checklist:${item.key}`]} viewer={viewer} />
+                </View>
                 <View
                   style={[
                     styles.box,
@@ -195,12 +212,15 @@ export function JoiningSheet({
                 ) : null}
               </View>
               <View style={styles.travelBody}>
-                <Text
-                  style={[styles.travelLabel, done ? styles.travelLabelOn : null]}
-                  numberOfLines={2}
-                >
-                  {step.label}
-                </Text>
+                <View style={styles.rowBody}>
+                  <Text
+                    style={[styles.travelLabelText, done ? styles.travelLabelOn : null]}
+                    numberOfLines={2}
+                  >
+                    {step.label}
+                  </Text>
+                  <MarkLine mark={marks?.[`travel:${step.key}`]} viewer={viewer} />
+                </View>
                 <Text style={styles.travelTime}>
                   {done ? formatWorkTime(at) : "—"}
                 </Text>
@@ -220,6 +240,36 @@ export function JoiningSheet({
  * an expired document is the thing that stops a joiner at the gate, and it
  * should not have to be found by scrolling.
  */
+/**
+ * Who marked an item, under its label.
+ *
+ * Aqua for the joiner's own mark — "done from my side" — and grey for one the
+ * supervisor or office put there, so a crew member can see at a glance which
+ * ticks are theirs and a supervisor can see which ones the crew claimed.
+ */
+function MarkLine({
+  mark,
+  viewer,
+}: {
+  mark?: { byName: string; self: boolean; at: string };
+  viewer: "mine" | "theirs";
+}) {
+  if (!mark) return null;
+  const who = mark.self
+    ? viewer === "mine"
+      ? "you"
+      : `${mark.byName} (crew)`
+    : mark.byName;
+  return (
+    <Text
+      style={[styles.mark, mark.self ? styles.markSelf : null]}
+      numberOfLines={1}
+    >
+      {mark.self ? "Done from crew side" : "Marked"} · {who} · {formatWorkTime(mark.at)}
+    </Text>
+  );
+}
+
 function ReadinessStrip({
   progress,
   readOnly,
@@ -335,7 +385,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  rowLabel: { flex: 1, fontSize: 15, color: colors.text, lineHeight: 20 },
+  rowBody: { flex: 1 },
+  rowLabelText: { fontSize: 15, color: colors.text, lineHeight: 20 },
+  mark: { marginTop: 2, fontSize: 11, color: colors.faint },
+  markSelf: { color: colors.aquaDark, fontWeight: "600" },
 
   state: {
     minWidth: 78,
@@ -391,7 +444,7 @@ const styles = StyleSheet.create({
     paddingVertical: space.md,
     marginLeft: space.sm,
   },
-  travelLabel: { flex: 1, fontSize: 15, color: colors.muted, lineHeight: 20 },
+  travelLabelText: { fontSize: 15, color: colors.muted, lineHeight: 20 },
   travelLabelOn: { color: colors.text, fontWeight: "600" },
   travelTime: {
     fontSize: 14,

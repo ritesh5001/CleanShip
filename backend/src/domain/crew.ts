@@ -72,6 +72,23 @@ export type ChecklistMap = Record<string, boolean>;
 /** ISO string per step, or null where it has been cleared. */
 export type TravelMap = Record<string, string | null>;
 
+/**
+ * Who set an item, and when.
+ *
+ * `self` is the whole point: true when the joiner marked their own row. That
+ * is the crew member telling the office "this is done from my side", and the
+ * board shows it differently from a tick the supervisor or office put there.
+ */
+export type CrewMark = {
+  byId: number;
+  byName: string;
+  self: boolean;
+  at: string;
+};
+
+/** Keyed "documents:passport", "checklist:rope_kit", "travel:boarded_flight". */
+export type CrewMarks = Record<string, CrewMark>;
+
 export function isDocumentState(value: unknown): value is DocumentState {
   return (
     typeof value === "string" &&
@@ -208,6 +225,8 @@ export type CrewMember = {
   documents: DocumentMap;
   checklist: ChecklistMap;
   travel: TravelMap;
+  /** Who marked each item that is currently set. */
+  marks: CrewMarks;
   notes: string | null;
   updatedByName: string | null;
   updatedAt: Date;
@@ -281,6 +300,7 @@ function toMember(
     documents: row.documents ?? {},
     checklist: row.checklist ?? {},
     travel: row.travel ?? {},
+    marks: row.marks ?? {},
     notes: row.notes,
     updatedByName: row.updatedByName,
     updatedAt: row.updatedAt,
@@ -530,6 +550,24 @@ export async function patchAssignment(
   const documentKeys = new Set((vessel.crewDocuments ?? []).map((d) => d.key));
   const checklistKeys = new Set((vessel.crewChecklist ?? []).map((c) => c.key));
 
+  /* Who set what. An item that is set gets the actor stamped on it; an item
+     that is cleared loses its mark, because there is nothing left to attribute
+     and a stale "marked by" on a blank square would read as a claim. */
+  const marks: CrewMarks = { ...(existing.marks ?? {}) };
+  const now = new Date().toISOString();
+  const stamp = (id: string, isSet: boolean) => {
+    if (isSet) {
+      marks[id] = {
+        byId: actor.sub,
+        byName: actor.name,
+        self: actor.sub === userId,
+        at: now,
+      };
+    } else {
+      delete marks[id];
+    }
+  };
+
   const documents: DocumentMap = { ...(existing.documents ?? {}) };
   for (const [key, value] of Object.entries(patch.documents ?? {})) {
     if (!documentKeys.has(key)) continue;
@@ -537,12 +575,14 @@ export async function patchAssignment(
       throw ApiError.badRequest(`Unknown document state "${String(value)}".`);
     }
     documents[key] = value;
+    stamp(`documents:${key}`, value !== "pending");
   }
 
   const checklist: ChecklistMap = { ...(existing.checklist ?? {}) };
   for (const [key, value] of Object.entries(patch.checklist ?? {})) {
     if (!checklistKeys.has(key)) continue;
     checklist[key] = Boolean(value);
+    stamp(`checklist:${key}`, Boolean(value));
   }
 
   const travel: TravelMap = { ...(existing.travel ?? {}) };
@@ -550,6 +590,7 @@ export async function patchAssignment(
     if (!TRAVEL_KEYS.has(key)) continue;
     if (value === null) {
       travel[key] = null;
+      stamp(`travel:${key}`, false);
       continue;
     }
     const when = new Date(String(value));
@@ -557,6 +598,7 @@ export async function patchAssignment(
       throw ApiError.badRequest(`"${key}" is not a valid time.`);
     }
     travel[key] = when.toISOString();
+    stamp(`travel:${key}`, true);
   }
 
   const [row] = await db
@@ -565,6 +607,7 @@ export async function patchAssignment(
       documents,
       checklist,
       travel,
+      marks,
       ...(patch.notes === undefined
         ? {}
         : { notes: patch.notes?.trim() || null }),

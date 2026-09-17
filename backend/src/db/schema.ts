@@ -14,6 +14,7 @@ import type { Stage } from "../domain/stages.js";
 import type {
   ChecklistMap,
   CrewChecklistItem,
+  CrewMarks,
   CrewDocumentItem,
   DocumentMap,
   TravelMap,
@@ -409,6 +410,11 @@ export const crewAssignments = pgTable(
      * 04:20 to the joiner, the office and the customer alike.
      */
     travel: jsonb("travel").$type<TravelMap>().notNull().default({}),
+    /**
+     * Who set each item, keyed "documents:passport". Lets the office tell a
+     * joiner saying "done from my side" apart from a supervisor confirming it.
+     */
+    marks: jsonb("marks").$type<CrewMarks>().notNull().default({}),
 
     notes: text("notes"),
     updatedById: integer("updated_by_id").references(() => users.id, {

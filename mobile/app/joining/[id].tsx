@@ -240,6 +240,8 @@ export default function JoiningDetail() {
         checklistState={member.checklist}
         travelState={member.travel}
         progress={member.progress}
+        marks={member.marks}
+        viewer={subjectId === null ? "mine" : "theirs"}
         readOnly={aboard}
         busyKey={busyKey}
         onDocument={(key, next: DocumentState) =>

@@ -268,6 +268,9 @@ function CrewRow({
   const ratio = asked === 0 ? 1 : answered / asked;
   const stage = travelStage(member.travel, steps);
   const blocked = progress.documentsExpired > 0;
+  /* What the joiner has marked done from their own phone — the part of the
+     sheet the supervisor has their word for rather than their own eyes. */
+  const byCrew = Object.values(member.marks ?? {}).filter((m) => m.self).length;
 
   /* My own row goes through /api/v1/me, which is scoped to the token and needs
      no ownership check; everybody else's goes through the vessel's crew
@@ -296,6 +299,11 @@ function CrewRow({
                   {member.isSupervisor ? "Supervisor" : "Crew"}
                   {stage.step ? ` · ${stage.step.short}` : ""}
                 </Text>
+                {byCrew > 0 && !isMe ? (
+                  <Text style={styles.rowByCrew}>
+                    {byCrew} marked done from their side
+                  </Text>
+                ) : null}
               </View>
               <View
                 style={[
@@ -366,6 +374,7 @@ const styles = StyleSheet.create({
   rowHead: { flexDirection: "row", alignItems: "flex-start", gap: space.md },
   rowName: { fontSize: 16, fontWeight: "700", color: colors.text },
   rowRole: { marginTop: 2, fontSize: 12, color: colors.muted },
+  rowByCrew: { marginTop: 2, fontSize: 12, fontWeight: "600", color: colors.aquaDark },
 
   pill: { borderWidth: 1, paddingHorizontal: 8, paddingVertical: 3 },
   pillText: { fontSize: 11, fontWeight: "800" },
