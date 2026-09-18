@@ -103,19 +103,20 @@ export async function submitEnquiry(
 }
 
 /**
- * Emails first, then the inbox.
+ * The inbox first, then the emails.
  *
- * The email is what actually reaches a person, so it decides whether the
- * submission succeeded — a database that is down must not turn a real enquiry
- * into an error page for a customer who did nothing wrong. Recording it in
- * CleanTrack is best-effort on top, and a failure there is logged rather than
- * shown.
+ * The API records the enquiry and says whether it looks like spam. Spam is
+ * kept in the inbox's spam tab but NOT emailed, so it stops reaching the
+ * company inbox and the scammer gets no acknowledgement to reply to.
+ *
+ * The email is still what decides success: if the API is down the enquiry is
+ * emailed anyway, so a database outage never turns a real enquiry into an
+ * error page for a customer who did nothing wrong.
  */
 async function deliverEnquiry(enquiry: Enquiry): Promise<void> {
-  await sendEnquiryEmails(enquiry);
-
+  let spam = false;
   try {
-    await recordEnquiry({
+    ({ spam } = await recordEnquiry({
       name: enquiry.name,
       email: enquiry.email,
       phone: enquiry.phone || null,
@@ -123,8 +124,11 @@ async function deliverEnquiry(enquiry: Enquiry): Promise<void> {
       vessel: enquiry.vessel || null,
       service: enquiry.service || null,
       message: enquiry.message,
-    });
+    }));
   } catch (error) {
     console.error("[enquiry] not recorded in the inbox", error);
   }
+
+  if (spam) return;
+  await sendEnquiryEmails(enquiry);
 }

@@ -1,4 +1,5 @@
 import "server-only";
+import { createHmac } from "node:crypto";
 import { cookies } from "next/headers";
 import { SESSION_COOKIE } from "./session-cookie";
 import type {
@@ -445,9 +446,16 @@ export function submitEnquiry(input: {
   service?: string | null;
   message: string;
 }) {
-  return request<{ id: number }>("/api/v1/enquiries", {
+  return request<{ id: number; spam: boolean }>("/api/v1/enquiries", {
     method: "POST",
     auth: false,
+    /* Proves to the API that this came through the website (and so past the
+       CAPTCHA). Must match FORM_KEY in backend/src/routes/enquiries.ts. */
+    headers: {
+      "X-Form-Key": createHmac("sha256", process.env.SESSION_SECRET ?? "")
+        .update("cleanship-enquiry-form")
+        .digest("hex"),
+    },
     body: input,
   });
 }

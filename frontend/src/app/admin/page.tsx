@@ -27,14 +27,19 @@ const STATUS_STYLE: Record<string, string> = {
  * token, so there is no loading state, no client-side fetch and no token in
  * the browser.
  */
-export default async function AdminInboxPage() {
+export default async function AdminInboxPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string }>;
+}) {
   const session = await requireSession("admin", "superadmin");
+  const { status: filter } = await searchParams;
 
   let rows: Awaited<ReturnType<typeof listEnquiries>>["enquiries"];
   let counts: Record<string, number>;
   let statuses: string[];
   try {
-    const data = await listEnquiries();
+    const data = await listEnquiries(filter);
     rows = data.enquiries;
     counts = data.counts;
     statuses = data.statuses;
@@ -45,7 +50,10 @@ export default async function AdminInboxPage() {
     statuses = ["new", "in-progress", "quoted", "won", "lost", "spam"];
   }
 
-  const total = Object.values(counts).reduce((n, c) => n + c, 0);
+  /* Spam is hidden from the list, so it is left out of the total too. */
+  const total = Object.entries(counts)
+    .filter(([status]) => status !== "spam")
+    .reduce((n, [, c]) => n + c, 0);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -78,17 +86,29 @@ export default async function AdminInboxPage() {
           Enquiries
         </h1>
         <p className="mt-1 text-sm text-slate-600">
-          {total} total · signed in as {session.name}
+          {total} total · spam hidden · signed in as {session.name}
         </p>
 
+        {/* Filters. "All" leaves spam out; the spam chip is where it lives. */}
         <div className="mt-4 flex flex-wrap gap-2">
+          <Link
+            href="/admin"
+            className={`rounded-none border px-3 py-1 text-[12px] font-semibold ${
+              filter ? "border-slate-300 bg-white text-slate-600" : "border-slate-900 bg-slate-900 text-white"
+            }`}
+          >
+            All · {total}
+          </Link>
           {statuses.map((status) => (
-            <span
+            <Link
               key={status}
-              className={`rounded-none border px-3 py-1 text-[12px] font-semibold capitalize ${STATUS_STYLE[status]}`}
+              href={`/admin?status=${status}`}
+              className={`rounded-none border px-3 py-1 text-[12px] font-semibold capitalize ${STATUS_STYLE[status]} ${
+                filter === status ? "ring-2 ring-slate-900 ring-offset-1" : ""
+              }`}
             >
               {status.replace("-", " ")} · {counts[status] ?? 0}
-            </span>
+            </Link>
           ))}
         </div>
 

@@ -1,4 +1,4 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { desc, eq, ne, sql } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { enquiries, type Enquiry } from "../db/schema.js";
 import { ApiError } from "../http/errors.js";
@@ -23,9 +23,14 @@ export function isEnquiryStatus(value: unknown): value is EnquiryStatus {
   );
 }
 
+/** Without a status, everything except spam — spam is only shown when asked for. */
 export function listEnquiries(status?: EnquiryStatus, limit = 200) {
-  const q = db.select().from(enquiries).orderBy(desc(enquiries.createdAt)).limit(limit);
-  return status ? q.where(eq(enquiries.status, status)) : q;
+  return db
+    .select()
+    .from(enquiries)
+    .where(status ? eq(enquiries.status, status) : ne(enquiries.status, "spam"))
+    .orderBy(desc(enquiries.createdAt))
+    .limit(limit);
 }
 
 /** Counts per status, for the inbox tabs. One query, not six. */
@@ -43,7 +48,7 @@ export async function enquiryCounts() {
 }
 
 export type EnquiryInput = Omit<Enquiry, "id" | "status" | "createdAt" | "notes"> &
-  Partial<Pick<Enquiry, "notes">>;
+  Partial<Pick<Enquiry, "notes" | "status">>;
 
 export async function createEnquiry(input: EnquiryInput) {
   const [row] = await db.insert(enquiries).values(input).returning();

@@ -9,6 +9,7 @@ import {
   listEnquiries,
   setEnquiryStatus,
 } from "../domain/enquiries.js";
+import { spamReason } from "../domain/spam.js";
 import { env } from "../env.js";
 import { requireRole } from "../http/session.js";
 import { parseBody, parseId } from "../http/validate.js";
@@ -53,7 +54,33 @@ const enquirySchema = z.object({
   message: z.string().min(1).max(5000),
 });
 
+/**
+ * Proof that a submission came through the website's server action, which is
+ * where the Turnstile CAPTCHA is checked. Without it a bot could POST here
+ * directly and skip the CAPTCHA entirely.
+ *
+ * Derived from SESSION_SECRET, which the website already shares, so there is
+ * no extra secret to configure. The website computes the same value in
+ * frontend/src/lib/api.ts.
+ */
+const FORM_KEY = () =>
+  crypto
+    .createHmac("sha256", env.SESSION_SECRET)
+    .update("cleanship-enquiry-form")
+    .digest();
+
+function fromWebsite(header: string | undefined) {
+  if (!header) return false;
+  const given = Buffer.from(header, "hex");
+  const expected = FORM_KEY();
+  return given.length === expected.length && crypto.timingSafeEqual(given, expected);
+}
+
 enquiryRoutes.post("/", async (req, res) => {
+  if (!fromWebsite(req.header("x-form-key"))) {
+    throw new ApiError(403, "forbidden", "Submit enquiries through the website.");
+  }
+
   const ip =
     (req.header("x-forwarded-for") ?? "").split(",")[0]?.trim() ||
     req.socket.remoteAddress ||
@@ -61,8 +88,12 @@ enquiryRoutes.post("/", async (req, res) => {
   throttle(ip);
 
   const body = parseBody(enquirySchema, req.body);
+  const reason = spamReason(body);
+  if (reason) console.log(`[enquiry] flagged as spam: ${reason}`);
+
   const enquiry = await createEnquiry({
     ...body,
+    status: reason ? "spam" : "new",
     phone: body.phone ?? null,
     company: body.company ?? null,
     vessel: body.vessel ?? null,
@@ -77,7 +108,7 @@ enquiryRoutes.post("/", async (req, res) => {
     userAgent: (req.header("user-agent") ?? "").slice(0, 255) || null,
   });
 
-  res.status(201).json({ id: enquiry.id });
+  res.status(201).json({ id: enquiry.id, spam: reason !== null });
 });
 
 /* -------------------------------------------------------------------- */
