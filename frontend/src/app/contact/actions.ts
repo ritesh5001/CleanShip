@@ -105,9 +105,9 @@ export async function submitEnquiry(
 /**
  * The inbox first, then the emails.
  *
- * The API records the enquiry and says whether it looks like spam. Spam is
- * kept in the inbox's spam tab but NOT emailed, so it stops reaching the
- * company inbox and the scammer gets no acknowledgement to reply to.
+ * The API records the enquiry, or discards it and says so if it looks like
+ * spam. Spam is not emailed either, so it never reaches the company inbox
+ * and the sender gets no acknowledgement to reply to.
  *
  * The email is still what decides success: if the API is down the enquiry is
  * emailed anyway, so a database outage never turns a real enquiry into an

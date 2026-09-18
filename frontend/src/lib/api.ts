@@ -446,7 +446,7 @@ export function submitEnquiry(input: {
   service?: string | null;
   message: string;
 }) {
-  return request<{ id: number; spam: boolean }>("/api/v1/enquiries", {
+  return request<{ id: number | null; spam: boolean }>("/api/v1/enquiries", {
     method: "POST",
     auth: false,
     /* Proves to the API that this came through the website (and so past the

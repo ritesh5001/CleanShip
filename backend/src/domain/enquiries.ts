@@ -48,7 +48,7 @@ export async function enquiryCounts() {
 }
 
 export type EnquiryInput = Omit<Enquiry, "id" | "status" | "createdAt" | "notes"> &
-  Partial<Pick<Enquiry, "notes" | "status">>;
+  Partial<Pick<Enquiry, "notes">>;
 
 export async function createEnquiry(input: EnquiryInput) {
   const [row] = await db.insert(enquiries).values(input).returning();

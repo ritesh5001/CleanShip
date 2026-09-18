@@ -88,12 +88,19 @@ enquiryRoutes.post("/", async (req, res) => {
   throttle(ip);
 
   const body = parseBody(enquirySchema, req.body);
+
+  /* Spam is not stored at all. The answer still looks like success, so the
+     sender learns nothing about what tripped the filter; the website reads
+     `spam` and skips the emails. */
   const reason = spamReason(body);
-  if (reason) console.log(`[enquiry] flagged as spam: ${reason}`);
+  if (reason) {
+    console.log(`[enquiry] spam discarded: ${reason} (${body.email})`);
+    res.status(200).json({ id: null, spam: true });
+    return;
+  }
 
   const enquiry = await createEnquiry({
     ...body,
-    status: reason ? "spam" : "new",
     phone: body.phone ?? null,
     company: body.company ?? null,
     vessel: body.vessel ?? null,
@@ -108,7 +115,7 @@ enquiryRoutes.post("/", async (req, res) => {
     userAgent: (req.header("user-agent") ?? "").slice(0, 255) || null,
   });
 
-  res.status(201).json({ id: enquiry.id, spam: reason !== null });
+  res.status(201).json({ id: enquiry.id, spam: false });
 });
 
 /* -------------------------------------------------------------------- */

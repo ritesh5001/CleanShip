@@ -1,11 +1,10 @@
 /**
- * Spots the junk the contact forms attract, so it lands in the inbox's spam
- * tab instead of among real enquiries.
+ * Spots the junk the contact forms attract. Flagged enquiries are discarded
+ * — not stored, not emailed (see routes/enquiries.ts).
  *
- * Flagged enquiries are still STORED (status "spam"), never dropped: a false
- * positive costs one click to move back, a silently lost customer costs a
- * job. The rules are deliberately narrow — each matches something no ship
- * operator asking for a quote would write.
+ * Because a false positive is a lost customer with no trace, the rules are
+ * deliberately narrow: each matches something no ship operator asking for a
+ * quote would write. Loosen them, never broaden them on a hunch.
  */
 
 type Fields = {
