@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { login, type LoginState } from "./actions";
 import { Button, Field, inputClass } from "@/components/cleantrack/ui";
+import { Turnstile } from "@/components/turnstile";
 
 const initial: LoginState = {};
 
@@ -59,6 +60,8 @@ export default function LoginPage() {
               className={inputClass}
             />
           </Field>
+
+          <Turnstile resetKey={state} />
 
           <SubmitButton />
         </form>

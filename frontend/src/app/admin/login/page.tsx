@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
+import { Turnstile } from "@/components/turnstile";
 import { adminLogin, type LoginState } from "./actions";
 
 const initial: LoginState = {};
@@ -72,6 +73,8 @@ export default function AdminLoginPage() {
               className="w-full min-h-11 rounded-none border border-slate-300 bg-white px-3 text-[16px] text-slate-900 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
             />
           </label>
+
+          <Turnstile resetKey={state} />
 
           <Submit />
         </form>

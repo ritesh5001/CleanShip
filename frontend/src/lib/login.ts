@@ -1,6 +1,7 @@
 import "server-only";
 import { ApiError, login as apiLogin } from "./api";
 import { createSession, type Role } from "./session";
+import { CAPTCHA_ERROR, verifyTurnstile } from "./turnstile";
 
 export type LoginState = { error?: string };
 
@@ -22,6 +23,12 @@ export async function attemptLogin(
   formData: FormData,
   allow: Role[],
 ): Promise<LoginResult> {
+  /* Before the credentials go anywhere: a bot guessing passwords never
+     reaches the API. */
+  if (!(await verifyTurnstile(formData))) {
+    return { ok: false, error: CAPTCHA_ERROR };
+  }
+
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 

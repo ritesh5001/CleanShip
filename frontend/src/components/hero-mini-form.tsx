@@ -6,6 +6,7 @@ import { useFormStatus } from "react-dom";
 import { submitEnquiry, type EnquiryState } from "@/app/contact/actions";
 import { serviceCategories } from "@/lib/services";
 import { ArrowIcon, CheckIcon } from "./icons";
+import { Turnstile } from "./turnstile";
 
 const initialState: EnquiryState = { status: "idle", message: "" };
 
@@ -166,6 +167,8 @@ export function HeroMiniForm() {
             </p>
           )}
         </div>
+
+        <Turnstile theme="dark" resetKey={state} />
 
         <SubmitButton />
 

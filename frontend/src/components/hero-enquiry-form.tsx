@@ -5,6 +5,7 @@ import { serviceCategories } from "@/lib/services";
 import { useFormStatus } from "react-dom";
 import { submitEnquiry, type EnquiryState } from "@/app/contact/actions";
 import { ArrowIcon, CheckIcon } from "./icons";
+import { Turnstile } from "./turnstile";
 import { siteConfig } from "@/lib/site";
 
 const initialState: EnquiryState = { status: "idle", message: "" };
@@ -231,6 +232,8 @@ export function HeroEnquiryForm({
             autoComplete="off"
           />
         </div>
+
+        <Turnstile theme="dark" resetKey={state} />
 
         <SubmitButton />
 

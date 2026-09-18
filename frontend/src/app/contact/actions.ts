@@ -3,6 +3,7 @@
 import { siteConfig } from "@/lib/site";
 import { sendEnquiryEmails, type Enquiry } from "@/lib/email";
 import { submitEnquiry as recordEnquiry } from "@/lib/api";
+import { CAPTCHA_ERROR, verifyTurnstile } from "@/lib/turnstile";
 
 export type EnquiryState = {
   status: "idle" | "success" | "error";
@@ -34,6 +35,10 @@ export async function submitEnquiry(
   // We return the success shape so bots get no signal that they were caught.
   if (str(formData, "website")) {
     return { status: "success", message: "Thank you — your enquiry has been received." };
+  }
+
+  if (!(await verifyTurnstile(formData))) {
+    return { status: "error", message: CAPTCHA_ERROR };
   }
 
   const name = str(formData, "name");

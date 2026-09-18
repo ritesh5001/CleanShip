@@ -5,6 +5,7 @@ import { useFormStatus } from "react-dom";
 import { submitEnquiry, type EnquiryState } from "@/app/contact/actions";
 import { serviceCategories } from "@/lib/services";
 import { ArrowIcon, CheckIcon, ChevronIcon } from "./icons";
+import { Turnstile } from "./turnstile";
 
 const initialState: EnquiryState = { status: "idle", message: "" };
 
@@ -163,6 +164,8 @@ export function ContactForm() {
           autoComplete="off"
         />
       </div>
+
+      <Turnstile resetKey={state} />
 
       <SubmitButton />
 
