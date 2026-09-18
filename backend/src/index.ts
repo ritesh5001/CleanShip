@@ -2,6 +2,7 @@ import "./load-env.js";
 import { assertEnv, env } from "./env.js";
 import { createApp } from "./app.js";
 import { closeDb } from "./db/index.js";
+import { startKeepAlive } from "./keep-alive.js";
 
 /**
  * Boot.
@@ -17,6 +18,7 @@ const server = app.listen(env.PORT, () => {
   console.log(
     `[cleanship-api] listening on :${env.PORT} (${env.NODE_ENV})`,
   );
+  startKeepAlive();
 });
 
 /**

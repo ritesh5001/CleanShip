@@ -55,9 +55,10 @@ export function createApp() {
   app.use(express.json({ limit: "256kb" }));
 
   /* One line per request, which is what Render's log view is good for.
-     Skipped for the health check, which fires constantly and says nothing. */
+     Skipped for the health check and keep-alive ping, which fire constantly
+     and say nothing. */
   app.use((req, res, next) => {
-    if (req.path === "/health") return next();
+    if (req.path === "/health" || req.path === "/ping") return next();
     const started = Date.now();
     res.on("finish", () => {
       console.log(
@@ -80,6 +81,16 @@ export function createApp() {
       console.error("[health] database unreachable", err);
       res.status(503).json({ ok: false, db: "down" });
     }
+  });
+
+  /**
+   * Keep-alive target. Deliberately does NOT touch the database: it is hit
+   * every 12 minutes to stop Render's free tier spinning the service down,
+   * and a query here would wake Neon on the same schedule and burn its
+   * compute hours for nothing.
+   */
+  app.get("/ping", (_req, res) => {
+    res.json({ ok: true, at: new Date().toISOString() });
   });
 
   app.use(attachSession);
