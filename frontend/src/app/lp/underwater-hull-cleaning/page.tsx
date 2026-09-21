@@ -86,7 +86,11 @@ const PATH = "/lp/underwater-hull-cleaning";
 /** Tags the enquiry in the inbox so campaign leads are separable from organic. */
 const LEAD_SOURCE = "Underwater Hull Cleaning — campaign landing page";
 
-export const metadata: Metadata = buildMetadata({
+/* Served at uwc.cleanship.co/ (see middleware.ts), so that is the canonical
+   address — not the www path it is built from. */
+const PUBLIC_URL = "https://uwc.cleanship.co/";
+
+const baseMetadata = buildMetadata({
   title: "Underwater Hull Cleaning — Get a Quote",
   description:
     "In-water hull cleaning by commercial divers. No dry dock, no off-hire — coating-safe fouling removal at anchorage or alongside, with video evidence. Get a quote.",
@@ -105,6 +109,12 @@ export const metadata: Metadata = buildMetadata({
   },
   noIndex: !INDEXABLE,
 });
+
+export const metadata: Metadata = {
+  ...baseMetadata,
+  alternates: { canonical: PUBLIC_URL },
+  openGraph: { ...baseMetadata.openGraph, url: PUBLIC_URL },
+};
 
 const trail = [
   { name: "Home", path: "/" },
