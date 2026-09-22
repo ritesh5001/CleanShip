@@ -74,11 +74,13 @@ export function TimeAsk({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, initial, minDate, maxDate]);
 
-  /** The last seven days, newest first, trimmed to the allowed window. */
+  /** Tomorrow, then the last seven days, newest first, trimmed to the
+      allowed window. Tomorrow is there because a time may be up to a day
+      ahead (see FUTURE_ALLOWANCE_MS in types). */
   const days = useMemo(() => {
     const out: Date[] = [];
     const today = dayStart(wallNow());
-    for (let i = 0; i < 7; i += 1) {
+    for (let i = -1; i < 7; i += 1) {
       const day = new Date(today.getTime() - i * DAY_MS);
       if (day >= dayStart(minDate) && day <= dayStart(maxDate)) out.push(day);
     }
@@ -90,7 +92,8 @@ export function TimeAsk({
 
   /* Only the hours and minutes that are actually allowed are offered. A
      finish on the start's own day cannot go below the start's hour, and in
-     that hour cannot go below the start's minute; today cannot go past now.
+     that hour cannot go below the start's minute; the last day cannot go past
+     the future allowance.
      Snapping an invalid pick back afterwards was not enough — the wheel still
      showed 03:00 as choosable after a 05:00 start, which read as allowed. */
   const onMinDay = sameDay(value, minDate);
@@ -263,6 +266,7 @@ const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 function describeDay(date: Date) {
   const today = wallNow();
   if (sameDay(date, today)) return "Today";
+  if (sameDay(date, new Date(today.getTime() + DAY_MS))) return "Tomorrow";
   if (sameDay(date, new Date(today.getTime() - DAY_MS))) return "Yesterday";
   return WEEKDAYS[date.getUTCDay()];
 }

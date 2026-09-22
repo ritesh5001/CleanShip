@@ -105,7 +105,7 @@ export function TimeAsk({
       setError(
         kind === "started"
           ? `A start cannot come after its finish — the latest is ${stampOf(bounds.max.toISOString())}.`
-          : `That is in the future. The latest is ${stampOf(bounds.max.toISOString())}.`,
+          : `That is more than a day ahead. The latest is ${stampOf(bounds.max.toISOString())}.`,
       );
       return;
     }

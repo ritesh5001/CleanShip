@@ -600,8 +600,8 @@ export default function Vessel() {
 
       {/* Asked for on every status tap that carries a time.
           Pre-filled with now, so the ordinary case — recording work as it
-          happens — is a single confirm. Capped at now, because a stage cannot
-          have started or finished in the future. Dismissing changes nothing:
+          happens — is a single confirm. Capped at a day ahead of now, so a stage
+          can be logged in advance but not dated days out by mistake. Dismissing changes nothing:
           a cancelled time means the tap was a mistake, and applying the status
           anyway would leave a status the supervisor did not agree to. */}
       <TimeAsk

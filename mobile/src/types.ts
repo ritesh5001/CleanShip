@@ -302,6 +302,20 @@ export function wallNow(): Date {
   );
 }
 
+/**
+ * How far ahead of now a time may be entered: one day.
+ *
+ * Crews and the office sometimes log a stage ahead of time — a start booked
+ * for first light, a finish the shift already knows. Past a day it is far
+ * more likely a wrong date than a plan, so it stops there.
+ */
+export const FUTURE_ALLOWANCE_MS = 24 * 60 * 60 * 1000;
+
+/** The latest time a stage may be given: now plus the future allowance. */
+export function latestAllowed(): Date {
+  return new Date(wallNow().getTime() + FUTURE_ALLOWANCE_MS);
+}
+
 const pad = (n: number) => String(n).padStart(2, "0");
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -399,7 +413,7 @@ export function vesselTimeWindow(
      should not refuse work recorded at 09:00 the same morning. */
   const min = new Date(Math.min(anchor.getTime(), now.getTime()));
   min.setUTCHours(0, 0, 0, 0);
-  const max = new Date(Math.min(twoMonthsOn.getTime(), now.getTime()));
+  const max = new Date(Math.min(twoMonthsOn.getTime(), latestAllowed().getTime()));
   return { min, max: max.getTime() < min.getTime() ? new Date(min) : max };
 }
 
@@ -424,7 +438,7 @@ export function timeBounds(
   counterpart: string | null | undefined,
 ): TimeWindow {
   let min = window.min;
-  let max = wallNow();
+  let max = latestAllowed();
 
   if (counterpart) {
     const other = new Date(counterpart).getTime();
