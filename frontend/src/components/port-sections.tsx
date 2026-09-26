@@ -340,7 +340,7 @@ export function NearbyPorts({
                   {portLabel(other)}
                 </span>
                 <span className="mt-0.5 block text-[12px] text-slate-500">
-                  {other.state} · {other.unlocode}
+                  {[other.state, other.unlocode].filter(Boolean).join(" · ")}
                 </span>
               </span>
               <ArrowIcon className="size-4 shrink-0 text-slate-300 transition-transform duration-[140ms] group-hover:translate-x-0.5 group-hover:text-blue-600" />

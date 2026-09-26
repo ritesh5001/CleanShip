@@ -62,7 +62,12 @@ export type Port = {
   officialName?: string;
   /** Names agents and charterers actually use. Feeds page keywords. */
   aka: string[];
-  unlocode: string;
+  /**
+   * UN/LOCODE. Optional because some real ports have none — a small island
+   * harbour whose nearest code on the UN list is its airport. Leave it out
+   * rather than borrow a code that names a different place.
+   */
+  unlocode?: string;
   /** State, emirate or province. */
   state: string;
   /** Country display name. */
@@ -78,7 +83,8 @@ export type Port = {
     | "gulf-of-oman"
     | "red-sea"
     | "sri-lanka"
-    | "west-africa";
+    | "west-africa"
+    | "cape-verde";
   waterBody: string;
   /** Who issues the permit. Named on every page for a reason. */
   authority: string;
@@ -118,6 +124,24 @@ export type Port = {
   tankNote?: string;
   /** Forces a line on or off where the cargo list misleads. */
   lineOverrides?: Partial<Record<LineKey, boolean>>;
+  /**
+   * Hand-written answer to "can hull work run while the vessel works cargo
+   * here", where the answer derived from `condition` would be wrong — an
+   * offshore buoy has no barge operations, a ferry port has no cargo window.
+   */
+  hullWindow?: string;
+  /**
+   * Hand-written visibility phrase, completing "Visibility at <port> is …",
+   * where the one derived from `condition` names the wrong cause (monsoon,
+   * lighterage, bulk dust) for this port.
+   */
+  visibility?: string;
+  /**
+   * Hand-written "what we typically find" paragraph for hull work, replacing
+   * the one derived from `condition` where that one describes the wrong
+   * fleet (long anchorage waits at a ferry port, for example).
+   */
+  hullFinding?: string;
   /** Per-scope copy, keyed by the scope's urlPrefix (see ScopeNote). */
   scopeNotes?: Partial<Record<string, ScopeNote>>;
 };
@@ -232,6 +256,11 @@ export function midSentence(text: string): string {
     (out, word) => out.replace(new RegExp(`\\b${word}\\b`, "gi"), word),
     text.toLowerCase(),
   );
+}
+
+/** " (INIXY)" for running prose, or nothing when the port has no code. */
+export function codeSuffix(port: Port): string {
+  return port.unlocode ? ` (${port.unlocode})` : "";
 }
 
 /** "Kandla Port", but never "Chennai Port Port". */

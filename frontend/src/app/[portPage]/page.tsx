@@ -428,9 +428,11 @@ function RegionHub({
                           <span className="font-display text-[18px] font-bold uppercase leading-tight text-ink-900 transition-colors duration-[140ms] group-hover:text-blue-600">
                             {portLabel(port)}
                           </span>
-                          <span className="tabular text-[12px] text-slate-400">
-                            {port.unlocode}
-                          </span>
+                          {port.unlocode && (
+                            <span className="tabular text-[12px] text-slate-400">
+                              {port.unlocode}
+                            </span>
+                          )}
                         </Link>
                         <p className="mt-1 text-[13px] leading-[1.5] text-slate-500">
                           {port.type} · {port.waterBody}
@@ -545,7 +547,7 @@ function PortHub({ page }: { page: Extract<PortPage, { kind: "port" }> }) {
       />
 
       <PageHero
-        eyebrow={`${port.state} · ${port.unlocode}`}
+        eyebrow={[port.state, port.unlocode].filter(Boolean).join(" · ")}
         title={`${line.name} at ${portLabel(port)}`}
         description={`${line.hubTagline} at ${portLabel(port)} — ${port.hook}.`}
         trail={trail}
@@ -696,7 +698,7 @@ function ScopePage({ page }: { page: Extract<PortPage, { kind: "scope" }> }) {
       />
 
       <PageHero
-        eyebrow={`${portLabel(port)} · ${port.unlocode}`}
+        eyebrow={[portLabel(port), port.unlocode].filter(Boolean).join(" · ")}
         title={`${scope.name} at ${portLabel(port)}`}
         description={scope.tagline}
         trail={trail}

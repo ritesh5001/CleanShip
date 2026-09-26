@@ -41,12 +41,14 @@ import {
   listAnd,
   midSentence,
   portLabel,
+  codeSuffix,
 } from "./types";
 import { indiaPorts } from "./india";
 import { uaePorts } from "./uae";
 import { saudiPorts } from "./saudi";
 import { sriLankaPorts } from "./sri-lanka";
 import { westAfricaPorts } from "./west-africa";
+import { capeVerdePorts } from "./cape-verde";
 import {
   approvalRoute,
   conditionSummary,
@@ -134,6 +136,17 @@ export const regions: Region[] = [
       "West Africa is defined by two things: long-period Atlantic ground swell that reaches the anchorages on days that look calm, and congestion severe enough that waiting for a berth is the normal state rather than the exception. The swell costs windows; the waiting creates them. Between them they explain why so much in-water work on this coast is done at anchor and why the fouling found is heavier than the trading pattern predicts.",
     regionNote:
       "Cleanship holds a base at Conakry, and the West African range has been part of the hull-cleaning service coverage since before the port programme existed. Ports along this coast sit close enough that a single mobilisation routinely covers two or three attendances on one trip.",
+  },
+  {
+    slug: "cape-verde",
+    name: "Cape Verde",
+    portsLabel: "Cape Verdean ports",
+    groupNoun: "island",
+    ports: capeVerdePorts,
+    intro:
+      "Cape Verde is ten volcanic islands in the open Atlantic, and its ports behave nothing like the mainland African coast. There are no rivers and no lagoons, so the water is clear ocean water; the constraint is exposure instead. The north-east trade wind blows for much of the year, and whether a harbour is workable depends on which side of its island it faces — the lee-side ports stay calm while the windward coasts and the channels between islands can run a rough sea.",
+    regionNote:
+      "All the islands' ports are run by ENAPOR, and most of the traffic is the inter-island network — ferries and coasters that the smaller islands depend on completely. That shapes the work: a clean or a survey has to fit a timetable rather than stop a service, and it is often better done at the bigger port on a ferry's route than at the small, exposed harbour at the far end of it.",
   },
 ];
 
@@ -448,7 +461,7 @@ export function pageKeywords(page: PortPage): string[] {
     ...nouns,
     `${nouns[0]} ${port.country}`,
     `${port.name} port services`,
-    port.unlocode,
+    ...(port.unlocode ? [port.unlocode] : []),
   ];
 }
 
@@ -557,7 +570,7 @@ export function scopeFaqs(port: Port, line: PortLine, scope: PortScope) {
   const base = [
     {
       q: `Do you provide ${scope.noun} at ${label}?`,
-      a: `Yes. Cleanship Marine works ${label} (${port.unlocode}) in ${port.state}, ${port.country}, covering ${areaPhrase(port)}. ${port.base ? `We hold an operating base at ${port.name}, so people and equipment are held locally rather than mobilised against a window.` : `Teams mobilise via ${airportLine(port)} with the full spread.`}`,
+      a: `Yes. Cleanship Marine works ${label}${codeSuffix(port)} in ${port.state}, ${port.country}, covering ${areaPhrase(port)}. ${port.base ? `We hold an operating base at ${port.name}, so people and equipment are held locally rather than mobilised against a window.` : `Teams mobilise via ${airportLine(port)} with the full spread.`}`,
     },
     {
       q: `Can ${scope.noun} be done while the vessel works cargo at ${port.name}?`,
@@ -627,7 +640,7 @@ export function portHubFaqs(port: Port, line: PortLine) {
   return [
     {
       q: `Does Cleanship provide ${line.noun} at ${label}?`,
-      a: `Yes. We cover the full ${line.noun} scope at ${label} (${port.unlocode}), ${port.state} — ${midSentence(listAnd(line.scopes.map((s) => s.name)))}. ${port.base ? `Cleanship holds an operating base at ${port.name}.` : `Teams mobilise via ${airportLine(port)}.`}`,
+      a: `Yes. We cover the full ${line.noun} scope at ${label}${codeSuffix(port)}, ${port.state} — ${midSentence(listAnd(line.scopes.map((s) => s.name)))}. ${port.base ? `Cleanship holds an operating base at ${port.name}.` : `Teams mobilise via ${airportLine(port)}.`}`,
     },
     {
       q:
@@ -710,9 +723,13 @@ export function regionHubFaqs(region: Region, line: PortLine) {
 
 export function portFactRows(port: Port) {
   return [
-    { label: "UN/LOCODE", value: port.unlocode },
+    ...(port.unlocode ? [{ label: "UN/LOCODE", value: port.unlocode }] : []),
     { label: "Port type", value: port.type },
-    { label: port.countryCode === "AE" ? "Emirate" : "State", value: port.state },
+    {
+      label:
+        port.countryCode === "AE" ? "Emirate" : port.countryCode === "CV" ? "Island" : "State",
+      value: port.state,
+    },
     { label: "Country", value: port.country },
     { label: "Water body", value: port.waterBody },
     { label: "Port authority", value: port.authority },

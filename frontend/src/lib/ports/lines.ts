@@ -21,6 +21,7 @@ import {
   listAnd,
   midSentence,
   portLabel,
+  codeSuffix,
   vesselLine,
 } from "./types";
 
@@ -61,10 +62,16 @@ export const WEATHER: Record<
     heat: "Humidity is high year-round rather than seasonal, so enclosed-space work here is planned with ventilation and rest cycles in every month, not just the summer.",
   },
   "west-africa": {
-    season: "Atlantic swell and the rains",
+    season: "combination of Atlantic swell and rain",
     window: "with the heaviest rain from May to October and swell running year-round",
     risk: "The swell here is long-period Atlantic ground swell rather than wind-driven sea, so it reaches the anchorages on days that look calm from the bridge and it is the single biggest cause of a lost in-water window on this coast",
     heat: "Humidity is high year-round and the rains make it worse, which matters more than temperature for enclosed-space work: holds will not dry, and a hold that cannot be dried cannot be closed.",
+  },
+  "cape-verde": {
+    season: "trade-wind and swell season",
+    window: "with the strongest trade winds from roughly December to May, and a short rainy season from August to October",
+    risk: "The islands sit in open ocean, so a port's exposure depends on which side of its island it faces: the lee-side harbours stay calm while the trade wind blows, but long-period swell from North Atlantic storms reaches the north and west coasts in winter, and the late-summer tropical waves that pass through here can turn into storms",
+    heat: "Dust is the less obvious constraint. From roughly November to March the harmattan carries Saharan dust across the islands — the local 'bruma seca' — which cuts visibility in the air and can stop launch and dive-support operations on the worst days.",
   },
   "gulf-of-oman": {
     season: "Arabian Sea swell",
@@ -214,7 +221,7 @@ const TANK_WINDOW: Record<WaitingPattern, string> = {
 };
 
 export function windowAnswer(port: Port, line: LineKey): string {
-  if (line === "hull-cleaning") return HULL_WINDOW[port.condition];
+  if (line === "hull-cleaning") return port.hullWindow ?? HULL_WINDOW[port.condition];
   if (line === "hold-cleaning") return HOLD_WINDOW[port.waiting];
   return TANK_WINDOW[port.waiting];
 }
@@ -239,7 +246,7 @@ const WORK_ENV: Record<WaitingPattern, string> = {
  */
 export function conditionSummary(port: Port, line: LineKey): string {
   if (line === "hull-cleaning") {
-    return `Visibility at ${portLabel(port)} is ${CONDITION_VISIBILITY[port.condition]}, and the ${WEATHER[port.weather].season} sets the outer limits of the calendar. How the tide and sea state shape the dive plan is set out in full in the working-conditions section on this page.`;
+    return `Visibility at ${portLabel(port)} is ${port.visibility ?? CONDITION_VISIBILITY[port.condition]}, and the ${WEATHER[port.weather].season} sets the outer limits of the calendar. How the tide and sea state shape the dive plan is set out in full in the working-conditions section on this page.`;
   }
   const heat = WEATHER[port.weather].heat
     ? " Between June and September the binding constraint is working temperature inside the space rather than access to it."
@@ -349,7 +356,7 @@ export function findingNotes(port: Port, line: LineKey, extra?: string) {
   const tail = (text: string) => `${text} ${extra ?? ""}`.trim();
 
   if (line === "hull-cleaning") {
-    return [hullCargoFinding(port), tail(HULL_FINDING[port.condition])];
+    return [hullCargoFinding(port), tail(port.hullFinding ?? HULL_FINDING[port.condition])];
   }
   /* The hand-written hold/tank notes now open their scope pages, so they are
      deliberately NOT repeated here — the cargo-derived and waiting-derived
@@ -522,7 +529,7 @@ const hullScopes: PortScope[] = [
     lead: (port) =>
       `Cleanship Marine cleans and polishes bow and stern thrusters at ${portLabel(port)}, ${port.state}. Divers clear the full tunnel bore, polish the blades and hub, and clear the gratings, restoring the manoeuvring thrust that quietly disappears while a vessel sits idle.`,
     angle: (port) =>
-      `Thruster tunnels are the worst fouling trap on a hull — sheltered, still and almost never inspected. That matters more than usual at ${port.name}, where ${port.hook} keeps vessels stationary in warm water for extended periods and growth builds on tunnel walls, blades and gratings until manoeuvring performance is noticeably down at exactly the moment it is needed.`,
+      `Thruster tunnels are the worst fouling trap on a hull — sheltered, still and almost never inspected. Growth builds on the tunnel walls, blades and gratings without anyone noticing until manoeuvring performance drops, and at ${port.name} — ${port.hook} — that tends to show at exactly the moment the thrust is needed.`,
     localScope: (port) => [
       "Full tunnel bore cleaned end to end, both openings, including the areas behind the gratings",
       "Blade and hub polished, with seal and boss condition inspected and reported",
@@ -861,7 +868,7 @@ export const portLines: PortLine[] = [
     eyebrow: "Hull Cleaning",
     hubTagline: "In-water hull, propeller and survey work",
     hubIntro: (port) =>
-      `Cleanship Marine provides the full underwater scope at ${portLabel(port)} (${port.unlocode}), ${port.state} — hull cleaning, propeller super polishing, bow and stern thruster work, class-approved in-water survey and UWILD. Every scope is carried out with the vessel afloat and on hire, at the berth or at the anchorage.`,
+      `Cleanship Marine provides the full underwater scope at ${portLabel(port)}${codeSuffix(port)}, ${port.state} — hull cleaning, propeller super polishing, bow and stern thruster work, class-approved in-water survey and UWILD. Every scope is carried out with the vessel afloat and on hire, at the berth or at the anchorage.`,
     scopes: hullScopes,
     keywords: [
       "hull cleaning",
@@ -880,7 +887,7 @@ export const portLines: PortLine[] = [
     eyebrow: "Hold Cleaning",
     hubTagline: "Holds ready for the next fixture",
     hubIntro: (port) =>
-      `Cleanship Marine cleans cargo holds at ${portLabel(port)} (${port.unlocode}), ${port.state} — shore gangs alongside, riding crews on the passage out, and IRATA rope access teams for the upper hold. ${port.holdNote ?? holdCargoFinding(port)}`,
+      `Cleanship Marine cleans cargo holds at ${portLabel(port)}${codeSuffix(port)}, ${port.state} — shore gangs alongside, riding crews on the passage out, and IRATA rope access teams for the upper hold. ${port.holdNote ?? holdCargoFinding(port)}`,
     scopes: holdScopes,
     keywords: [
       "hold cleaning",
@@ -898,7 +905,7 @@ export const portLines: PortLine[] = [
     eyebrow: "Tank Cleaning",
     hubTagline: "Grade changes, sludge removal and shore tanks",
     hubIntro: (port) =>
-      `Cleanship Marine cleans cargo, bunker and shore tanks at ${portLabel(port)} (${port.unlocode}), ${port.state} — grade changes on product and chemical tankers, sludge demucking, terminal storage tanks and offshore support vessel turnarounds. ${port.tankNote ?? tankCargoFinding(port)}`,
+      `Cleanship Marine cleans cargo, bunker and shore tanks at ${portLabel(port)}${codeSuffix(port)}, ${port.state} — grade changes on product and chemical tankers, sludge demucking, terminal storage tanks and offshore support vessel turnarounds. ${port.tankNote ?? tankCargoFinding(port)}`,
     scopes: tankScopes,
     keywords: [
       "tank cleaning",

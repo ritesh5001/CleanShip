@@ -534,6 +534,12 @@ export const westAfricaPorts: Port[] = [
       "Sèmè Terminal is the export end of the Niger–Benin crude pipeline, operated by WAPCO, a CNPC subsidiary. Crude from Niger's Agadem fields arrives by pipeline and is loaded onto tankers at an offshore single point mooring; the first cargo loaded in May 2024. It is a single-purpose oil terminal rather than a port, served from Cotonou a short way along the coast.",
     hook: "the offshore crude buoy at the end of the Niger–Benin pipeline",
     neighbours: ["cotonou-port", "lome-port", "kpeme-port"],
+    visibility:
+      "good for this coast — open sea water, away from the lagoon outflows at Cotonou — so the limit here is the swell rather than what a diver can see",
+    hullFinding:
+      "Tankers coming to Sèmè have usually crossed from their last discharge in ballast and may then wait offshore for their loading slot, and it is that waiting in warm Gulf of Guinea water that adds growth fastest. A clean done before loading removes it before the laden voyage, where it would cost the most.",
+    hullWindow:
+      "No — nothing is done while a tanker is connected to the buoy and loading. Hull work is done in the waiting area off the terminal before she is called in, or after she is released, which at Sèmè is usually time she is spending waiting anyway.",
     /* A crude terminal, so the derived lines would include tank cleaning. The
        programme here is hull work only until tank work at the terminal is
        something we can describe properly. */

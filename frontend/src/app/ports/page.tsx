@@ -158,9 +158,11 @@ export default function PortsHubPage() {
                               <span className="font-display text-[18px] font-bold uppercase leading-tight text-ink-900 transition-colors duration-[140ms] group-hover:text-blue-600">
                                 {portLabel(port)}
                               </span>
-                              <span className="tabular text-[12px] text-slate-400">
-                                {port.unlocode}
-                              </span>
+                              {port.unlocode && (
+                                <span className="tabular text-[12px] text-slate-400">
+                                  {port.unlocode}
+                                </span>
+                              )}
                             </Link>
                             <p className="mt-1 text-[13px] leading-[1.5] text-slate-500">
                               {port.type} · {port.waterBody}
