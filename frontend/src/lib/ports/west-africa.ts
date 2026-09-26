@@ -11,9 +11,10 @@
  * Conakry, Kpémé or San Pédro, so a page that names the authority and
  * describes the swell is competing against nothing.
  *
- * Ports are taken from the UN/LOCODE list in `Port Coverage.xlsx`. Sierra
- * Leone, Guinea-Bissau and The Gambia appear in the service coverage claim in
- * lib/site.ts but have no entry on that sheet, so they get no pages —
+ * Ports are taken from the UN/LOCODE list in `Port Coverage.xlsx`, plus the
+ * Benin, Ivorian and Gambian terminals added from checked sources (UN/LOCODE,
+ * the port authorities, terminal data). Sierra Leone and Guinea-Bissau appear
+ * in the service coverage claim in lib/site.ts but have no pages yet —
  * publishing a port page for a port we cannot name correctly would undo the
  * point of the exercise.
  */
@@ -395,7 +396,7 @@ export const westAfricaPorts: Port[] = [
     profile:
       "Dakar is West Africa's northern gateway and a major bunkering and fishing port, working containers, phosphate and agricultural bulk for Senegal and the landlocked Sahel. Its shelter and its position on the Europe–South America routes make it a natural call for in-water work on this coast.",
     hook: "cooler Canary Current water and reliable shelter",
-    neighbours: ["conakry-port", "monrovia-port", "abidjan-port"],
+    neighbours: ["banjul-port", "conakry-port", "monrovia-port", "abidjan-port"],
     holdNote:
       "Groundnuts and agricultural bulk out of Dakar are food-grade fixtures, and phosphate inbound is exactly the residue they will not tolerate. That inbound-outbound pairing is the standing hold cleaning brief here.",
     tankNote:
@@ -1061,6 +1062,157 @@ export const westAfricaPorts: Port[] = [
         faq: {
           q: "Can UWILD be done at Sassandra?",
           a: "It is possible for an eligible vessel, but it is uncommon here. For most vessels working this coast, San Pédro — nearby, with clearer water and easier surveyor access — is the better place, and we will advise honestly.",
+        },
+      },
+    },
+  },
+  {
+    slug: "banjul-port",
+    name: "Banjul",
+    officialName: "Port of Banjul",
+    aka: ["Port of Banjul", "Gambia", "Banjul Wharf"],
+    unlocode: "GMBJL",
+    state: "Banjul",
+    country: "The Gambia",
+    countryCode: "GM",
+    coast: "Atlantic",
+    weather: "west-africa",
+    waterBody: "Gambia River estuary",
+    authority: "Gambia Ports Authority",
+    type: "State Port",
+    condition: "tidal-silt",
+    waiting: "mixed",
+    cargoes: ["Containers", "Rice, sugar and flour", "Cement and general cargo", "Fuel", "Fishing catch"],
+    vesselTypes: ["Feeder container ships", "General cargo ships", "Banjul–Barra ferries", "Fishing vessels", "Small cruise ships"],
+    airports: ["Banjul (BJL)"],
+    workAreas: ["Banjul Wharf", "New Banjul Jetty and container berths", "fisheries jetty", "Banjul–Barra ferry terminal"],
+    conditions:
+      "Banjul sits at the mouth of the Gambia River, and the water at its berths is estuary water: tidal, fast-flowing on the ebb and flood, and carrying sediment down from a river that drains a large part of West Africa. A sand bar in the entrance channel limits vessels to about a 9-metre draft, and the deepest-drafted ships time their passage to the flood tide. For in-water work that means two things — dives are timed to slack water, and visibility at the berths is low enough that divers work by touch under surface supervision.",
+    profile:
+      "Banjul is The Gambia's only seaport and the gateway for most of what the country imports — rice, sugar, flour, cement, fuel and containers — with some cargo moving on into Senegal and further inland. The Gambia Ports Authority runs about 750 metres of quay, including the Banjul Wharf, the New Banjul Jetty and its container berths, a fisheries jetty and the terminal for the Banjul–Barra ferries across the river mouth.",
+    hook:
+      "The Gambia's only seaport, at the mouth of a tidal river",
+    neighbours: ["gambia-river-port", "dakar-port", "conakry-port"],
+    lineOverrides: { "hold-cleaning": false, "tank-cleaning": false },
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "At Banjul the tide sets the working day. The Gambia River runs hard on the ebb and flood past the berths, and divers can only work safely at slack water — a window of an hour or so, twice a day. A full hull clean is therefore planned across several slack-water windows rather than one continuous shift, sized to the time the vessel is alongside, and the team uses brush carts on the flat sides where they can work largely by feel in the cloudy estuary water.",
+        faq: {
+          q: "How long does a hull clean take at Banjul?",
+          a: "Longer in elapsed time than at a sheltered port, because divers can only work at slack water in the Gambia River's tidal stream — roughly an hour or so, twice a day. We plan the clean across several slack-water windows while the vessel is alongside and tell you in advance how many she needs.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "Vessels bound for Banjul cross a sand bar in the entrance channel, often on the flood tide with limited water under the keel, and they work in estuary water full of sand and silt. Both wear on a propeller: suspended sand is mildly abrasive, and a propeller turning close to the bottom can pick up damage at the blade edges. A polish at Banjul is therefore also a careful inspection of both faces, the edges and the tips, with anything found photographed and reported.",
+        faq: {
+          q: "Do you check for damage when polishing a propeller at Banjul?",
+          a: "Always. Vessels cross the sand bar in the entrance channel, often with little water under the keel, and the estuary water carries sand and silt. We inspect the blade edges, tips and both faces during the polish, and report any damage rather than polishing over it.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "The Banjul–Barra ferries cross the mouth of the Gambia River many times a day and berth across a strong tidal stream at both ends of the crossing. That is the hardest thruster work on this coast, and a thruster tunnel fouled by the warm, nutrient-rich estuary water gives up exactly the thrust needed to hold a ferry against the current. Cleaning is fitted between crossings, at slack water, with the thruster isolated first.",
+        faq: {
+          q: "Can a Banjul–Barra ferry's thruster be cleaned without stopping the service?",
+          a: "We plan it between crossings or during a scheduled stand-down, at slack water, so the crossing is interrupted as little as possible. The thruster is isolated and tagged out with the master before the dive.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "The estuary water at Banjul is too cloudy for the wide shots a surveyor normally relies on, and slack-water windows are short. An in-water class survey here is possible, but only with close-quarters lighting, agreed acceptance criteria and a survey plan split across several tidal windows. Where a vessel's schedule allows, a survey at Dakar — a day's steaming north, in clearer Canary Current water — may give class a better picture, and we will say so up front.",
+        faq: {
+          q: "Is Banjul a good place for an in-water class survey?",
+          a: "It is possible, but the estuary water is cloudy and slack-water windows are short, so the survey needs close-quarters lighting and several tidal windows. If the vessel's route allows, Dakar has much clearer water and may be the better choice. We advise honestly before the surveyor is booked.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "For vessels trading to The Gambia, the nearest major ship repair centre is Dakar, with its Dakarnave yard. That makes UWILD attractive for regular Banjul callers — feeders and general cargo ships on fixed rotations — as long as the inspection can be done properly. Because the estuary is cloudy and tidal, UWILD for a Banjul caller is often best planned at Dakar or at the outer anchorage rather than alongside, after eligibility has been confirmed with class.",
+        faq: {
+          q: "Where should UWILD be done for a vessel trading to Banjul?",
+          a: "Often at Dakar or the outer anchorage rather than alongside at Banjul, because the estuary water is cloudy and tidal. We first confirm the vessel's eligibility with the class society, then plan the inspection where the surveyor will get the clearest picture.",
+        },
+      },
+    },
+  },
+  {
+    slug: "gambia-river-port",
+    name: "Gambia River",
+    label: "Gambia River Terminals",
+    officialName: "Banjul Anchorage and the Mandinari tanker moorings",
+    aka: ["Banjul Anchorage", "Banjul Roads", "Mandinari", "Mandinari CBM", "Gambia River"],
+    unlocode: "GMBJL",
+    state: "Banjul",
+    country: "The Gambia",
+    countryCode: "GM",
+    coast: "Atlantic",
+    weather: "west-africa",
+    waterBody: "Gambia River estuary",
+    authority: "Gambia Ports Authority",
+    type: "State Port",
+    condition: "anchorage",
+    waiting: "long-wait",
+    cargoes: ["Fuel and petroleum products", "Transhipment and lightering cargo"],
+    vesselTypes: ["Product tankers", "Vessels waiting for a Banjul berth", "Lightering and bunker barges"],
+    airports: ["Banjul (BJL)"],
+    workAreas: ["inner anchorage off Banjul", "Mandinari conventional buoy mooring", "outer anchorage beyond the bar"],
+    conditions:
+      "The inner anchorage off Banjul is 14 to 15 metres deep, a wide stretch of the estuary about a mile across and two miles long — far deeper than the port's own oil berth, which has only 5 to 6 metres. So the larger tankers bringing fuel to The Gambia either lie at anchor or moor at the conventional buoy mooring at Mandinari, about four nautical miles south of the commercial port, where they are held fore and aft between buoys. It is all tidal estuary water: the stream runs hard on the ebb and flood, and visibility is low.",
+    profile:
+      "This is the part of the Port of Banjul where the big ships wait and where the fuel comes in. The inner anchorage holds vessels waiting for a berth at Banjul and tankers too deep for the oil berth, and the Mandinari buoy mooring handles tanker discharge for the country's fuel supply. For most tankers calling The Gambia, the anchorage and Mandinari — not the quays — are where they spend their time.",
+    hook:
+      "the deep-water anchorage and tanker moorings of the Gambia River",
+    neighbours: ["banjul-port", "dakar-port", "conakry-port"],
+    visibility:
+      "low — this is a tidal estuary carrying sediment down the Gambia River, and it is at its worst in the rainy season when the river is in flood",
+    hullFinding:
+      "Vessels at the Banjul anchorage are waiting, often for days, in warm, nutrient-rich estuary water — ideal conditions for growth. Tankers waiting for Mandinari or for lighterage collect fouling across the flat bottom, and the sea chests pick up both growth and river silt.",
+    hullWindow:
+      "Not while a tanker is moored at Mandinari and discharging. Hull work is done at the inner anchorage at slack water — usually during the wait for a berth or for the buoys, which at Banjul is time the vessel is spending anyway.",
+    hullMethod:
+      "The tidal stream in the estuary sets the method here: dives are timed to slack water at the anchorage, the team works by touch under surface supervision in low visibility, and nothing is done at the Mandinari buoys while a tanker is moored and discharging.",
+    lineOverrides: { "hold-cleaning": false, "tank-cleaning": false },
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "Most tankers bringing fuel to The Gambia cannot use the port's oil berth, which has only 5 to 6 metres of water, so they spend their call at the inner anchorage or on the Mandinari buoys. The time at anchor waiting for the buoys is the window for a hull clean, done at slack water in the estuary's tidal stream. Nothing is done while the tanker is moored at Mandinari and discharging.",
+        faq: {
+          q: "When can a tanker's hull be cleaned at the Gambia River terminals?",
+          a: "While she waits at the inner anchorage off Banjul — for the Mandinari buoys or for lighterage — at slack water. Nothing is done while she is moored at Mandinari and discharging. The anchorage wait is usually long enough to plan the clean across several slack-water windows.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "A tanker leaving the Gambia River after discharge sails light, usually on a long ballast passage back to her loading port. Polishing the propeller at the inner anchorage before she leaves — at slack water, while she waits for the tide and the pilot to take her back over the bar — gives her a clean propeller for that whole voyage. The estuary's sand and silt are checked for too: blade edges and tips are inspected and any wear reported.",
+        faq: {
+          q: "Is it worth polishing a tanker's propeller at the Banjul anchorage?",
+          a: "Yes, especially before a long ballast voyage out of the Gambia River. We polish at the inner anchorage at slack water and inspect the blade edges for wear from the sandy estuary water at the same time.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "Mooring at Mandinari is a conventional buoy mooring: the tanker is held between buoys at bow and stern, placed there with her own anchors and winches, mooring boats and — where she has one — her bow thruster, all against the tidal stream. A thruster that has fouled during a long wait at anchor makes that harder. For tankers fitted with one, the tunnel is cleaned at the anchorage at slack water before she is called to the buoys.",
+        faq: {
+          q: "Why clean the thruster before mooring at Mandinari?",
+          a: "Because mooring between buoys at Mandinari is done against the Gambia River's tidal stream, and a fouled thruster gives less control. For tankers fitted with a bow thruster, we clean it at the inner anchorage at slack water before the mooring.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "The Banjul anchorage is where a vessel is most likely to need an unplanned underwater inspection: the entrance channel has a sand bar with limited water over it, and a ship that touches on the way in should be checked before she goes further. We can put a diver down at the anchorage at slack water for a damage survey with live video to the surface. For a planned class survey, the cloudy estuary water makes Dakar the better choice where the schedule allows.",
+        faq: {
+          q: "Can you do an underwater damage survey at the Banjul anchorage after touching the bar?",
+          a: "Yes. We carry out a damage survey at the inner anchorage at slack water, with live video to the surface so the master, owner, insurer and surveyor can see the damage, followed by a full report. For a planned class survey, clearer water at Dakar is usually better.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "The tankers serving The Gambia are its fuel supply, and a tanker away for a dry dock is a gap in it. UWILD can keep an eligible tanker in service, but tanker eligibility is narrower than for most ships, especially for older vessels, so it is checked with class first. With the estuary water cloudy and tidal, the inspection itself is usually better planned at Dakar or at the outer anchorage beyond the bar than inside the river.",
+        faq: {
+          q: "Is UWILD possible for a tanker trading to the Gambia River?",
+          a: "It can be, but tanker eligibility needs to be checked with the class society first, especially for older tankers. If she qualifies, we usually plan the inspection at Dakar or the outer anchorage, where the water is clearer than inside the estuary.",
         },
       },
     },
