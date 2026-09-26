@@ -444,11 +444,53 @@ export const westAfricaPorts: Port[] = [
     profile:
       "Takoradi is Ghana's bulk and energy port, exporting manganese, bauxite and cocoa and serving the Jubilee and TEN offshore fields. The mix of export bulk carriers and a resident offshore fleet gives it two quite different in-water workloads in the same harbour.",
     hook: "Ghana's offshore support base and bulk export port",
-    neighbours: ["tema-port", "abidjan-port", "san-pedro-port"],
+    neighbours: ["sekondi-port", "elmina-port", "tema-port", "abidjan-port"],
     holdNote:
       "Manganese and bauxite fines are the standing residues and both stain. The complication at Takoradi is the cocoa trade in the same port: a vessel discharging ore and fixing for cocoa needs the full sequence and a dry, odour-free hold, and the rains make the drying stage the constraint.",
     tankNote:
       "Tank work at Takoradi is mostly the offshore fleet — mud, brine, base oil and bulk tanks turned round between charters — alongside bunker and slop cleaning. Product grade changes are the smaller share.",
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "Takoradi's steadiest in-water customers are not the bulk carriers but the offshore support vessels serving Ghana's Jubilee and TEN oil fields. Between charters they lie in the harbour in warm water and foul heavily, and a fouled OSV burns more fuel and loses speed on every run out to the fields. A clean between charters, alongside in the sheltered basin, gets the vessel back to full performance before her next contract.",
+        faq: {
+          q: "Do you clean offshore support vessels at Takoradi between charters?",
+          a: "Yes — they are the main in-water customers here. OSVs waiting between charters in Takoradi harbour foul quickly in the warm water. We clean them alongside in the sheltered basin, fitted around their next mobilisation.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "An offshore support vessel spends much of her time holding position near an FPSO or a rig rather than steaming, and her propellers and thrusters are working hard at low speed. Growth on the blades makes that less efficient. At Takoradi, polishing is usually combined with thruster work on the OSV fleet, done alongside between charters, while bulk carriers loading manganese or bauxite are polished at the anchorage before a long voyage.",
+        faq: {
+          q: "Is propeller polishing worthwhile for offshore support vessels at Takoradi?",
+          a: "Yes. OSVs spend long periods holding position, so propeller condition affects fuel use even at low speed. We usually combine the polish with thruster cleaning, alongside in Takoradi between charters.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "For an offshore support vessel on dynamic positioning, the thrusters are everything: they are what keeps her in place beside an FPSO in the swell. A fouled thruster reduces power and position-keeping margin, which in turn limits the conditions the vessel can work in. Thruster cleaning on the Takoradi OSV fleet is therefore routine maintenance, planned between charters and done alongside in the sheltered harbour.",
+        faq: {
+          q: "Why is thruster cleaning so important for OSVs based at Takoradi?",
+          a: "Because offshore support vessels on dynamic positioning depend on their thrusters to hold position near the FPSOs and rigs. Fouling reduces thrust and the vessel's working margin. We clean the thrusters alongside in Takoradi between charters.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "Takoradi is a breakwater harbour with good shelter, and it is the base for the vessels that serve Ghana's offshore fields, many of which need regular class surveys. An in-water survey alongside in the basin between charters means the OSV does not have to leave the region for a dry dock. The harbour water is moderately clear inside the breakwater, and the survey plan is agreed with class beforehand.",
+        faq: {
+          q: "Can an OSV have its class survey at Takoradi between charters?",
+          a: "Yes, in many cases. The survey is done alongside in Takoradi's sheltered basin, with live video to the surveyor, and planned around the vessel's next charter. We agree the scope with the class society in advance.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "UWILD suits the Takoradi offshore fleet well: an OSV on a long-term charter to the Jubilee or TEN fields is expensive to take off station, and the nearest dry dock is at Tema, a voyage along the coast. Where the vessel is eligible, UWILD alongside in Takoradi earns the survey credit between charters. We confirm eligibility with class before any cost is committed.",
+        faq: {
+          q: "Can offshore support vessels do UWILD at Takoradi?",
+          a: "Yes, if they are eligible. UWILD alongside in Takoradi saves the trip to a dry dock at Tema and keeps the vessel available for charter. We check eligibility with the class society first.",
+        },
+      },
+    },
   },
   {
     slug: "tema-port",
@@ -492,11 +534,53 @@ export const westAfricaPorts: Port[] = [
     profile:
       "Tema is Ghana's principal container port and the gateway for Accra and the interior, working clinker, grain and refined products alongside the box traffic. Liner tonnage on fixed rotations makes it a port where in-water work is a planned maintenance item.",
     hook: "Ghana's main container gateway on a tight berth clock",
-    neighbours: ["takoradi-port", "lome-port", "cotonou-port"],
+    neighbours: ["accra-port", "takoradi-port", "lome-port", "cotonou-port"],
     holdNote:
       "Tema discharges clinker and loads grain, which is the sequence that fails inspections: cement residue sets hard and a grain surveyor will not pass a hold carrying it. The berth clock means the honest plan is usually to start alongside and finish with a riding crew on the passage.",
     tankNote:
       "Refined product parcels move through Tema for the Ghanaian market, so tank work is grade changes plus bunker and slop cleaning. Terminal permission governs whether it can run alongside, and it usually cannot.",
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "Tema's container berths — including the deep-water Terminal 3 run by Meridian Port Services — work to tight productivity targets, and the terminal will not hold a ship alongside for anything that is not cargo. So hull work at Tema is either sequenced to run in parallel with cargo operations, with the terminal's agreement, or done at the anchorage before the berth. For liner ships on a fixed West Africa rotation, the practical answer is a planned clean at the anchorage on a set call, not a reaction to a speed loss.",
+        faq: {
+          q: "Can the hull be cleaned while a container ship works cargo at Tema?",
+          a: "Sometimes, with the terminal's agreement, because Tema's container terminals work to strict productivity targets. More often we clean at the anchorage before the vessel berths, so no berth time is lost. For regular callers, we suggest a planned clean on a set call of the rotation.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "Main-line container ships call Tema on long rotations between Europe, Asia and West Africa, and their fuel bill on those legs is set partly by the condition of the propeller. Tema is often the last major call before a long passage, which makes it the right place to polish — at the anchorage or alongside if the terminal allows — so the vessel carries a clean propeller for the whole voyage.",
+        faq: {
+          q: "Why polish the propeller at Tema rather than elsewhere on the rotation?",
+          a: "Because Tema is often the last big call before a long passage, and a propeller polished there works for the whole of that leg. We do it at the anchorage or, with the terminal's agreement, alongside during cargo operations.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "Tema has two very different fleets in one harbour: the container and bulk ships at the commercial berths, and the tuna and industrial fishing fleet at the Tema Fishing Harbour. The fishing vessels spend long spells tied up between trips in warm harbour water, which is when thruster tunnels fill with growth. For container ships berthing on a tight window, a clean thruster makes the berthing quicker; for the fishing fleet, the clean fits between trips.",
+        faq: {
+          q: "Do you clean thrusters on fishing vessels at the Tema Fishing Harbour?",
+          a: "Yes. The tuna and industrial fishing vessels there often lie alongside between trips, which is when thruster tunnels foul. We clean them between trips, with the thruster isolated first, so the vessel loses no fishing time.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "Tema harbour water is warm and turbid, with moderate to low visibility, so a class survey at the berth needs close-quarters lighting and acceptance criteria agreed with the surveyor in advance. The anchorage outside the breakwater usually offers clearer water. For a survey that turns up damage, Tema also has a shipyard able to dry-dock, which gives the owner a local option if repairs prove necessary.",
+        faq: {
+          q: "What happens if an in-water survey at Tema finds damage that needs a dry dock?",
+          a: "Tema has a shipyard with dry-docking, so the repair can often be done locally rather than on a long deviation. The in-water survey tells you and class exactly what is there first, so the docking decision is made on evidence.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "Because Tema has its own shipyard with dry-docking, UWILD here is a straight comparison, not the only option. It is worth it for eligible vessels on tight liner schedules, where a dock slot means breaking the rotation, and for vessels where the inspection is expected to find nothing needing the ship out of the water. We check eligibility with class first and give an honest comparison with docking at Tema.",
+        faq: {
+          q: "UWILD or dry dock at Tema — which is better?",
+          a: "It depends on the vessel and what the survey is likely to find. If she is eligible and no repairs are expected, UWILD keeps her on her schedule. If repairs are likely, docking at Tema's shipyard may make more sense. We check eligibility with class and give you an honest comparison.",
+        },
+      },
+    },
   },
   {
     slug: "cotonou-port",
@@ -1213,6 +1297,238 @@ export const westAfricaPorts: Port[] = [
         faq: {
           q: "Is UWILD possible for a tanker trading to the Gambia River?",
           a: "It can be, but tanker eligibility needs to be checked with the class society first, especially for older tankers. If she qualifies, we usually plan the inspection at Dakar or the outer anchorage, where the water is clearer than inside the estuary.",
+        },
+      },
+    },
+  },
+  {
+    slug: "accra-port",
+    name: "Accra",
+    label: "Jamestown Fishing Port, Accra",
+    officialName: "Jamestown Fishing Port Complex",
+    aka: ["Jamestown", "James Town", "Jamestown Fishing Harbour", "Accra fishing port"],
+    state: "Greater Accra",
+    country: "Ghana",
+    countryCode: "GH",
+    coast: "Gulf of Guinea",
+    weather: "west-africa",
+    waterBody: "Gulf of Guinea",
+    authority: "Ghana Ports and Harbours Authority",
+    type: "State Port",
+    condition: "sheltered",
+    waiting: "berth-driven",
+    cargoes: ["Fishing catch"],
+    vesselTypes: ["Inshore fishing vessels", "Semi-industrial fishing boats", "Motorised fishing canoes"],
+    airports: ["Accra (ACC)"],
+    workAreas: ["Jamestown harbour basin", "berths inside the breakwater", "the repair workshop slipway area"],
+    conditions:
+      "Jamestown Fishing Port was built with a new breakwater, dredged basin, berths and navigation aids, turning what had been an exposed beach landing below the old Jamestown lighthouse into a sheltered harbour. Inside the breakwater the water is calm enough to work in most conditions; outside it, the Atlantic swell runs onto the Accra shoreline year-round. The basin is shallow by commercial standards, built for fishing craft rather than cargo ships.",
+    profile:
+      "Accra's cargo port is Tema, 25 kilometres along the coast; Jamestown is the capital's fishing port. The Jamestown Fishing Port Complex, built by CRCC with a Chinese government grant and inaugurated in September 2024, has a breakwater, berths, a fish market, a 60-tonne-a-day ice plant, a 200-tonne cold store and a repair workshop, and serves one of the oldest fishing communities on the Ghanaian coast.",
+    hook:
+      "the capital's new fishing harbour at Jamestown",
+    neighbours: ["tema-port", "elmina-port", "sekondi-port"],
+    visibility:
+      "moderate inside the new breakwater, reduced by run-off from the city after heavy rain and by stirred-up sediment in the shallow basin",
+    hullFinding:
+      "The vessels at Jamestown are inshore and semi-industrial fishing boats that spend long days slow or stationary on the grounds and then lie alongside between trips, so growth is heavy and mixed, and rope and netting around the propeller are as common as the fouling.",
+    hullWindow:
+      "Between fishing trips, alongside in the sheltered basin. The harbour is a working fishing port, so the job is planned around landing times and berth space.",
+    lineOverrides: { "hold-cleaning": false, "tank-cleaning": false },
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "Most boats working out of Jamestown are inshore and semi-industrial fishing vessels rather than cargo ships, and for them hull fouling is a daily fuel cost on every run to the fishing grounds. The new sheltered basin means these boats can now be cleaned in the water alongside, between trips, instead of waiting to be hauled out. For bigger ships calling Accra — container, bulk and tanker traffic — the port is Tema, not Jamestown.",
+        faq: {
+          q: "Can a fishing boat be hull-cleaned in the water at Jamestown instead of being hauled out?",
+          a: "Yes. Since the new breakwater and basin were built, fishing vessels can be cleaned alongside in sheltered water between trips. It is quicker and cheaper than hauling out and costs no fishing time. Larger ships calling Accra use Tema, which has its own page.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "For a fishing boat, the propeller's worst enemy is gear as much as growth: rope and netting caught around the shaft cut power and can damage the seal. A diver visit at Jamestown usually combines clearing whatever is wrapped around the propeller, shaft and rope guard with a polish of the blades, so the boat goes back to the grounds with full power.",
+        faq: {
+          q: "Can you clear rope and net from a propeller at Jamestown?",
+          a: "Yes, and we check the shaft seal and rope guard at the same time. For fishing vessels we usually combine this with a propeller polish in one dive, alongside in the harbour.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "Few of the boats at Jamestown carry a thruster at all; most are inshore vessels and canoes. Thruster work here is for the larger semi-industrial vessels that do have one, and it is a small, quick job alongside in the basin between trips. Anything larger that needs thruster work in the Accra area is normally at Tema.",
+        faq: {
+          q: "Is thruster cleaning common at Jamestown?",
+          a: "Not very — most boats here have no thruster. For the larger fishing vessels that do, we clean the tunnel and blades alongside between trips. Larger ships in the Accra area are handled at Tema.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "Formal class surveys are rare at Jamestown: most of the fleet is inshore fishing craft outside the class survey regime. What is useful here is a quick underwater inspection — after a grounding on the approach, for an insurer, or before buying a second-hand boat. For ships that do need a class in-water survey near Accra, Tema, with its larger basin and anchorage, is the right place.",
+        faq: {
+          q: "Can you do an underwater inspection of a fishing boat at Jamestown?",
+          a: "Yes — for damage after a grounding, for an insurer or before a purchase. It is done alongside in the harbour with video and a written report. For a formal class survey near Accra, Tema is usually the better place.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "UWILD applies to classed vessels that are eligible under their class rules, and very few of the boats at Jamestown fall into that group. For the classed vessels that work the Accra coast, the right place for UWILD is Tema, where there is space, a surveyor on hand and a shipyard close by if the inspection finds something. We will say plainly if a vessel should go there instead.",
+        faq: {
+          q: "Can UWILD be done at Jamestown, Accra?",
+          a: "For the few eligible classed vessels using the harbour it is possible, but Tema — nearby, with a larger basin and a shipyard — is usually the better place. We will recommend the right location for your vessel.",
+        },
+      },
+    },
+  },
+  {
+    slug: "elmina-port",
+    name: "Elmina",
+    label: "Elmina Fishing Port",
+    officialName: "Elmina Fishing Port",
+    aka: ["Elmina fishing harbour", "Benya lagoon", "Cape Coast"],
+    state: "Central Region",
+    country: "Ghana",
+    countryCode: "GH",
+    coast: "Gulf of Guinea",
+    weather: "west-africa",
+    waterBody: "Gulf of Guinea, at the mouth of the Benya lagoon",
+    authority: "Ghana Ports and Harbours Authority",
+    type: "State Port",
+    condition: "sheltered",
+    waiting: "berth-driven",
+    cargoes: ["Fishing catch"],
+    vesselTypes: ["Semi-industrial fishing vessels", "Inshore fishing boats", "Motorised fishing canoes"],
+    airports: ["Takoradi (TKD)", "Accra (ACC)"],
+    workAreas: ["fishing harbour basin", "berths at the Benya lagoon mouth"],
+    conditions:
+      "Elmina's fishing port sits at the mouth of the Benya lagoon, beneath Elmina Castle, and its basin was dredged and rebuilt between 2020 and 2023. The lagoon is shallow and tidal, and its outflow carries silt into the harbour, so visibility in the basin is low and the depth has to be maintained by dredging. The rebuilt breakwater gives the fleet shelter that the old port did not have.",
+    profile:
+      "Elmina is one of the oldest fishing towns on the Gulf of Guinea coast, around the castle built by the Portuguese in 1482. Its fishing port was rebuilt and expanded in an €84 million project, commissioned in May 2023, that made it the largest fishing harbour in Ghana's Central Region, serving a large fleet of canoes and semi-industrial fishing vessels.",
+    hook:
+      "a rebuilt fishing harbour at the mouth of the Benya lagoon",
+    neighbours: ["sekondi-port", "takoradi-port", "accra-port"],
+    visibility:
+      "low — the Benya lagoon's outflow carries silt into the shallow harbour, and it is worst after heavy rain",
+    hullFinding:
+      "The semi-industrial fishing vessels at Elmina lie in the warm, silty lagoon mouth between trips, so hulls carry heavy mixed growth plus a film of silt, and sea chests and cooling inlets clog with both. Nets and rope around propellers are a routine find.",
+    hullWindow:
+      "Between fishing trips, alongside in the rebuilt harbour, planned around landing times and the tide at the lagoon mouth.",
+    lineOverrides: { "hold-cleaning": false, "tank-cleaning": false },
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "Elmina's harbour sits at the mouth of a silty lagoon, and that shapes the work: divers work largely by touch in low visibility, and silt clogs sea chests and cooling-water inlets as well as the hull. For a fishing vessel, a blocked inlet means an overheating engine at sea, so a clean at Elmina always includes clearing the sea chests and inlets, not just the hull plating.",
+        faq: {
+          q: "Why do sea chests clog so quickly at Elmina?",
+          a: "Because the harbour is at the mouth of the Benya lagoon, which carries silt into the basin, and the warm water grows marine life fast. Both end up in the sea chests and cooling inlets. We clear them as part of every hull clean here.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "The Elmina fleet fishes the coast day after day, and the combination of growth and caught gear is what costs it power. A diver visit clears netting and rope from the propeller, shaft and rope guard, checks the shaft seal, and polishes the blades — done alongside between trips so no fishing day is lost.",
+        faq: {
+          q: "Can you clear a fouled propeller at Elmina between fishing trips?",
+          a: "Yes. We clear netting and rope, check the shaft seal and rope guard, and polish the blades, alongside in the harbour between trips.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "Most of the Elmina fleet has no thruster, so thruster work is limited to the larger semi-industrial vessels that do. Where one is fitted, it matters here: turning in the harbour at the narrow lagoon mouth, with a tidal current running, needs full control. The tunnel and blades are cleaned alongside between trips.",
+        faq: {
+          q: "Do fishing vessels at Elmina need thruster cleaning?",
+          a: "Only the larger vessels fitted with one, which is a minority of the fleet. For those, we clean the tunnel and blades alongside between trips — useful given the tight turning space at the lagoon mouth.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "The silty water at Elmina makes it a poor place for a formal class survey, and few vessels here need one. It is a practical place for an underwater damage check — after a grounding on the lagoon bar, or for an insurer — done with close-quarters lighting. For a class survey on this stretch of coast, Takoradi is usually the better choice.",
+        faq: {
+          q: "Can you do an underwater damage check at Elmina after a grounding?",
+          a: "Yes, with close-quarters lighting because the water is silty. You get video and a written report. For a formal class survey, Takoradi is usually better.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "UWILD is for classed vessels that are eligible under their class rules, and Elmina's fleet is mostly outside that system. For a classed vessel working this part of the coast, UWILD is best done at Takoradi, where the water is clearer and surveyors are based. We will recommend that rather than attempt it in Elmina's silty basin.",
+        faq: {
+          q: "Is UWILD possible at Elmina?",
+          a: "For eligible classed vessels it is possible, but the silty water makes Takoradi, a short distance west, the better location. We will advise honestly which to choose.",
+        },
+      },
+    },
+  },
+  {
+    slug: "sekondi-port",
+    name: "Sekondi",
+    label: "Sekondi Fishing Harbour",
+    officialName: "Albert Bosomtwi-Sam Fishing Harbour",
+    aka: ["Sekondi", "Sekondi Fishing Port", "Albert Bosomtwi-Sam Fishing Harbour", "Sekondi-Takoradi"],
+    unlocode: "GHSEK",
+    state: "Western Region",
+    country: "Ghana",
+    countryCode: "GH",
+    coast: "Gulf of Guinea",
+    weather: "west-africa",
+    waterBody: "Gulf of Guinea",
+    authority: "Ghana Ports and Harbours Authority",
+    type: "State Port",
+    condition: "sheltered",
+    waiting: "berth-driven",
+    cargoes: ["Fishing catch"],
+    vesselTypes: ["Semi-industrial fishing vessels", "Inshore fishing boats", "Fishing canoes"],
+    airports: ["Takoradi (TKD)", "Accra (ACC)"],
+    workAreas: ["fishing harbour basin", "fishing boat berths"],
+    conditions:
+      "Sekondi's fishing harbour lies a short distance east of Takoradi port, in the twin city of Sekondi-Takoradi, and it is sheltered behind its own breakwater. It shares a wall with the Sekondi Naval Base, so work near the base boundary follows the navy's security rules. The water is warm and moderately clear away from the landing areas.",
+    profile:
+      "The Albert Bosomtwi-Sam Fishing Harbour at Sekondi is one of Ghana's two main fishing harbours, alongside Tema. It was started in 1988 with Japanese grant aid and expanded with a further Japanese grant from 2016, adding berthing capacity and an ice plant, and it serves a large fleet of canoes and semi-industrial fishing vessels. Next door is the Sekondi Naval Base, home port of the Ghana Navy's largest ship.",
+    hook:
+      "one of Ghana's two main fishing harbours, beside the naval base",
+    neighbours: ["takoradi-port", "elmina-port", "tema-port"],
+    visibility:
+      "moderate — better than the lagoon ports, reduced near the landing areas and after heavy rain",
+    hullFinding:
+      "The fishing vessels at Sekondi lie alongside between trips in warm, sheltered water, and growth builds quickly on hulls, in sea chests and around the stern gear. Rope and netting around the propeller are a common find.",
+    hullWindow:
+      "Between fishing trips, alongside in the harbour, planned around landings and berth space.",
+    lineOverrides: { "hold-cleaning": false, "tank-cleaning": false },
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "Sekondi is the fishing harbour of Sekondi-Takoradi, and the fishing fleet is kept apart from the commercial port and offshore base at Takoradi next door. The boats here are semi-industrial and inshore fishing vessels, and a hull clean for them is about fuel on every trip to the grounds. The work is done alongside between trips in the sheltered basin, keeping clear of the naval base boundary.",
+        faq: {
+          q: "What is the difference between hull cleaning at Sekondi and at Takoradi?",
+          a: "The vessels. Sekondi is the fishing harbour, where we clean fishing vessels alongside between trips. Takoradi, next door, is the commercial port and offshore support base, with bulk carriers and offshore support vessels. Each has its own page.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "For a fishing boat, a propeller fouled with rope or net loses power and can damage its shaft seal. At Sekondi, a diver visit usually combines clearing the propeller, shaft and rope guard with a polish of the blades, so the boat goes back to sea at full power. It is done alongside between trips.",
+        faq: {
+          q: "Can you clear rope and net from a fishing boat's propeller at Sekondi?",
+          a: "Yes. We clear the propeller, shaft and rope guard, check the seal and polish the blades, alongside in the harbour between trips.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "Most boats at Sekondi have no thruster. For the larger vessels that do, a thruster clean is a short job alongside between trips. The naval vessels next door at the Sekondi Naval Base are a separate matter, handled only through the navy's own arrangements.",
+        faq: {
+          q: "Do you clean thrusters at Sekondi?",
+          a: "For fishing vessels fitted with one, yes — alongside between trips. Most of the fleet has no thruster. Work for the naval base next door is only done through the navy's own arrangements.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "Formal class surveys are uncommon at Sekondi because most of the fleet is outside the class survey regime. What is often needed here is an underwater inspection — damage after a grounding, a check for an insurer or before a sale. Because Takoradi port is next door, a classed vessel that needs a full in-water survey can easily be handled there instead.",
+        faq: {
+          q: "Can a fishing vessel get an underwater inspection at Sekondi?",
+          a: "Yes — for damage, an insurer or a sale. We inspect alongside with video and a written report. For a classed vessel needing a formal survey, Takoradi next door is usually better.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "UWILD is only relevant for classed vessels that are eligible, and those are rare in the Sekondi fishing fleet. For the classed vessels working this coast, UWILD is normally planned at Takoradi next door, which has the offshore support base, surveyors on hand and a basin used to class work.",
+        faq: {
+          q: "Can UWILD be done at Sekondi?",
+          a: "It is possible for eligible classed vessels, but Takoradi, next door, is usually the better place. We will recommend the right location for your vessel.",
         },
       },
     },
