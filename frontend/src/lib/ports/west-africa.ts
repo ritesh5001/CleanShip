@@ -185,11 +185,53 @@ export const westAfricaPorts: Port[] = [
     profile:
       "Abidjan is the largest port in francophone West Africa and the region's main container, cocoa and refined product gateway, with a substantial fishing fleet in the same lagoon. The shelter makes it the practical base for in-water work along this stretch of coast.",
     hook: "sheltered lagoon water behind the Vridi Canal",
-    neighbours: ["san-pedro-port", "monrovia-port", "tema-port"],
+    neighbours: ["vridi-port", "lion-terminal-port", "san-pedro-port", "espoir-terminal-port"],
     holdNote:
       "Cocoa and coffee are food-grade cargoes with strict cleanliness and odour requirements, and Abidjan loads both in volume. A hold that carried a mineral or fertiliser cargo inbound and is fixed for cocoa outbound needs the full sequence and a dry, odour-free result — the lagoon humidity is what makes the drying stage the hard part.",
     tankNote:
       "Abidjan refines and exports product, so the tank work here is grade changes on product tankers plus bunker and slop cleaning. Licensed slop reception is limited on this coast, so it is booked before the tanks are opened rather than assumed.",
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "Abidjan is the one port on this coast where the hull problem is the water itself. Once a vessel is through the Vridi Canal she is lying in the Ébrié Lagoon — warm, brackish and rich in nutrients — and fouling grows back faster here than at the open-sea ports along the coast. A container ship on a regular Abidjan rotation is picking up growth on every call, so the clean is best treated as a recurring item timed to the rotation, not a one-off when the speed has already dropped.",
+        faq: {
+          q: "Why does the hull foul so quickly in Abidjan?",
+          a: "Because the port is inside the Ébrié Lagoon. The water is warm, brackish and rich in nutrients, which is ideal for marine growth, and it is sheltered and still. Vessels that call Abidjan regularly pick up fouling on every call, so we suggest cleaning on a schedule tied to the rotation rather than waiting for a speed loss.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "The container, reefer and cocoa tonnage that works Abidjan leaves through the Vridi Canal onto long legs to Europe and Asia. A propeller that has sat for days in the lagoon comes out with a film and early growth on the blades, and that roughness is carried the whole way. Polishing inside the lagoon, while the vessel works cargo, puts a clean blade on for the departure — the inner basins are sheltered enough to take the finish properly.",
+        faq: {
+          q: "Can the propeller be polished while the vessel works cargo in Abidjan?",
+          a: "Usually, yes. The berths are inside the sheltered lagoon, and propeller polishing can run alongside cargo operations once the shaft is immobilised and the terminal agrees. The vessel then leaves through the Vridi Canal with a freshly polished propeller.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "Every vessel entering Abidjan comes through the Vridi Canal and then manoeuvres within the lagoon basins to reach her berth, and the lagoon is where thruster tunnels foul fastest: still, warm, brackish water inside a sheltered tunnel. Liner vessels berthing at the container terminals on a tight window depend on full thrust. A thruster clean at the berth, with the unit isolated, restores it before the next departure through the canal.",
+        faq: {
+          q: "Which vessels in Abidjan need thruster cleaning most often?",
+          a: "Vessels that call regularly and spend time in the lagoon — container ships and reefers on fixed rotations, and the resident fishing and support fleet. The lagoon water fouls thruster tunnels quickly, so regular callers benefit from a clean every few calls rather than waiting until thrust is visibly down.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "Lagoon water is the difficulty for survey work in Abidjan: brackish, full of suspended matter and low in visibility, especially in the rainy season when the rivers feeding the Ébrié Lagoon are running. A surveyor cannot pass what they cannot see, so a class survey here is planned with close-quarters lighting and agreed acceptance criteria in advance — or, where the vessel's schedule allows, done outside the canal at the anchorage, where the sea water is clearer.",
+        faq: {
+          q: "Is it better to do an in-water survey inside the Abidjan lagoon or outside at the anchorage?",
+          a: "Outside, if the vessel's schedule allows. The anchorage beyond the Vridi Canal has clearer sea water than the lagoon, which gives the surveyor a better picture. Inside the lagoon, visibility is low — especially in the rainy season — so the lighting plan and acceptance criteria have to be agreed with class beforehand.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "Abidjan has ship repair facilities, so for a vessel trading here UWILD is a choice rather than the only way to avoid a long deviation. It makes most sense for the regular callers — liner vessels on a fixed schedule — where a dock slot means breaking the rotation. The inspection is best done at the anchorage outside the canal, in clearer water, and eligibility is checked with class first.",
+        faq: {
+          q: "Should we do UWILD in Abidjan or dock at a local yard?",
+          a: "It depends on the vessel and the scope. If she is eligible and no repairs below the waterline are expected, UWILD keeps her on her rotation. If repairs are likely, a docking may be the better call. We check eligibility with class and give you an honest comparison before anything is booked.",
+        },
+      },
+    },
   },
   {
     slug: "san-pedro-port",
@@ -226,9 +268,51 @@ export const westAfricaPorts: Port[] = [
     profile:
       "San Pédro is the world's largest cocoa export port and Côte d'Ivoire's second harbour, working timber, manganese and containers alongside it. Traffic is smaller bulk and reefer tonnage on seasonal cocoa rotations.",
     hook: "the world's largest cocoa export port",
-    neighbours: ["abidjan-port", "monrovia-port", "tema-port"],
+    neighbours: ["sassandra-port", "abidjan-port", "monrovia-port", "tema-port"],
     holdNote:
       "Cocoa is the whole story here. It is food-grade, it is odour-sensitive, and it will reject a hold that carried manganese or timber treatment residue without a full clean. San Pédro is where the difference between a swept hold and a grain-clean hold turns into a rejected fixture.",
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "San Pédro's trade moves with the cocoa season, and the reefer and bulk tonnage that comes for it often waits for cargo to be ready. That waiting, in warm Gulf of Guinea water, is when the hull fouls. The port sits behind a breakwater in open-sea water rather than a lagoon, so it is a good place to clean properly and film it well — and the quieter berths mean a full shift is usually available without fighting for time.",
+        faq: {
+          q: "When is the best time to clean a hull at San Pédro?",
+          a: "While the vessel is waiting for cargo, which is common during the cocoa season. The water here is clearer than in the lagoon ports and the berths are less congested than Abidjan, so a full clean with a good video record can usually be done in one visit.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "Many of the vessels loading cocoa at San Pédro are reefers and general cargo ships heading on a long voyage to Europe, where their fuel bill is set by the condition they leave in. The clearer water behind the breakwater lets a diver work the blades to an even Class A finish and record it properly, so the owner gets both the fuel saving and the evidence for the performance file.",
+        faq: {
+          q: "Is San Pédro a good place for propeller polishing?",
+          a: "Yes. The water behind the breakwater is clearer than at the lagoon ports, which helps the diver finish the blades evenly and film the result. For vessels leaving on a long voyage to Europe with cocoa, the polish pays for itself over that passage.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "San Pédro's smaller reefer and general cargo tonnage calls on a seasonal pattern, and between seasons vessels can sit idle for long spells — the conditions in which a thruster tunnel fills up with growth without anyone noticing. The first berthing of the season is where it shows. Cleaning the tunnel, blades and gratings on arrival, while the vessel waits for cargo, restores the thrust before it is needed.",
+        faq: {
+          q: "Why check the thruster at the start of the cocoa season at San Pédro?",
+          a: "Because vessels often sit idle between seasons, and that is when thruster tunnels foul most. A clean on arrival, while waiting for cargo, restores thrust before the busy berthing period begins.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "San Pédro is one of the better survey ports on this coast. It is open-sea water behind a breakwater rather than lagoon or river water, so visibility is generally good enough for the wide shots and close detail a surveyor needs. The swell still governs the outer anchorage, so a survey is best done inside the breakwater when a berth or a quiet corner of the basin is available.",
+        faq: {
+          q: "How does San Pédro compare with Abidjan for an in-water survey?",
+          a: "San Pédro usually has clearer water, because it is open sea behind a breakwater rather than a lagoon. That makes it a good choice for class survey work, done inside the breakwater where the swell does not reach.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "For a vessel on the San Pédro cocoa trade, the nearest ship repair yard is a voyage away along the coast, and a docking in the middle of the season costs cargo as well as time. UWILD lets an eligible vessel earn the survey credit during the wait for cargo instead. The clear water behind the breakwater helps produce a strong inspection record, and eligibility is checked with class before anything is booked.",
+        faq: {
+          q: "Can UWILD be done at San Pédro during the cocoa season?",
+          a: "Yes, if the vessel is eligible — and doing it while she waits for cargo means no time is lost. We confirm eligibility with the class society first and plan the inspection inside the breakwater, where the water is clearer and calmer.",
+        },
+      },
+    },
   },
   {
     slug: "monrovia-port",
@@ -543,6 +627,8 @@ export const westAfricaPorts: Port[] = [
     /* A crude terminal, so the derived lines would include tank cleaning. The
        programme here is hull work only until tank work at the terminal is
        something we can describe properly. */
+    hullMethod:
+      "The buoy itself is off limits, so hull work is done with the tanker in the waiting area off the terminal, before she is called to the SPM or after she is released; the dive plan is built around the loading schedule and the swell.",
     lineOverrides: { "tank-cleaning": false, "hold-cleaning": false },
     scopeNotes: {
       "underwater-hull-cleaning": {
@@ -583,6 +669,398 @@ export const westAfricaPorts: Port[] = [
         faq: {
           q: "Is UWILD possible for a crude tanker at Sèmè?",
           a: "It can be, but eligibility for tankers — especially older ones under the enhanced survey programme — is narrower than for other vessels. We check the vessel's age, class notation and survey history with the class society first. If she qualifies, the inspection is done in the waiting area off the terminal, outside the safety zone, and never while she is connected.",
+        },
+      },
+    },
+  },
+  {
+    slug: "vridi-port",
+    name: "Vridi",
+    label: "Vridi Oil Terminals",
+    officialName: "Vridi–Port-Bouët oil terminals, Port of Abidjan",
+    aka: ["Vridi", "Port-Bouët", "Port Bouet", "Vridi Canal", "Abidjan oil terminal"],
+    unlocode: "CIPBT",
+    state: "Abidjan",
+    country: "Côte d'Ivoire",
+    countryCode: "CI",
+    coast: "Gulf of Guinea",
+    weather: "west-africa",
+    waterBody: "Vridi Canal and the Ébrié Lagoon",
+    authority: "Port Autonome d'Abidjan",
+    type: "State Port",
+    condition: "sheltered",
+    waiting: "mixed",
+    cargoes: ["Crude oil and refined products", "Bitumen", "LPG"],
+    vesselTypes: ["Product tankers", "Bitumen tankers", "LPG carriers", "Bunker barges"],
+    airports: ["Abidjan (ABJ)"],
+    workAreas: ["oil berths along the Vridi Canal", "Petroci and SIAP tanker berths", "anchorage off the canal entrance"],
+    conditions:
+      "The Vridi Canal is a straight cut 2.7 kilometres long, 370 metres wide and about 13.5 metres deep, opened in 1950 to join the sea to the Ébrié Lagoon, and the oil terminals line its banks. That puts the tanker berths in a narrow, busy channel with a current running through it as the lagoon exchanges water with the sea, rather than in a quiet basin. In-water work at these berths is therefore timed around the current and the canal traffic, and always agreed with the terminal, because every one of them is a hazardous-cargo berth.",
+    profile:
+      "Vridi, in the commune of Port-Bouët, is where Abidjan handles oil. Five oil terminals line the Vridi Canal — including the Petroci and SIAP tanker berths — alongside the SIR refinery and the Abidjan–Vridi Petroleum Terminal, a GESTOCI depot commissioned in 1983 with 324,400 cubic metres of storage and one of the largest in West Africa. The traffic is product, bitumen and LPG tankers supplying Côte d'Ivoire and its landlocked neighbours.",
+    hook:
+      "Abidjan's oil terminals along the Vridi Canal",
+    neighbours: ["lion-terminal-port", "abidjan-port", "espoir-terminal-port"],
+    visibility:
+      "low to moderate — the canal carries lagoon water out to sea and sea water in, and the brackish, sediment-laden lagoon side is much cloudier than the open sea outside",
+    hullWindow:
+      "Only with the terminal's agreement, because every berth on the Vridi Canal is a hazardous-cargo berth. Where the terminal permits it, work is done alongside at slack water in the canal; where it does not, the vessel is cleaned at the anchorage off the canal entrance before or after her berth.",
+    lineOverrides: { "hold-cleaning": false, "tank-cleaning": false },
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "The tankers at Vridi lie in a canal, not a basin, and the current through the Vridi Canal changes as the lagoon exchanges water with the sea. That current — not the swell — is what governs a hull clean here. The dive is timed to the slack water, and the terminal's safety rules come first, because these are hazardous-cargo berths where no in-water work happens without the terminal's written permission.",
+        faq: {
+          q: "Can a tanker's hull be cleaned at a Vridi oil berth?",
+          a: "Only with the terminal's written permission, and only at slack water, because the canal has a current and every berth handles hazardous cargo. Where the terminal will not permit it, we clean at the anchorage off the Vridi Canal entrance before or after the vessel's berth.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "Product and bitumen tankers supplying Abidjan and the inland markets run short regional voyages and return often, which means their propellers spend a lot of time idle at the berth or waiting off the canal. Polishing at Vridi is usually done at the anchorage outside the canal, where there is no current, clear sea water and no hazardous-cargo restrictions — so the blades are finished properly before the next loaded passage.",
+        faq: {
+          q: "Where is propeller polishing done for tankers calling at Vridi?",
+          a: "Usually at the anchorage off the Vridi Canal entrance, where there is no canal current, the water is clearer and there are no berth restrictions. It can be done alongside only if the terminal agrees and the current allows.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "Berthing a tanker in the Vridi Canal means manoeuvring in a narrow channel with a current and passing traffic, and the thruster is doing real work the whole time. A tunnel fouled by the brackish lagoon water that flows through the canal gives less thrust exactly when it matters. The thruster is cleaned at the anchorage or, with the terminal's permission, at slack water alongside, and isolated with the master first.",
+        faq: {
+          q: "Why is thruster condition important for tankers berthing in the Vridi Canal?",
+          a: "Because the canal is narrow, has a current and carries passing traffic, so the thruster is working hard during every berthing. A fouled tunnel gives less thrust when it is needed most. We clean it at the anchorage, or alongside at slack water where the terminal allows.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "Survey work at the Vridi berths faces two limits at once: the cloudy lagoon water that flows through the canal, and the hazardous-cargo rules at every terminal. For a class survey, the anchorage outside the canal is usually the better place — clearer sea water and no terminal restrictions. Where it has to be done alongside, the lighting plan and the terminal's approval are both agreed before the surveyor attends.",
+        faq: {
+          q: "Can an in-water class survey be done alongside at Vridi?",
+          a: "It can, with the terminal's approval and a close-quarters lighting plan agreed with the surveyor, because the canal water is cloudy. In most cases the anchorage outside the canal is the better choice: clearer water and no hazardous-cargo restrictions.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "The tankers serving Vridi are the fuel supply for Côte d'Ivoire and its landlocked neighbours, and taking one out of service for a docking leaves a gap in that supply. UWILD lets an eligible tanker earn the survey credit without leaving the trade. Tanker eligibility is narrower than for most ships, especially for older vessels, so it is checked with class first; the inspection itself is done at the anchorage outside the canal.",
+        faq: {
+          q: "Is UWILD possible for a product tanker trading to Vridi?",
+          a: "It can be, but tanker eligibility is narrower than for other ships, especially older ones, so we check it with the class society first. If she qualifies, the inspection is done at the anchorage off the Vridi Canal, where the water is clearer and there are no berth restrictions.",
+        },
+      },
+    },
+  },
+  {
+    slug: "lion-terminal-port",
+    name: "Lion",
+    label: "Lion Terminal",
+    officialName: "Lion Terminal (single point mooring off Port-Bouët)",
+    aka: ["Lion SPM", "Port-Bouët SPM", "Abidjan crude terminal"],
+    state: "Abidjan",
+    country: "Côte d'Ivoire",
+    countryCode: "CI",
+    coast: "Gulf of Guinea",
+    weather: "west-africa",
+    waterBody: "Gulf of Guinea, off Port-Bouët",
+    authority: "Port Autonome d'Abidjan",
+    type: "Private Port",
+    condition: "anchorage",
+    waiting: "mixed",
+    cargoes: ["Crude oil"],
+    vesselTypes: ["Crude tankers of 80,000 to 250,000 dwt", "Mooring and support craft"],
+    airports: ["Abidjan (ABJ)"],
+    workAreas: ["temporary anchorage off the Vridi Canal entrance", "sea area outside the SPM safety zone"],
+    conditions:
+      "Lion Terminal is a single point mooring in open sea about 1.2 nautical miles off the Port-Bouët lighthouse, so there is no shelter at all: a tanker on the buoy, or waiting for it, takes the full Atlantic swell running onto this coast. Mooring is in daylight only, and pilots board at a temporary anchorage a few miles off the Vridi Canal entrance. No in-water work is done at the buoy or while a tanker is connected; it happens at that anchorage, before or after.",
+    profile:
+      "Lion Terminal is the crude oil discharge buoy off Port-Bouët, just outside the Vridi Canal, where tankers of 80,000 to 250,000 deadweight tonnes — up to a 21-metre draft — discharge crude for the refinery and storage complex at Vridi. It is one of the few places on this coast that takes very large crude carriers, and it is too deep and too exposed for anything but a buoy.",
+    hook:
+      "the crude discharge buoy off Port-Bouët",
+    neighbours: ["vridi-port", "abidjan-port", "espoir-terminal-port"],
+    visibility:
+      "good by the standards of this coast — it is open sea water, clearer than the lagoon inside the Vridi Canal — so the swell rather than visibility decides when a diver can work",
+    hullFinding:
+      "The large crude tankers that discharge at Lion Terminal often wait at the anchorage for their daylight mooring slot, and waiting in warm Gulf of Guinea water is what adds growth fastest. Because they arrive laden and leave light, the hull they present at the anchorage before discharge is at its deepest — the full wetted area is underwater.",
+    hullWindow:
+      "No — nothing is done while a tanker is connected to the buoy. Hull work is done at the temporary anchorage off the Vridi Canal entrance, typically while she waits for her daylight mooring slot, or after she is released.",
+    hullMethod:
+      "The buoy itself is off limits, so hull work is done with the tanker at the temporary anchorage off the Vridi Canal entrance, before she is moored or after she is released; the dive plan is built around the daylight mooring schedule and the swell.",
+    lineOverrides: { "hold-cleaning": false, "tank-cleaning": false },
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "A crude tanker coming to Lion Terminal arrives laden, so the whole of her flat bottom is deep underwater — the largest wetted area she will present all voyage. Moorings are made in daylight only, so tankers routinely wait at the anchorage off the Vridi Canal for their slot, and that wait is the window for a clean. It is done there, well outside the buoy's safety zone, and she then discharges and sails light.",
+        faq: {
+          q: "When can a tanker's hull be cleaned at Lion Terminal?",
+          a: "While she waits at the anchorage for her daylight mooring slot, or after she has been released from the buoy. Nothing is done at the SPM or while she is connected. The anchorage wait is the usual window.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "After discharging at Lion Terminal a crude tanker sails light, often on a long ballast voyage back to her loading area. A propeller polished at the anchorage off Port-Bouët — before she moors, or after she leaves the buoy — works for that whole passage. With the anchorage in open swell, the polish is fitted to a calm spell and planned alongside the terminal's mooring schedule.",
+        faq: {
+          q: "Is it worth polishing the propeller of a VLCC or Suezmax at Lion Terminal?",
+          a: "Yes, especially before a long ballast voyage. The polish is done at the anchorage off the Vridi Canal, before mooring or after release, in a calm spell. We plan it around the terminal's daylight mooring schedule so it costs no extra time.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "Most very large crude carriers calling at Lion Terminal have no bow thruster — they are brought onto the buoy with the help of tugs and mooring craft. So thruster cleaning here is mostly for the smaller tankers that do carry one, and for the support and mooring craft that work the buoy. Those boats spend their time in warm water between jobs and depend on their thrusters when handling hoses and hawsers at the SPM.",
+        faq: {
+          q: "Do the large tankers at Lion Terminal need thruster cleaning?",
+          a: "Many very large crude carriers have no bow thruster, so usually not. Thruster cleaning at Lion Terminal is mainly for the smaller tankers that are fitted with one and for the support and mooring craft that work the buoy.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "Open sea water gives Lion Terminal better visibility than the lagoon ports, but the anchorage is fully exposed to the Atlantic swell, and a surveyor needs the diver to hold steady on the hull for the length of a survey. Surveys here are planned with standby time built in, fitted to the wait for the daylight mooring slot, and agreed with class beforehand.",
+        faq: {
+          q: "Can a class survey be done while a tanker waits for Lion Terminal?",
+          a: "Yes — the wait for the daylight mooring slot is a good time for it. The anchorage has clear sea water but is exposed to swell, so we plan the survey with standby time and agree the programme with the class society in advance.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "The tankers that discharge at Lion Terminal are large crude carriers, and UWILD rules for tankers — particularly older ones under the enhanced survey programme — are narrower than for most ships. So a UWILD enquiry here starts with the vessel's age, class and survey history. Where she is eligible, the inspection can be done at the anchorage off Port-Bouët during the wait for the mooring slot, saving a long deviation to a dock that could take a ship of her size.",
+        faq: {
+          q: "Is UWILD possible for a large crude tanker at Lion Terminal?",
+          a: "It can be, if she is eligible — and for large and older tankers eligibility needs careful checking with class. If she qualifies, the inspection is done at the anchorage off Port-Bouët during the wait for the mooring slot, never while she is connected to the buoy.",
+        },
+      },
+    },
+  },
+  {
+    slug: "espoir-terminal-port",
+    name: "Espoir",
+    label: "Espoir Marine Terminal",
+    officialName: "Espoir Marine Terminal (FPSO Espoir Ivoirien)",
+    aka: ["Espoir", "Espoir field", "FPSO Espoir Ivoirien", "Block CI-26"],
+    unlocode: "CIESP",
+    state: "Block CI-26",
+    country: "Côte d'Ivoire",
+    countryCode: "CI",
+    coast: "Gulf of Guinea",
+    weather: "west-africa",
+    waterBody: "Gulf of Guinea",
+    authority: "CNR International",
+    type: "Private Port",
+    condition: "anchorage",
+    waiting: "mixed",
+    cargoes: ["Crude oil", "Associated gas piped ashore"],
+    vesselTypes: ["FPSO Espoir Ivoirien", "Shuttle tankers", "Offshore support vessels"],
+    airports: ["Abidjan (ABJ)"],
+    workAreas: ["FPSO Espoir Ivoirien on station", "shuttle tanker offloading area", "field support vessel moorings"],
+    conditions:
+      "Espoir lies in open sea about 10 nautical miles south of Jacqueville and 32 nautical miles south-west of Abidjan, so everything here — the FPSO, the shuttle tankers and the support vessels — works in the full Atlantic swell with no shelter. The field has a wellhead platform feeding the FPSO, and all diving is done under the operator's field permit system, planned around production, offloading and the weather rather than a berth.",
+    profile:
+      "Espoir is an offshore oil field in Block CI-26, operated by CNR International with Petroci and Tullow as partners. A wellhead platform feeds the FPSO Espoir Ivoirien, which stores up to 1.16 million barrels and offloads crude to shuttle tankers, while gas goes ashore by subsea pipeline to generate electricity in Abidjan. The FPSO is owned by BW Offshore and has stayed on station under successive lease extensions.",
+    hook:
+      "an FPSO field off Jacqueville that never comes into port",
+    neighbours: ["baobab-terminal-port", "lion-terminal-port", "vridi-port"],
+    visibility:
+      "good — this is clear open-sea water well offshore — so the swell and the field's operations rather than visibility decide the window",
+    hullFinding:
+      "An FPSO that has been on station for years has never had its hull cleaned by a dock, so growth builds in layers, and it matters most at the sea chests, water intakes and caissons, where fouling cuts the cooling and process water flow the plant depends on. Shuttle tankers and support vessels show the more familiar pattern of growth from long periods of slow steaming and waiting.",
+    hullWindow:
+      "Only within the operator's permit system. On the FPSO, in-water work is planned around production and offloading; on a shuttle tanker, it is done while she waits in the field rather than during a connected offloading.",
+    hullMethod:
+      "There is no anchor and no berth here: the FPSO is held on station by her own moorings, and shuttle tankers and support vessels work around her, so the dive plan is built around the field's production and offloading programme and the swell, under the operator's permit system.",
+    lineOverrides: { "hold-cleaning": false, "tank-cleaning": false },
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "The FPSO Espoir Ivoirien has been moored on the field for years and will not see a dry dock while she produces, so her hull is cleaned where she is. The priority on an FPSO is not speed but flow: sea chests, water intakes and caissons clogged with growth reduce the cooling and process water the plant needs. At Espoir, hull cleaning is therefore planned with the operator as maintenance of the production system, not as a fuel-saving job.",
+        faq: {
+          q: "Why clean the hull of an FPSO that never sails?",
+          a: "Because fouling on an FPSO blocks sea chests, intakes and caissons and reduces the water flow the production plant depends on. At Espoir the cleaning is planned with the operator as part of keeping the plant running, within the field's permit system.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "The FPSO at Espoir is moored on station and does not use a propeller in service, so propeller polishing here is for the vessels that come and go: the shuttle tankers that take the crude away and the support vessels that serve the field. A shuttle tanker waiting for her offloading slot in warm water collects growth on the blades, and a polish before she loads means she carries a clean propeller on the laden voyage.",
+        faq: {
+          q: "Is propeller polishing relevant at Espoir if the FPSO does not move?",
+          a: "For the FPSO, no — she stays moored on station. But the shuttle tankers and support vessels working the field do benefit. A shuttle tanker can be polished while she waits for her offloading slot, so she leaves laden with a clean propeller.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "The support vessels that serve an offshore field like Espoir use their thrusters constantly — holding position alongside the FPSO or the wellhead platform, often on dynamic positioning. A thruster that loses power to fouling limits what those vessels can do in the swell. Cleaning the tunnels and blades on the field support fleet is the main thruster work here, planned between their tasks so field operations are not interrupted.",
+        faq: {
+          q: "Which vessels at Espoir need thruster cleaning?",
+          a: "Mainly the offshore support vessels, which rely on their thrusters to hold position near the FPSO and the platform, often on dynamic positioning. We clean them between tasks so the field is not left without support.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "An FPSO that stays on station for years has to have its hull and moorings surveyed where it is, because it cannot go to a dry dock without stopping production. That makes in-water class survey work at Espoir a routine requirement, not an alternative. The survey programme — hull plating, sea chests, mooring connections and appendages — is agreed with the class society and the operator in advance and fitted around production and offloading.",
+        faq: {
+          q: "How is an FPSO like Espoir Ivoirien surveyed for class?",
+          a: "In the water, because she cannot go to a dry dock without stopping production. The survey programme is agreed with the class society and the operator in advance, covering the hull, sea chests and moorings, and fitted around production and offloading with live video to the surveyor.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "For the Espoir Ivoirien, underwater inspection in lieu of dry-docking is not an option to weigh up; it is how an FPSO on a long-term lease stays in class. The question is doing it well: a defined programme, live video to the surveyor, thickness readings where required, and a report that stands up to class review. With the FPSO's lease extended, those inspections will continue to be the backbone of keeping her in class on station.",
+        faq: {
+          q: "Is UWILD standard for the FPSO at Espoir?",
+          a: "Yes. An FPSO on a long-term lease meets her dry-docking survey requirement in the water, because she stays on station. We deliver the UWILD programme with live video to the surveyor, thickness readings where required and a full report for class, planned with the operator around production.",
+        },
+      },
+    },
+  },
+  {
+    slug: "baobab-terminal-port",
+    name: "Baobab",
+    label: "Baobab Marine Terminal",
+    officialName: "Baobab Marine Terminal (FPSO Baobab Ivoirien MV10)",
+    aka: ["Baobab", "Baobab field", "FPSO Baobab Ivoirien", "MV10", "Block CI-40"],
+    unlocode: "CIBAO",
+    state: "Block CI-40",
+    country: "Côte d'Ivoire",
+    countryCode: "CI",
+    coast: "Gulf of Guinea",
+    weather: "west-africa",
+    waterBody: "Gulf of Guinea",
+    authority: "CNR International",
+    type: "Private Port",
+    condition: "anchorage",
+    waiting: "mixed",
+    cargoes: ["Crude oil"],
+    vesselTypes: ["FPSO Baobab Ivoirien MV10", "Shuttle tankers", "Offshore support vessels"],
+    airports: ["Abidjan (ABJ)"],
+    workAreas: ["FPSO Baobab Ivoirien on station", "shuttle tanker offloading area", "field support vessel moorings"],
+    conditions:
+      "Baobab is a deep-water field about 25 kilometres off the coast in 900 to 1,300 metres of water, so the FPSO is held by a spread mooring far above the sea bed and everything on the field works in open Atlantic swell. The depth means all work stays close to the surface — on the FPSO's hull, the mooring connections at the hull and the offloading vessels — and it is done under the operator's field permit system.",
+    profile:
+      "Baobab is a deep-water oil field in Block CI-40, operated by CNR International with Svenska Petroleum and Petroci as partners. Its crude is produced and stored on the FPSO Baobab Ivoirien MV10, a 346,000-deadweight-tonne vessel, and exported by shuttle tanker through the Baobab Marine Terminal — the FPSO with its bow moorings, hoses and pipeline end manifold.",
+    hook:
+      "a deep-water FPSO field in up to 1,300 metres of water",
+    neighbours: ["espoir-terminal-port", "lion-terminal-port", "vridi-port"],
+    visibility:
+      "good — clear, deep open-sea water — so the swell and the field's operations set the window, not what a diver can see",
+    hullFinding:
+      "On a 346,000-tonne FPSO that stays on station, the growth that matters is at the sea chests, water intakes and caissons, and around the mooring and riser connections at the hull, where it adds weight and blocks flow. The shuttle tankers show the ordinary pattern of growth from waiting in warm water for their offloading slot.",
+    hullWindow:
+      "Only within the operator's permit system. Work on the FPSO is planned around production and offloading; shuttle tankers are cleaned while they wait in the field, never during a connected offloading.",
+    hullMethod:
+      "There is no anchor and no berth here: the FPSO is held on station by her own moorings, and shuttle tankers and support vessels work around her, so the dive plan is built around the field's production and offloading programme and the swell, under the operator's permit system.",
+    lineOverrides: { "hold-cleaning": false, "tank-cleaning": false },
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "The Baobab Ivoirien MV10 is a very large FPSO — 346,000 deadweight tonnes — moored in deep water where she will stay for her working life. Cleaning a hull that size is planned area by area over a campaign, not in a single dive, with priority given to the sea chests and intakes that feed the plant and the areas around the mooring and riser connections. It is organised with the operator around production and offloading.",
+        faq: {
+          q: "How is the hull of a large FPSO like Baobab Ivoirien cleaned?",
+          a: "In stages, as a planned campaign rather than a single dive, starting with the sea chests, water intakes and the areas around the mooring and riser connections. We organise it with the operator around production and offloading, under the field's permit system.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "The Baobab FPSO stays on its moorings and does not rely on a propeller in service, so propeller polishing at Baobab is for the shuttle tankers and support vessels. A shuttle tanker that waits for its slot in warm water picks up growth on the blades, and polishing her before she loads — in the field, under the operator's rules — sends her off on the laden voyage with a clean propeller.",
+        faq: {
+          q: "Who needs propeller polishing at the Baobab field?",
+          a: "The shuttle tankers and field support vessels, not the FPSO, which stays moored. A shuttle tanker can be polished while she waits for her offloading slot, so the polished propeller works for the whole laden voyage.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "Deep water means everything at Baobab is done from vessels holding position at the surface — support vessels alongside the FPSO, and shuttle tankers during the approach to offloading. Their thrusters, often on dynamic positioning, are what keep them in place in the swell. A fouled thruster reduces the margin in exactly those operations, so thruster cleaning on the field fleet is planned between tasks to keep that margin intact.",
+        faq: {
+          q: "Why does thruster condition matter so much at Baobab?",
+          a: "Because in deep water there is nothing to anchor to near the FPSO — support vessels and shuttle tankers hold position with their thrusters, often on dynamic positioning. A fouled thruster reduces that capability. We clean the field fleet's thrusters between tasks.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "An FPSO of this size in deep water can only be surveyed where she is. The class survey covers a very large hull and the attachment points for its moorings and risers, so it is planned as a programme over several dive windows rather than a single visit, agreed in advance with the class society and the operator, and fitted around production and offloading.",
+        faq: {
+          q: "How long does an in-water class survey of the Baobab FPSO take?",
+          a: "It depends on the scope agreed with class, but a hull of 346,000 deadweight tonnes is surveyed as a programme over several dive windows, not in a single visit. We plan it with the operator and the class society in advance and fit it around production and offloading.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "For an FPSO moored in up to 1,300 metres of water, the dry-docking survey is met under water — there is no realistic alternative while she produces. At Baobab the value is in how the programme is run: planned over several windows, with live video to the surveyor, thickness readings where required, and a report the class society can accept, so that the FPSO stays in class without interrupting the field.",
+        faq: {
+          q: "Is UWILD how the Baobab FPSO meets her dry-docking survey?",
+          a: "Yes — an FPSO in deep water on long-term station meets it under water. We deliver the UWILD programme over several planned dive windows, with live video to the surveyor and a full report for class, organised with the operator so production is not interrupted.",
+        },
+      },
+    },
+  },
+  {
+    slug: "sassandra-port",
+    name: "Sassandra",
+    officialName: "Port de pêche de Sassandra",
+    aka: ["Sassandra wharf", "Sassandra fishing port"],
+    unlocode: "CIZSS",
+    state: "Gbôklé",
+    country: "Côte d'Ivoire",
+    countryCode: "CI",
+    coast: "Gulf of Guinea",
+    weather: "west-africa",
+    waterBody: "Gulf of Guinea, at the mouth of the Sassandra River",
+    authority: "the local maritime authority",
+    type: "State Port",
+    condition: "anchorage",
+    waiting: "berth-driven",
+    cargoes: ["Fishing catch"],
+    vesselTypes: ["Fishing vessels", "Coastal craft", "Artisanal fishing boats"],
+    airports: ["San Pédro (SPY)", "Abidjan (ABJ)"],
+    workAreas: ["fishing port quay", "roadstead off Sassandra"],
+    conditions:
+      "Sassandra is an open roadstead at the mouth of the Sassandra River, with no breakwater harbour of the size found at San Pédro, so the Atlantic swell reaches the anchorage directly. The river brings fresh water and sediment into the bay, especially in the rainy season, which clouds the water close to the town. In-water work is planned for calm spells and done away from the river plume where possible.",
+    profile:
+      "Sassandra was one of Côte d'Ivoire's colonial-era ports — its wharf dates from 1951 and still stands, partly broken, in the middle of the bay — and it lost its trade to San Pédro when the deep-water port opened along the coast. Today it is a fishing town, with a fishing port built with Japanese cooperation, and the vessels that call are fishing boats and small coastal craft.",
+    hook:
+      "a colonial-era wharf town that is now a fishing port",
+    neighbours: ["san-pedro-port", "abidjan-port", "vridi-port"],
+    visibility:
+      "variable — reasonable in calm, dry weather away from the shore, but the Sassandra River carries sediment into the bay, especially in the rainy season, and that clouds the water near the town",
+    hullFinding:
+      "The boats working out of Sassandra are fishing vessels and small coastal craft that spend long hours slow or stationary in warm water, so growth is heavy and mixed and builds quickly in the niches. Nets and lines around the propeller and rudder are as common a find as the growth itself.",
+    hullWindow:
+      "For fishing vessels, between trips — usually alongside the fishing port quay in calm weather, or at the roadstead when the swell allows.",
+    lineOverrides: { "hold-cleaning": false, "tank-cleaning": false },
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "The working fleet at Sassandra is fishing vessels, not cargo ships, and their hull work is about staying at sea: a fishing boat with a fouled hull burns more fuel on every trip to the grounds and back. Cleaning is fitted between trips, alongside the fishing port quay or at the roadstead in calm weather, and kept away from the Sassandra River plume where the water is cloudiest.",
+        faq: {
+          q: "Do you clean fishing vessel hulls at Sassandra?",
+          a: "Yes — fishing vessels are the main in-water customers here. We clean between trips, alongside the fishing port quay or at the roadstead when the swell allows, so the vessel loses no fishing time.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "For a fishing boat, the propeller's biggest enemy at Sassandra is not only growth but gear: rope and netting wrapped around the shaft, which cuts power and can damage the seal. A diver's visit here usually combines clearing anything fouling the propeller, shaft and rope guard with a polish of the blades, so the boat goes back out with full power and no hidden damage.",
+        faq: {
+          q: "Can you clear nets and rope from a propeller at Sassandra?",
+          a: "Yes, and we inspect the shaft seal and rope guard at the same time. For fishing vessels it makes sense to combine this with a propeller polish in one dive.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "Few of the fishing boats and small craft at Sassandra have a bow thruster at all, so thruster cleaning here is a small job for the vessels that do — typically larger fishing or support vessels visiting from San Pédro or Abidjan. Where a thruster is fitted, the tunnel is cleaned and the blades and gratings cleared during a stay, with the unit isolated first.",
+        faq: {
+          q: "Is thruster cleaning common at Sassandra?",
+          a: "Not very — most boats here have no thruster. It applies to the larger fishing and support vessels that do, often visiting from San Pédro or Abidjan, and it is done during a normal stay with the thruster isolated.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "A formal class survey is rarely done at Sassandra: the vessels are mostly small fishing craft outside the usual class survey regime, and the river sediment clouds the water near the town. Where an underwater inspection is needed — after damage, or for an insurer — it is done in calm weather away from the river plume. For a full class survey, San Pédro, a short distance along the coast with clearer water, is usually the better choice.",
+        faq: {
+          q: "Should a class survey be done at Sassandra or San Pédro?",
+          a: "Usually San Pédro, which is close by and has clearer water behind its breakwater. Sassandra is better suited to a quick underwater inspection or damage check, done in calm weather away from the river plume.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "UWILD at Sassandra would only apply to a larger vessel that is both eligible and calling here, which is uncommon — most of the fleet is small fishing craft outside that regime. For an eligible vessel working this stretch of coast, the inspection is normally planned at San Pédro, where the water is clearer and the surveyor can attend more easily. We will always say which port gives the better result.",
+        faq: {
+          q: "Can UWILD be done at Sassandra?",
+          a: "It is possible for an eligible vessel, but it is uncommon here. For most vessels working this coast, San Pédro — nearby, with clearer water and easier surveyor access — is the better place, and we will advise honestly.",
         },
       },
     },

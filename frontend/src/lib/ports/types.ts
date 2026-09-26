@@ -142,6 +142,12 @@ export type Port = {
    * fleet (long anchorage waits at a ferry port, for example).
    */
   hullFinding?: string;
+  /**
+   * Hand-written method sentence for hull work, replacing the one derived
+   * from `condition` — "riding to her anchor" is wrong for an FPSO on a
+   * spread mooring or a tanker at a buoy.
+   */
+  hullMethod?: string;
   /** Per-scope copy, keyed by the scope's urlPrefix (see ScopeNote). */
   scopeNotes?: Partial<Record<string, ScopeNote>>;
 };

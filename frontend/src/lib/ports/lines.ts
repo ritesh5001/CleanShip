@@ -376,7 +376,7 @@ export function seasonNotes(port: Port, line: LineKey): string[] {
 
   const driver =
     line === "hull-cleaning"
-      ? HULL_METHOD[port.condition]
+      ? (port.hullMethod ?? HULL_METHOD[port.condition])
       : line === "hold-cleaning"
         ? HOLD_METHOD[port.waiting]
         : TANK_METHOD[port.waiting];
