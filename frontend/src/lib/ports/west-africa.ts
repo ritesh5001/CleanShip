@@ -454,9 +454,132 @@ export const westAfricaPorts: Port[] = [
     profile:
       "Cotonou is Benin's only deep-water port and the transit gateway for the landlocked Sahel, working containers, cotton, vehicles and agricultural bulk. Congestion is its defining operational feature and the reason so much tonnage sits here long enough to need a hull clean.",
     hook: "the transit gateway to the Sahel, and the queue that comes with it",
-    neighbours: ["lome-port", "tema-port", "kpeme-port"],
+    neighbours: ["seme-port", "lome-port", "kpeme-port", "tema-port"],
     holdNote:
       "Cotonou loads cotton and agricultural bulk and discharges general cargo and fertiliser, so the standing brief is preparing holds for a food-grade or fibre cargo after a dirty inbound. Cotton in particular will reject a hold on odour and residue alone.",
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "The Cotonou queue decides what a diver finds. A vessel that has swung at the outer anchorage for a week in water close to 28°C arrives at the berth with the soft slime and weed stage already giving way to the first hard shell, and every further day moves the job from a brush-cart clean towards a slower hand clean. So the hull is best done while she is still waiting — the anchorage wait is otherwise dead time, and it means she leaves the berth clean rather than carrying the queue's growth onto her next leg. Vehicle carriers are the other Cotonou-specific case: their tall, flat sides are exactly where a cart works fastest, so a car carrier's hull is often a shorter job here than her size suggests.",
+        faq: {
+          q: "Is it better to clean the hull at the Cotonou anchorage or once the vessel is alongside?",
+          a: "Usually at the anchorage. Congestion means most vessels wait there anyway, the berth time is governed by cargo operations and the terminal, and cleaning before berthing means the growth picked up during the wait does not sail with the vessel. Alongside work is possible where the terminal allows it, but at Cotonou the anchorage wait is the more reliable window.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "Most of the tonnage at Cotonou is feeder and regional liner tonnage on fixed West African rotations, calling here every few weeks and spending a large share of each call at anchor. A propeller that stands still for days in warm water collects a slime film and early calcareous growth on the blade faces, and the roughness it leaves costs fuel on every sea passage until it is removed. Because these vessels come back on a schedule, polishing at Cotonou works best as a planned item on alternate calls — tied to the performance data — rather than a reaction once the fuel curve has already drifted.",
+        faq: {
+          q: "How often should a feeder on the Cotonou rotation have the propeller polished?",
+          a: "It depends on the rotation and the time spent idle, so we set it from the vessel's performance monitoring rather than a fixed calendar. As a starting point, a vessel that routinely waits several days at the Cotonou anchorage should have the propeller checked on every call and polished whenever the blade roughness has come back — often every second or third call.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "Cotonou handles a steady flow of vehicle carriers and RoRo tonnage for the transit trade, and those ships berth on their thrusters: a car carrier bringing her stern ramp onto the RoRo berth leans on the bow thruster far harder than a bulk carrier ever does. A tunnel that has fouled through a long anchorage wait costs exactly that thrust, at exactly that moment. Cleaning the tunnel, blades and gratings while she is still waiting for her berthing slot means the thrust is back before it is needed, instead of being discovered missing with the pilot on board.",
+        faq: {
+          q: "Can the bow thruster be cleaned before our RoRo berthing slot at Cotonou?",
+          a: "Yes — that is the usual plan. The thruster is isolated and tagged out with the master, the divers clean the tunnel, blades and gratings at the anchorage, and it is handed back in time for the berthing. Give us the slot time and we work back from it.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "Survey work at Cotonou has a season. The lagoon channel that joins Lake Nokoué to the sea opens onto the coast right beside the harbour, and when the Ouémé river floods — typically peaking around September and October — that outflow carries fresh water and sediment past the port entrance. The basin is sheltered, but visibility in the weeks after the flood is at its worst of the year. Where a survey date has any flexibility, the dry season from roughly November to March gives the surveyor a far better picture; where it does not, the lighting and camera plan is agreed with class before the attendance is booked.",
+        faq: {
+          q: "When is the best time of year for an in-water class survey at Cotonou?",
+          a: "The dry season, roughly November to March, when visibility in the harbour is at its best. The weeks after the Ouémé flood — usually around September and October — are the hardest, because the lagoon outflow beside the port entrance brings sediment into the approaches. If the survey is due then, we agree close-quarters lighting and the acceptance criteria with the surveyor in advance.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "There is no dry dock in Benin, and the nearest docking yards on this coast are days away in another country with their own queue. For a vessel trading the Gulf of Guinea, a drydocking survey therefore means a deviation, a yard slot and the off-hire that comes with both. That is what makes UWILD worth checking at Cotonou: the long anchorage wait here is already paid-for time with the vessel stationary, and an eligible vessel can earn the survey credit during it instead of steaming away to find a dock.",
+        faq: {
+          q: "Is there a dry dock near Cotonou?",
+          a: "Not in Benin. A drydocking survey means a deviation to a yard elsewhere on the coast, plus that yard's queue. For eligible vessels, UWILD at Cotonou — done during the anchorage wait — earns the survey credit without the deviation. We check eligibility with the class society before anything is booked.",
+        },
+      },
+    },
+  },
+  {
+    slug: "seme-port",
+    name: "Sèmè",
+    label: "Sèmè Terminal",
+    officialName: "Sèmè Terminal (Niger–Benin pipeline export terminal)",
+    aka: ["Seme", "Seme Terminal", "Sèmè-Podji", "Benin"],
+    unlocode: "BJSEM",
+    state: "Ouémé",
+    country: "Benin",
+    countryCode: "BJ",
+    coast: "Gulf of Guinea",
+    weather: "west-africa",
+    waterBody: "Bight of Benin, Gulf of Guinea",
+    authority: "WAPCO, the terminal operator",
+    type: "Private Port",
+    condition: "anchorage",
+    waiting: "mixed",
+    cargoes: ["Crude oil"],
+    vesselTypes: [
+      "Crude oil tankers",
+      "Mooring and terminal support vessels",
+      "Offshore supply and crew boats",
+    ],
+    airports: ["Cotonou (COO)"],
+    workAreas: [
+      "tanker waiting area off the terminal",
+      "sea area outside the SPM safety zone",
+    ],
+    conditions:
+      "Sèmè has no harbour at all. Tankers load offshore at a single point mooring, so every vessel here lies in open Gulf of Guinea water with nothing between her and the long-period Atlantic swell that runs onto this coast. That swell, not visibility, decides whether a dive goes ahead. The water itself is warm and — away from the lagoon outflows further west at Cotonou — clearer than the harbour ports, which helps inspection work on the days the sea allows it. No work is ever done at the buoy or while a tanker is connected.",
+    profile:
+      "Sèmè Terminal is the export end of the Niger–Benin crude pipeline, operated by WAPCO, a CNPC subsidiary. Crude from Niger's Agadem fields arrives by pipeline and is loaded onto tankers at an offshore single point mooring; the first cargo loaded in May 2024. It is a single-purpose oil terminal rather than a port, served from Cotonou a short way along the coast.",
+    hook: "the offshore crude buoy at the end of the Niger–Benin pipeline",
+    neighbours: ["cotonou-port", "lome-port", "kpeme-port"],
+    /* A crude terminal, so the derived lines would include tank cleaning. The
+       programme here is hull work only until tank work at the terminal is
+       something we can describe properly. */
+    lineOverrides: { "tank-cleaning": false, "hold-cleaning": false },
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "A crude tanker comes to Sèmè in ballast to load, and that is the useful fact for hull work. Sitting light, she has less hull underwater than she will for the whole laden voyage that follows, so the wetted area to clean is smaller and the job shorter — and she then takes a clean bottom into the leg where drag costs the most fuel. The clean is done in the waiting area before she is called to the buoy, never inside the terminal's safety zone and never while she is connected. With no harbour craft at Sèmè itself, the dive support boat runs out from Cotonou.",
+        faq: {
+          q: "Can the hull be cleaned while the tanker is on the Sèmè buoy?",
+          a: "No. Nothing is done at the single point mooring or while the vessel is connected and loading. The clean is done in the waiting area off the terminal before she is called in, or after she has been released, and it is agreed with WAPCO and the master beforehand.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "The voyage out of Sèmè is the one that matters for propeller condition: a fully laden crude tanker on a long passage to her discharge port, where every point of propeller efficiency is paid for in fuel for weeks. Polishing in the waiting area before she loads puts the smoothest possible blade on for exactly that leg. The window is set by the loading schedule rather than by a berth, so we plan against the terminal's nomination and the swell forecast together, and polish the moment both line up.",
+        faq: {
+          q: "When should the propeller be polished on a tanker loading at Sèmè?",
+          a: "Before loading, while she waits to be called to the buoy — so the freshly polished propeller is working for the whole laden voyage out, which is where it saves the most fuel. We plan it against the loading nomination and the swell forecast, and it is never done while the vessel is connected.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "Many large crude tankers that load at Sèmè are not fitted with a bow thruster at all — they are brought onto the buoy with the help of the terminal's support craft. So thruster cleaning here is mostly for the vessels that keep the terminal running: the mooring and support boats that work the buoy day after day, and the smaller tankers that do carry a thruster. The support craft in particular sit in warm water between jobs and depend on their thrusters for close-quarters work at the buoy, which is where a fouled tunnel shows first.",
+        faq: {
+          q: "Do tankers loading at Sèmè need thruster cleaning?",
+          a: "Only if they are fitted with one, and many large crude tankers are not — they are assisted onto the buoy by the terminal's support vessels. Thruster cleaning at Sèmè is mainly for those support and mooring craft, and for the smaller tankers that do have a thruster.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "Sèmè's water is clearer than the harbour ports to the west because it is open sea rather than a basin fed by a lagoon, and on a calm day that gives a surveyor a good picture. The difficulty is the other way round from Cotonou: not what the camera can see, but whether the swell lets a diver hold position alongside the hull for the length of a survey. Survey dates here are therefore planned with standby built in, and the survey is fitted into the wait for the loading slot so the vessel loses no time to it.",
+        faq: {
+          q: "Can a class survey be done while the tanker waits for her Sèmè loading slot?",
+          a: "Yes, and that is the best time for it — the vessel is waiting anyway. The survey programme is agreed with the class society in advance, and because Sèmè is an open-sea location we build standby into the plan for the swell rather than committing to a single date.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "Most of the tonnage at Sèmè is crude tankers, and UWILD for tankers is narrower than for most other ship types: under the enhanced survey programme, older tankers face tighter conditions on which surveys can be done in the water. That is why a UWILD enquiry for a vessel loading at Sèmè starts with her age, class and survey history before anything is booked. Where she is eligible, the payoff is large — there is no dry dock anywhere near this terminal, and a docking would mean steaming away from the loading programme to find one.",
+        faq: {
+          q: "Is UWILD possible for a crude tanker at Sèmè?",
+          a: "It can be, but eligibility for tankers — especially older ones under the enhanced survey programme — is narrower than for other vessels. We check the vessel's age, class notation and survey history with the class society first. If she qualifies, the inspection is done in the waiting area off the terminal, outside the safety zone, and never while she is connected.",
+        },
+      },
+    },
   },
 ];
 

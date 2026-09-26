@@ -298,8 +298,16 @@ const INDEX_SCOPE_PAGES = false;
 /** Scope urlPrefixes that stay indexable regardless of the flag above. */
 const ALWAYS_INDEX: string[] = [];
 
+/**
+ * The exception that follows from the reasoning above: a scope page carrying
+ * a hand-written ScopeNote for its port is NOT the templated page this policy
+ * exists to hold back — it has copy that could only have been written about
+ * that service at that port. Those are indexed, one page at a time, as the
+ * notes are written. Everything else stays behind the flag.
+ */
 export function shouldIndex(page: PortPage): boolean {
   if (page.kind !== "scope") return true;
+  if (page.port.scopeNotes?.[page.scope.urlPrefix]) return true;
   return INDEX_SCOPE_PAGES || ALWAYS_INDEX.includes(page.scope.urlPrefix);
 }
 
@@ -605,7 +613,11 @@ export function scopeFaqs(port: Port, line: PortLine, scope: PortScope) {
           : `It depends on the tank count and volume, the prior and next grade, how much sludge is in there and whether the work runs alongside, at anchorage or on passage from ${port.name}. ${COST_TAIL(port)}`,
   };
 
-  return [...base, permit, conditions, vessels, mobilise, cost];
+  /* The port's own question for this scope goes second: after "do you work
+     here", before the generic ones, because it is the one a reader of this
+     particular page is most likely to have. */
+  const own = port.scopeNotes?.[scope.urlPrefix]?.faq;
+  return [base[0], ...(own ? [own] : []), base[1], permit, conditions, vessels, mobilise, cost];
 }
 
 export function portHubFaqs(port: Port, line: PortLine) {

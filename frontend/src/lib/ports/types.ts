@@ -32,11 +32,32 @@ export type LineKey = "hull-cleaning" | "hold-cleaning" | "tank-cleaning";
  */
 export type WaitingPattern = "long-wait" | "berth-driven" | "mixed";
 
+/**
+ * Hand-written copy for ONE scope at ONE port.
+ *
+ * The scope builders in ./lines.ts give every port the same sentences with
+ * the port's facts dropped in. That is fine as a floor, but on its own it
+ * makes "propeller polishing at X" and "propeller polishing at Y" read as the
+ * same page. A scope note is the part that could only have been written about
+ * this service at this port — it renders under the lead and adds an FAQ.
+ */
+export type ScopeNote = {
+  /** One paragraph, specific to this scope at this port. */
+  note: string;
+  /** A question a superintendent would actually ask about it here. */
+  faq?: { q: string; a: string };
+};
+
 export type Port = {
   /** URL fragment. Always ends "-port" so routes read as a place. */
   slug: string;
   /** Short display name used in headings: "Kandla", "Nhava Sheva". */
   name: string;
+  /**
+   * Full display label where "<name> Port" would be wrong — an offshore
+   * terminal is not a port. Defaults to "<name> Port".
+   */
+  label?: string;
   /** Official name where it differs from the trading name. */
   officialName?: string;
   /** Names agents and charterers actually use. Feeds page keywords. */
@@ -97,6 +118,8 @@ export type Port = {
   tankNote?: string;
   /** Forces a line on or off where the cargo list misleads. */
   lineOverrides?: Partial<Record<LineKey, boolean>>;
+  /** Per-scope copy, keyed by the scope's urlPrefix (see ScopeNote). */
+  scopeNotes?: Partial<Record<string, ScopeNote>>;
 };
 
 /* -------------------------------------------------------------------- */
@@ -213,6 +236,7 @@ export function midSentence(text: string): string {
 
 /** "Kandla Port", but never "Chennai Port Port". */
 export function portLabel(port: Port): string {
+  if (port.label) return port.label;
   return port.name.toLowerCase().endsWith("port")
     ? port.name
     : `${port.name} Port`;

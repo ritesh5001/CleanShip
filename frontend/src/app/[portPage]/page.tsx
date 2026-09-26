@@ -719,6 +719,11 @@ function ScopePage({ page }: { page: Extract<PortPage, { kind: "scope" }> }) {
               <p className="mt-5 text-[16px] leading-[1.62] text-ink-700">
                 {scope.angle(port)}
               </p>
+              {port.scopeNotes?.[scope.urlPrefix] && (
+                <p className="mt-5 text-[16px] leading-[1.62] text-ink-700">
+                  {port.scopeNotes[scope.urlPrefix]!.note}
+                </p>
+              )}
             </Reveal>
 
             <Reveal delay={60}>
