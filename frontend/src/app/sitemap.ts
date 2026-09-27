@@ -7,6 +7,7 @@ import { portPages, shouldIndex } from "@/lib/ports/registry";
 import { offices } from "@/lib/site";
 import { realProjects } from "@/lib/projects";
 import { insights } from "@/lib/insights";
+import { getPublishedPosts } from "@/lib/blog";
 
 /**
  * XML sitemap generated from the service taxonomy, so a new service is
@@ -24,7 +25,28 @@ import { insights } from "@/lib/insights";
  * Reinstate it per-URL only when there is a real content source to date it
  * from — a CMS record, or the git commit date of the port entry.
  */
-export default function sitemap(): MetadataRoute.Sitemap {
+/* Rebuilt at most every 5 minutes; saving a post in the admin also
+   revalidates it straight away. */
+export const revalidate = 300;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  /* Blog posts carry a real lastModified: the CMS records when each one was
+     last saved, which is exactly the per-URL date the note above asks for. */
+  const blogRoutes: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/blog`, changeFrequency: "weekly", priority: 0.8 },
+    ...(await getPublishedPosts())
+      .filter((p) => !p.noindex)
+      .map((p) => ({
+        url: `${BASE_URL}/blog/${p.slug}`,
+        lastModified: new Date(p.updatedAt),
+        changeFrequency: "monthly" as const,
+        priority: 0.7,
+        ...(p.coverImageUrl
+          ? { images: [p.coverImageUrl.startsWith("http") ? p.coverImageUrl : `${BASE_URL}${p.coverImageUrl}`] }
+          : {}),
+      })),
+  ];
+
 
   const staticRoutes: MetadataRoute.Sitemap = (
     [
@@ -161,6 +183,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
 
   return [
+    ...blogRoutes,
     ...staticRoutes,
     ...categoryRoutes,
     ...serviceRoutes,

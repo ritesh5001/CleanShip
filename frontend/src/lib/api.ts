@@ -2,6 +2,7 @@ import "server-only";
 import { createHmac } from "node:crypto";
 import { cookies } from "next/headers";
 import { SESSION_COOKIE } from "./session-cookie";
+import type { Post as BlogPost, PostSummary as BlogPostSummary } from "./blog";
 import type {
   CellEvent,
   CellStatus,
@@ -427,6 +428,34 @@ export async function listEnquiries(status?: string) {
     counts: Record<string, number>;
     statuses: string[];
   }>(`/api/v1/enquiries${status ? `?status=${encodeURIComponent(status)}` : ""}`);
+}
+
+/* -------------------------------------------------------------------- */
+/* Blog — the admin editor. Public reads are in lib/blog.ts.            */
+/* -------------------------------------------------------------------- */
+
+export type PostWrite = Partial<
+  Omit<BlogPost, "id" | "createdAt" | "updatedAt" | "publishedAt">
+> & { publishedAt?: string | null };
+
+export function listAllPosts() {
+  return request<{ posts: BlogPostSummary[] }>("/api/v1/posts/admin");
+}
+
+export function getPostForEdit(id: number) {
+  return request<{ post: BlogPost }>(`/api/v1/posts/admin/${id}`);
+}
+
+export function createPost(body: PostWrite) {
+  return request<{ post: BlogPost }>("/api/v1/posts/admin", { method: "POST", body });
+}
+
+export function updatePost(id: number, body: PostWrite) {
+  return request<{ post: BlogPost }>(`/api/v1/posts/admin/${id}`, { method: "PATCH", body });
+}
+
+export function deletePost(id: number) {
+  return request<void>(`/api/v1/posts/admin/${id}`, { method: "DELETE" });
 }
 
 export function setEnquiryStatus(id: number, status: string) {

@@ -1,4 +1,5 @@
 import {
+  boolean,
   index,
   integer,
   jsonb,
@@ -473,6 +474,42 @@ export const enquiries = pgTable(
   (t) => [index("enquiries_status_idx").on(t.status)],
 );
 
+/* ------------------------------------------------------------------ */
+/* Blog                                                                */
+/* ------------------------------------------------------------------ */
+
+export type PostFaq = { q: string; a: string };
+export type PostSource = { label: string; url: string };
+
+/** Written in the admin panel, read by /blog. Body is Markdown. */
+export const posts = pgTable(
+  "posts",
+  {
+    id: serial("id").primaryKey(),
+    slug: varchar("slug", { length: 160 }).notNull().unique(),
+    title: varchar("title", { length: 200 }).notNull(),
+    seoTitle: varchar("seo_title", { length: 80 }),
+    description: varchar("description", { length: 320 }).notNull().default(""),
+    category: varchar("category", { length: 80 }).notNull().default(""),
+    keywords: jsonb("keywords").$type<string[]>().notNull().default([]),
+    lead: text("lead").notNull().default(""),
+    body: text("body").notNull().default(""),
+    faqs: jsonb("faqs").$type<PostFaq[]>().notNull().default([]),
+    sources: jsonb("sources").$type<PostSource[]>().notNull().default([]),
+    coverImageUrl: text("cover_image_url"),
+    coverImageAlt: varchar("cover_image_alt", { length: 200 }),
+    authorName: varchar("author_name", { length: 120 }).notNull().default(""),
+    authorRole: varchar("author_role", { length: 160 }),
+    status: varchar("status", { length: 16 }).$type<"draft" | "published">().notNull().default("draft"),
+    noindex: boolean("noindex").notNull().default(false),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("posts_status_published_idx").on(t.status, t.publishedAt)],
+);
+
+export type Post = typeof posts.$inferSelect;
 export type User = typeof users.$inferSelect;
 export type Client = typeof clients.$inferSelect;
 export type Vessel = typeof vessels.$inferSelect;

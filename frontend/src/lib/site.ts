@@ -353,7 +353,7 @@ export const mainNav = [
   // several hundred pages were discoverable only via the sitemap and footer.
   { label: "Ports", href: "/ports" },
   { label: "Projects", href: "/projects" },
-  { label: "Insights", href: "/insights" },
+  { label: "Blog", href: "/blog" },
   { label: "Locations", href: "/locations" },
   { label: "About Us", href: "/about" },
   { label: "Contact Us", href: "/contact" },

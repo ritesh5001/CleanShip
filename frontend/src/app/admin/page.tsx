@@ -4,6 +4,7 @@ import { requireSession } from "@/lib/session";
 import { listEnquiries } from "@/lib/api";
 import { formatDateTime, relativeTime } from "@/lib/format";
 import { setEnquiryStatusAction } from "./actions";
+import { AdminBar } from "./blog/admin-bar";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -57,29 +58,7 @@ export default async function AdminInboxPage({
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-          <div className="flex items-baseline gap-3">
-            <span className="text-[15px] font-bold text-slate-900">
-              Cleanship admin
-            </span>
-            <Link
-              href="/cleantrack/admin"
-              className="text-[13px] font-medium text-blue-700 hover:underline"
-            >
-              CleanTrack →
-            </Link>
-          </div>
-          <form action="/cleantrack/logout" method="post">
-            <button
-              type="submit"
-              className="rounded-none px-3 py-2 text-[14px] font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-900"
-            >
-              Sign out
-            </button>
-          </form>
-        </div>
-      </header>
+      <AdminBar current="enquiries" />
 
       <main className="mx-auto max-w-6xl px-4 py-6">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">

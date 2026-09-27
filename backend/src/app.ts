@@ -10,6 +10,7 @@ import { clientRoutes } from "./routes/clients.js";
 import { vesselRoutes } from "./routes/vessels.js";
 import { shareRoutes } from "./routes/share.js";
 import { enquiryRoutes } from "./routes/enquiries.js";
+import { postRoutes } from "./routes/posts.js";
 import { rawPool } from "./db/index.js";
 
 /**
@@ -102,6 +103,7 @@ export function createApp() {
   app.use("/api/v1/vessels", vesselRoutes);
   app.use("/api/v1/share", shareRoutes);
   app.use("/api/v1/enquiries", enquiryRoutes);
+  app.use("/api/v1/posts", postRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

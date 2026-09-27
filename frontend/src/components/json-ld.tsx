@@ -8,7 +8,9 @@ export function JsonLd({ schema }: { schema: object | object[] }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(payload) }}
+      /* "<" escaped so text containing "</script>" — a blog post written in
+         the admin panel, say — cannot close this tag early. */
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(payload).replace(/</g, "\\u003c") }}
     />
   );
 }
