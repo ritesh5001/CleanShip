@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { offices, siteConfig, serviceAreas } from "./site";
+import { offices, officePostalAddress, siteConfig, serviceAreas } from "./site";
 import type { Faq, Service, ServiceCategory } from "./services";
 
 /**
@@ -322,25 +322,7 @@ export function officeSchemas() {
     url: `${BASE_URL}/contact`,
     email: siteConfig.email,
     telephone: siteConfig.phones.map((p) => p.href.replace("tel:", "")),
-    address: {
-      "@type": "PostalAddress",
-      ...(office.street ? { streetAddress: office.street } : {}),
-      addressLocality: office.city,
-      /* Some entries carry a state, e.g. "Gujarat, India". schema.org expects
-         a country in addressCountry, so anything before the last comma is
-         split out as addressRegion — "Gujarat, India" as a country is invalid
-         and would be discarded by consumers. */
-      ...(office.country.includes(",")
-        ? {
-            addressRegion: office.country
-              .slice(0, office.country.lastIndexOf(","))
-              .trim(),
-            addressCountry: office.country
-              .slice(office.country.lastIndexOf(",") + 1)
-              .trim(),
-          }
-        : { addressCountry: office.country }),
-    },
+    address: officePostalAddress(office),
     ...(office.head
       ? { additionalType: "https://schema.org/Organization" }
       : {}),

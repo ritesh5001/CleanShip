@@ -10,7 +10,14 @@ import { Button } from "@/components/ui";
 import { ArrowIcon, PhoneIcon } from "@/components/icons";
 import { WhatsAppCta } from "@/components/whatsapp-cta";
 import { heroMediaFor } from "@/lib/service-media";
-import { getOffice, offices, siteConfig, type Office } from "@/lib/site";
+import {
+  getOffice,
+  officePostalAddress,
+  offices,
+  officeTownLine,
+  siteConfig,
+  type Office,
+} from "@/lib/site";
 import { portLabel, linesFor } from "@/lib/ports/types";
 import {
   getLine,
@@ -89,24 +96,7 @@ export default async function LocationPage({ params }: Params) {
     { name: office.city, path: `/locations/${office.slug}` },
   ];
 
-  /* Some countries arrive as "Gujarat, India" — schema.org expects a country
-     in addressCountry, so anything before the last comma becomes the region. */
-  const hasRegion = office.country.includes(",");
-  const address = {
-    "@type": "PostalAddress",
-    ...(office.street ? { streetAddress: office.street } : {}),
-    addressLocality: office.city,
-    ...(hasRegion
-      ? {
-          addressRegion: office.country
-            .slice(0, office.country.lastIndexOf(","))
-            .trim(),
-          addressCountry: office.country
-            .slice(office.country.lastIndexOf(",") + 1)
-            .trim(),
-        }
-      : { addressCountry: office.country }),
-  };
+  const address = officePostalAddress(office);
 
   return (
     <>
@@ -289,9 +279,7 @@ export default async function LocationPage({ params }: Params) {
                             <br />
                           </>
                         )}
-                        {office.city}
-                        <br />
-                        {office.country}
+                        {officeTownLine(office)}
                       </dd>
                     </div>
                     <div className="py-3">

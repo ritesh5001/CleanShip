@@ -146,15 +146,20 @@ export const serviceAreas = [
 /**
  * Physical offices and operating bases, grouped by region.
  *
- * ⚠️ Two street lines need confirming before launch — see the notes on the
- * Colombo and Dammam entries. An address that is subtly wrong is worse than
- * one that is obviously missing, so nothing here has been silently corrected.
+ * Addresses as supplied by the office. `country` is the country alone;
+ * `state`, `locality` and `postalCode` carry the rest, so the structured data
+ * gets proper PostalAddress fields instead of parsing "Gujarat, India".
  */
 export type Office = {
   city: string;
   country: string;
   /** Street line, omitted where only the city/zone was supplied. */
   street?: string;
+  /** Postal town when it differs from `city` (Kandla's office is in Gandhidham). */
+  locality?: string;
+  /** State / province, where the address has one. */
+  state?: string;
+  postalCode?: string;
   /** Grouping used by the locations grid. */
   region: "Middle East" | "South Asia" | "West Africa";
   /** Marks the registered head office. */
@@ -175,7 +180,7 @@ export const offices: Office[] = [
   {
     city: "Ajman",
     country: "United Arab Emirates",
-    street: "Ajman Free Zone, C1 Building",
+    street: "B.C. 1302955, Ajman Free Zone C1 Building",
     region: "Middle East",
     head: true,
     slug: "ajman",
@@ -187,7 +192,7 @@ export const offices: Office[] = [
   {
     city: "Fujairah",
     country: "United Arab Emirates",
-    street: "Al Hail",
+    street: "Al Maha Trading, Al Hail",
     region: "Middle East",
     slug: "fujairah",
     portSlug: "fujairah-port",
@@ -211,9 +216,7 @@ export const offices: Office[] = [
   {
     city: "Dammam",
     country: "Saudi Arabia",
-    // Supplied as "our Commercial Centre, 1st Floor -Office 106" — the
-    // building name looks truncated. Confirm before launch.
-    street: "Commercial Centre, 1st Floor, Office 106",
+    street: "Hamra Commercial Centre, 1st Floor, Office 106",
     region: "Middle East",
     slug: "dammam",
     portSlug: "dammam-port",
@@ -223,13 +226,42 @@ export const offices: Office[] = [
   },
   {
     city: "Kandla",
-    country: "Gujarat, India",
+    country: "India",
+    street: "Plot No. 77, Bhageshree Township 1, Nr. Airport Chowkdi",
+    locality: "Gandhidham, Kachchh",
+    state: "Gujarat",
+    postalCode: "370210",
     region: "South Asia",
     slug: "kandla",
     portSlug: "kandla-port",
     regionSlug: "india",
     phone: 0,
     role: "The Gujarat base. Divers, compressors, brush carts and gangs are held here for Kandla itself and the Kutch range — Mundra, Navlakhi, Jakhau — rather than mobilised against a berth window.",
+  },
+  {
+    city: "Mumbai",
+    country: "India",
+    street: "1st Floor, Loha Bhavan, Room No. 3, P D'Mello Road, Carnac Road, Victoria Docks, Masjid Bandar East",
+    state: "Maharashtra",
+    postalCode: "400009",
+    region: "South Asia",
+    slug: "mumbai",
+    portSlug: "mumbai-port",
+    regionSlug: "india",
+    phone: 0,
+    role: "The Mumbai office, on P D'Mello Road beside the Victoria Docks. It covers Mumbai port and Nhava Sheva across the harbour, the busiest container and tanker traffic on India's west coast.",
+  },
+  {
+    city: "Lucknow",
+    country: "India",
+    street: "Top Floor, Ph 01, Vrindavan Road, near Allen House Public School, Sector 5E, Telibagh",
+    state: "Uttar Pradesh",
+    postalCode: "226029",
+    region: "South Asia",
+    slug: "lucknow",
+    regionSlug: "india",
+    phone: 0,
+    role: "An inland office in Uttar Pradesh. There is no port here — vessel work in India is run from the coastal bases at Kandla, Mumbai and Visakhapatnam.",
   },
   {
     city: "Visakhapatnam",
@@ -245,11 +277,11 @@ export const offices: Office[] = [
   {
     city: "Colombo",
     country: "Sri Lanka",
-    /* Supplied as "Merchantile Logistics, No 23, Alfered Place". Corrected to
-       the real spellings — local citation matching is exact-string, so a
-       misspelled street means every directory citation built against it fails
-       to match and the office earns nothing. Confirm with the office. */
-    street: "Mercantile Logistics, No 23, Alfred Place",
+    /* Supplied as "Colombo Merchantile Logistics, No 23, Alfered Place".
+       Spelling corrected to "Mercantile" and "Alfred Place" (the real street
+       in Colombo 3) — citation matching is exact-string, so a misspelling
+       would stop directory listings matching this address. */
+    street: "Colombo Mercantile Logistics, No 23, Alfred Place",
     region: "South Asia",
     slug: "colombo",
     portSlug: "colombo-port",
@@ -260,7 +292,7 @@ export const offices: Office[] = [
   {
     city: "Conakry",
     country: "Guinea",
-    street: "Sonoco Trade Center",
+    street: "CleanShip Marine SUCC, 8th Avenue, Sonoco Trade",
     region: "West Africa",
     slug: "conakry",
     portSlug: "conakry-port",
@@ -339,6 +371,29 @@ export const categoryCoverage: Record<
     ],
   },
 };
+
+/** Everything after the street line: "Gandhidham, Kachchh, Gujarat 370210, India". */
+export function officeTownLine(office: Office) {
+  const town = office.locality ?? office.city;
+  const state = [office.state, office.postalCode].filter(Boolean).join(" ");
+  return [town, state, office.country].filter(Boolean).join(", ");
+}
+
+export function officeFullAddress(office: Office) {
+  return [office.street, officeTownLine(office)].filter(Boolean).join(", ");
+}
+
+/** schema.org PostalAddress for an office. */
+export function officePostalAddress(office: Office) {
+  return {
+    "@type": "PostalAddress",
+    ...(office.street ? { streetAddress: office.street } : {}),
+    addressLocality: office.locality ?? office.city,
+    ...(office.state ? { addressRegion: office.state } : {}),
+    ...(office.postalCode ? { postalCode: office.postalCode } : {}),
+    addressCountry: office.country,
+  };
+}
 
 const officeBySlug = new Map(offices.map((o) => [o.slug, o]));
 

@@ -1,6 +1,6 @@
 import { PinIcon } from "./icons";
 import { StaggerGroup } from "./motion/scroll-reveal";
-import { offices, type Office } from "@/lib/site";
+import { offices, officeTownLine, type Office } from "@/lib/site";
 
 const REGIONS = ["Middle East", "South Asia", "West Africa"] as const;
 
@@ -87,7 +87,7 @@ function OfficeEntry({
           onNavy ? "text-white/60" : "text-slate-500"
         }`}
       >
-        {office.country}
+        {officeTownLine(office)}
       </p>
     </div>
   );
