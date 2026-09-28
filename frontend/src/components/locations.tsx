@@ -93,14 +93,6 @@ function OfficeEntry({
   );
 }
 
-/**
- * Coverage note for a single service or service line.
- *
- * Coverage genuinely differs per scope — hull cleaning runs the West Africa
- * range while riding crews go anywhere — so stating it on the service page is
- * more useful than one company-wide claim, and it stops a West Africa
- * operator assuming hull cleaning is a UAE-only service.
- */
 export function CoverageNote({
   areas,
   worldwide = false,
