@@ -166,6 +166,7 @@ export function SiteFooter() {
             <ul className="mt-4 space-y-2.5 text-[14px]">
               {[
                 { label: "About Us", href: "/about" },
+                { label: "Our Team", href: "/team" },
                 { label: "Projects", href: "/projects" },
                 { label: "All Services", href: "/services" },
                 { label: "Contact Us", href: "/contact" },

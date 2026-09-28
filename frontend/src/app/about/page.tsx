@@ -118,6 +118,9 @@ export default function AboutPage() {
                   not arrive at convenient hours.
                 </p>
               </div>
+              <div className="mt-8">
+                <Button href="/team">Meet the team</Button>
+              </div>
             </Reveal>
           </div>
 
