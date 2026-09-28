@@ -64,10 +64,10 @@ export const team: TeamMember[] = [
     socials: {},
   },
   {
-    slug: "sweta-singh",
+    slug: "shweta-Singh",
     title: "Ms.",
-    name: "Sweta Singh",
-    position: "Digital Marketing",
+    name: "Shweta Singh",
+    position: "Digital Marketing Executive",
     socials: {},
   },
   {
