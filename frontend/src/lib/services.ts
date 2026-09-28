@@ -1936,6 +1936,7 @@ export const serviceCategories: ServiceCategory[] = [
           "ROV inspection for underwater and flooded spaces",
           "Eliminates staging cost and confined-space exposure",
           "High-resolution imagery with defect location mapping",
+          "Approved RIT service supplier — BW Class certificate BW/096439",
         ],
         scope: [
           {
@@ -1984,6 +1985,10 @@ export const serviceCategories: ServiceCategory[] = [
           "Post-damage assessment",
         ],
         faqs: [
+          {
+            q: "Is Cleanship an approved Remote Inspection Techniques (RIT) service supplier?",
+            a: "Yes. Blue Wave Classification (BW Class) approved Cleanship Marine Services FZE as a service supplier for survey using Remote Inspection Techniques as an alternative means for close-up survey of the structure of ships and mobile offshore units — certificate BW/096439, issued in Dubai on 23 July 2026 and valid until 23 July 2029.",
+          },
           {
             q: "Will class accept drone inspection instead of close-up survey?",
             a: "For many scopes yes, but acceptance is scope-specific and remains the society's decision. We establish it in writing before the survey rather than presenting a report and hoping.",

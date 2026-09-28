@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { offices, officePostalAddress, siteConfig, serviceAreas } from "./site";
+import { credentialSchemas } from "@/components/certifications";
 import type { Faq, Service, ServiceCategory } from "./services";
 
 /**
@@ -200,12 +201,14 @@ export function organizationSchema() {
     ],
     areaServed: serviceAreas.map((area) => ({ "@type": "Place", name: area })),
     sameAs: Object.values(siteConfig.social),
+    hasCredential: credentialSchemas(),
     knowsAbout: [
       "Cargo hold cleaning",
       "Marine tank cleaning",
       "Underwater hull cleaning",
       "Propeller polishing",
       "UWILD",
+      "Remote Inspection Techniques (RIT)",
       "Marine NDT inspection",
       "Hydroblasting",
       "Marine painting",

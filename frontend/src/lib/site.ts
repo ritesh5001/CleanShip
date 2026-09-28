@@ -111,7 +111,7 @@ export const siteConfig = {
   social: {
     linkedin: "https://www.linkedin.com/company/cleanshipmarine",
     instagram: "https://www.instagram.com/cleanship_marine_services/",
-    facebook: "https://www.facebook.com/profile.php?id=61581138043689",
+    facebook: "https://www.facebook.com/Cleanshipmarineservices/",
     youtube: "https://www.youtube.com/@Cleanshipmarineservices",
   },
 

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
 import { FaqList } from "@/components/faq";
+import { Certifications } from "@/components/certifications";
 import { Reveal } from "@/components/reveal";
 import {
   ProcessTimeline,
@@ -209,6 +210,9 @@ export default async function ServicePage({ params }: Params) {
                 <ProcessTimeline steps={service.process} />
               </div>
             </section>
+
+            {/* Class approval covering this scope, where we hold one. */}
+            <Certifications service={[category.slug, service.slug]} heading />
 
             {/* FAQ */}
             {service.faqs.length > 0 && (

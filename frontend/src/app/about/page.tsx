@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { CtaBand } from "@/components/cta-band";
+import { Certifications } from "@/components/certifications";
 import { Reveal } from "@/components/reveal";
 import { StatsBand } from "@/components/stats";
 import { JsonLd } from "@/components/json-ld";
@@ -238,6 +239,24 @@ export default function AboutPage() {
           <Reveal delay={150}>
             <div className="mt-10">
               <Button href="/services">View more services</Button>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ---------- Approvals ---------- */}
+      <section className="bg-white">
+        <div className="container-page py-16 lg:py-24">
+          <Reveal>
+            <SectionHeading
+              eyebrow="Approvals"
+              title="Certified by class"
+              description="Our approvals are issued to Cleanship Marine Services FZE in our own name, with the certificate number stated so any surveyor can check it."
+            />
+          </Reveal>
+          <Reveal delay={80}>
+            <div className="mt-10">
+              <Certifications />
             </div>
           </Reveal>
         </div>
