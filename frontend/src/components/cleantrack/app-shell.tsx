@@ -21,6 +21,7 @@ const NAV: Record<Session["role"], { href: string; label: string }[]> = {
     { href: "/cleantrack/admin/clients", label: "Clients" },
     { href: "/cleantrack/admin/users", label: "Users" },
     { href: "/admin", label: "Enquiries" },
+    { href: "/admin/blog", label: "Blog" },
   ],
   /* Same nav as an admin, plus nothing: the extra a superadmin has is the
      right to manage people, and Users is already on the list. */
@@ -29,6 +30,7 @@ const NAV: Record<Session["role"], { href: string; label: string }[]> = {
     { href: "/cleantrack/admin/clients", label: "Clients" },
     { href: "/cleantrack/admin/users", label: "Users" },
     { href: "/admin", label: "Enquiries" },
+    { href: "/admin/blog", label: "Blog" },
   ],
   supervisor: [{ href: "/cleantrack/app", label: "My vessels" }],
 };

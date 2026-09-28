@@ -68,6 +68,15 @@ export function middleware(request: NextRequest) {
   const isCleanTrackHost = CLEANTRACK_HOSTS.some((h) => host.startsWith(h));
   if (!isCleanTrackHost) return NextResponse.next();
 
+  /* The blog editor lives on the main site, not in CleanTrack. The "Blog" tab
+     in the CleanTrack office menu is a plain /admin/blog link, which on this
+     host would otherwise be rewritten to /cleantrack/admin/blog and 404 — so
+     send it across. The session cookie is scoped to .cleanship.co, so the
+     office user arrives still signed in. */
+  if (pathname === "/admin/blog" || pathname.startsWith("/admin/blog/")) {
+    return NextResponse.redirect(`${MAIN_ORIGIN}${pathname}${search}`, 307);
+  }
+
   /* Already prefixed (an internal link that hard-coded the path), or an asset
      route that must not be rewritten. */
   if (
