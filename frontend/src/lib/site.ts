@@ -356,5 +356,6 @@ export const mainNav = [
   { label: "Blog", href: "/blog" },
   { label: "Locations", href: "/locations" },
   { label: "About Us", href: "/about" },
+  { label: "Our Team", href: "/team" },
   { label: "Contact Us", href: "/contact" },
 ] as const;
