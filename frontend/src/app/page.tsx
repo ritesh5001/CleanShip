@@ -44,7 +44,7 @@ const baseMetadata = buildMetadata({
 });
 
 /* cleanship.ae and cleanship.gr are the regional versions of this site
-   (country-sites/). The three home pages name each other, and each must
+   (cleanship-uae/ and cleanship-greece/). The three home pages name each other, and each must
    carry the same three links for search engines to accept them. */
 export const metadata: Metadata = {
   ...baseMetadata,
