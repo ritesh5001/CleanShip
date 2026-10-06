@@ -24,7 +24,7 @@ import { PhotoOverlay } from "@/components/photo-overlay";
 import { stockImages } from "@/lib/stock-images";
 import { buildMetadata, faqSchema } from "@/lib/seo";
 
-export const metadata: Metadata = buildMetadata({
+const baseMetadata = buildMetadata({
   /* The root layout's title template does not apply to the root page, so the
      brand is written in here explicitly. Every other page gets "| Cleanship"
      from the template; without this line the homepage was the one page with
@@ -42,6 +42,21 @@ export const metadata: Metadata = buildMetadata({
   ],
   image: { url: "/posters/underwater-hull-cleaning.jpg", alt: "Diver cleaning a vessel's underwater hull" },
 });
+
+/* cleanship.ae and cleanship.gr are the regional versions of this site
+   (country-sites/). The three home pages name each other, and each must
+   carry the same three links for search engines to accept them. */
+export const metadata: Metadata = {
+  ...baseMetadata,
+  alternates: {
+    ...baseMetadata.alternates,
+    languages: {
+      "en-AE": "https://www.cleanship.ae/",
+      "en-GR": "https://www.cleanship.gr/",
+      "x-default": "https://www.cleanship.co/",
+    },
+  },
+};
 
 const differentiators = [
   {

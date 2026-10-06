@@ -1,0 +1,15 @@
+Barlow, Barlow Condensed and IBM Plex Mono are licensed under the SIL Open
+Font License, Version 1.1.
+
+  Barlow / Barlow Condensed — Copyright 2017 The Barlow Project Authors
+  https://github.com/jpt/barlow
+
+  IBM Plex Mono — Copyright 2017 IBM Corp.
+  https://github.com/IBM/plex
+
+Full license text: https://openfontlicense.org
+
+These .woff2 files were fetched from Google Fonts (fonts.gstatic.com) at the
+same URLs next/font/google would request, and are vendored here so the build
+has no runtime dependency on that network call. See the comment in
+../layout.tsx for why.
