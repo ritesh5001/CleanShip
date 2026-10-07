@@ -13,9 +13,9 @@
  *
  * Ports are taken from the UN/LOCODE list in `Port Coverage.xlsx`, plus the
  * Benin, Ivorian and Gambian terminals added from checked sources (UN/LOCODE,
- * the port authorities, terminal data). Sierra Leone and Guinea-Bissau appear
- * in the service coverage claim in lib/site.ts but have no pages yet —
- * publishing a port page for a port we cannot name correctly would undo the
+ * the port authorities, terminal data). Sierra Leone (Freetown, Pepel) and
+ * Guinea-Bissau (Bissau) were added the same way, from UN/LOCODE and port
+ * sources. A port page for a port we cannot name correctly would undo the
  * point of the exercise.
  */
 
@@ -63,7 +63,7 @@ export const westAfricaPorts: Port[] = [
     profile:
       "Conakry is Guinea's principal port and the outlet for the largest bauxite reserves in the world, working ore and alumina alongside containers, food aid and general cargo. Cleanship holds an operating base at the Sonoco Trade Center here, so this is the one West African port where people and equipment are on the ground rather than flown in.",
     hook: "the outlet for the world's largest bauxite reserves",
-    neighbours: ["monrovia-port", "dakar-port", "abidjan-port"],
+    neighbours: ["freetown-port", "bissau-port", "monrovia-port", "dakar-port"],
     base: true,
     holdNote:
       "Bauxite is the standing residue at Conakry and it is the difficult kind: fine, red and it stains, so it needs chemical treatment and rinsing rather than sweeping. Vessels loading here for a clean cargo elsewhere need the full sequence, and the anchorage wait is the time to do it — a ballast leg out of Guinea is long enough for a riding crew to finish what the anchorage started.",
@@ -351,7 +351,7 @@ export const westAfricaPorts: Port[] = [
     profile:
       "The Freeport of Monrovia is Liberia's principal port, working iron ore exports alongside containers, fuel and general cargo. It is a port where waiting is normal and where the in-water job found on arrival is usually heavier than the trading pattern would predict.",
     hook: "long anchorage waits on the Liberian ore run",
-    neighbours: ["conakry-port", "abidjan-port", "dakar-port"],
+    neighbours: ["freetown-port", "conakry-port", "abidjan-port", "dakar-port"],
     holdNote:
       "Iron ore fines are the standing residue and they stain — chemical treatment and rinsing, not sweeping. The rains are the complication: between May and October a washed hold will not dry on its own, so ventilation and timing matter more here than the washing itself.",
   },
@@ -1176,7 +1176,7 @@ export const westAfricaPorts: Port[] = [
       "Banjul is The Gambia's only seaport and the gateway for most of what the country imports — rice, sugar, flour, cement, fuel and containers — with some cargo moving on into Senegal and further inland. The Gambia Ports Authority runs about 750 metres of quay, including the Banjul Wharf, the New Banjul Jetty and its container berths, a fisheries jetty and the terminal for the Banjul–Barra ferries across the river mouth.",
     hook:
       "The Gambia's only seaport, at the mouth of a tidal river",
-    neighbours: ["gambia-river-port", "dakar-port", "conakry-port"],
+    neighbours: ["gambia-river-port", "bissau-port", "dakar-port", "conakry-port"],
     lineOverrides: { "hold-cleaning": false, "tank-cleaning": false },
     scopeNotes: {
       "underwater-hull-cleaning": {
@@ -1529,6 +1529,284 @@ export const westAfricaPorts: Port[] = [
         faq: {
           q: "Can UWILD be done at Sekondi?",
           a: "It is possible for eligible classed vessels, but Takoradi, next door, is usually the better place. We will recommend the right location for your vessel.",
+        },
+      },
+    },
+  },
+  {
+    slug: "freetown-port",
+    name: "Freetown",
+    officialName: "Port of Freetown (Queen Elizabeth II Quay)",
+    aka: ["Queen Elizabeth II Quay", "QE II Quay", "Port of Freetown", "Sierra Leone"],
+    unlocode: "SLFNA",
+    state: "Western Area",
+    country: "Sierra Leone",
+    countryCode: "SL",
+    coast: "Atlantic",
+    weather: "west-africa",
+    waterBody: "Sierra Leone River estuary",
+    authority: "Sierra Leone Ports Authority",
+    type: "State Port",
+    condition: "sheltered",
+    waiting: "mixed",
+    cargoes: ["Containers", "Rice and bagged general cargo", "Break-bulk and project cargo", "Fuel", "Fishing catch"],
+    vesselTypes: ["Feeder container ships", "General cargo and break-bulk ships", "Product tankers", "Fishing vessels", "Freetown–Lungi ferries"],
+    airports: ["Freetown Lungi (FNA)"],
+    workAreas: ["container terminal (berths 3–6)", "bulk and break-bulk berths", "Kissy Oil Terminal", "inner harbour anchorage"],
+    conditions:
+      "Freetown sits on the south side of the Sierra Leone River estuary, one of the largest natural harbours on the African coast, and the quay is sheltered from the Atlantic swell that works the open coast to either side. What it is not sheltered from is the rain: Freetown is one of the wettest capitals in West Africa, and from roughly May to October the river carries run-off into the harbour, cutting visibility at the berths and stopping deck work in the heaviest downpours. Warm estuary water and long berth waits build fouling steadily.",
+    profile:
+      "The Port of Freetown at Queen Elizabeth II Quay is Sierra Leone's main commercial port. The container terminal, berths 3 to 6, is run under concession by Freetown Terminal Limited, part of Africa Global Logistics, and its extension added a 13-metre-deep berth for larger container ships. Bulk and break-bulk cargo is handled under a separate concession, and the harbour also carries the Kissy Oil Terminal, the fishing fleet and the ferries across the estuary to Lungi airport.",
+    hook: "Sierra Leone's main port, in one of Africa's largest natural harbours",
+    neighbours: ["pepel-port", "conakry-port", "monrovia-port"],
+    visibility:
+      "moderate in the dry season, low from roughly May to October when rain run-off from the Sierra Leone River clouds the harbour",
+    hullFinding:
+      "Vessels calling Freetown often wait for a berth in warm, nutrient-rich estuary water, so the flat bottom and sea chests pick up steady barnacle and weed growth, heavier after the rainy season. Fishing vessels based in the harbour, which lie idle between trips, carry the heaviest fouling we see here.",
+    holdNote:
+      "Freetown's hold work is mostly bagged rice, break-bulk and project cargo rather than a bulk residue clean — broken bags, spilled grain, dunnage and lashing waste — and the rainy season is the complication: a hold washed between May and October will not dry by itself.",
+    lineOverrides: { "tank-cleaning": false },
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "Freetown's harbour is sheltered, so hull cleaning alongside or at the inner anchorage is possible most of the year. The season sets the method: in the dry months the water is clear enough to work and film well, while from May to October rain run-off from the river drops visibility and divers work largely by touch on the flat sides. We plan the clean around the berth window and tell you before mobilising what video quality to expect for the season.",
+        faq: {
+          q: "Can hull cleaning be done in Freetown during the rainy season?",
+          a: "Yes — the harbour stays sheltered — but visibility drops from about May to October as the river carries run-off into the estuary, so divers work largely by touch and the video is less clear. For a clean with good before-and-after footage, the dry season is better.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "Container feeders on fixed West African rotations call Freetown regularly, and a propeller polish fitted into the anchorage wait or the berth window is the cheapest fuel saving available on a long coastal rotation. The polish is done blade by blade with diver-held tools, and the rope guard is checked for fishing line and net, which the Freetown fishing fleet leaves in the harbour.",
+        faq: {
+          q: "Why check the rope guard when polishing a propeller at Freetown?",
+          a: "Freetown has a large fishing fleet, and lost line and net in the harbour can wrap around the shaft. We clear and check the rope guard and seal area during every polish.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "The ferries running across the estuary between Freetown and Lungi, and the tugs and workboats in the harbour, berth many times a day and depend on their thrusters. A tunnel fouled by warm estuary water gives up the thrust needed to manoeuvre across the river current. We clean thrusters between crossings or during stand-downs, with the unit isolated first.",
+        faq: {
+          q: "Can you clean a ferry's thruster without stopping the Lungi crossing?",
+          a: "We plan it between crossings or during a scheduled stand-down so the service is interrupted as little as possible, with the thruster isolated and tagged out before the dive.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "An in-water class survey at Freetown is best planned for the dry season, when the harbour water is clearest. From May to October, rain run-off makes the surveyor's view poor, and we would rather say so before the surveyor is booked than present video that class cannot accept.",
+        faq: {
+          q: "When is the best time for an in-water survey at Freetown?",
+          a: "The dry season, roughly November to April, when visibility in the harbour is best. In the rainy season the river clouds the water and a survey needs close-quarters lighting and agreed acceptance criteria.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "There is no large dry dock in Sierra Leone, so for an eligible ship trading here a UWILD can save a long deviation to a yard. We confirm eligibility with the class society first, then plan the inspection for the dry season and the clearest water in the harbour.",
+        faq: {
+          q: "Is UWILD worthwhile for a ship trading to Freetown?",
+          a: "Often, yes. With no large dry dock nearby, an in-water inspection in place of a docking can save a long deviation — provided class confirms the ship is eligible and the inspection is timed for clear water.",
+        },
+      },
+      "cargo-hold-cleaning": {
+        note:
+          "Holds discharged at Freetown are usually bagged rice and break-bulk: split bags, spilled grain, dunnage and lashing waste rather than a hard bulk residue. Our gang sweeps and removes it as discharge finishes. Spilled rice that gets wet ferments and attracts pests, so it is taken out before it can spoil, and in the rainy season the holds are ventilated and dried rather than left to dry by themselves.",
+        faq: {
+          q: "What does hold cleaning at Freetown usually involve?",
+          a: "Removing spilled bagged rice, broken bags, dunnage and lashing waste after discharge, then washing and drying the holds. In the rainy season, drying the holds properly is the part that takes planning.",
+        },
+      },
+      "hold-cleaning-riding-crew": {
+        note:
+          "Ships that discharge at Freetown and load a sensitive cargo next often have little time alongside. A riding crew joining here can finish the holds on the passage to the next load port, so the ship arrives ready for inspection instead of waiting for a shore gang there.",
+        faq: {
+          q: "Can a riding crew join at Freetown?",
+          a: "Yes, subject to the ship's schedule and the port's crew joining rules. The crew brings its own equipment and cleans on passage.",
+        },
+      },
+      "rope-access-hold-cleaning": {
+        note:
+          "On break-bulk and project ships, the high parts of the hold — frames, hatch coamings and the underside of the hatch covers — are where residue and loose rust hide. Rope access lets our team clean and inspect them without staging, inside a normal Freetown port call.",
+        faq: {
+          q: "Why use rope access for hold cleaning at Freetown?",
+          a: "It reaches the upper frames and hatch coamings without building staging, so the work fits inside a short port call.",
+        },
+      },
+    },
+  },
+  {
+    slug: "pepel-port",
+    name: "Pepel",
+    officialName: "Port of Pepel",
+    aka: ["Pepel", "Pepel iron ore port", "Sierra Leone River"],
+    unlocode: "SLPEP",
+    state: "Port Loko",
+    country: "Sierra Leone",
+    countryCode: "SL",
+    coast: "Atlantic",
+    weather: "west-africa",
+    waterBody: "Sierra Leone River estuary",
+    authority: "Sierra Leone Ports Authority and the mine operator",
+    type: "Private Port",
+    condition: "tidal-silt",
+    waiting: "long-wait",
+    cargoes: ["Iron ore"],
+    vesselTypes: ["Handysize to Panamax bulk carriers", "Barges and tugs"],
+    airports: ["Freetown Lungi (FNA)"],
+    workAreas: ["ore loading berth", "Pepel anchorage"],
+    conditions:
+      "Pepel is about 24 kilometres up the Sierra Leone River from Freetown, at the end of the 84-kilometre railway from the Marampa iron ore mine. The river is tidal and carries silt, so visibility is low and dives are timed to the tide, and the anchorage depth of around 9 to 10 metres limits the draft of ships that can work here. The rainy season from about May to October adds heavy run-off.",
+    profile:
+      "Pepel is Sierra Leone's iron ore export port, built to ship ore railed down from Marampa. Shipments depend on the mines' production, so traffic comes in campaigns rather than as a steady flow, and bulk carriers can wait at anchor for a loading slot. Iron ore is the cargo, and its fines are the residue the next charterer will check for.",
+    hook: "iron ore loading on the Sierra Leone River",
+    neighbours: ["freetown-port", "conakry-port", "monrovia-port"],
+    visibility: "low — the Sierra Leone River is tidal and silty, and worst in the rainy season",
+    hullFinding:
+      "Bulk carriers at Pepel often wait at anchor for a loading slot in warm, silty river water. Growth builds on the flat bottom during the wait, and the sea chests take in silt as well as marine growth.",
+    hullWindow:
+      "During the wait at the Pepel anchorage, at slack water. Divers do not work alongside the ore berth during loading.",
+    holdNote:
+      "Iron ore fines are the residue at Pepel. They are heavy, they stain and they pack into frames and hopper corners, so the next cargo usually needs a full wash — and in the rainy season a washed hold will not dry by itself.",
+    lineOverrides: { "tank-cleaning": false },
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "The working window at Pepel is the wait at anchor for a loading slot. The Sierra Leone River is tidal and silty, so dives are timed to slack water and divers work largely by touch on the flat bottom. Sea chests are always opened and cleared, because silt goes in with the growth and blocks the cooling water supply on a ship that has to sail fully laden.",
+        faq: {
+          q: "When can a bulk carrier's hull be cleaned at Pepel?",
+          a: "During the wait at the Pepel anchorage, at slack water in the tidal river. We do not dive alongside the ore berth while loading is going on.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "A bulk carrier loading iron ore at Pepel sails deep and slow on a long voyage, often to Europe or Asia. A propeller polished during the anchorage wait gives her a clean propeller for that whole laden passage, and the blades are checked for wear from the silty river water at the same time.",
+        faq: {
+          q: "Is propeller polishing worthwhile before sailing from Pepel?",
+          a: "Yes. The ship leaves fully laden on a long voyage, so a clean propeller saves fuel for the whole passage. We polish during the anchorage wait.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "The tugs and barges that work the Sierra Leone River and the ore berth spend their lives in warm, silty water and manoeuvre against the tidal stream. Fouled thruster tunnels and tug propulsion lose exactly the power that work needs. We clean them between ship movements, with the units isolated.",
+        faq: {
+          q: "Do you clean tug and workboat thrusters at Pepel?",
+          a: "Yes, between ship movements, with the thruster isolated first. Silt and warm water foul them quickly.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "The silty water of the Sierra Leone River is a poor setting for a planned class survey. Pepel is better suited to a damage inspection — after contact with the bottom on the river approach, for example — done with close-quarters lighting and live video. For a planned survey, Freetown's harbour in the dry season or another port on the route gives clearer water.",
+        faq: {
+          q: "Can you carry out an underwater damage inspection at Pepel?",
+          a: "Yes, with close-quarters lighting and live video to the master, owner or insurer. For a planned class survey, clearer water elsewhere is usually better, and we will say so.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "For bulk carriers in the ore trade, UWILD can avoid a deviation to a dry dock — there is no large yard in Sierra Leone. But Pepel's river water is too silty for most UWILD scopes. We confirm eligibility with class and usually recommend doing the inspection at a clearer-water port on the ship's route.",
+        faq: {
+          q: "Can UWILD be done at Pepel?",
+          a: "It is rarely the best place because the river water is silty. We confirm eligibility with class and plan the inspection at a port on the route with clearer water.",
+        },
+      },
+      "cargo-hold-cleaning": {
+        note:
+          "Iron ore fines are heavy and staining, and they pack into frames, brackets and hopper corners. Ships arriving at Pepel to load ore usually need little hold preparation, but ships leaving with a different cargo next need the full sequence: dry removal, high-pressure washing and a fresh-water rinse to stop the stain and the salt staying on the steel.",
+        faq: {
+          q: "How are iron ore residues removed from holds?",
+          a: "Dry removal of the fines first, then high-pressure washing, chemical treatment for the stain where needed, and a fresh-water rinse and drying. Packed fines in frames and hopper corners take the most time.",
+        },
+      },
+      "hold-cleaning-riding-crew": {
+        note:
+          "After discharging ore elsewhere, a ship returning on ballast often has a long passage and a different next cargo. For ships trading out of Pepel, a riding crew can do the full ore clean on that passage, so the holds arrive at the next load port ready for inspection.",
+        faq: {
+          q: "When is a riding crew the right choice for an ore carrier?",
+          a: "When the ship has a long ballast passage and a cleaner cargo next. The crew cleans on passage instead of the ship waiting for a shore gang at the load port.",
+        },
+      },
+      "rope-access-hold-cleaning": {
+        note:
+          "Iron ore dust settles on the high frames, hatch coamings and the underside of the hatch covers, where a surveyor looks first. Rope access lets our team clean those areas without staging, which matters on a ship whose holds are deep and whose time in port is short.",
+        faq: {
+          q: "Why clean the upper hold with rope access after iron ore?",
+          a: "Ore dust settles on the upper frames and hatch coamings that surveyors check first. Rope access reaches them without staging, so the job fits the port call.",
+        },
+      },
+    },
+  },
+  {
+    slug: "bissau-port",
+    name: "Bissau",
+    officialName: "Port of Bissau",
+    aka: ["Porto de Bissau", "Pidjiguiti", "Guinea-Bissau", "Geba River"],
+    unlocode: "GWOXB",
+    state: "Bissau",
+    country: "Guinea-Bissau",
+    countryCode: "GW",
+    coast: "Atlantic",
+    weather: "west-africa",
+    waterBody: "Geba River estuary",
+    authority: "Administração dos Portos da Guiné-Bissau (APGB)",
+    type: "State Port",
+    condition: "tidal-silt",
+    waiting: "long-wait",
+    cargoes: ["Containers (cashew exports)", "Rice and general imports", "Fuel", "Fishing catch"],
+    vesselTypes: ["Feeder container ships", "General cargo ships", "Product tankers", "Fishing vessels"],
+    airports: ["Bissau (OXB)"],
+    workAreas: ["main T-shaped pier", "southwest pier", "Bissau anchorage"],
+    conditions:
+      "Bissau lies on the Geba River estuary, where the tidal range reaches up to about 7 metres at spring tides — several times what most of the West African coast sees. The tide sets everything: the stream runs hard through the estuary, dives are only possible around slack water, and the water carries enough silt that divers work by touch. The pier offers around 7 metres of water, so ships often wait at anchor for the tide and the berth.",
+    profile:
+      "The Port of Bissau is Guinea-Bissau's main port and handles almost all of the country's trade, chief among it raw cashew nuts — the country's main export, shipped in containers. Ships call to a T-shaped pier built in 1993 and an older southwest pier, and port stays are long: the port handles far more containers than it was designed for, and an average call runs to more than two weeks.",
+    hook: "cashew exports on the Geba estuary, with one of West Africa's biggest tides",
+    neighbours: ["banjul-port", "conakry-port", "dakar-port"],
+    visibility: "low — the Geba estuary is tidal and silty, with strong streams except around slack water",
+    hullFinding:
+      "Port stays at Bissau are long, often more than two weeks, and ships lie in warm, silty estuary water for much of that time. Hulls pick up heavy growth on the flat bottom and sea chests fill with silt and weed.",
+    hullWindow:
+      "Around slack water, alongside or at the anchorage — the long average port stay at Bissau usually leaves plenty of slack-water windows to plan a full clean.",
+    hullMethod:
+      "With a tidal range of up to 7 metres and strong streams in the estuary, every dive is timed to slack water and supervised from the surface, and the team works by touch in the silty water. A hull clean is split across several slack-water windows during the call.",
+    lineOverrides: { "hold-cleaning": false, "tank-cleaning": false },
+    scopeNotes: {
+      "underwater-hull-cleaning": {
+        note:
+          "The Geba estuary's tide — up to about 7 metres at springs — means divers can only work safely around slack water. At Bissau that is less of a limit than it sounds, because ships stay for a long time: the average call runs to more than two weeks. We use that time to clean the hull across several slack-water windows, so the ship sails on schedule with a clean bottom.",
+        faq: {
+          q: "How is hull cleaning planned at Bissau with such large tides?",
+          a: "Dives are timed to slack water, around an hour each side of high and low water. Because port stays at Bissau are long, we spread the clean across several windows during the call.",
+        },
+      },
+      "propeller-polishing": {
+        note:
+          "A ship that has spent two weeks in warm estuary water at Bissau leaves with a fouled propeller and a long voyage ahead — often to Asia with cashew containers on board. A polish during the stay costs no extra port time and restores the blade surface for the whole passage. Blade edges are checked for wear from the silty water at the same time.",
+        faq: {
+          q: "When should a propeller be polished at Bissau?",
+          a: "Towards the end of the stay, at slack water, so the ship sails with a clean propeller. The long port stays mean there is usually no extra time needed.",
+        },
+      },
+      "thruster-cleaning": {
+        note:
+          "Berthing at Bissau's pier across a strong tidal stream asks a lot of a bow thruster, and a tunnel fouled during a long stay delivers less of the thrust that manoeuvre needs. We clean thrusters at slack water during the call, with the unit isolated, so the ship has full control when she unberths.",
+        faq: {
+          q: "Why clean the thruster before leaving Bissau?",
+          a: "Ships unberth across a strong tidal stream, and a thruster fouled during a long stay loses power exactly when it is needed. We clean it at slack water before departure.",
+        },
+      },
+      "in-water-survey": {
+        note:
+          "The silty, fast-moving water of the Geba estuary is a difficult place for a planned class survey. Bissau suits a damage inspection better — after contact with a shoal on the approach, for example — done at slack water with close-quarters lighting and live video. For a planned survey, a clearer-water port such as Dakar is usually better.",
+        faq: {
+          q: "Can you do an underwater damage inspection at Bissau?",
+          a: "Yes, at slack water, with close-quarters lighting and live video to the master, owner and insurer. For a planned class survey we normally recommend a port with clearer water.",
+        },
+      },
+      "uwild-inspection": {
+        note:
+          "For ships trading regularly to Guinea-Bissau, UWILD can avoid a deviation to a dry dock, but Bissau's silty estuary is rarely clear enough for a class inspection. We confirm eligibility with the class society and plan the inspection at a clearer-water port on the route, such as Dakar.",
+        faq: {
+          q: "Where should UWILD be done for a ship trading to Bissau?",
+          a: "Usually at a clearer-water port on the route, such as Dakar, rather than in the silty Geba estuary. We confirm eligibility with class first.",
         },
       },
     },

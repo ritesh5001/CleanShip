@@ -13,7 +13,7 @@ export type Enquiry = {
   message: string;
 };
 
-const FROM = process.env.RESEND_FROM_EMAIL ?? "Cleanship Website <website@cleanship.co>";
+const FROM = process.env.RESEND_FROM_EMAIL ?? "Cleanship Sales <sales@cleanship.ae>";
 const TO = process.env.ENQUIRY_TO_EMAIL ?? company.email;
 
 const esc = (v: string) =>

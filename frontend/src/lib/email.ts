@@ -29,7 +29,7 @@ export type Enquiry = {
  * have not verified in the dashboard — this is not optional.
  */
 const FROM =
-  process.env.RESEND_FROM_EMAIL ?? `Cleanship Website <website@cleanship.co>`;
+  process.env.RESEND_FROM_EMAIL ?? "Cleanship Sales <sales@cleanship.ae>";
 
 /** Where enquiries land. Defaults to the published address. */
 /**
