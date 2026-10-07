@@ -210,6 +210,43 @@ const nextConfig: NextConfig = {
       permanent: true,
     }));
   },
+  /**
+   * The two subdomains, served from this one app.
+   *
+   * `cleantrack.*` shows the CleanTrack screens (/cleantrack/*) and `uwc.*`
+   * shows the hull cleaning landing page at its root. The visitor's URL never
+   * changes, so these are rewrites, not redirects.
+   *
+   * THESE LIVE HERE AND NOT IN middleware.ts ON PURPOSE. A rewrite returned
+   * from middleware is compared against the server's own origin, and when
+   * `next start` is bound to a specific address (`-H 127.0.0.1`, as a reverse
+   * proxy or tunnel setup usually does) the two origins differ in hostname.
+   * Next then treats the rewrite as an external proxy to https://localhost:PORT
+   * and every request on both subdomains returns a bare "Internal Server
+   * Error". Config rewrites are matched on the Host header and never compare
+   * origins, so they behave the same however the server is started.
+   *
+   * `beforeFiles` so that "/" reaches CleanTrack instead of the marketing home
+   * page. Paths with a file extension are excluded so /cleantrack-icon-192.png
+   * and the manifests are still served from /public.
+   */
+  async rewrites() {
+    const cleantrack = [{ type: "host" as const, value: "cleantrack\\..+" }];
+    const uwc = [{ type: "host" as const, value: "uwc\\..+" }];
+    return {
+      beforeFiles: [
+        { source: "/", has: cleantrack, destination: "/cleantrack" },
+        {
+          source: "/:path((?!cleantrack(?:/|$)|api(?:/|$)|_next(?:/|$))[^.]+)",
+          has: cleantrack,
+          destination: "/cleantrack/:path",
+        },
+        { source: "/", has: uwc, destination: "/lp/underwater-hull-cleaning" },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
   async headers() {
     return [
       {

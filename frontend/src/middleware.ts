@@ -3,13 +3,14 @@ import { NextResponse, type NextRequest } from "next/server";
 /**
  * Serves CleanTrack on its own subdomain from this one app.
  *
- * `cleantrack.cleanship.co/app` is rewritten to `/cleantrack/app` internally.
- * The visitor's URL never changes — they see the subdomain, Next sees the
- * path — so there is one deployment, one build and one session cookie instead
- * of a second project to keep in step.
+ * `cleantrack.cleanship.co/app` is rewritten to `/cleantrack/app` internally
+ * (by the host rewrites in next.config.ts). The visitor's URL never changes —
+ * they see the subdomain, Next sees the path — so there is one deployment, one
+ * build and one session cookie instead of a second project to keep in step.
  *
  * A rewrite, not a redirect: a redirect would bounce the supervisor's phone to
  * the marketing domain and lose the subdomain the whole arrangement exists for.
+ * This file now only does the redirects; see next.config.ts for the rewrites.
  *
  * Locally there is no subdomain, so /cleantrack/* is reachable directly and
  * this does nothing.
@@ -48,11 +49,9 @@ export function middleware(request: NextRequest) {
 
   if (host.startsWith(UWC_HOST)) {
     if (isPassthrough(pathname)) return NextResponse.next();
-    if (pathname === "/") {
-      const url = request.nextUrl.clone();
-      url.pathname = UWC_PAGE;
-      return NextResponse.rewrite(url);
-    }
+    /* "/" is served by the host rewrite in next.config.ts, not here — see the
+       note there for why a middleware rewrite is unsafe. */
+    if (pathname === "/") return NextResponse.next();
     /* The landing page's own path on the subdomain collapses to the root. */
     if (pathname === UWC_PAGE) {
       return NextResponse.redirect(`${UWC_ORIGIN}/${search}`, 308);
@@ -77,19 +76,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(`${MAIN_ORIGIN}${pathname}${search}`, 307);
   }
 
-  /* Already prefixed (an internal link that hard-coded the path), or an asset
-     route that must not be rewritten. */
-  if (
-    pathname.startsWith("/cleantrack") ||
-    pathname.startsWith("/api/") ||
-    pathname.startsWith("/_next/")
-  ) {
-    return NextResponse.next();
-  }
-
-  const url = request.nextUrl.clone();
-  url.pathname = `/cleantrack${pathname === "/" ? "" : pathname}`;
-  return NextResponse.rewrite(url);
+  /* Everything else on the cleantrack host is mapped to /cleantrack/* by the
+     host rewrite in next.config.ts. */
+  return NextResponse.next();
 }
 
 export const config = {
