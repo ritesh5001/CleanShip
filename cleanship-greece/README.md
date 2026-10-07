@@ -2,16 +2,19 @@
 
 The site for Greek shipowners and technical managers: riding crews, hull cleaning, UWILD, tank cleaning and remote inspection at the ports where Cleanship has offices — the UAE, Saudi Arabia, India, Sri Lanka and Guinea.
 
-This is its own Next.js app with its own Vercel project. It shares nothing at runtime with
-cleanship.co or cleanship.ae. Company details and office addresses are kept the same as every
-Cleanship site.
+One self-contained Next.js app — no backend, no database, no CleanTrack. Everything (pages,
+SEO, the quote form) lives in this folder and deploys as a single project. The only outside
+services are Resend (email) and Cloudflare Turnstile (the form's CAPTCHA). Company details and
+office addresses are kept the same as every Cleanship site.
 
 - `src/content/greece.ts`: everything specific to this site (copy, services, ports we serve, FAQs,
   SEO titles, brand name). Edit content here.
 - `src/content/company.ts`: name, phones, email, socials, **all office addresses** and the
   BW Class certificate. Keep in step with `frontend/src/lib/site.ts` and `cleanship-uae/src/content/company.ts`.
-- Enquiries go to the same CleanTrack inbox as cleanship.co, with "(via cleanship.gr)" added to the
-  service so you can tell them apart. They're also emailed through Resend.
+- The quote form (`src/app/contact/actions.ts`) checks the honeypot, the Turnstile token, the
+  fields and the spam rules in `src/lib/spam.ts`, then emails the enquiry to the office through
+  Resend, with "cleanship.gr" in the subject. Spam is dropped without an email. There is no inbox or
+  database — the email is the record.
 
 ## Run locally
 
@@ -27,11 +30,8 @@ New project from this repository, **Root Directory `cleanship-greece`**, framewo
 
 Environment variables (see `.env.example`):
 
-- `BACKEND_URL`: the Render API, the same one cleanship.co uses
-- `ENQUIRY_FORM_KEY`: `HMAC-SHA256(SESSION_SECRET, "cleanship-enquiry-form")` in hex, so the
-  session secret itself never has to be copied here:
-  `S='<SESSION_SECRET>' node -e "console.log(require('crypto').createHmac('sha256',process.env.S).update('cleanship-enquiry-form').digest('hex'))"`
-- `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `ENQUIRY_TO_EMAIL`: same as cleanship.co
+- `RESEND_API_KEY`, `RESEND_FROM_EMAIL` (must be on a Resend-verified domain — `sales@cleanship.ae`
+  works, cleanship.co is not verified), `ENQUIRY_TO_EMAIL` (defaults to admin@cleanship.co)
 - `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`: add `cleanship.gr` to the Turnstile
   widget's hostnames in Cloudflare first
 - `NEXT_PUBLIC_GA_ID`: optional GA4 property for this domain
