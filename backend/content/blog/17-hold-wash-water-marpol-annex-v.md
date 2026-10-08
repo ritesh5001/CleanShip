@@ -1,6 +1,6 @@
 ---
 slug: hold-wash-water-marpol-annex-v
-title: "Hold wash water and cargo residues: what MARPOL Annex V allows, and where it has to go instead"
+title: Hold wash water and cargo residues: what MARPOL Annex V allows, and where it has to go instead
 seoTitle: Hold Wash Water and MARPOL Annex V: Discharge Rules
 description: Where cargo hold wash water and residues can be discharged under MARPOL Annex V, what HME means, special areas, cleaning agents, port reception facilities and Garbage Record Book entries.
 category: Safety & compliance
