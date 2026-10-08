@@ -1,6 +1,6 @@
 import "server-only";
 import { ApiError, login as apiLogin } from "./api";
-import { createSession, type Role } from "./session";
+import { canVerifyToken, createSession, type Role } from "./session";
 import { CAPTCHA_ERROR, verifyTurnstile } from "./turnstile";
 
 export type LoginState = { error?: string };
@@ -39,6 +39,18 @@ export async function attemptLogin(
 
   try {
     const result = await apiLogin(email, password, allow);
+    /* Setting a cookie this app then rejects would send the user into the
+       admin and straight back out, which has surfaced as a 502 rather than
+       anything readable. Stop here and say what is wrong instead. */
+    if (!(await canVerifyToken(result.token))) {
+      console.error(
+        "[login] The API's session token does not verify here: SESSION_SECRET differs between this app and the API.",
+      );
+      return {
+        ok: false,
+        error: "Sign-in is misconfigured on the server (session keys do not match). Please contact the site administrator.",
+      };
+    }
     await createSession(result.token, result.expiresIn);
     return { ok: true, role: result.user.role, landing: result.landing };
   } catch (err) {

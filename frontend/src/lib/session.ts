@@ -97,6 +97,20 @@ export async function destroySession() {
   });
 }
 
+/**
+ * Whether this app can verify a token the API just issued. False means the
+ * two SESSION_SECRET values differ: every sign-in "succeeds" at the API and
+ * then bounces off every page here, which is worth saying out loud.
+ */
+export async function canVerifyToken(token: string): Promise<boolean> {
+  try {
+    await jwtVerify(token, secret(), { issuer: "cleanship", audience: "cleanship-app" });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /** The current session, or null. Never throws — callers decide what to do. */
 export async function getSession(): Promise<Session | null> {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
