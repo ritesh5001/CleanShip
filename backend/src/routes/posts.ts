@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import {
   SLUG_PATTERN,
+  bulkImport,
   createPost,
   deletePost,
   getById,
@@ -73,6 +74,33 @@ const schema = z.object({
 
 postRoutes.get("/admin", requireRole("admin"), async (_req, res) => {
   res.json({ posts: await listAll() });
+});
+
+/* CSV import. The site parses the file and sends the rows; each row is
+   checked against the same schema as the editor, and every problem in the
+   file is reported at once rather than one per attempt. */
+const bulkSchema = z.object({
+  posts: z.array(z.unknown()).min(1, "The file has no posts in it.").max(200, "Import at most 200 posts at a time."),
+  onExisting: z.enum(["skip", "update"]).default("skip"),
+  dryRun: z.boolean().default(false),
+});
+
+postRoutes.post("/admin/bulk", requireRole("admin"), async (req, res) => {
+  const { posts, onExisting, dryRun } = parseBody(bulkSchema, req.body);
+  const rows = posts.map((raw, i) => {
+    const parsed = schema.safeParse(raw);
+    const loose = (raw ?? {}) as { slug?: unknown; title?: unknown };
+    return {
+      row: i + 1,
+      input: parsed.success ? parsed.data : null,
+      errors: parsed.success
+        ? []
+        : parsed.error.issues.map((issue) => `${issue.path.join(".") || "row"}: ${issue.message}`),
+      slug: parsed.success ? parsed.data.slug : typeof loose.slug === "string" ? loose.slug : "",
+      title: parsed.success ? parsed.data.title : typeof loose.title === "string" ? loose.title : "",
+    };
+  });
+  res.json(await bulkImport(rows, { onExisting, dryRun }));
 });
 
 postRoutes.get("/admin/:id", requireRole("admin"), async (req, res) => {

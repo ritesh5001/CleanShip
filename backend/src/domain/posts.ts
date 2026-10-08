@@ -1,4 +1,4 @@
-import { and, desc, eq, lte, ne, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, lte, ne, sql } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { posts, type Post, type PostFaq, type PostSource } from "../db/schema.js";
 import { ApiError } from "../http/errors.js";
@@ -136,4 +136,79 @@ export async function updatePost(id: number, input: Partial<PostInput>): Promise
 export async function deletePost(id: number) {
   const [row] = await db.delete(posts).where(eq(posts.id, id)).returning({ id: posts.id });
   if (!row) throw ApiError.notFound("No such post.");
+}
+
+/* -------------------------------------------------------------------- */
+/* Bulk import (the admin CSV upload)                                    */
+/* -------------------------------------------------------------------- */
+
+export type BulkRowResult = {
+  /** 1-based position in the upload, so the admin can find it in the CSV. */
+  row: number;
+  slug: string;
+  title: string;
+  action: "create" | "update" | "skip" | "error";
+  errors: string[];
+};
+
+export type BulkOptions = {
+  /** What to do when a slug is already taken by a post in the database. */
+  onExisting: "skip" | "update";
+  /** Report what would happen without writing anything. */
+  dryRun: boolean;
+};
+
+/**
+ * Plans every row, and writes only if every row is clean.
+ *
+ * All-or-nothing on purpose: a half-imported CSV leaves the admin working out
+ * which rows landed and editing the file to re-run the rest. One transaction
+ * means a failed import changes nothing and the fixed file can simply be
+ * uploaded again. `invalid` carries rows the route already rejected, so the
+ * report covers the whole file in one pass.
+ */
+export async function bulkImport(
+  rows: { row: number; input: PostInput | null; errors: string[]; slug: string; title: string }[],
+  { onExisting, dryRun }: BulkOptions,
+): Promise<{ written: boolean; results: BulkRowResult[] }> {
+  const slugs = rows.map((r) => r.slug).filter(Boolean);
+  const existing = slugs.length
+    ? await db.select().from(posts).where(inArray(posts.slug, slugs))
+    : [];
+  const bySlug = new Map(existing.map((p) => [p.slug, p]));
+
+  const seen = new Map<string, number>();
+  const results: BulkRowResult[] = rows.map((r) => {
+    const errors = [...r.errors];
+    if (r.slug) {
+      const first = seen.get(r.slug);
+      if (first) errors.push(`Same slug as row ${first}; each post needs its own.`);
+      else seen.set(r.slug, r.row);
+    }
+    const action: BulkRowResult["action"] = errors.length
+      ? "error"
+      : bySlug.has(r.slug)
+        ? onExisting === "update" ? "update" : "skip"
+        : "create";
+    return { row: r.row, slug: r.slug, title: r.title, action, errors };
+  });
+
+  if (dryRun || results.some((r) => r.action === "error")) return { written: false, results };
+
+  await db.transaction(async (tx) => {
+    for (const [i, r] of results.entries()) {
+      const input = rows[i].input!;
+      if (r.action === "create") {
+        await tx.insert(posts).values({ ...input, publishedAt: publishStamp(input) ?? null });
+      } else if (r.action === "update") {
+        const current = bySlug.get(r.slug)!;
+        const stamp = publishStamp(input, current);
+        await tx
+          .update(posts)
+          .set({ ...input, ...(stamp !== undefined ? { publishedAt: stamp } : {}), updatedAt: new Date() })
+          .where(eq(posts.id, current.id));
+      }
+    }
+  });
+  return { written: true, results };
 }

@@ -14,6 +14,14 @@ import type { NextConfig } from "next";
  */
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  experimental: {
+    serverActions: {
+      /* The blog CSV import sends whole articles through a server action;
+         the 1MB default is about a dozen long posts. Vercel caps a request
+         body at 4.5MB, so this is as high as it usefully goes. */
+      bodySizeLimit: "4mb",
+    },
+  },
   poweredByHeader: false,
   compress: true,
   images: {

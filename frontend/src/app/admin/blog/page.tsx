@@ -40,12 +40,20 @@ export default async function AdminBlogPage() {
               <a href="/blog" target="_blank" className="text-blue-700 hover:underline">View blog ↗</a>
             </p>
           </div>
-          <Link
-            href="/admin/blog/new"
-            className="inline-flex min-h-11 items-center bg-blue-700 px-5 text-[14px] font-semibold text-white hover:bg-blue-800"
-          >
-            + New post
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              href="/admin/blog/import"
+              className="inline-flex min-h-11 items-center border border-slate-300 bg-white px-5 text-[14px] font-semibold text-slate-800 hover:bg-slate-100"
+            >
+              Import CSV
+            </Link>
+            <Link
+              href="/admin/blog/new"
+              className="inline-flex min-h-11 items-center bg-blue-700 px-5 text-[14px] font-semibold text-white hover:bg-blue-800"
+            >
+              + New post
+            </Link>
+          </div>
         </div>
 
         {failed ? (

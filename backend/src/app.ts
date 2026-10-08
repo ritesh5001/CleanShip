@@ -53,6 +53,11 @@ export function createApp() {
     }),
   );
 
+  /* A CSV import of blog posts carries whole articles — tens of kilobytes
+     each — so its one route gets a bigger allowance than the 256kb that keeps
+     every other endpoint honest. Mounted first: the general parser below sees
+     the body already parsed and leaves it alone. */
+  app.use("/api/v1/posts/admin/bulk", express.json({ limit: "4mb" }));
   app.use(express.json({ limit: "256kb" }));
 
   /* One line per request, which is what Render's log view is good for.

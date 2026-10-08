@@ -3,6 +3,7 @@ import { createHmac } from "node:crypto";
 import { cookies } from "next/headers";
 import { SESSION_COOKIE } from "./session-cookie";
 import type { Post as BlogPost, PostSummary as BlogPostSummary } from "./blog";
+import type { ImportPost } from "./blog-csv";
 import type {
   CellEvent,
   CellStatus,
@@ -456,6 +457,26 @@ export function updatePost(id: number, body: PostWrite) {
 
 export function deletePost(id: number) {
   return request<void>(`/api/v1/posts/admin/${id}`, { method: "DELETE" });
+}
+
+export type BulkRowResult = {
+  row: number;
+  slug: string;
+  title: string;
+  action: "create" | "update" | "skip" | "error";
+  errors: string[];
+};
+
+/** CSV import: every row checked, and written only if all of them pass. */
+export function bulkImportPosts(body: {
+  posts: ImportPost[];
+  onExisting: "skip" | "update";
+  dryRun: boolean;
+}) {
+  return request<{ written: boolean; results: BulkRowResult[] }>("/api/v1/posts/admin/bulk", {
+    method: "POST",
+    body,
+  });
 }
 
 export function setEnquiryStatus(id: number, status: string) {
