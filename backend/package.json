@@ -15,6 +15,7 @@
     "set-password": "tsx src/db/set-password.ts",
     "set-role": "tsx src/db/set-role.ts",
     "reclassify-spam": "tsx src/db/reclassify-spam.ts",
+    "schedule-posts": "tsx src/db/schedule-posts.ts",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio"
   },

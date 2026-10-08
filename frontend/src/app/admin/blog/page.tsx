@@ -19,7 +19,13 @@ export default async function AdminBlogPage() {
     console.error("[admin/blog] API unavailable", err);
     failed = true;
   }
-  const published = posts.filter((p) => p.status === "published").length;
+  /* A published post dated in the future is scheduled: the public API hides
+     it until that moment. Counted apart so "published" means "live". */
+  const now = Date.now();
+  const isScheduled = (p: PostSummary) =>
+    p.status === "published" && !!p.publishedAt && new Date(p.publishedAt).getTime() > now;
+  const scheduled = posts.filter(isScheduled).length;
+  const published = posts.filter((p) => p.status === "published").length - scheduled;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -29,7 +35,8 @@ export default async function AdminBlogPage() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">Blog</h1>
             <p className="mt-1 text-sm text-slate-600">
-              {posts.length} posts · {published} published · {posts.length - published} drafts ·{" "}
+              {posts.length} posts · {published} published · {scheduled} scheduled ·{" "}
+              {posts.length - published - scheduled} drafts ·{" "}
               <a href="/blog" target="_blank" className="text-blue-700 hover:underline">View blog ↗</a>
             </p>
           </div>
@@ -79,19 +86,21 @@ export default async function AdminBlogPage() {
                     <td className="px-4 py-3">
                       <span
                         className={`inline-block border px-2 py-0.5 text-[12px] font-semibold ${
-                          p.status === "published"
-                            ? "border-emerald-400 bg-emerald-50 text-emerald-800"
-                            : "border-slate-300 bg-slate-100 text-slate-600"
+                          isScheduled(p)
+                            ? "border-amber-400 bg-amber-50 text-amber-800"
+                            : p.status === "published"
+                              ? "border-emerald-400 bg-emerald-50 text-emerald-800"
+                              : "border-slate-300 bg-slate-100 text-slate-600"
                         }`}
                       >
-                        {p.status}
+                        {isScheduled(p) ? "scheduled" : p.status}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-slate-600">{formatPostDate(p.publishedAt) || "—"}</td>
                     <td className="px-4 py-3 text-slate-600">{formatPostDate(p.updatedAt)}</td>
                     <td className="px-4 py-3 text-right whitespace-nowrap">
                       <Link href={`/admin/blog/${p.id}`} className="text-blue-700 hover:underline">Edit</Link>
-                      {p.status === "published" && (
+                      {p.status === "published" && !isScheduled(p) && (
                         <a href={`/blog/${p.slug}`} target="_blank" className="ml-3 text-blue-700 hover:underline">
                           View ↗
                         </a>

@@ -252,6 +252,10 @@ export function PostEditor({ post, defaultAuthor }: { post: Post | null; default
     </button>
   );
 
+  /* Saved as published with a future date: the public site hides it until then. */
+  const scheduled =
+    status === "published" && !!post?.publishedAt && new Date(post.publishedAt).getTime() > Date.now();
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-6">
       {/* Top bar: title, state and the three actions. */}
@@ -262,13 +266,17 @@ export function PostEditor({ post, defaultAuthor }: { post: Post | null; default
           <p className="text-[12px] text-slate-500">
             <span
               className={`mr-2 inline-block border px-1.5 text-[11px] font-semibold ${
-                status === "published" ? "border-emerald-400 text-emerald-700" : "border-slate-300 text-slate-600"
+                scheduled
+                  ? "border-amber-400 text-amber-700"
+                  : status === "published"
+                    ? "border-emerald-400 text-emerald-700"
+                    : "border-slate-300 text-slate-600"
               }`}
             >
-              {status}
+              {scheduled ? "scheduled" : status}
             </span>
             {dirty ? "Unsaved changes" : "All changes saved"} · {words} words · {readingMinutes(words)} min read
-            {status === "published" && post && (
+            {status === "published" && post && !scheduled && (
               <>
                 {" · "}
                 <a href={`/blog/${post.slug}`} target="_blank" className="text-blue-700 hover:underline">View live ↗</a>
@@ -654,7 +662,9 @@ export function PostEditor({ post, defaultAuthor }: { post: Post | null; default
                   value={draft.publishedAt}
                   onChange={(e) => set("publishedAt", e.target.value)}
                 />
-                <p className="mt-1 text-[11px] text-slate-500">Leave empty to use the moment you publish.</p>
+                <p className="mt-1 text-[11px] text-slate-500">
+                  Leave empty to use the moment you publish. A future date schedules the post: it stays off the site until then.
+                </p>
               </div>
             </section>
 

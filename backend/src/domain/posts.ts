@@ -1,4 +1,4 @@
-import { and, desc, eq, ne, sql } from "drizzle-orm";
+import { and, desc, eq, lte, ne, sql } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { posts, type Post, type PostFaq, type PostSource } from "../db/schema.js";
 import { ApiError } from "../http/errors.js";
@@ -9,7 +9,14 @@ import { ApiError } from "../http/errors.js";
  * Drafts are invisible to the public API — `getPublishedBySlug` and
  * `listPublished` filter on status, so a draft URL 404s on the site even if
  * someone guesses it. The admin endpoints see everything.
+ *
+ * A published post with a future `publishedAt` is scheduled: the public reads
+ * also require the date to have passed, so it goes live on its own at that
+ * moment (give or take the site's 5-minute cache) with no job to flip it.
  */
+
+/** Published and due: what the public site is allowed to see. */
+const isLive = () => and(eq(posts.status, "published"), lte(posts.publishedAt, sql`now()`));
 
 export const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -55,7 +62,7 @@ export function listPublished() {
   return db
     .select(summaryColumns)
     .from(posts)
-    .where(eq(posts.status, "published"))
+    .where(isLive())
     .orderBy(desc(posts.publishedAt));
 }
 
@@ -67,7 +74,7 @@ export async function getPublishedBySlug(slug: string): Promise<Post | undefined
   const [row] = await db
     .select()
     .from(posts)
-    .where(and(eq(posts.slug, slug), eq(posts.status, "published")))
+    .where(and(eq(posts.slug, slug), isLive()))
     .limit(1);
   return row;
 }
