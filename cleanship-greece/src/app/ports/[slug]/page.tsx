@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     title: p.seoTitle,
     description: p.metaDescription,
     path: `/ports/${p.slug}`,
-    keywords: [p.name, `hull cleaning ${p.name}`, `hold cleaning ${p.name}`, `${p.name} port`, ...site.keywords.slice(0, 3)],
+    keywords: [p.name, `καθαρισμός γάστρας ${p.name}`, `καθαρισμός κυτών ${p.name}`, `hull cleaning ${p.name}`, `hold cleaning ${p.name}`, ...site.keywords.slice(0, 3)],
   });
 }
 
@@ -32,7 +32,7 @@ export default async function PlacePage({ params }: Params) {
   const p = getPlace((await params).slug);
   if (!p) notFound();
   const trail = [
-    { name: "Home", path: "/" },
+    { name: "Αρχική", path: "/" },
     { name: site.placesLabel, path: "/ports" },
     { name: p.name, path: `/ports/${p.slug}` },
   ];
@@ -48,7 +48,7 @@ export default async function PlacePage({ params }: Params) {
           ...services.map((s) => ({
             "@context": "https://schema.org",
             "@type": "Service",
-            name: `${s.name} at ${p.name}`,
+            name: `${s.name}: ${p.name}`,
             serviceType: s.name,
             provider: { "@id": ORG_ID },
             areaServed: { "@type": "Place", name: `${p.name}, ${p.area}` },
@@ -57,7 +57,7 @@ export default async function PlacePage({ params }: Params) {
         ]}
       />
       <PageHero eyebrow={`${p.area}${p.waterBody ? ` · ${p.waterBody}` : ""}`} title={p.seoTitle} lead={p.hook} trail={trail} image="/images/vessel-on-passage.jpg">
-        <Button href={`/contact?port=${encodeURIComponent(p.name)}`} variant="light" arrow>Get a quote for {p.name}</Button>
+        <Button href={`/contact?port=${encodeURIComponent(p.name)}`} variant="light" arrow>Προσφορά για {p.name}</Button>
       </PageHero>
 
       <section className="bg-white">
@@ -67,11 +67,11 @@ export default async function PlacePage({ params }: Params) {
               {p.body.map((para) => <p key={para}>{para}</p>)}
             </div>
             <section className="mt-12">
-              <h2 className="text-h3 text-ink-900">What we do at {p.name}</h2>
+              <h2 className="text-h3 text-ink-900">Τι κάνουμε στο λιμάνι {p.name}</h2>
               <div className="mt-5"><CheckList items={p.work} /></div>
             </section>
             <section className="mt-12">
-              <h2 className="text-h3 text-ink-900">Services at {p.name}</h2>
+              <h2 className="text-h3 text-ink-900">Υπηρεσίες στο λιμάνι {p.name}</h2>
               <ul className="mt-6 grid gap-4 sm:grid-cols-2">
                 {services.map((s) => (
                   <li key={s.slug}>
@@ -84,7 +84,7 @@ export default async function PlacePage({ params }: Params) {
               </ul>
             </section>
             <section className="mt-14">
-              <h2 className="text-h3 text-ink-900">{p.name} — questions</h2>
+              <h2 className="text-h3 text-ink-900">{p.name}: συχνές ερωτήσεις</h2>
               <div className="mt-6"><FaqList faqs={p.faqs} /></div>
             </section>
           </article>
@@ -94,7 +94,7 @@ export default async function PlacePage({ params }: Params) {
               <dl className="card rule-accent-top divide-y divide-line-200 p-7 text-[15px]">
                 {[
                   [site.areaLabel, p.area],
-                  ["Water", p.waterBody],
+                  ["Θάλασσα", p.waterBody],
                   ["UN/LOCODE", p.unlocode],
                 ]
                   .filter(([, v]) => v)
@@ -107,7 +107,7 @@ export default async function PlacePage({ params }: Params) {
               </dl>
               {nearby.length > 0 && (
                 <div className="card p-7">
-                  <h2 className="font-display text-[19px] font-bold uppercase text-ink-900">Nearby</h2>
+                  <h2 className="font-display text-[19px] font-bold uppercase text-ink-900">Κοντινά λιμάνια</h2>
                   <ul className="mt-4 space-y-2.5">
                     {nearby.map((x) => (
                       <li key={x.slug}>
@@ -123,7 +123,7 @@ export default async function PlacePage({ params }: Params) {
           </aside>
         </div>
       </section>
-      <CtaBand title={`Ship due at ${p.name}?`} />
+      <CtaBand title={`Έρχεται πλοίο στο λιμάνι ${p.name};`} />
     </>
   );
 }

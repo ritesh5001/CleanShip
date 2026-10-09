@@ -8,7 +8,7 @@ import { CtaBand } from "@/components/cta-band";
 
 const title = site.portsPageTitle;
 export const metadata: Metadata = buildMetadata({ title, description: site.placesIntro, path: "/ports" });
-const trail = [{ name: "Home", path: "/" }, { name: site.placesLabel, path: "/ports" }];
+const trail = [{ name: "Αρχική", path: "/" }, { name: site.placesLabel, path: "/ports" }];
 
 export default function PortsPage() {
   const groups = [...new Set(site.places.map((p) => p.area))];

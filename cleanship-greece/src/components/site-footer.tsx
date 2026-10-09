@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { company, whatsappUrl } from "@/content/company";
+import { company } from "@/content/company";
+import { whatsappUrl } from "@/content/labels";
 import { site } from "@/content/site";
+import { hours, phoneLabel } from "@/content/labels";
 import { Logo } from "./logo";
 import { OfficeGrid } from "./offices";
 import { ClockIcon, FacebookIcon, InstagramIcon, LinkedInIcon, MailIcon, PhoneIcon, WhatsAppIcon, YouTubeIcon } from "./icons";
@@ -29,7 +31,7 @@ export function SiteFooter() {
                 <span className="flex flex-col gap-1">
                   {company.phones.map((p) => (
                     <a key={p.href} href={p.href} className={`tabular ${link}`}>
-                      {p.number} <span className="text-white/45">({p.label})</span>
+                      {p.number} <span className="text-white/45">({phoneLabel(p.label)})</span>
                     </a>
                   ))}
                 </span>
@@ -40,28 +42,28 @@ export function SiteFooter() {
               </li>
               <li className="flex gap-3.5">
                 <WhatsAppIcon className="mt-1 size-[18px] shrink-0 text-aqua-500" />
-                <a href={whatsappUrl(site.domain)} target="_blank" rel="noopener noreferrer" className={link}>WhatsApp the operations desk</a>
+                <a href={whatsappUrl(site.domain)} target="_blank" rel="noopener noreferrer" className={link}>WhatsApp στο τμήμα επιχειρήσεων</a>
               </li>
               <li className="flex gap-3.5">
                 <ClockIcon className="mt-1 size-[18px] shrink-0 text-aqua-500" />
                 <span>
-                  {company.hours.office}
+                  {hours.office}
                   <br />
-                  <span className="text-aqua-200">{company.hours.operations}</span>
+                  <span className="text-aqua-200">{hours.operations}</span>
                 </span>
               </li>
             </ul>
             <div className="mt-7 flex gap-2.5">
               {socials.map(({ href, label, Icon }) => (
-                <a key={label} href={href} target="_blank" rel="noopener noreferrer me" aria-label={`Cleanship on ${label}`} className="flex size-11 items-center justify-center border border-white/16 hover:border-aqua-500 hover:text-white">
+                <a key={label} href={href} target="_blank" rel="noopener noreferrer me" aria-label={`Η Cleanship στο ${label}`} className="flex size-11 items-center justify-center border border-white/16 hover:border-aqua-500 hover:text-white">
                   <Icon className="size-[18px]" />
                 </a>
               ))}
             </div>
           </div>
 
-          <nav aria-label="Services" className="lg:col-span-3">
-            <h2 className={heading}>Services</h2>
+          <nav aria-label="Υπηρεσίες" className="lg:col-span-3">
+            <h2 className={heading}>Υπηρεσίες</h2>
             <ul className="mt-4 space-y-2.5 text-[14px]">
               {site.services.map((s) => (
                 <li key={s.slug}>
@@ -82,22 +84,22 @@ export function SiteFooter() {
             </ul>
           </nav>
 
-          <nav aria-label="Company" className="lg:col-span-2">
-            <h2 className={heading}>Company</h2>
+          <nav aria-label="Εταιρεία" className="lg:col-span-2">
+            <h2 className={heading}>Εταιρεία</h2>
             <ul className="mt-4 space-y-2.5 text-[14px]">
               {[
-                ["About", "/about"],
-                ["Offices", "/offices"],
-                ["Contact", "/contact"],
-                ["Privacy Policy", "/privacy-policy"],
-                ["Terms", "/terms"],
+                ["Η εταιρεία", "/about"],
+                ["Γραφεία", "/offices"],
+                ["Επικοινωνία", "/contact"],
+                ["Πολιτική απορρήτου", "/privacy-policy"],
+                ["Όροι χρήσης", "/terms"],
               ].map(([label, href]) => (
                 <li key={href}>
                   <Link href={href} className={link}>{label}</Link>
                 </li>
               ))}
             </ul>
-            <h2 className={`${heading} mt-9`}>Cleanship sites</h2>
+            <h2 className={`${heading} mt-9`}>Ιστότοποι Cleanship</h2>
             <ul className="mt-4 space-y-2.5 text-[14px]">
               {site.sisterSites.map((s) => (
                 <li key={s.url}>
@@ -109,14 +111,14 @@ export function SiteFooter() {
         </div>
 
         <section aria-labelledby="footer-offices" className="mt-14 border-t border-white/16 pt-10">
-          <h2 id="footer-offices" className={heading}>Our offices</h2>
+          <h2 id="footer-offices" className={heading}>Τα γραφεία μας</h2>
           <div className="mt-6">
             <OfficeGrid onNavy />
           </div>
         </section>
 
         <div className="mt-14 flex flex-col gap-3 border-t border-white/16 pt-8 text-[13px] text-white/50 sm:flex-row sm:justify-between">
-          <p>© {new Date().getFullYear()} {company.legalName}. Licence {company.licence}, Ajman Free Zone, UAE.</p>
+          <p>© {new Date().getFullYear()} {company.legalName}. Άδεια {company.licence}, Ελεύθερη Ζώνη Ajman, ΗΑΕ.</p>
           <p>{site.domain}</p>
         </div>
       </div>

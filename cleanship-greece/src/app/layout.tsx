@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import localFont from "next/font/local";
+import { Fira_Mono, Fira_Sans, Fira_Sans_Condensed } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -10,28 +10,26 @@ import { company } from "@/content/company";
 import { site } from "@/content/site";
 import { BASE_URL, organizationSchema, websiteSchema } from "@/lib/seo";
 
-const barlowCondensed = localFont({
-  src: [
-    { path: "./fonts/barlow-condensed-500.woff2", weight: "500" },
-    { path: "./fonts/barlow-condensed-600.woff2", weight: "600" },
-    { path: "./fonts/barlow-condensed-700.woff2", weight: "700" },
-  ],
-  variable: "--font-barlow-condensed",
+/* Barlow, the family the other Cleanship sites use, has no Greek letters, so
+   this site uses Fira Sans: the same engineered, condensed-headline feel with
+   full Greek coverage. next/font downloads and self-hosts the files at build
+   time; visitors' browsers never call Google. */
+const displayFont = Fira_Sans_Condensed({
+  subsets: ["greek", "latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-display-face",
   display: "swap",
 });
-const barlow = localFont({
-  src: [
-    { path: "./fonts/barlow-400.woff2", weight: "400" },
-    { path: "./fonts/barlow-500.woff2", weight: "500" },
-    { path: "./fonts/barlow-600.woff2", weight: "600" },
-    { path: "./fonts/barlow-700.woff2", weight: "700" },
-  ],
-  variable: "--font-barlow",
+const bodyFont = Fira_Sans({
+  subsets: ["greek", "latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-body-face",
   display: "swap",
 });
-const plexMono = localFont({
-  src: [{ path: "./fonts/ibm-plex-mono-400.woff2", weight: "400" }],
-  variable: "--font-plex-mono",
+const monoFont = Fira_Mono({
+  subsets: ["greek", "latin"],
+  weight: ["400"],
+  variable: "--font-mono-face",
   display: "swap",
 });
 
@@ -51,11 +49,11 @@ export const viewport: Viewport = { themeColor: "#06203a", width: "device-width"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={site.lang} className={`${barlowCondensed.variable} ${barlow.variable} ${plexMono.variable}`}>
+    <html lang={site.lang} className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}>
       <body>
         <JsonLd schema={[organizationSchema(), websiteSchema()]} />
         <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-white focus:p-3">
-          Skip to content
+          Μετάβαση στο περιεχόμενο
         </a>
         <SiteHeader />
         <main id="main">{children}</main>

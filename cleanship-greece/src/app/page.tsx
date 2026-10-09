@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { company, offices, whatsappUrl } from "@/content/company";
+import { company, offices } from "@/content/company";
+import { whatsappUrl } from "@/content/labels";
 import { site } from "@/content/site";
 import { buildMetadata, faqSchema } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
@@ -17,10 +18,10 @@ export default function HomePage() {
   const h = site.home;
   const countries = new Set(offices.map((o) => o.country)).size;
   const stats = [
-    { value: `${offices.length}`, label: `offices in ${countries} countries` },
-    { value: "24/7", label: "operations desk" },
-    { value: String(company.foundingYear), label: "working since" },
-    { value: "BW Class", label: "approved RIT supplier" },
+    { value: `${offices.length}`, label: `γραφεία σε ${countries} χώρες` },
+    { value: "24/7", label: "τμήμα επιχειρήσεων" },
+    { value: String(company.foundingYear), label: "έτος ίδρυσης" },
+    { value: "BW Class", label: "εγκεκριμένος πάροχος RIT" },
   ];
 
   return (
@@ -36,11 +37,11 @@ export default function HomePage() {
           <h1 className="text-display mt-6 max-w-4xl">{h.title}</h1>
           <p className="text-lead mt-7 max-w-2xl text-white/85">{h.lead}</p>
           <div className="mt-10 flex flex-wrap gap-3">
-            <Button href="/contact" variant="light" arrow>Get a quote</Button>
+            <Button href="/contact" variant="light" arrow>Ζητήστε προσφορά</Button>
             <Button href={whatsappUrl(site.domain)} variant="whatsapp" external>
               <WhatsAppIcon className="size-4" /> WhatsApp
             </Button>
-            <Button href="/services" variant="ghost">Our services</Button>
+            <Button href="/services" variant="ghost">Οι υπηρεσίες μας</Button>
           </div>
         </div>
       </section>
@@ -62,7 +63,7 @@ export default function HomePage() {
       <section className="bg-white">
         <div className="container-page grid gap-12 py-20 lg:grid-cols-12 lg:py-24">
           <div className="lg:col-span-5">
-            <SectionHeading eyebrow="Who we are" title={h.introTitle} />
+            <SectionHeading eyebrow="Ποιοι είμαστε" title={h.introTitle} />
           </div>
           <div className="space-y-5 text-[17px] leading-[1.65] text-ink-700 lg:col-span-7">
             {h.intro.map((p) => <p key={p}>{p}</p>)}
@@ -72,7 +73,7 @@ export default function HomePage() {
 
       <section className="bg-paper">
         <div className="container-page py-20 lg:py-24">
-          <SectionHeading eyebrow="Services" title="What we do" description={site.servicesIntro} />
+          <SectionHeading eyebrow="Υπηρεσίες" title="Τι κάνουμε" description={site.servicesIntro} />
           <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {site.services.map((s) => (
               <li key={s.slug}>
@@ -81,7 +82,7 @@ export default function HomePage() {
                   <h3 className="mt-5 font-display text-[22px] font-bold uppercase leading-tight text-ink-900 group-hover:text-blue-600">{s.name}</h3>
                   <p className="mt-3 flex-1 text-[15px] leading-[1.6] text-slate-600">{s.short}</p>
                   <span className="mt-5 inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.08em] text-blue-600">
-                    Learn more <ArrowIcon className="size-4" />
+                    Περισσότερα <ArrowIcon className="size-4" />
                   </span>
                 </Link>
               </li>
@@ -109,7 +110,7 @@ export default function HomePage() {
 
       <section className="on-navy bg-navy-900">
         <div className="container-page py-20 lg:py-24">
-          <SectionHeading eyebrow={`Why ${site.brand}`} title={site.whyTitle} />
+          <SectionHeading eyebrow={`Γιατί ${site.brand}`} title={site.whyTitle} />
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {h.why.map((w) => (
               <div key={w.title} className="border-t-2 border-aqua-500 pt-5">
@@ -123,7 +124,7 @@ export default function HomePage() {
 
       <section className="bg-white">
         <div className="container-page py-20 lg:py-24">
-          <SectionHeading eyebrow="How it works" title="From enquiry to report" />
+          <SectionHeading eyebrow="Πώς δουλεύουμε" title="Από το αίτημα στην αναφορά" />
           <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {h.process.map((s, i) => (
               <li key={s.title} className="card p-6">
@@ -138,14 +139,14 @@ export default function HomePage() {
 
       <section className="bg-paper">
         <div className="container-page py-20 lg:py-24">
-          <SectionHeading eyebrow="Approvals" title="Certified by class" />
+          <SectionHeading eyebrow="Εγκρίσεις" title="Πιστοποιημένοι από νηογνώμονα" />
           <div className="mt-10"><CertificateCard /></div>
         </div>
       </section>
 
       <section className="bg-white">
         <div className="container-page py-20 lg:py-24">
-          <SectionHeading eyebrow="Offices" title="Where to find us" description="The same offices and addresses as every Cleanship site." />
+          <SectionHeading eyebrow="Γραφεία" title="Πού θα μας βρείτε" description="Τα ίδια γραφεία και διευθύνσεις με όλους τους ιστότοπους της Cleanship." />
           <div className="mt-12"><OfficeGrid /></div>
         </div>
       </section>
@@ -153,7 +154,7 @@ export default function HomePage() {
       <section className="bg-paper">
         <div className="container-page grid gap-12 py-20 lg:grid-cols-12 lg:py-24">
           <div className="lg:col-span-4">
-            <SectionHeading eyebrow="FAQ" title="Questions we get asked" />
+            <SectionHeading eyebrow="Συχνές ερωτήσεις" title="Τι μας ρωτούν συχνά" />
           </div>
           <div className="lg:col-span-8"><FaqList faqs={h.faqs} /></div>
         </div>

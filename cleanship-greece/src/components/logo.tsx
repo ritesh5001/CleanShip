@@ -5,7 +5,7 @@ export function Logo({ onNavy = false, className = "h-9 w-auto sm:h-10", priorit
   return (
     <Image
       src="/brand/cleanship-logo.webp"
-      alt={`${company.legalName} logo`}
+      alt={`Λογότυπο ${company.legalName}`}
       width={950}
       height={250}
       priority={priority}

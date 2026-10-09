@@ -125,7 +125,7 @@ export function serviceSchema(service: Service, place?: Place) {
   return {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: place ? `${service.name} at ${place.name}` : service.name,
+    name: place ? `${service.name}: ${place.name}` : service.name,
     serviceType: service.name,
     description: service.metaDescription,
     provider: { "@id": ORG_ID },

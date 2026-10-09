@@ -71,9 +71,9 @@
   --color-danger-100: #fae5e0;
 
   /* ---- Type ---- */
-  --font-display: var(--font-barlow-condensed), "Barlow Condensed", sans-serif;
-  --font-sans: var(--font-barlow), "Barlow", -apple-system, sans-serif;
-  --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
+  --font-display: var(--font-display-face), "Fira Sans Condensed", sans-serif;
+  --font-sans: var(--font-body-face), "Fira Sans", -apple-system, sans-serif;
+  --font-mono: var(--font-mono-face), "Fira Mono", ui-monospace, monospace;
 
   --tracking-display: 0.01em;
   --tracking-eyebrow: 0.18em;

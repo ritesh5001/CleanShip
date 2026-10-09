@@ -1,7 +1,6 @@
 import { officesByCountry, officeTownLine } from "@/content/company";
 import { site } from "@/content/site";
-
-const LABEL: Record<string, string> = { "United Arab Emirates": "UAE" };
+import { countryShort } from "@/content/labels";
 
 export function OfficeGrid({ onNavy = false }: { onNavy?: boolean }) {
   return (
@@ -9,7 +8,7 @@ export function OfficeGrid({ onNavy = false }: { onNavy?: boolean }) {
       {officesByCountry(site.officeOrder).map((group) => (
         <div key={group.country}>
           <h3 className={`label-caps text-[11px] ${onNavy ? "text-aqua-200" : "text-blue-600"}`}>
-            {LABEL[group.country] ?? group.country}
+            {countryShort(group.country)}
           </h3>
           <ul className="mt-4 space-y-5">
             {group.items.map((o) => (
@@ -18,7 +17,7 @@ export function OfficeGrid({ onNavy = false }: { onNavy?: boolean }) {
                   <p className={`text-[15px] font-semibold ${onNavy ? "text-white" : "text-ink-900"}`}>
                     {o.city}
                     {o.head && (
-                      <span className="label-caps ml-2 bg-aqua-500 px-1.5 py-0.5 align-middle text-[9px] text-abyss-950">Head office</span>
+                      <span className="label-caps ml-2 bg-aqua-500 px-1.5 py-0.5 align-middle text-[9px] text-abyss-950">Κεντρικά γραφεία</span>
                     )}
                   </p>
                   <p className={`mt-1 text-[13px] leading-[1.55] ${onNavy ? "" : "text-slate-600"}`}>

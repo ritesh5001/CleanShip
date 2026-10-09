@@ -3,7 +3,7 @@ import "server-only";
 const VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
 export const CAPTCHA_ERROR =
-  "Please complete the security check and try again.";
+  "Ολοκληρώστε τον έλεγχο ασφαλείας και δοκιμάστε ξανά.";
 
 /**
  * Checks the Cloudflare Turnstile token a form posted.

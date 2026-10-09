@@ -8,13 +8,13 @@ import { CertificateCard } from "@/components/certificate";
 import { SectionHeading } from "@/components/ui";
 
 export const metadata: Metadata = buildMetadata({ title: site.about.title, description: site.about.lead, path: "/about", image: "/images/crew-at-work.jpg" });
-const trail = [{ name: "Home", path: "/" }, { name: "About", path: "/about" }];
+const trail = [{ name: "Αρχική", path: "/" }, { name: "Η εταιρεία", path: "/about" }];
 
 export default function AboutPage() {
   return (
     <>
       <JsonLd schema={breadcrumbSchema(trail)} />
-      <PageHero eyebrow="About" title={site.about.title} lead={site.about.lead} trail={trail} image="/images/crew-at-work.jpg" />
+      <PageHero eyebrow="Η εταιρεία" title={site.about.title} lead={site.about.lead} trail={trail} image="/images/crew-at-work.jpg" />
       <section className="bg-white">
         <div className="container-page grid gap-12 py-20 lg:grid-cols-12">
           <div className="space-y-5 text-[17px] leading-[1.7] text-ink-700 lg:col-span-8">
@@ -24,7 +24,7 @@ export default function AboutPage() {
       </section>
       <section className="bg-paper">
         <div className="container-page py-20">
-          <SectionHeading eyebrow="Approvals" title="Certified by class" />
+          <SectionHeading eyebrow="Εγκρίσεις" title="Πιστοποιημένοι από νηογνώμονα" />
           <div className="mt-10"><CertificateCard /></div>
         </div>
       </section>

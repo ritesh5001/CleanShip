@@ -7,8 +7,17 @@ SEO, the quote form) lives in this folder and deploys as a single project. The o
 services are Resend (email) and Cloudflare Turnstile (the form's CAPTCHA). Company details and
 office addresses are kept the same as every Cleanship site.
 
+- **The site is in Greek** (`lang="el-GR"`). Industry terms Greek technical departments use in
+  English (grain clean, off-hire, UWILD, riding crew) stay in English, port names stay in Latin
+  script, and URLs stay English so links never break. The enquiry notification to the office stays
+  in English; the acknowledgement to the customer is in Greek.
 - `src/content/greece.ts`: everything specific to this site (copy, services, ports we serve, FAQs,
   SEO titles, brand name). Edit content here.
+- `src/content/labels.ts`: Greek display text for facts that live in `company.ts` (country names,
+  hours, the certificate wording, the WhatsApp greeting). `company.ts` itself stays English and
+  identical across sites.
+- Fonts are Fira Sans / Fira Sans Condensed via `next/font/google`, because Barlow (used on the
+  other sites) has no Greek letters. They are downloaded at build time and self-hosted.
 - `src/content/company.ts`: name, phones, email, socials, **all office addresses** and the
   BW Class certificate. Keep in step with `frontend/src/lib/site.ts` and `cleanship-uae/src/content/company.ts`.
 - The quote form (`src/app/contact/actions.ts`) checks the honeypot, the Turnstile token, the

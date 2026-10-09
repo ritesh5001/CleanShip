@@ -51,6 +51,7 @@ export function Turnstile({
       sitekey: SITE_KEY,
       theme,
       size: "flexible",
+      language: "el",
     });
     return () => {
       if (widgetId.current) window.turnstile?.remove(widgetId.current);

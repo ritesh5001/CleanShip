@@ -4,25 +4,25 @@ import { site } from "@/content/site";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/page-hero";
 
-export const metadata: Metadata = buildMetadata({ title: "Privacy Policy", description: `How ${company.legalName} handles personal data submitted through ${site.domain}.`, path: "/privacy-policy" });
+export const metadata: Metadata = buildMetadata({ title: "Πολιτική απορρήτου", description: `Πώς η ${company.legalName} χειρίζεται τα προσωπικά δεδομένα που υποβάλλονται μέσω του ${site.domain}.`, path: "/privacy-policy" });
 
 export default function PrivacyPage() {
-  const trail = [{ name: "Home", path: "/" }, { name: "Privacy Policy", path: "/privacy-policy" }];
+  const trail = [{ name: "Αρχική", path: "/" }, { name: "Πολιτική απορρήτου", path: "/privacy-policy" }];
   return (
     <>
-      <PageHero title="Privacy Policy" trail={trail} />
+      <PageHero title="Πολιτική απορρήτου" trail={trail} />
       <article className="container-page max-w-3xl space-y-6 py-16 text-[16px] leading-[1.7] text-ink-700 [&_h2]:mt-10 [&_h2]:font-display [&_h2]:text-[24px] [&_h2]:font-bold [&_h2]:uppercase [&_h2]:text-ink-900">
-        <p>This policy explains how {company.legalName} (&ldquo;Cleanship&rdquo;), {company.registeredAddress.full}, handles personal data submitted through {site.domain}.</p>
-        <h2>What we collect</h2>
-        <p>When you send an enquiry we receive the details you enter: name, email address, phone number, company, vessel name or IMO number, the service you are interested in and your message.</p>
-        <h2>How we use it</h2>
-        <p>We use your details only to answer your enquiry, prepare a quote and carry out the work you ask for. We do not sell personal data or use it for unrelated marketing.</p>
-        <h2>Who processes it</h2>
-        <p>This site does not keep a database of enquiries. Your enquiry is sent by email to our office through our email provider, Resend, and a confirmation is emailed to you. The security check on the form is provided by Cloudflare Turnstile. If analytics are enabled, Google Analytics receives anonymous usage data.</p>
-        <h2>How long we keep it</h2>
-        <p>Enquiry emails are kept in our mailbox for as long as needed to respond and for our normal business records, after which they are deleted.</p>
-        <h2>Your rights</h2>
-        <p>You can ask to see, correct or delete the personal data we hold about you by emailing <a className="text-blue-600 underline" href={`mailto:${company.email}`}>{company.email}</a>.</p>
+        <p>Η παρούσα πολιτική εξηγεί πώς η {company.legalName} (&laquo;Cleanship&raquo;), {company.registeredAddress.full}, χειρίζεται τα προσωπικά δεδομένα που υποβάλλονται μέσω του {site.domain}.</p>
+        <h2>Τι συλλέγουμε</h2>
+        <p>Όταν μας στέλνετε αίτημα, λαμβάνουμε τα στοιχεία που συμπληρώνετε: ονοματεπώνυμο, διεύθυνση email, αριθμό τηλεφώνου, εταιρεία, όνομα πλοίου ή αριθμό IMO, την υπηρεσία που σας ενδιαφέρει και το μήνυμά σας.</p>
+        <h2>Πώς τα χρησιμοποιούμε</h2>
+        <p>Χρησιμοποιούμε τα στοιχεία σας μόνο για να απαντήσουμε στο αίτημά σας, να ετοιμάσουμε προσφορά και να εκτελέσουμε την εργασία που ζητάτε. Δεν πουλάμε προσωπικά δεδομένα και δεν τα χρησιμοποιούμε για άσχετη προώθηση.</p>
+        <h2>Ποιος τα επεξεργάζεται</h2>
+        <p>Ο ιστότοπος δεν διατηρεί βάση δεδομένων με αιτήματα. Το αίτημά σας αποστέλλεται με email στο γραφείο μας μέσω του παρόχου email μας, Resend, και λαμβάνετε επιβεβαίωση με email. Ο έλεγχος ασφαλείας της φόρμας παρέχεται από το Cloudflare Turnstile. Αν είναι ενεργοποιημένα τα στατιστικά επισκεψιμότητας, το Google Analytics λαμβάνει ανώνυμα δεδομένα χρήσης.</p>
+        <h2>Πόσο καιρό τα διατηρούμε</h2>
+        <p>Τα email των αιτημάτων διατηρούνται στο γραμματοκιβώτιό μας όσο χρειάζεται για να απαντήσουμε και για τα συνήθη επιχειρηματικά μας αρχεία, και στη συνέχεια διαγράφονται.</p>
+        <h2>Τα δικαιώματά σας</h2>
+        <p>Μπορείτε να ζητήσετε πρόσβαση, διόρθωση ή διαγραφή των προσωπικών δεδομένων που τηρούμε για εσάς στέλνοντας email στο <a className="text-blue-600 underline" href={`mailto:${company.email}`}>{company.email}</a>.</p>
       </article>
     </>
   );

@@ -27,8 +27,8 @@ export default async function ServicePage({ params }: Params) {
   const s = getService((await params).slug);
   if (!s) notFound();
   const trail = [
-    { name: "Home", path: "/" },
-    { name: "Services", path: "/services" },
+    { name: "Αρχική", path: "/" },
+    { name: "Υπηρεσίες", path: "/services" },
     { name: s.name, path: `/services/${s.slug}` },
   ];
   const places = site.places.filter((p) => p.services.includes(s.slug));
@@ -37,7 +37,7 @@ export default async function ServicePage({ params }: Params) {
     <>
       <JsonLd schema={[breadcrumbSchema(trail), serviceSchema(s), faqSchema(s.faqs)]} />
       <PageHero eyebrow={s.name} title={s.seoTitle} lead={s.short} trail={trail} image={s.image}>
-        <Button href={`/contact?service=${encodeURIComponent(s.name)}`} variant="light" arrow>Get a quote</Button>
+        <Button href={`/contact?service=${encodeURIComponent(s.name)}`} variant="light" arrow>Ζητήστε προσφορά</Button>
       </PageHero>
 
       <section className="bg-white">
@@ -54,12 +54,12 @@ export default async function ServicePage({ params }: Params) {
             ))}
             {s.slug === "remote-inspection-ndt" && (
               <section className="mt-12">
-                <h2 className="text-h3 text-ink-900">Class approval</h2>
+                <h2 className="text-h3 text-ink-900">Έγκριση νηογνώμονα</h2>
                 <div className="mt-5"><CertificateCard /></div>
               </section>
             )}
             <section className="mt-14">
-              <h2 className="text-h3 text-ink-900">Frequently asked</h2>
+              <h2 className="text-h3 text-ink-900">Συχνές ερωτήσεις</h2>
               <div className="mt-6"><FaqList faqs={s.faqs} /></div>
             </section>
           </article>
@@ -67,7 +67,7 @@ export default async function ServicePage({ params }: Params) {
           <aside className="lg:col-span-4">
             <div className="space-y-6 lg:sticky lg:top-[130px]">
               <div className="card rule-accent-top p-7">
-                <h2 className="font-display text-[20px] font-bold uppercase text-ink-900">What&apos;s included</h2>
+                <h2 className="font-display text-[20px] font-bold uppercase text-ink-900">Τι περιλαμβάνεται</h2>
                 <div className="mt-5"><CheckList items={s.points} /></div>
               </div>
               {places.length > 0 && (
@@ -79,7 +79,7 @@ export default async function ServicePage({ params }: Params) {
                     {places.map((p) => (
                       <li key={p.slug}>
                         <Link href={`/ports/${p.slug}`} className="text-blue-600 hover:underline">
-                          {s.name} at {p.name}
+                          {p.name}
                         </Link>
                       </li>
                     ))}

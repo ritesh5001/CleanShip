@@ -6,11 +6,11 @@ import { MailIcon, MenuIcon, PhoneIcon } from "./icons";
 
 export function navItems() {
   return [
-    { label: "Services", href: "/services" },
+    { label: "Υπηρεσίες", href: "/services" },
     { label: site.placesLabel, href: "/ports" },
-    { label: "About", href: "/about" },
-    { label: "Offices", href: "/offices" },
-    { label: "Contact", href: "/contact" },
+    { label: "Η εταιρεία", href: "/about" },
+    { label: "Γραφεία", href: "/offices" },
+    { label: "Επικοινωνία", href: "/contact" },
   ];
 }
 
@@ -34,28 +34,28 @@ export function SiteHeader() {
         </div>
       </div>
       <div className="container-page flex h-[72px] items-center justify-between gap-6">
-        <Link href="/" className="flex items-center gap-3" aria-label={`${company.name} home`}>
+        <Link href="/" className="flex items-center gap-3" aria-label={`${company.name}: αρχική σελίδα`}>
           <Logo priority className="h-9 w-auto" />
           <span className="label-caps hidden border-l border-line-200 pl-3 text-[11px] text-blue-600 sm:inline">
             {site.tag}
           </span>
         </Link>
-        <nav aria-label="Main" className="hidden items-center gap-7 lg:flex">
+        <nav aria-label="Κύριο μενού" className="hidden items-center gap-7 lg:flex">
           {navItems().map((item) => (
             <Link key={item.href} href={item.href} className="text-[14px] font-semibold uppercase tracking-[0.06em] text-ink-900 hover:text-blue-600">
               {item.label}
             </Link>
           ))}
           <Link href="/contact" className="inline-flex min-h-11 items-center bg-blue-600 px-5 text-[14px] font-semibold uppercase tracking-[0.08em] text-white hover:bg-navy-700">
-            Get a quote
+            Ζητήστε προσφορά
           </Link>
         </nav>
         <details className="group relative lg:hidden">
-          <summary className="flex size-11 cursor-pointer list-none items-center justify-center border border-line-200 [&::-webkit-details-marker]:hidden" aria-label="Menu">
+          <summary className="flex size-11 cursor-pointer list-none items-center justify-center border border-line-200 [&::-webkit-details-marker]:hidden" aria-label="Μενού">
             <MenuIcon className="size-5" />
           </summary>
-          <nav aria-label="Mobile" className="absolute right-0 top-14 w-64 border border-line-200 bg-white p-3 shadow-lg">
-            {[...navItems(), { label: "Get a quote", href: "/contact" }].map((item) => (
+          <nav aria-label="Μενού κινητού" className="absolute right-0 top-14 w-64 border border-line-200 bg-white p-3 shadow-lg">
+            {[...navItems(), { label: "Ζητήστε προσφορά", href: "/contact" }].map((item) => (
               <Link key={item.label} href={item.href} className="block px-3 py-3 text-[15px] font-semibold text-ink-900 hover:bg-blue-50">
                 {item.label}
               </Link>

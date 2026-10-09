@@ -7,15 +7,15 @@ import { PageHero } from "@/components/page-hero";
 import { OfficeGrid } from "@/components/offices";
 import { CtaBand } from "@/components/cta-band";
 
-const description = `Cleanship Marine Services offices in the UAE, Saudi Arabia, India, Sri Lanka and Guinea. Head office: ${company.registeredAddress.full}.`;
-export const metadata: Metadata = buildMetadata({ title: "Our Offices", description, path: "/offices" });
-const trail = [{ name: "Home", path: "/" }, { name: "Offices", path: "/offices" }];
+const description = `Τα γραφεία της Cleanship Marine Services στα Ηνωμένα Αραβικά Εμιράτα, τη Σαουδική Αραβία, την Ινδία, τη Σρι Λάνκα και τη Γουινέα. Κεντρικά γραφεία: ${company.registeredAddress.full}.`;
+export const metadata: Metadata = buildMetadata({ title: "Τα γραφεία μας", description, path: "/offices" });
+const trail = [{ name: "Αρχική", path: "/" }, { name: "Γραφεία", path: "/offices" }];
 
 export default function OfficesPage() {
   return (
     <>
       <JsonLd schema={[breadcrumbSchema(trail), ...officeSchemas()]} />
-      <PageHero eyebrow="Offices" title="Our offices" lead={description} trail={trail} />
+      <PageHero eyebrow="Γραφεία" title="Τα γραφεία μας" lead={description} trail={trail} />
       <section className="bg-white">
         <div className="container-page py-20">
           <OfficeGrid />

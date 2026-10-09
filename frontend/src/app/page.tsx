@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     ...baseMetadata.alternates,
     languages: {
       "en-AE": "https://www.cleanship.ae/",
-      "en-GR": "https://www.cleanship.gr/",
+      "el-GR": "https://www.cleanship.gr/",
       "x-default": "https://www.cleanship.co/",
     },
   },

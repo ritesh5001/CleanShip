@@ -597,7 +597,7 @@ export const uae: SiteContent = {
   servicePortsLabel: "UAE ports",
   sisterSites: [
     { label: "cleanship.co — Global", url: "https://www.cleanship.co", hreflang: "x-default" },
-    { label: "cleanship.gr — Greece", url: "https://www.cleanship.gr", hreflang: "en-GR" },
+    { label: "cleanship.gr — Greece", url: "https://www.cleanship.gr", hreflang: "el-GR" },
   ],
   domain: "cleanship.ae",
   url: "https://www.cleanship.ae",

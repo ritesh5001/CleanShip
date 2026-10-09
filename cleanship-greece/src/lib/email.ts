@@ -30,8 +30,8 @@ function table(pairs: [string, string][]) {
     .join("")}</table>`;
 }
 
-function shell(title: string, body: string) {
-  return `<!doctype html><html><body style="margin:0;background:#f6f8fa;font-family:Arial,sans-serif;color:#243545">
+function shell(title: string, body: string, lang = "en") {
+  return `<!doctype html><html lang="${lang}"><body style="margin:0;background:#f6f8fa;font-family:Arial,sans-serif;color:#243545">
 <table width="100%" cellpadding="0" cellspacing="0" style="padding:24px 12px"><tr><td align="center">
 <table width="100%" cellpadding="0" cellspacing="0" style="max-width:620px;background:#fff;border:1px solid #dce4eb">
 <tr><td style="background:#06203a;padding:20px 26px;color:#fff;font-size:20px;font-weight:700;letter-spacing:.04em">CLEANSHIP <span style="color:#00b0b9;font-size:12px">${esc(site.domain)}</span></td></tr>
@@ -40,7 +40,12 @@ function shell(title: string, body: string) {
 </table></td></tr></table></body></html>`;
 }
 
-/** Company notification must succeed; the acknowledgement is best effort. */
+/**
+ * Company notification must succeed; the acknowledgement is best effort.
+ *
+ * The notification stays in English for the operations desk; the
+ * acknowledgement goes to the customer, in Greek like the rest of the site.
+ */
 export async function sendEnquiryEmails(e: Enquiry) {
   const key = process.env.RESEND_API_KEY;
   if (!key) throw new Error("RESEND_API_KEY is not configured");
@@ -72,16 +77,17 @@ export async function sendEnquiryEmails(e: Enquiry) {
       from: FROM,
       to: e.email,
       replyTo: company.email,
-      subject: "We have your enquiry — Cleanship Marine Services",
+      subject: "Λάβαμε το αίτημά σας — Cleanship Marine Services",
       html: shell(
-        "We have your enquiry",
-        `<p style="font-size:15px;line-height:1.6">Thank you, ${esc(e.name)}. Your enquiry has reached our operations desk and we will reply within one working day — sooner for ships already in port.</p>${table([
-          ["Service", e.service],
-          ["Vessel / IMO", e.vessel],
-          ["Your message", e.message],
+        "Λάβαμε το αίτημά σας",
+        `<p style="font-size:15px;line-height:1.6">Ευχαριστούμε, ${esc(e.name)}. Το αίτημά σας έφτασε στο τμήμα επιχειρήσεών μας και θα σας απαντήσουμε μέσα σε μία εργάσιμη ημέρα, και νωρίτερα για πλοία που βρίσκονται ήδη στο λιμάνι.</p>${table([
+          ["Υπηρεσία", e.service],
+          ["Πλοίο / IMO", e.vessel],
+          ["Το μήνυμά σας", e.message],
         ])}`,
+        "el",
       ),
-      text: `Thank you, ${e.name}. Your enquiry has reached our operations desk and we will reply within one working day.\n\n${e.message}`,
+      text: `Ευχαριστούμε, ${e.name}. Το αίτημά σας έφτασε στο τμήμα επιχειρήσεών μας και θα σας απαντήσουμε μέσα σε μία εργάσιμη ημέρα.\n\n${e.message}`,
     });
   } catch (err) {
     console.error("[enquiry] acknowledgement failed (lead is safe)", err);
