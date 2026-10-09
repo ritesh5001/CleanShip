@@ -1,6 +1,12 @@
-import { officesByCountry, officeTownLine } from "@/content/company";
+import { officesByCountry, type Office } from "@/content/company";
 import { site } from "@/content/site";
-import { countryShort } from "@/content/labels";
+import { countryName, countryShort } from "@/content/labels";
+
+/* company.ts builds this line in English; here the country is Greek. */
+function townLine(o: Office) {
+  const state = [o.state, o.postalCode].filter(Boolean).join(" ");
+  return [o.locality ?? o.city, state, countryName(o.country)].filter(Boolean).join(", ");
+}
 
 export function OfficeGrid({ onNavy = false }: { onNavy?: boolean }) {
   return (
@@ -27,7 +33,7 @@ export function OfficeGrid({ onNavy = false }: { onNavy?: boolean }) {
                         <br />
                       </>
                     )}
-                    {officeTownLine(o)}
+                    {townLine(o)}
                   </p>
                 </address>
               </li>
